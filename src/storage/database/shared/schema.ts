@@ -87,6 +87,32 @@ export const inquiries = pgTable(
 	]
 );
 
+export const orders = pgTable(
+	"orders",
+	{
+		id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
+		order_id: varchar("order_id", { length: 100 }).notNull().unique(),
+		product_id: varchar("product_id", { length: 36 }).notNull().references(() => products.id),
+		product_name: varchar("product_name", { length: 255 }).notNull(),
+		quantity: integer("quantity").notNull().default(1),
+		amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
+		currency: varchar("currency", { length: 10 }).default("USD").notNull(),
+		payer_email: varchar("payer_email", { length: 255 }),
+		payer_name: varchar("payer_name", { length: 200 }),
+		paypal_order_id: varchar("paypal_order_id", { length: 100 }),
+		status: varchar("status", { length: 20 }).default("pending").notNull(),
+		created_at: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+		updated_at: timestamp("updated_at", { withTimezone: true }),
+	},
+	(table) => [
+		index("orders_order_id_idx").on(table.order_id),
+		index("orders_product_id_idx").on(table.product_id),
+		index("orders_status_idx").on(table.status),
+		index("orders_paypal_order_id_idx").on(table.paypal_order_id),
+		index("orders_created_at_idx").on(table.created_at),
+	]
+);
+
 const { createInsertSchema: createCoercedInsertSchema } = createSchemaFactory({ coerce: { date: true } });
 export const insertInquirySchema = createCoercedInsertSchema(inquiries).pick({
 	name: true,
@@ -103,3 +129,4 @@ export type InsertInquiry = z.infer<typeof insertInquirySchema>;
 
 export type Category = typeof categories.$inferSelect;
 export type Product = typeof products.$inferSelect;
+export type Order = typeof orders.$inferSelect;

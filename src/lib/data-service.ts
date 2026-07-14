@@ -1,5 +1,5 @@
 import { getSupabaseClient } from '@/storage/database/supabase-client';
-import type { Product, Category, Inquiry, InsertInquiry } from '@/storage/database/shared/schema';
+import type { Product, Category, Inquiry, InsertInquiry, Order } from '@/storage/database/shared/schema';
 
 const client = getSupabaseClient();
 
@@ -178,4 +178,50 @@ export async function createInquiry(inquiry: InsertInquiry): Promise<Inquiry> {
     .single();
   if (error) throw new Error(`Failed to create inquiry: ${error.message}`);
   return data as Inquiry;
+}
+
+// ============ Orders ============
+
+export interface CreateOrderInput {
+  order_id: string;
+  product_id: string | null;
+  product_name: string;
+  quantity: number;
+  amount: string;
+  currency: string;
+  payer_email: string | null;
+  payer_name: string | null;
+  paypal_order_id: string | null;
+  status: string;
+}
+
+export async function createOrder(order: CreateOrderInput): Promise<Order> {
+  const { data, error } = await client
+    .from('orders')
+    .insert(order)
+    .select()
+    .single();
+  if (error) throw new Error(`Failed to create order: ${error.message}`);
+  return data as Order;
+}
+
+export async function getOrderByPayPalId(paypalOrderId: string): Promise<Order | null> {
+  const { data, error } = await client
+    .from('orders')
+    .select('*')
+    .eq('paypal_order_id', paypalOrderId)
+    .maybeSingle();
+  if (error) throw new Error(`Failed to fetch order: ${error.message}`);
+  return data as Order | null;
+}
+
+export async function updateOrderStatus(id: string, status: string): Promise<Order> {
+  const { data, error } = await client
+    .from('orders')
+    .update({ status, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw new Error(`Failed to update order: ${error.message}`);
+  return data as Order;
 }

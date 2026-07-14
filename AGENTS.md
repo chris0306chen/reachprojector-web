@@ -29,22 +29,27 @@ src/
 │   │   ├── products-client.tsx     # 产品列表客户端组件 (排序/分页)
 │   │   └── [slug]/
 │   │       ├── page.tsx            # 产品详情页 (SSR + JSON-LD)
-│   │       └── product-detail-client.tsx  # 产品详情客户端组件
+│   │       └── product-detail-client.tsx  # 产品详情客户端组件 (含 PayPal)
 │   ├── about/page.tsx              # 关于我们
 │   ├── contact/
 │   │   ├── page.tsx                # 联系我们
 │   │   └── contact-form.tsx        # 询盘表单客户端组件
+│   ├── order-success/page.tsx      # 支付成功页面
 │   └── api/
-│       └── inquiries/route.ts      # 询盘提交 API
+│       ├── inquiries/route.ts      # 询盘提交 API
+│       └── paypal/
+│           ├── create-order/route.ts   # PayPal 创建订单 API
+│           └── capture-order/route.ts  # PayPal 捕获支付 API
 ├── components/
 │   ├── layout/
 │   │   ├── header.tsx              # 导航栏 (响应式 + 下拉菜单)
 │   │   ├── footer.tsx              # 页脚
 │   │   └── whatsapp-button.tsx     # WhatsApp 浮动按钮
-│   └── product-card.tsx            # 产品卡片组件
+│   ├── product-card.tsx            # 产品卡片组件
+│   └── paypal-checkout.tsx         # PayPal 支付组件
 ├── lib/
 │   ├── utils.ts                    # 工具函数 (cn)
-│   └── data-service.ts             # Supabase CRUD 服务层
+│   └── data-service.ts             # Supabase CRUD 服务层 (含订单)
 ├── storage/database/
 │   ├── shared/schema.ts            # Drizzle 表定义
 │   └── supabase-client.ts          # Supabase 客户端
@@ -57,6 +62,14 @@ src/
 - `categories` — 产品分类 (Projectors, Printers, Components)
 - `products` — 产品数据 (31 个种子产品)
 - `inquiries` — 客户询盘
+- `orders` — PayPal 订单记录 (order_id, product_id, amount, currency, payer_email, status)
+
+## 环境变量
+
+- `PAYPAL_CLIENT_ID` — PayPal Sandbox Client ID
+- `PAYPAL_SECRET` — PayPal Sandbox Secret
+- `PAYPAL_BASE_URL` — PayPal API 基础地址 (sandbox: https://api-m.sandbox.paypal.com)
+- `NEXT_PUBLIC_PAYPAL_CLIENT_ID` — 前端 PayPal Client ID (同 PAYPAL_CLIENT_ID)
 
 ## 常用命令
 
