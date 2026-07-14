@@ -8,7 +8,7 @@ async function seedAdmin() {
   const passwordHash = await bcrypt.hash(password, 10);
 
   const { data, error } = await supabase.from("users").insert({
-    email: "admin@reachprojector.com",
+    email: "admin@reachtronics.com",
     password_hash: passwordHash,
     name: "Admin",
     role: "admin",
