@@ -35,16 +35,30 @@ src/
 │   │   ├── page.tsx                # 联系我们
 │   │   └── contact-form.tsx        # 询盘表单客户端组件
 │   ├── order-success/page.tsx      # 支付成功页面
-│   └── api/
-│       ├── inquiries/route.ts      # 询盘提交 API
-│       └── paypal/
-│           ├── create-order/route.ts   # PayPal 创建订单 API
-│           └── capture-order/route.ts  # PayPal 捕获支付 API
+│   ├── admin/                      # 后台管理系统
+│   │   ├── layout.tsx              # Admin 布局 (侧边栏)
+│   │   ├── login/page.tsx          # 登录页面
+│   │   ├── dashboard/page.tsx      # 数据概览
+│   │   ├── products/page.tsx       # 产品管理 (CRUD + 上下架)
+│   │   ├── products/import/page.tsx # 产品采集
+│   │   ├── orders/page.tsx         # 订单管理 (发货/状态)
+│   │   ├── inquiries/page.tsx      # 询盘管理
+│   │   ├── shipping/page.tsx       # 运费模板管理
+│   │   └── users/page.tsx          # 员工管理 (子账号 + 权限)
+│   ├── api/
+│   │   ├── auth/                   # 认证 API (login/logout/me)
+│   │   ├── admin/                  # Admin API (dashboard/orders/products/users/shipping/inquiries)
+│   │   ├── inquiries/route.ts      # 询盘提交 API
+│   │   └── paypal/
+│   │       ├── create-order/route.ts   # PayPal 创建订单 API
+│   │       └── capture-order/route.ts  # PayPal 捕获支付 API
 ├── components/
 │   ├── layout/
 │   │   ├── header.tsx              # 导航栏 (响应式 + 下拉菜单)
 │   │   ├── footer.tsx              # 页脚
 │   │   └── whatsapp-button.tsx     # WhatsApp 浮动按钮
+│   ├── admin/
+│   │   └── admin-sidebar.tsx       # Admin 侧边栏导航
 │   ├── product-card.tsx            # 产品卡片组件
 │   └── paypal-checkout.tsx         # PayPal 支付组件
 ├── lib/
@@ -62,7 +76,16 @@ src/
 - `categories` — 产品分类 (Projectors, Printers, Components)
 - `products` — 产品数据 (31 个种子产品)
 - `inquiries` — 客户询盘
-- `orders` — PayPal 订单记录 (order_id, product_id, amount, currency, payer_email, status)
+- `orders` — PayPal 订单记录 (order_id, product_id, amount, currency, payer_email, status, shipping_method, tracking_number)
+- `users` — 后台用户 (admin/staff 角色, JSON 权限)
+- `shipping_templates` — 运费模板 (区域/计费方式/费率)
+
+## 后台管理员账号
+
+- **管理员邮箱**: admin@reachprojector.com
+- **管理员密码**: Reach@2024Admin
+- **后台地址**: /admin
+- **子账号**: 通过 /admin/users 创建，可配置权限
 
 ## 环境变量
 

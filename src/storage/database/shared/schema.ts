@@ -100,6 +100,9 @@ export const orders = pgTable(
 		payer_email: varchar("payer_email", { length: 255 }),
 		payer_name: varchar("payer_name", { length: 200 }),
 		paypal_order_id: varchar("paypal_order_id", { length: 100 }),
+		shipping_method: varchar("shipping_method", { length: 50 }),
+		shipping_cost: numeric("shipping_cost", { precision: 10, scale: 2 }),
+		tracking_number: varchar("tracking_number", { length: 200 }),
 		status: varchar("status", { length: 20 }).default("pending").notNull(),
 		created_at: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 		updated_at: timestamp("updated_at", { withTimezone: true }),
@@ -110,6 +113,48 @@ export const orders = pgTable(
 		index("orders_status_idx").on(table.status),
 		index("orders_paypal_order_id_idx").on(table.paypal_order_id),
 		index("orders_created_at_idx").on(table.created_at),
+	]
+);
+
+export const users = pgTable(
+	"users",
+	{
+		id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
+		email: varchar("email", { length: 255 }).notNull().unique(),
+		password_hash: varchar("password_hash", { length: 255 }).notNull(),
+		name: varchar("name", { length: 100 }).notNull(),
+		role: varchar("role", { length: 20 }).default("staff").notNull(),
+		permissions: jsonb("permissions").$type<string[]>().default([]),
+		is_active: boolean("is_active").default(true).notNull(),
+		last_login_at: timestamp("last_login_at", { withTimezone: true }),
+		created_at: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+		updated_at: timestamp("updated_at", { withTimezone: true }),
+	},
+	(table) => [
+		index("users_email_idx").on(table.email),
+		index("users_role_idx").on(table.role),
+	]
+);
+
+export const shipping_templates = pgTable(
+	"shipping_templates",
+	{
+		id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
+		name: varchar("name", { length: 100 }).notNull(),
+		zone: varchar("zone", { length: 200 }).notNull(),
+		method: varchar("method", { length: 50 }).notNull(),
+		weight_rate: jsonb("weight_rate").$type<Record<string, number>>(),
+		volume_rate: jsonb("volume_rate").$type<Record<string, number>>(),
+		fixed_fee: numeric("fixed_fee", { precision: 10, scale: 2 }),
+		free_shipping_min: numeric("free_shipping_min", { precision: 10, scale: 2 }),
+		trade_terms: varchar("trade_terms", { length: 20 }).default("DDP"),
+		is_active: boolean("is_active").default(true).notNull(),
+		created_at: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+		updated_at: timestamp("updated_at", { withTimezone: true }),
+	},
+	(table) => [
+		index("shipping_templates_zone_idx").on(table.zone),
+		index("shipping_templates_method_idx").on(table.method),
 	]
 );
 
@@ -130,3 +175,5 @@ export type InsertInquiry = z.infer<typeof insertInquirySchema>;
 export type Category = typeof categories.$inferSelect;
 export type Product = typeof products.$inferSelect;
 export type Order = typeof orders.$inferSelect;
+export type User = typeof users.$inferSelect;
+export type ShippingTemplate = typeof shipping_templates.$inferSelect;
