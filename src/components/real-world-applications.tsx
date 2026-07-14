@@ -10,7 +10,7 @@ const applications = [
     subtitle: '客厅家庭影院场景',
     description:
       'Transform your living room into a cinematic paradise. Our 4K laser projectors deliver theater-quality visuals with stunning brightness and color accuracy, perfect for family movie nights.',
-    image: '/images/cases/case-home-cinema.jpg',
+    image: '/images/cases/case-home-cinema.png',
     videoUrl: null, // 视频后续添加
   },
   {
@@ -19,7 +19,7 @@ const applications = [
     subtitle: '客厅休闲观影场景',
     description:
       'Create the ultimate entertainment hub. Enjoy sports, gaming, and streaming on a massive screen that brings every moment to life with immersive detail.',
-    image: '/images/cases/case-living-room.jpg',
+    image: '/images/cases/case-living-room.png',
     videoUrl: null, // 视频后续添加
   },
 ];
