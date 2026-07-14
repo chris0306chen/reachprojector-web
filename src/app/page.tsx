@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { ArrowRight, Truck, Shield, DollarSign, Headphones, Award, Globe } from 'lucide-react';
 import { getProducts, getCategories } from '@/lib/data-service';
 import { ProductCard } from '@/components/product-card';
+import RealWorldApplications from '@/components/real-world-applications';
+import ShippingDelivery from '@/components/shipping-delivery';
 
 export const dynamic = 'force-dynamic';
 
@@ -164,6 +166,12 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      {/* Real-World Applications - Case Studies */}
+      <RealWorldApplications />
+
+      {/* Shipping & Delivery */}
+      <ShippingDelivery />
 
       {/* B2B Wholesale CTA */}
       <section className="py-16 lg:py-20 bg-slate-900">
