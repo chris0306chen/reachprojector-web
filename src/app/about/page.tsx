@@ -109,7 +109,7 @@ export default function AboutPage() {
               {
                 icon: Globe,
                 title: 'Global Reach',
-                desc: 'Serving customers across Europe, Americas, Southeast Asia, Russia, and the Middle East. Multi-language support available.',
+                desc: 'Serving customers across Europe, Americas, Southeast Asia, and the Middle East. Multi-language support available.',
               },
               {
                 icon: Users,
