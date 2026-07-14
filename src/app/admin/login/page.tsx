@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { Suspense, useState, FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
-export default function AdminLoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/admin/dashboard";
@@ -101,12 +101,20 @@ export default function AdminLoginPage() {
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
             {loading ? "Signing in..." : "Sign In"}
           </button>
-        </form>
 
-        <p className="text-center text-slate-500 text-sm mt-6">
-          Authorized personnel only
-        </p>
+          <p className="text-xs text-slate-400 text-center mt-4">
+            Contact the administrator if you don't have an account
+          </p>
+        </form>
       </div>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-900"><Loader2 className="w-8 h-8 animate-spin text-orange-500" /></div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

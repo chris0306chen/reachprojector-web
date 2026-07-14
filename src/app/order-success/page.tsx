@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { CheckCircle, Package, ArrowRight } from 'lucide-react';
 
-export default function OrderSuccessPage() {
+function OrderSuccessContent() {
   const searchParams = useSearchParams();
   const productName = searchParams.get('product') || 'your product';
   const [mounted, setMounted] = useState(false);
@@ -69,5 +69,21 @@ export default function OrderSuccessPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function OrderSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-[60vh] flex items-center justify-center px-4">
+        <div className="animate-pulse space-y-4">
+          <div className="w-16 h-16 bg-slate-200 rounded-full mx-auto" />
+          <div className="h-8 bg-slate-200 rounded w-48 mx-auto" />
+          <div className="h-4 bg-slate-200 rounded w-64 mx-auto" />
+        </div>
+      </div>
+    }>
+      <OrderSuccessContent />
+    </Suspense>
   );
 }
