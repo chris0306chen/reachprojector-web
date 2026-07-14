@@ -1,0 +1,155 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { getProducts, getCategories, getBrands } from '@/lib/data-service';
+import { ProductCard } from '@/components/product-card';
+import { ProductsClient } from './products-client';
+
+export const metadata: Metadata = {
+  title: 'Products',
+  description: 'Browse our complete catalog of premium projectors, printers, and computer components from top global brands.',
+};
+
+export const dynamic = 'force-dynamic';
+
+interface ProductsPageProps {
+  searchParams: Promise<{
+    category?: string;
+    brand?: string;
+    sort?: string;
+    search?: string;
+    page?: string;
+    minPrice?: string;
+    maxPrice?: string;
+  }>;
+}
+
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  const params = await searchParams;
+  const page = parseInt(params.page || '1');
+  const sortBy = (params.sort as 'newest' | 'price_asc' | 'price_desc' | 'name') || 'newest';
+
+  const [result, categories, brands] = await Promise.all([
+    getProducts({
+      categorySlug: params.category,
+      brand: params.brand,
+      search: params.search,
+      minPrice: params.minPrice ? parseFloat(params.minPrice) : undefined,
+      maxPrice: params.maxPrice ? parseFloat(params.maxPrice) : undefined,
+      sortBy,
+      page,
+      pageSize: 12,
+    }),
+    getCategories(),
+    getBrands(),
+  ]);
+
+  return (
+    <div className="bg-slate-50 min-h-screen">
+      {/* Breadcrumb */}
+      <div className="bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <nav className="flex items-center gap-2 text-sm">
+            <Link href="/" className="text-slate-500 hover:text-slate-900 transition-colors">Home</Link>
+            <span className="text-slate-300">/</span>
+            <span className="text-slate-900 font-medium">Products</span>
+            {params.category && (
+              <>
+                <span className="text-slate-300">/</span>
+                <span className="text-orange-500 capitalize">{params.category}</span>
+              </>
+            )}
+          </nav>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar Filters */}
+          <aside className="lg:w-64 shrink-0">
+            <div className="bg-white rounded-xl border border-slate-200 p-5 sticky top-24">
+              <h2 className="text-base font-semibold text-slate-900 mb-4">Filters</h2>
+
+              {/* Categories */}
+              <div className="mb-6">
+                <h3 className="text-sm font-medium text-slate-700 mb-2">Category</h3>
+                <ul className="space-y-1.5">
+                  <li>
+                    <Link
+                      href="/products"
+                      className={`text-sm ${!params.category ? 'text-orange-500 font-medium' : 'text-slate-500 hover:text-slate-900'} transition-colors`}
+                    >
+                      All Products
+                    </Link>
+                  </li>
+                  {categories.map((cat) => (
+                    <li key={cat.slug}>
+                      <Link
+                        href={`/products?category=${cat.slug}`}
+                        className={`text-sm ${params.category === cat.slug ? 'text-orange-500 font-medium' : 'text-slate-500 hover:text-slate-900'} transition-colors`}
+                      >
+                        {cat.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Brands */}
+              <div className="mb-6">
+                <h3 className="text-sm font-medium text-slate-700 mb-2">Brand</h3>
+                <ul className="space-y-1.5 max-h-48 overflow-y-auto">
+                  {brands.map((brand) => (
+                    <li key={brand}>
+                      <Link
+                        href={`/products?brand=${encodeURIComponent(brand)}${params.category ? `&category=${params.category}` : ''}`}
+                        className={`text-sm ${params.brand === brand ? 'text-orange-500 font-medium' : 'text-slate-500 hover:text-slate-900'} transition-colors`}
+                      >
+                        {brand}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Price Range */}
+              <div>
+                <h3 className="text-sm font-medium text-slate-700 mb-2">Price Range</h3>
+                <div className="space-y-1.5">
+                  {[
+                    { label: 'Under $500', min: '0', max: '500' },
+                    { label: '$500 - $1000', min: '500', max: '1000' },
+                    { label: '$1000 - $2000', min: '1000', max: '2000' },
+                    { label: '$2000 - $5000', min: '2000', max: '5000' },
+                    { label: 'Over $5000', min: '5000', max: '' },
+                  ].map((range) => (
+                    <Link
+                      key={range.label}
+                      href={`/products?minPrice=${range.min}${range.max ? `&maxPrice=${range.max}` : ''}${params.category ? `&category=${params.category}` : ''}`}
+                      className="block text-sm text-slate-500 hover:text-slate-900 transition-colors"
+                    >
+                      {range.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          {/* Products Grid */}
+          <div className="flex-1">
+            <ProductsClient
+              products={result.products}
+              total={result.total}
+              page={page}
+              totalPages={result.totalPages}
+              currentSort={sortBy}
+              currentCategory={params.category}
+              currentBrand={params.brand}
+              currentSearch={params.search}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
