@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createOrder } from '@/lib/data-service';
 
-const PAYPAL_BASE_URL = process.env.PAYPAL_BASE_URL || 'https://api-m.sandbox.paypal.com';
+const PAYPAL_BASE_URL = process.env.PAYPAL_BASE_URL || 'https://api-m.paypal.com';
 
 async function getAccessToken(): Promise<string> {
   const clientId = process.env.PAYPAL_CLIENT_ID;
   const secret = process.env.PAYPAL_SECRET;
 
-  if (!clientId || !secret || clientId === 'YOUR_SANDBOX_CLIENT_ID' || secret === 'YOUR_SANDBOX_SECRET') {
+  if (!clientId || !secret || clientId.startsWith('YOUR_') || secret.startsWith('YOUR_')) {
     throw new Error('PAYPAL_NOT_CONFIGURED');
   }
 
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     // Check if PayPal is configured
     const clientId = process.env.PAYPAL_CLIENT_ID;
     const secret = process.env.PAYPAL_SECRET;
-    if (!clientId || !secret || clientId === 'YOUR_SANDBOX_CLIENT_ID' || secret === 'YOUR_SANDBOX_SECRET') {
+    if (!clientId || !secret || clientId.startsWith('YOUR_') || secret.startsWith('YOUR_')) {
       return NextResponse.json({
         configured: false,
         message: 'PayPal is not configured. Please set valid PAYPAL_CLIENT_ID and PAYPAL_SECRET in environment variables.',
