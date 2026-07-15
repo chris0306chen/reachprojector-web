@@ -16,8 +16,9 @@ export async function POST(request: NextRequest) {
     
     const client = new Client({
       connectionString: process.env.DATABASE_URL || 
-        'postgresql://postgres:rUICHI2020!!@db.ufzzynacrknnmmyczmzl.supabase.co:5432/postgres',
+        'postgresql://postgres.ufzzynacrknnmmyczmzl:rUICHI2020!!@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require',
       connectionTimeoutMillis: 30000,
+      ssl: { rejectUnauthorized: false },
     })
 
     await client.connect()
