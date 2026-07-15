@@ -76,15 +76,15 @@ function getSupabaseCredentials(): SupabaseCredentials {
   loadEnv();
 
   // 优先读标准环境变量（Vercel 等），fallback 到 Coze 专用变量
-  const url = process.env.SUPABASE_URL || process.env.COZE_SUPABASE_URL || 'https://placeholder.supabase.co';
-  const anonKey = process.env.SUPABASE_KEY || process.env.COZE_SUPABASE_ANON_KEY || 'placeholder-anon-key';
+  const url = process.env.SUPABASE_URL || process.env.COZE_SUPABASE_URL || 'https://br-handy-deer-627f60fc.supabase2.aidap-global.cn-beijing.volces.com';
+  const anonKey = process.env.SUPABASE_KEY || process.env.COZE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjMzNjQ3MTAzNDAsInJvbGUiOiJzZXJ2aWNlX3JvbGUifQ.2SKx37Jklte9cKRFNwfe7m1C3NEThWJwJZkIG9xpl8g';
 
   return { url, anonKey };
 }
 
 function getSupabaseServiceRoleKey(): string | undefined {
   loadEnv();
-  return process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.COZE_SUPABASE_SERVICE_ROLE_KEY;
+  return process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.COZE_SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjMzNjQ3MTAzNDAsInJvbGUiOiJzZXJ2aWNlX3JvbGUifQ.2SKx37Jklte9cKRFNwfe7m1C3NEThWJwJZkIG9xpl8g';
 }
 
 function getSupabaseClient(token?: string): SupabaseClient {
