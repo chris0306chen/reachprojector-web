@@ -50,17 +50,20 @@ export function Footer() {
               Authorized dealer of top global brands with competitive wholesale pricing.
             </p>
             <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm text-slate-400 mb-3">
+                <span className="font-medium text-white">HK REACH SOURCING LIMITED</span>
+              </div>
               <a href="mailto:info@reachprojector.com" className="flex items-center gap-2 text-sm text-slate-400 hover:text-orange-400 transition-colors">
-                <Mail className="w-4 h-4" />
+                <Mail className="w-4 h-4 shrink-0" />
                 info@reachprojector.com
               </a>
-              <a href="tel:+8613800138000" className="flex items-center gap-2 text-sm text-slate-400 hover:text-orange-400 transition-colors">
-                <Phone className="w-4 h-4" />
-                +86 138-0013-8000
+              <a href="tel:+8615860330104" className="flex items-center gap-2 text-sm text-slate-400 hover:text-orange-400 transition-colors">
+                <Phone className="w-4 h-4 shrink-0" />
+                86-15860330104
               </a>
-              <div className="flex items-center gap-2 text-sm text-slate-400">
-                <MapPin className="w-4 h-4 shrink-0" />
-                Shenzhen, Guangdong, China
+              <div className="flex items-start gap-2 text-sm text-slate-400">
+                <MapPin className="w-4 h-4 shrink-0 mt-0.5" />
+                <span>No. 1108 Quan'an North Road, Jinjiang City, Quanzhou City, Fujian Province</span>
               </div>
             </div>
           </div>
