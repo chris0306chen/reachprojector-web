@@ -33,7 +33,17 @@ export function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <img src="/images/logo.png" alt="RC Logo" className="h-8 w-auto" />
+              <img src="/images/logo.png" alt="RC Logo" className="h-10 w-auto" />
+              <div className="flex flex-col leading-tight">
+                <span className="text-2xl font-extrabold tracking-wide">
+                  <span className="text-orange-500">R</span>
+                  <span className="text-white">E</span>
+                  <span className="text-white">A</span>
+                  <span className="text-orange-500">C</span>
+                  <span className="text-white">H</span>
+                </span>
+                <span className="text-xs text-slate-300 tracking-widest">PROJECTOR</span>
+              </div>
             </div>
             <p className="text-sm text-slate-400 mb-6 max-w-sm leading-relaxed">
               Your trusted partner for premium projectors, printers, and computer components.
