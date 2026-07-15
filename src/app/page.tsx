@@ -18,36 +18,42 @@ export default async function HomePage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative bg-slate-900 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-orange-500 rounded-full blur-[128px]" />
-          <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-blue-500 rounded-full blur-[96px]" />
-        </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
+      <section className="relative min-h-[600px] lg:min-h-screen overflow-hidden flex items-center">
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: 'url(/images/hero/hero-bg.jpg)' }}
+        />
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-black/55" />
+        {/* Gradient Overlay for depth */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-slate-900/40 to-transparent" />
+        
+        {/* Content */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 w-full">
           <div className="max-w-3xl">
             <p className="text-orange-400 text-sm font-semibold uppercase tracking-wider mb-4">
               Authorized Dealer of Premium Electronics
             </p>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-tight mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-tight mb-6 drop-shadow-lg">
               Premium Projectors &<br />
               <span className="text-orange-400">Electronics</span> Worldwide
             </h1>
-            <p className="text-lg text-slate-300 max-w-2xl mb-8 leading-relaxed">
+            <p className="text-lg text-slate-200 max-w-2xl mb-8 leading-relaxed drop-shadow-md">
               Your trusted source for 4K laser projectors, professional printers, and high-performance
               computer components. Competitive pricing, global shipping, and expert support.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
                 href="/products"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-all hover:scale-105 shadow-lg"
               >
                 Browse Products
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-medium rounded-lg border border-white/20 transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-medium rounded-lg border border-white/30 backdrop-blur-sm transition-all hover:scale-105"
               >
                 Wholesale Inquiry
               </Link>
@@ -55,16 +61,16 @@ export default async function HomePage() {
             {/* Stats */}
             <div className="mt-12 grid grid-cols-3 gap-8 max-w-md">
               <div>
-                <p className="text-2xl font-bold text-white">500+</p>
-                <p className="text-xs text-slate-400">Products</p>
+                <p className="text-2xl font-bold text-white drop-shadow-md">500+</p>
+                <p className="text-xs text-slate-300">Products</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-white">50+</p>
-                <p className="text-xs text-slate-400">Countries</p>
+                <p className="text-2xl font-bold text-white drop-shadow-md">50+</p>
+                <p className="text-xs text-slate-300">Countries</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-white">12+</p>
-                <p className="text-xs text-slate-400">Top Brands</p>
+                <p className="text-2xl font-bold text-white drop-shadow-md">12+</p>
+                <p className="text-xs text-slate-300">Top Brands</p>
               </div>
             </div>
           </div>
