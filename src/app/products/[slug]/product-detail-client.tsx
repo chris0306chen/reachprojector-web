@@ -146,6 +146,13 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
 
           {/* CTA Buttons */}
           <div className="flex flex-wrap gap-3 mb-6">
+            <Link
+              href={`/checkout?productId=${product.id}&productName=${encodeURIComponent(product.name)}&price=${price}&quantity=${quantity}`}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-all hover:scale-[1.02] shadow-md"
+            >
+              <ShoppingCart className="w-4 h-4" />
+              Checkout Now
+            </Link>
             <a
               href={`https://wa.me/8613800138000?text=${whatsappMessage}`}
               target="_blank"
@@ -157,9 +164,8 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
             </a>
             <Link
               href={`/contact?product=${product.slug}`}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 border-2 border-slate-300 hover:border-orange-400 text-slate-700 hover:text-orange-600 font-medium rounded-lg transition-colors"
             >
-              <ShoppingCart className="w-4 h-4" />
               Send Inquiry
             </Link>
           </div>

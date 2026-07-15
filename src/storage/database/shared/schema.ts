@@ -100,6 +100,8 @@ export const orders = pgTable(
 		payer_email: varchar("payer_email", { length: 255 }),
 		payer_name: varchar("payer_name", { length: 200 }),
 		paypal_order_id: varchar("paypal_order_id", { length: 100 }),
+		airwallex_intent_id: varchar("airwallex_intent_id", { length: 100 }),
+		payment_method: varchar("payment_method", { length: 20 }).default("paypal").notNull(),
 		shipping_method: varchar("shipping_method", { length: 50 }),
 		shipping_cost: numeric("shipping_cost", { precision: 10, scale: 2 }),
 		tracking_number: varchar("tracking_number", { length: 200 }),
@@ -112,6 +114,8 @@ export const orders = pgTable(
 		index("orders_product_id_idx").on(table.product_id),
 		index("orders_status_idx").on(table.status),
 		index("orders_paypal_order_id_idx").on(table.paypal_order_id),
+		index("orders_airwallex_intent_id_idx").on(table.airwallex_intent_id),
+		index("orders_payment_method_idx").on(table.payment_method),
 		index("orders_created_at_idx").on(table.created_at),
 	]
 );

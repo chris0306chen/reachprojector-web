@@ -89,6 +89,8 @@ export async function POST(request: NextRequest) {
       payer_email: payerEmail,
       payer_name: payerName,
       paypal_order_id: orderId,
+      airwallex_intent_id: null,
+      payment_method: 'paypal',
       status: captureData.status === 'COMPLETED' ? 'completed' : 'pending',
     });
 

@@ -192,6 +192,8 @@ export interface CreateOrderInput {
   payer_email: string | null;
   payer_name: string | null;
   paypal_order_id: string | null;
+  airwallex_intent_id: string | null;
+  payment_method: string;
   status: string;
 }
 
