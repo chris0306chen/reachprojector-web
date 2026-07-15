@@ -2,14 +2,20 @@ import { NextResponse } from 'next/server';
 import { createInquiry } from '@/lib/data-service';
 import nodemailer from 'nodemailer';
 
+const SMTP_HOST = process.env.SMTP_HOST || 'smtp.qiye.aliyun.com';
+const SMTP_PORT = parseInt(process.env.SMTP_PORT || '465');
+const SMTP_USER = process.env.SMTP_USER || 'rc001@reachtronics.com';
+const SMTP_PASS = process.env.SMTP_PASS || 'Chris0525!';
+const SMTP_FROM = process.env.SMTP_FROM || 'info@reachtronics.com';
+
 function createTransport() {
   return nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: parseInt(process.env.SMTP_PORT || '465'),
+    host: SMTP_HOST,
+    port: SMTP_PORT,
     secure: true,
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
+      user: SMTP_USER,
+      pass: SMTP_PASS,
     },
     connectionTimeout: 10000,
   });
@@ -23,14 +29,8 @@ function sendInquiryNotification(inquiry: {
   subject?: string;
   inquiry_type?: string;
 }) {
-  // Fire and forget - don't block the response
-  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    console.warn('SMTP not configured, skipping inquiry email notification');
-    return;
-  }
-
   const transporter = createTransport();
-  const fromAddress = process.env.SMTP_FROM || process.env.SMTP_USER;
+  const fromAddress = SMTP_FROM;
   const toAddress = 'info@reachtronics.com';
   const now = new Date().toLocaleString('en-US', { timeZone: 'Asia/Shanghai' });
 
