@@ -95,57 +95,55 @@ export default async function HomePage() {
                 title: '4K Laser Projectors',
                 desc: 'Cinema-grade 4K laser projection for home theater',
                 href: '/products?category=projectors&sub=4k-laser',
-                color: 'from-blue-500/10 to-indigo-500/10',
-                iconColor: 'text-blue-600',
-                iconBg: 'bg-blue-100',
+                image: '/images/categories/projector-4k.jpg',
               },
               {
                 icon: Tv,
                 title: 'UST Laser TV',
                 desc: 'Ultra-short throw laser TV for immersive big-screen',
                 href: '/products?category=projectors&sub=ust',
-                color: 'from-orange-500/10 to-amber-500/10',
-                iconColor: 'text-orange-600',
-                iconBg: 'bg-orange-100',
+                image: '/images/categories/ust-laser-tv.jpg',
               },
               {
                 icon: Printer,
                 title: 'Printers & Scanners',
                 desc: 'Professional printers and scanners for office',
                 href: '/products?category=printers',
-                color: 'from-emerald-500/10 to-teal-500/10',
-                iconColor: 'text-emerald-600',
-                iconBg: 'bg-emerald-100',
+                image: '/images/categories/printer-scanner.jpg',
               },
               {
                 icon: Cpu,
                 title: 'Components',
                 desc: 'CPU, motherboard, RAM, GPU and more',
                 href: '/products?category=components',
-                color: 'from-violet-500/10 to-purple-500/10',
-                iconColor: 'text-violet-600',
-                iconBg: 'bg-violet-100',
+                image: '/images/categories/components.jpg',
               },
             ].map((cat) => (
               <Link
                 key={cat.title}
                 href={cat.href}
-                className="group relative bg-white border border-slate-200 rounded-xl p-5 lg:p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 overflow-hidden"
+                className="group relative h-[200px] sm:h-[280px] lg:h-[350px] rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
               >
-                {/* Background gradient on hover */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${cat.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+                {/* Background Image */}
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                  style={{ backgroundImage: `url(${cat.image})` }}
+                />
+                {/* Dark Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20 group-hover:via-black/50 transition-all duration-300" />
                 
-                <div className="relative z-10">
-                  <div className={`w-12 h-12 ${cat.iconBg} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                    <cat.icon className={`w-6 h-6 ${cat.iconColor}`} />
+                {/* Content */}
+                <div className="relative z-10 h-full flex flex-col justify-end p-4 lg:p-5">
+                  <div className="w-10 h-10 lg:w-12 lg:h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-3 border border-white/10">
+                    <cat.icon className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
                   </div>
-                  <h3 className="text-base lg:text-lg font-bold text-slate-900 mb-1.5">
+                  <h3 className="text-sm lg:text-lg font-bold text-white mb-1 drop-shadow-md">
                     {cat.title}
                   </h3>
-                  <p className="text-xs lg:text-sm text-slate-500 mb-3 leading-relaxed">
+                  <p className="text-xs lg:text-sm text-white/80 mb-2 lg:mb-3 leading-relaxed line-clamp-2">
                     {cat.desc}
                   </p>
-                  <span className="inline-flex items-center gap-1 text-xs font-medium text-orange-500 group-hover:text-orange-600 transition-colors">
+                  <span className="inline-flex items-center gap-1 text-xs font-medium text-orange-400 group-hover:text-orange-300 transition-colors">
                     View Products <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </span>
                 </div>
