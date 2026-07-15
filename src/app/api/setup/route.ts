@@ -15,10 +15,13 @@ export async function POST(request: NextRequest) {
     const { Client } = await import('pg')
     
     const client = new Client({
-      connectionString: process.env.DATABASE_URL || 
-        'postgresql://postgres:rUICHI2020!!@[2406:da12:1f1:f802:c880:dc09:557d:17f8]:5432/postgres?sslmode=require',
-      connectionTimeoutMillis: 30000,
+      host: 'db.ufzzynacrknnmmyczmzl.supabase.co',
+      port: 5432,
+      database: 'postgres',
+      user: 'postgres',
+      password: 'rUICHI2020!!',
       ssl: { rejectUnauthorized: false },
+      connectionTimeoutMillis: 30000,
     })
 
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
