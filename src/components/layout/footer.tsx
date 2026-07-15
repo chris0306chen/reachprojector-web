@@ -36,14 +36,7 @@ export function Footer() {
               <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">R</span>
               </div>
-              <div className="flex flex-col">
-                <span className="text-lg font-bold text-white tracking-tight leading-tight">
-                  <span style={{ color: '#FF6B00' }}>R</span>EAC<span style={{ color: '#FF6B00' }}>C</span>H
-                </span>
-                <span className="text-[10px] font-medium text-slate-400 tracking-widest leading-tight uppercase">
-                  PROJECTOR
-                </span>
-              </div>
+              <img src="/images/logo.png" alt="RC Logo" className="h-8 w-auto" />
             </div>
             <p className="text-sm text-slate-400 mb-6 max-w-sm leading-relaxed">
               Your trusted partner for premium projectors, printers, and computer components.
@@ -64,6 +57,10 @@ export function Footer() {
               <div className="flex items-start gap-2 text-sm text-slate-400">
                 <MapPin className="w-4 h-4 shrink-0 mt-0.5" />
                 <span>No. 1108 Quan'an North Road, Jinjiang City, Quanzhou City, Fujian Province</span>
+              </div>
+              <div className="flex items-start gap-2 text-sm text-slate-400">
+                <MapPin className="w-4 h-4 shrink-0 mt-0.5" />
+                <span>Room S007, 2/F, Capital Plaza, 61-65 Chatham Road South, Tsim Sha Tsui, Hong Kong</span>
               </div>
             </div>
           </div>

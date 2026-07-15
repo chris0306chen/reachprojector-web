@@ -51,14 +51,7 @@ export function Header() {
             <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
               <span className="text-orange-500 font-bold text-sm">R</span>
             </div>
-            <div className="flex flex-col">
-              <span className="text-lg font-bold text-slate-900 tracking-tight leading-tight">
-                <span style={{ color: '#FF6B00' }}>R</span>EAC<span style={{ color: '#FF6B00' }}>C</span>H
-              </span>
-              <span className="text-[10px] font-medium text-slate-500 tracking-widest leading-tight uppercase">
-                PROJECTOR
-              </span>
-            </div>
+            <img src="/images/logo.png" alt="RC Logo" className="h-10 w-auto" />
           </Link>
 
           {/* Desktop Nav */}
