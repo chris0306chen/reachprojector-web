@@ -49,7 +49,7 @@ export function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
             <img src="/images/logo.png" alt="RC Logo" className="h-8 w-auto" />
-            <span className="text-xl font-bold text-white">REACH PROJECTOR</span>
+            <span className="text-xl font-bold text-slate-900">REACH PROJECTOR</span>
           </Link>
 
           {/* Desktop Nav */}

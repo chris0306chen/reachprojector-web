@@ -33,9 +33,6 @@ export function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">R</span>
-              </div>
               <img src="/images/logo.png" alt="RC Logo" className="h-8 w-auto" />
             </div>
             <p className="text-sm text-slate-400 mb-6 max-w-sm leading-relaxed">
