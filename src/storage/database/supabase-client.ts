@@ -1,6 +1,4 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { execSync } from 'child_process';
-import { getReportBuffer, createWrappedFetch } from 'coze-coding-dev-sdk';
 
 let envLoaded = false;
 
@@ -16,6 +14,7 @@ function loadEnv(): void {
   }
 
   try {
+    // 尝试 dotenv
     try {
       require('dotenv').config();
       if (process.env.SUPABASE_URL || process.env.COZE_SUPABASE_URL) {
@@ -26,7 +25,10 @@ function loadEnv(): void {
       // dotenv not available
     }
 
-    const pythonCode = `
+    // 尝试 Coze workload identity（仅 Coze 环境可用）
+    try {
+      const { execSync } = require('child_process');
+      const pythonCode = `
 import os
 import sys
 try:
@@ -39,31 +41,32 @@ try:
 except Exception as e:
     print(f"# Error: {e}", file=sys.stderr)
 `;
+      const output = execSync(`python3 -c '${pythonCode.replace(/'/g, "'\"'\"'")}'`, {
+        encoding: 'utf-8',
+        timeout: 10000,
+        stdio: ['pipe', 'pipe', 'pipe'],
+      });
 
-    const output = execSync(`python3 -c '${pythonCode.replace(/'/g, "'\"'\"'")}'`, {
-      encoding: 'utf-8',
-      timeout: 10000,
-      stdio: ['pipe', 'pipe', 'pipe'],
-    });
-
-    const lines = output.trim().split('\n');
-    for (const line of lines) {
-      if (line.startsWith('#')) continue;
-      const eqIndex = line.indexOf('=');
-      if (eqIndex > 0) {
-        const key = line.substring(0, eqIndex);
-        let value = line.substring(eqIndex + 1);
-        if ((value.startsWith("'") && value.endsWith("'")) ||
-            (value.startsWith('"') && value.endsWith('"'))) {
-          value = value.slice(1, -1);
-        }
-        if (!process.env[key]) {
-          process.env[key] = value;
+      const lines = output.trim().split('\n');
+      for (const line of lines) {
+        if (line.startsWith('#')) continue;
+        const eqIndex = line.indexOf('=');
+        if (eqIndex > 0) {
+          const key = line.substring(0, eqIndex);
+          let value = line.substring(eqIndex + 1);
+          if ((value.startsWith("'") && value.endsWith("'")) ||
+              (value.startsWith('"') && value.endsWith('"'))) {
+            value = value.slice(1, -1);
+          }
+          if (!process.env[key]) {
+            process.env[key] = value;
+          }
         }
       }
+      envLoaded = true;
+    } catch {
+      // Coze workload identity not available (e.g. Vercel)
     }
-
-    envLoaded = true;
   } catch {
     // Silently fail
   }
@@ -99,13 +102,16 @@ function getSupabaseClient(token?: string): SupabaseClient {
   if (token) {
     globalOptions.headers = { Authorization: `Bearer ${token}` };
   }
+
+  // 尝试加载 Coze 上报（仅 Coze 环境）
   try {
+    const { getReportBuffer, createWrappedFetch } = require('coze-coding-dev-sdk');
     const buffer = getReportBuffer();
     if (buffer) {
       globalOptions.fetch = createWrappedFetch(buffer, 'supabase');
     }
   } catch {
-    // Silent — reporting setup failure should not block client creation
+    // coze-coding-dev-sdk not available (e.g. Vercel)
   }
 
   return createClient(url, key, {
