@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     
     const client = new Client({
       connectionString: process.env.DATABASE_URL || 
-        'postgresql://postgres:rUICHI2020!!@db.ufzzynacrknnmmyczmzl.supabase.co:5432/postgres',
+        'postgresql://postgres:rUICHI2020!!@db.br-handy-deer-627f60fc.supabase2.aidap-global.cn-beijing.volces.com:5432/postgres',
       connectionTimeoutMillis: 30000,
     })
 
