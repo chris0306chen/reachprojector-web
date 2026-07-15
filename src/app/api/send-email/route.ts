@@ -1,3 +1,4 @@
+// Email sending API - uses SMTP transport configured via environment variables
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
