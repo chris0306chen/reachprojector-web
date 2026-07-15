@@ -26,6 +26,21 @@ coze build
 coze start
 ```
 
+## 数据库初始化
+
+项目使用 Supabase (PostgreSQL) 作为数据库。首次部署需要初始化数据库：
+
+### 方式一：Supabase SQL Editor（推荐）
+1. 登录 [Supabase Dashboard](https://supabase.com/dashboard)
+2. 进入项目 → SQL Editor
+3. 复制 `scripts/init-db.sql` 的全部内容，粘贴执行
+
+### 方式二：命令行 seed 脚本
+```bash
+# 确保 .env.local 中配置了 SUPABASE_URL 和 SUPABASE_KEY
+npx tsx src/scripts/seed.ts
+```
+
 ## 项目结构
 
 ```

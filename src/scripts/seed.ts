@@ -2,6 +2,13 @@ import { getSupabaseClient } from '@/storage/database/supabase-client';
 
 const client = getSupabaseClient();
 
+// Check if Supabase is properly configured
+if (!process.env.SUPABASE_URL && !process.env.COZE_SUPABASE_URL) {
+  console.error('Error: Supabase credentials not configured.');
+  console.error('Set SUPABASE_URL and SUPABASE_KEY in .env.local');
+  process.exit(1);
+}
+
 const categories = [
   { name: 'Projectors', slug: 'projectors', description: 'Professional 4K Laser Projectors, UST Laser TVs and home theater solutions from top brands.', image_url: '/images/category-projectors.jpg', sort_order: 1 },
   { name: 'Printers', slug: 'printers', description: 'High-performance laser and inkjet printers for office and home use.', image_url: '/images/category-printers.jpg', sort_order: 2 },
