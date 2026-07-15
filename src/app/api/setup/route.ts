@@ -21,6 +21,7 @@ export async function POST(request: NextRequest) {
       ssl: { rejectUnauthorized: false },
     })
 
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
     await client.connect()
     const results: string[] = []
 
