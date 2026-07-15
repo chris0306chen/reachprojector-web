@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     
     const client = new Client({
       connectionString: process.env.DATABASE_URL || 
-        'postgresql://postgres:rUICHI2020!!@ufzzynacrknnmmyczmzl.supabase.co:5432/postgres?sslmode=require',
+        'postgresql://postgres:rUICHI2020!!@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?sslmode=require',
       connectionTimeoutMillis: 30000,
       ssl: { rejectUnauthorized: false },
     })
@@ -531,8 +531,13 @@ INSERT INTO users (email, password_hash, name, role, permissions, is_active) VAL
       }
     })
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Unknown error'
-    return NextResponse.json({ error: message }, { status: 500 })
+    const message = error instanceof Error ? error.message : JSON.stringify(error)
+    console.error('Setup error:', error)
+    return NextResponse.json({ 
+      error: message, 
+      details: String(error),
+      connection_host: 'aws-0-ap-southeast-1.pooler.supabase.com:5432'
+    }, { status: 500 })
   }
 }
 
