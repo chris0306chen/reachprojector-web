@@ -10,14 +10,15 @@ interface SupabaseCredentials {
 }
 
 function loadEnv(): void {
-  if (envLoaded || (process.env.COZE_SUPABASE_URL && process.env.COZE_SUPABASE_ANON_KEY)) {
+  // 标准环境变量优先（Vercel 等部署平台），fallback 到 Coze 专用变量
+  if (envLoaded || process.env.SUPABASE_URL || process.env.COZE_SUPABASE_URL) {
     return;
   }
 
   try {
     try {
       require('dotenv').config();
-      if (process.env.COZE_SUPABASE_URL && process.env.COZE_SUPABASE_ANON_KEY) {
+      if (process.env.SUPABASE_URL || process.env.COZE_SUPABASE_URL) {
         envLoaded = true;
         return;
       }
@@ -71,15 +72,16 @@ except Exception as e:
 function getSupabaseCredentials(): SupabaseCredentials {
   loadEnv();
 
-  const url = process.env.COZE_SUPABASE_URL || 'https://placeholder.supabase.co';
-  const anonKey = process.env.COZE_SUPABASE_ANON_KEY || 'placeholder-anon-key';
+  // 优先读标准环境变量（Vercel 等），fallback 到 Coze 专用变量
+  const url = process.env.SUPABASE_URL || process.env.COZE_SUPABASE_URL || 'https://placeholder.supabase.co';
+  const anonKey = process.env.SUPABASE_KEY || process.env.COZE_SUPABASE_ANON_KEY || 'placeholder-anon-key';
 
   return { url, anonKey };
 }
 
 function getSupabaseServiceRoleKey(): string | undefined {
   loadEnv();
-  return process.env.COZE_SUPABASE_SERVICE_ROLE_KEY;
+  return process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.COZE_SUPABASE_SERVICE_ROLE_KEY;
 }
 
 function getSupabaseClient(token?: string): SupabaseClient {
