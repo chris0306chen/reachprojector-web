@@ -6,24 +6,40 @@ const client = getSupabaseClient();
 // ============ Categories ============
 
 export async function getCategories(): Promise<Category[]> {
-  const { data, error } = await client
-    .from('categories')
-    .select('id, name, slug, description, image_url, sort_order')
-    .eq('is_active', true)
-    .order('sort_order', { ascending: true });
-  if (error) throw new Error(`Failed to fetch categories: ${error.message}`);
-  return data as Category[];
+  try {
+    const { data, error } = await client
+      .from('categories')
+      .select('id, name, slug, description, image_url, sort_order')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
+    if (error) {
+      console.warn('[DataService] Failed to fetch categories:', error.message);
+      return [];
+    }
+    return data as Category[];
+  } catch (error) {
+    console.error('[DataService] getCategories error:', error);
+    return [];
+  }
 }
 
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {
-  const { data, error } = await client
-    .from('categories')
-    .select('id, name, slug, description, image_url')
-    .eq('slug', slug)
-    .eq('is_active', true)
-    .maybeSingle();
-  if (error) throw new Error(`Failed to fetch category: ${error.message}`);
-  return data as Category | null;
+  try {
+    const { data, error } = await client
+      .from('categories')
+      .select('id, name, slug, description, image_url')
+      .eq('slug', slug)
+      .eq('is_active', true)
+      .maybeSingle();
+    if (error) {
+      console.warn('[DataService] Failed to fetch category:', error.message);
+      return null;
+    }
+    return data as Category | null;
+  } catch (error) {
+    console.error('[DataService] getCategoryBySlug error:', error);
+    return null;
+  }
 }
 
 // ============ Products ============
@@ -122,7 +138,10 @@ export async function getProducts(filters: ProductFilters = {}): Promise<Product
   query = query.range(from, to);
 
   const { data, error, count } = await query;
-  if (error) throw new Error(`Failed to fetch products: ${error.message}`);
+  if (error) {
+    console.warn('[DataService] Failed to fetch products:', error.message);
+    return { products: [], total: 0, page, pageSize, totalPages: 0 };
+  }
 
   const total = count ?? 0;
   return {
@@ -135,37 +154,61 @@ export async function getProducts(filters: ProductFilters = {}): Promise<Product
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
-  const { data, error } = await client
-    .from('products')
-    .select('*')
-    .eq('slug', slug)
-    .eq('is_active', true)
-    .maybeSingle();
-  if (error) throw new Error(`Failed to fetch product: ${error.message}`);
-  return data as Product | null;
+  try {
+    const { data, error } = await client
+      .from('products')
+      .select('*')
+      .eq('slug', slug)
+      .eq('is_active', true)
+      .maybeSingle();
+    if (error) {
+      console.warn('[DataService] Failed to fetch product:', error.message);
+      return null;
+    }
+    return data as Product | null;
+  } catch (error) {
+    console.error('[DataService] getProductBySlug error:', error);
+    return null;
+  }
 }
 
 export async function getRelatedProducts(productId: string, categoryId: string, limit = 4): Promise<Product[]> {
-  const { data, error } = await client
-    .from('products')
-    .select('id, name, slug, brand, price, images, short_description, stock_status')
-    .eq('category_id', categoryId)
-    .eq('is_active', true)
-    .neq('id', productId)
-    .limit(limit);
-  if (error) throw new Error(`Failed to fetch related products: ${error.message}`);
-  return data as Product[];
+  try {
+    const { data, error } = await client
+      .from('products')
+      .select('id, name, slug, brand, price, images, short_description, stock_status')
+      .eq('category_id', categoryId)
+      .eq('is_active', true)
+      .neq('id', productId)
+      .limit(limit);
+    if (error) {
+      console.warn('[DataService] Failed to fetch related products:', error.message);
+      return [];
+    }
+    return data as Product[];
+  } catch (error) {
+    console.error('[DataService] getRelatedProducts error:', error);
+    return [];
+  }
 }
 
 export async function getBrands(): Promise<string[]> {
-  const { data, error } = await client
-    .from('products')
-    .select('brand')
-    .eq('is_active', true)
-    .order('brand');
-  if (error) throw new Error(`Failed to fetch brands: ${error.message}`);
-  const brands = [...new Set(data.map((p: { brand: string }) => p.brand))];
-  return brands.sort();
+  try {
+    const { data, error } = await client
+      .from('products')
+      .select('brand')
+      .eq('is_active', true)
+      .order('brand');
+    if (error) {
+      console.warn('[DataService] Failed to fetch brands:', error.message);
+      return [];
+    }
+    const brands = [...new Set(data.map((p: { brand: string }) => p.brand))];
+    return brands.sort();
+  } catch (error) {
+    console.error('[DataService] getBrands error:', error);
+    return [];
+  }
 }
 
 // ============ Inquiries ============
