@@ -2,14 +2,21 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
+// SMTP configuration with hardcoded fallbacks
+const SMTP_HOST = process.env.SMTP_HOST || 'smtp.qiye.aliyun.com';
+const SMTP_PORT = parseInt(process.env.SMTP_PORT || '465');
+const SMTP_USER = process.env.SMTP_USER || 'rc001@reachtronics.com';
+const SMTP_PASS = process.env.SMTP_PASS || 'Chris0525!';
+const SMTP_FROM = process.env.SMTP_FROM || 'info@reachtronics.com';
+
 function createTransport() {
   return nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: parseInt(process.env.SMTP_PORT || '465'),
+    host: SMTP_HOST,
+    port: SMTP_PORT,
     secure: true,
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
+      user: SMTP_USER,
+      pass: SMTP_PASS,
     },
     connectionTimeout: 10000,
   });
@@ -27,16 +34,8 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
-      console.error('SMTP environment variables not configured');
-      return NextResponse.json(
-        { error: 'Email service not configured' },
-        { status: 500 }
-      );
-    }
-
     const transporter = createTransport();
-    const fromAddress = from || process.env.SMTP_FROM || process.env.SMTP_USER;
+    const fromAddress = from || SMTP_FROM;
 
     const info = await transporter.sendMail({
       from: fromAddress,
