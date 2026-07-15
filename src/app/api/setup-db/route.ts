@@ -2,7 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
 // Database setup API - creates tables and seeds data
-// Access: GET /api/setup-db?confirm=true (requires confirm param for safety)
+// Access: GET /api/setup-db?confirm=true or POST /api/setup-db
+export async function POST() {
+  return runSetup();
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const confirm = searchParams.get('confirm');
@@ -10,9 +14,13 @@ export async function GET(request: NextRequest) {
   if (confirm !== 'true') {
     return NextResponse.json({
       error: 'Add ?confirm=true to execute database setup',
-      usage: 'GET /api/setup-db?confirm=true',
+      usage: 'GET /api/setup-db?confirm=true or POST /api/setup-db',
     });
   }
+  return runSetup();
+}
+
+async function runSetup() {
 
   const supabaseUrl = process.env.SUPABASE_URL || process.env.COZE_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.COZE_SUPABASE_SERVICE_ROLE_KEY;
