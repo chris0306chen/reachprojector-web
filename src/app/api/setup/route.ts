@@ -15,16 +15,11 @@ export async function POST(request: NextRequest) {
     const { Client } = await import('pg')
     
     const client = new Client({
-      host: 'db.ufzzynacrknnmmyczmzl.supabase.co',
-      port: 5432,
-      database: 'postgres',
-      user: 'postgres',
-      password: 'rUICHI2020!!',
-      ssl: { rejectUnauthorized: false },
+      connectionString: process.env.DATABASE_URL || 
+        'postgresql://postgres:rUICHI2020!!@db.ufzzynacrknnmmyczmzl.supabase.co:5432/postgres',
       connectionTimeoutMillis: 30000,
     })
 
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
     await client.connect()
     const results: string[] = []
 
@@ -534,21 +529,8 @@ INSERT INTO users (email, password_hash, name, role, permissions, is_active) VAL
       }
     })
   } catch (error: unknown) {
-    let message = 'Unknown error'
-    let details = ''
-    if (error instanceof Error) {
-      message = error.message
-      details = error.stack || ''
-    } else {
-      message = JSON.stringify(error)
-      details = String(error)
-    }
-    console.error('Setup error:', error)
-    return NextResponse.json({ 
-      error: message, 
-      details: details.substring(0, 500),
-      connection_host: 'direct-ipv6'
-    }, { status: 500 })
+    const message = error instanceof Error ? error.message : 'Unknown error'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
 
