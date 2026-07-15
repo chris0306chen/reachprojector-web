@@ -38,7 +38,7 @@ export function Footer() {
               </div>
               <div className="flex flex-col">
                 <span className="text-lg font-bold text-white tracking-tight leading-tight">
-                  REACH
+                  <span style={{ color: '#FF6B00' }}>R</span>EAC<span style={{ color: '#FF6B00' }}>C</span>H
                 </span>
                 <span className="text-[10px] font-medium text-slate-400 tracking-widest leading-tight uppercase">
                   PROJECTOR
@@ -125,7 +125,7 @@ export function Footer() {
       <div className="border-t border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-slate-500">
-            &copy; {new Date().getFullYear()} REACH PROJECTOR. All rights reserved.
+            &copy; 2026 HK REACH SOURCING LIMITED. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-xs text-slate-500 hover:text-orange-400 transition-colors">

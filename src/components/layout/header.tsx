@@ -53,7 +53,7 @@ export function Header() {
             </div>
             <div className="flex flex-col">
               <span className="text-lg font-bold text-slate-900 tracking-tight leading-tight">
-                REACH
+                <span style={{ color: '#FF6B00' }}>R</span>EAC<span style={{ color: '#FF6B00' }}>C</span>H
               </span>
               <span className="text-[10px] font-medium text-slate-500 tracking-widest leading-tight uppercase">
                 PROJECTOR
