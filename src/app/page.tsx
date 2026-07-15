@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { ArrowRight, Truck, Shield, DollarSign, Headphones, Award, Globe } from 'lucide-react';
-import { getProducts, getCategories } from '@/lib/data-service';
+import { ArrowRight, Truck, Shield, DollarSign, Headphones, Award, Globe, Monitor, Tv, Printer, Cpu } from 'lucide-react';
+import { getProducts } from '@/lib/data-service';
 import { ProductCard } from '@/components/product-card';
 import RealWorldApplications from '@/components/real-world-applications';
 import ShippingDelivery from '@/components/shipping-delivery';
@@ -8,10 +8,9 @@ import ShippingDelivery from '@/components/shipping-delivery';
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const [bestsellers, newArrivals, categories] = await Promise.all([
+  const [bestsellers, newArrivals] = await Promise.all([
     getProducts({ isBestseller: true, pageSize: 8 }),
     getProducts({ isNewArrival: true, pageSize: 4 }),
-    getCategories(),
   ]);
 
   const brands = ['XGIMI', 'Hisense', 'JMGO', 'AWOL Vision', 'Formovie', 'HP', 'Canon', 'Brother', 'Epson', 'Intel', 'AMD', 'Samsung'];
@@ -72,7 +71,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Categories */}
+      {/* Category Navigation Cards */}
       <section className="py-16 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -83,22 +82,65 @@ export default async function HomePage() {
               Explore our wide range of premium electronics from world-leading brands
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {categories.map((cat) => (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+            {[
+              {
+                icon: Monitor,
+                title: '4K Laser Projectors',
+                desc: 'Cinema-grade 4K laser projection for home theater',
+                href: '/products?category=projectors&sub=4k-laser',
+                color: 'from-blue-500/10 to-indigo-500/10',
+                iconColor: 'text-blue-600',
+                iconBg: 'bg-blue-100',
+              },
+              {
+                icon: Tv,
+                title: 'UST Laser TV',
+                desc: 'Ultra-short throw laser TV for immersive big-screen',
+                href: '/products?category=projectors&sub=ust',
+                color: 'from-orange-500/10 to-amber-500/10',
+                iconColor: 'text-orange-600',
+                iconBg: 'bg-orange-100',
+              },
+              {
+                icon: Printer,
+                title: 'Printers & Scanners',
+                desc: 'Professional printers and scanners for office',
+                href: '/products?category=printers',
+                color: 'from-emerald-500/10 to-teal-500/10',
+                iconColor: 'text-emerald-600',
+                iconBg: 'bg-emerald-100',
+              },
+              {
+                icon: Cpu,
+                title: 'Components',
+                desc: 'CPU, motherboard, RAM, GPU and more',
+                href: '/products?category=components',
+                color: 'from-violet-500/10 to-purple-500/10',
+                iconColor: 'text-violet-600',
+                iconBg: 'bg-violet-100',
+              },
+            ].map((cat) => (
               <Link
-                key={cat.slug}
-                href={`/products?category=${cat.slug}`}
-                className="group relative bg-slate-50 hover:bg-slate-900 rounded-xl p-8 transition-all duration-300 overflow-hidden"
+                key={cat.title}
+                href={cat.href}
+                className="group relative bg-white border border-slate-200 rounded-xl p-5 lg:p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 overflow-hidden"
               >
+                {/* Background gradient on hover */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${cat.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+                
                 <div className="relative z-10">
-                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-white transition-colors mb-2">
-                    {cat.name}
+                  <div className={`w-12 h-12 ${cat.iconBg} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                    <cat.icon className={`w-6 h-6 ${cat.iconColor}`} />
+                  </div>
+                  <h3 className="text-base lg:text-lg font-bold text-slate-900 mb-1.5">
+                    {cat.title}
                   </h3>
-                  <p className="text-sm text-slate-500 group-hover:text-slate-300 transition-colors mb-4">
-                    {cat.description}
+                  <p className="text-xs lg:text-sm text-slate-500 mb-3 leading-relaxed">
+                    {cat.desc}
                   </p>
-                  <span className="inline-flex items-center gap-1 text-sm font-medium text-orange-500 group-hover:text-orange-400 transition-colors">
-                    View Products <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <span className="inline-flex items-center gap-1 text-xs font-medium text-orange-500 group-hover:text-orange-600 transition-colors">
+                    View Products <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </span>
                 </div>
               </Link>
