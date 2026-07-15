@@ -44,6 +44,9 @@ export function Footer() {
             </p>
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm text-slate-400 mb-3">
+                <span className="font-medium text-white">Quanzhou Reach Technology Co., Ltd.</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-slate-400 mb-3">
                 <span className="font-medium text-white">HK REACH SOURCING LIMITED</span>
               </div>
               <a href="mailto:info@reachprojector.com" className="flex items-center gap-2 text-sm text-slate-400 hover:text-orange-400 transition-colors">

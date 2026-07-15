@@ -48,10 +48,8 @@ export function Header() {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
-              <span className="text-orange-500 font-bold text-sm">R</span>
-            </div>
-            <img src="/images/logo.png" alt="RC Logo" className="h-10 w-auto" />
+            <img src="/images/logo.png" alt="RC Logo" className="h-8 w-auto" />
+            <span className="text-xl font-bold text-white">REACH PROJECTOR</span>
           </Link>
 
           {/* Desktop Nav */}
