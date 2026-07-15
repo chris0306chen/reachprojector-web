@@ -95,28 +95,28 @@ export default async function HomePage() {
                 title: '4K Laser Projectors',
                 desc: 'Cinema-grade 4K laser projection for home theater',
                 href: '/products?category=projectors&sub=4k-laser',
-                image: '/images/categories/4k-laser-projector.webp',
+                image: '/images/categories/4k-laser-projector.jpg',
               },
               {
                 icon: Tv,
                 title: 'UST Laser TV',
                 desc: 'Ultra-short throw laser TV for immersive big-screen',
                 href: '/products?category=projectors&sub=ust',
-                image: '/images/categories/ust-laser-tv.webp',
+                image: '/images/categories/ust-laser-tv.jpg',
               },
               {
                 icon: Printer,
                 title: 'Printers & Scanners',
                 desc: 'Professional printers and scanners for office',
                 href: '/products?category=printers',
-                image: '/images/categories/printer-scanner.webp',
+                image: '/images/categories/printer-scanner.jpg',
               },
               {
                 icon: Cpu,
                 title: 'Components',
                 desc: 'CPU, motherboard, RAM, GPU and more',
                 href: '/products?category=components',
-                image: '/images/categories/components.webp',
+                image: '/images/categories/components.jpg',
               },
             ].map((cat) => (
               <Link
