@@ -13,15 +13,17 @@ export async function POST(request: Request) {
       );
     }
 
-    const inquiry = await createInquiry({
-      name,
-      email,
-      phone: phone || undefined,
-      company: company || undefined,
-      subject: subject || undefined,
-      message,
-      inquiry_type: inquiry_type || 'general',
-    });
+    const inquiryData = {
+      name: String(name),
+      email: String(email),
+      phone: phone ? String(phone) : undefined,
+      company: company ? String(company) : undefined,
+      subject: subject ? String(subject) : undefined,
+      message: String(message),
+      inquiry_type: inquiry_type ? String(inquiry_type) : 'general',
+    } as const;
+
+    const inquiry = await createInquiry(inquiryData as any);
 
     return NextResponse.json({ success: true, data: inquiry }, { status: 201 });
   } catch (error) {

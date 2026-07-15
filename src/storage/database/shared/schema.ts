@@ -1,6 +1,6 @@
 import { pgTable, serial, timestamp, varchar, text, numeric, boolean, jsonb, integer, index } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
-import { createSchemaFactory } from "drizzle-zod"
+import { createSchemaFactory, createInsertSchema } from "drizzle-zod"
 import { z } from "zod"
 
 export const healthCheck = pgTable("health_check", {
@@ -162,16 +162,15 @@ export const shipping_templates = pgTable(
 	]
 );
 
-const { createInsertSchema: createCoercedInsertSchema } = createSchemaFactory({ coerce: { date: true } });
-export const insertInquirySchema = createCoercedInsertSchema(inquiries).pick({
-	name: true,
-	email: true,
-	phone: true,
-	company: true,
-	subject: true,
-	message: true,
-	product_id: true,
-	inquiry_type: true,
+export const insertInquirySchema = z.object({
+	name: z.string().max(100),
+	email: z.string().max(255),
+	phone: z.string().max(50).optional(),
+	company: z.string().max(200).optional(),
+	subject: z.string().max(255).optional(),
+	message: z.string(),
+	product_id: z.string().max(36).optional(),
+	inquiry_type: z.string().max(20).default("general"),
 });
 export type Inquiry = typeof inquiries.$inferSelect;
 export type InsertInquiry = z.infer<typeof insertInquirySchema>;
