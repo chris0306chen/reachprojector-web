@@ -57,3 +57,15 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function GET() {
+  return NextResponse.json({
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    user: SMTP_USER,
+    pass: SMTP_PASS ? SMTP_PASS.substring(0,3) + '***' + SMTP_PASS.substring(SMTP_PASS.length-3) : 'not set',
+    from: SMTP_FROM,
+    envUser: process.env.SMTP_USER || 'not set',
+    envPass: process.env.SMTP_PASS ? process.env.SMTP_PASS.substring(0,3) + '***' : 'not set'
+  });
+}
