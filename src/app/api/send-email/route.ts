@@ -5,8 +5,8 @@ import nodemailer from 'nodemailer';
 // SMTP configuration with hardcoded fallbacks
 const SMTP_HOST = process.env.SMTP_HOST || 'smtp.qiye.aliyun.com';
 const SMTP_PORT = parseInt(process.env.SMTP_PORT || '465');
-const SMTP_USER = process.env.SMTP_USER || 'rc001@reachtronics.com';
-const SMTP_PASS = process.env.SMTP_PASS || 'Chris0525!';
+const SMTP_USER = process.env.SMTP_USER || 'Reach001@reachtronics.com';
+const SMTP_PASS = process.env.SMTP_PASS || 'LC314frHyYJOgZxq';
 const SMTP_FROM = process.env.SMTP_FROM || 'info@reachtronics.com';
 
 function createTransport() {
