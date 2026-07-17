@@ -4,16 +4,59 @@ import { getProducts } from '@/lib/data-service';
 import { ProductCard } from '@/components/product-card';
 import RealWorldApplications from '@/components/real-world-applications';
 import ShippingDelivery from '@/components/shipping-delivery';
+import { getTranslations } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
+  const t = await getTranslations('home');
+
   const [bestsellers, newArrivals] = await Promise.all([
     getProducts({ isBestseller: true, pageSize: 8 }),
     getProducts({ isNewArrival: true, pageSize: 4 }),
   ]);
 
   const brands = ['XGIMI', 'Hisense', 'JMGO', 'AWOL Vision', 'Formovie', 'HP', 'Canon', 'Brother', 'Epson', 'Intel', 'AMD', 'Samsung'];
+
+  const categories = [
+    {
+      icon: Monitor,
+      titleKey: 'categories.projectors',
+      descKey: 'categories.projectorsDesc',
+      href: '/products?category=projectors&sub=4k-laser',
+      image: '/images/categories/4k-laser-projector.jpg',
+    },
+    {
+      icon: Tv,
+      titleKey: 'categories.ustLaser',
+      descKey: 'categories.ustLaserDesc',
+      href: '/products?category=projectors&sub=ust',
+      image: '/images/categories/ust-laser-tv.jpg',
+    },
+    {
+      icon: Printer,
+      titleKey: 'categories.printers',
+      descKey: 'categories.printersDesc',
+      href: '/products?category=printers',
+      image: '/images/categories/printer-scanner.jpg',
+    },
+    {
+      icon: Cpu,
+      titleKey: 'categories.components',
+      descKey: 'categories.componentsDesc',
+      href: '/products?category=components',
+      image: '/images/categories/components.jpg',
+    },
+  ];
+
+  const whyChooseUs = [
+    { icon: Award, titleKey: 'whyChoose.authorizedDealer', descKey: 'whyChoose.authorizedDealerDesc' },
+    { icon: DollarSign, titleKey: 'whyChoose.competitivePricing', descKey: 'whyChoose.competitivePricingDesc' },
+    { icon: Truck, titleKey: 'whyChoose.globalShipping', descKey: 'whyChoose.globalShippingDesc' },
+    { icon: Shield, titleKey: 'whyChoose.qualityGuarantee', descKey: 'whyChoose.qualityGuaranteeDesc' },
+    { icon: Headphones, titleKey: 'whyChoose.expertSupport', descKey: 'whyChoose.expertSupportDesc' },
+    { icon: Globe, titleKey: 'whyChoose.worldwideService', descKey: 'whyChoose.worldwideServiceDesc' },
+  ];
 
   return (
     <>
@@ -36,41 +79,40 @@ export default async function HomePage() {
               Authorized Dealer of Premium Electronics
             </p>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-tight mb-6 drop-shadow-lg">
-              Premium Projectors &<br />
-              <span className="text-orange-400">Electronics</span> Worldwide
+              {t('hero.title1')}<br />
+              <span className="text-orange-400">{t('hero.title2')}</span> {t('hero.title3')}
             </h1>
             <p className="text-lg text-slate-200 max-w-2xl mb-8 leading-relaxed drop-shadow-md">
-              Your trusted source for 4K laser projectors, professional printers, and high-performance
-              computer components. Competitive pricing, global shipping, and expert support.
+              {t('hero.description')}
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
                 href="/products"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-all hover:scale-105 shadow-lg"
               >
-                Browse Products
+                {t('hero.browseProducts')}
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/contact"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-medium rounded-lg border border-white/30 backdrop-blur-sm transition-all hover:scale-105"
               >
-                Wholesale Inquiry
+                {t('hero.wholesaleInquiry')}
               </Link>
             </div>
             {/* Stats */}
             <div className="mt-12 grid grid-cols-3 gap-8 max-w-md">
               <div>
                 <p className="text-2xl font-bold text-white drop-shadow-md">500+</p>
-                <p className="text-xs text-slate-300">Products</p>
+                <p className="text-xs text-slate-300">{t('hero.stats.products')}</p>
               </div>
               <div>
                 <p className="text-2xl font-bold text-white drop-shadow-md">50+</p>
-                <p className="text-xs text-slate-300">Countries</p>
+                <p className="text-xs text-slate-300">{t('hero.stats.countries')}</p>
               </div>
               <div>
                 <p className="text-2xl font-bold text-white drop-shadow-md">12+</p>
-                <p className="text-xs text-slate-300">Top Brands</p>
+                <p className="text-xs text-slate-300">{t('hero.stats.topBrands')}</p>
               </div>
             </div>
           </div>
@@ -82,45 +124,16 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-3">
-              Shop by Category
+              {t('categories.title')}
             </h2>
             <p className="text-slate-500 max-w-2xl mx-auto">
-              Explore our wide range of premium electronics from world-leading brands
+              {t('categories.description')}
             </p>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-            {[
-              {
-                icon: Monitor,
-                title: '4K Laser Projectors',
-                desc: 'Cinema-grade 4K laser projection for home theater',
-                href: '/products?category=projectors&sub=4k-laser',
-                image: '/images/categories/4k-laser-projector.jpg',
-              },
-              {
-                icon: Tv,
-                title: 'UST Laser TV',
-                desc: 'Ultra-short throw laser TV for immersive big-screen',
-                href: '/products?category=projectors&sub=ust',
-                image: '/images/categories/ust-laser-tv.jpg',
-              },
-              {
-                icon: Printer,
-                title: 'Printers & Scanners',
-                desc: 'Professional printers and scanners for office',
-                href: '/products?category=printers',
-                image: '/images/categories/printer-scanner.jpg',
-              },
-              {
-                icon: Cpu,
-                title: 'Components',
-                desc: 'CPU, motherboard, RAM, GPU and more',
-                href: '/products?category=components',
-                image: '/images/categories/components.jpg',
-              },
-            ].map((cat) => (
+            {categories.map((cat) => (
               <Link
-                key={cat.title}
+                key={cat.titleKey}
                 href={cat.href}
                 className="group relative h-[200px] sm:h-[280px] lg:h-[350px] rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
               >
@@ -138,10 +151,10 @@ export default async function HomePage() {
                     <cat.icon className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
                   </div>
                   <h3 className="text-sm lg:text-lg font-bold text-white mb-1 drop-shadow-md">
-                    {cat.title}
+                    {t(cat.titleKey)}
                   </h3>
                   <p className="text-xs lg:text-sm text-white/80 mb-2 lg:mb-3 leading-relaxed line-clamp-2">
-                    {cat.desc}
+                    {t(cat.descKey)}
                   </p>
                   <span className="inline-flex items-center gap-1 text-xs font-medium text-orange-400 group-hover:text-orange-300 transition-colors">
                     View Products <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -159,9 +172,9 @@ export default async function HomePage() {
           <div className="flex items-end justify-between mb-10">
             <div>
               <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-2">
-                Best Sellers
+                {t('bestsellers.title')}
               </h2>
-              <p className="text-slate-500">Our most popular products chosen by customers worldwide</p>
+              <p className="text-slate-500">{t('bestsellers.description')}</p>
             </div>
             <Link
               href="/products"
@@ -193,9 +206,9 @@ export default async function HomePage() {
             <div className="flex items-end justify-between mb-10">
               <div>
                 <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-2">
-                  New Arrivals
+                  {t('newArrivals.title')}
                 </h2>
-                <p className="text-slate-500">Latest products added to our catalog</p>
+                <p className="text-slate-500">{t('newArrivals.description')}</p>
               </div>
               <Link
                 href="/products?sort=newest"
@@ -223,17 +236,16 @@ export default async function HomePage() {
       <section className="py-16 lg:py-20 bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl lg:text-3xl font-bold text-white mb-4">
-            B2B Wholesale Program
+            {t('b2b.title')}
           </h2>
           <p className="text-slate-300 max-w-2xl mx-auto mb-8">
-            Get exclusive wholesale pricing, priority shipping, and dedicated account management
-            for bulk orders. Serving businesses in 50+ countries.
+            {t('b2b.description')}
           </p>
           <Link
             href="/contact"
             className="inline-flex items-center gap-2 px-8 py-3.5 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
           >
-            Request Wholesale Pricing
+            {t('b2b.contactUs')}
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -244,7 +256,7 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-3">
-              Trusted Brands We Carry
+              {t('brands.title')}
             </h2>
             <p className="text-slate-500">Authorized dealer of the world&apos;s leading electronics brands</p>
           </div>
@@ -266,27 +278,20 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-3">
-              Why Choose REACH PROJECTOR
+              {t('whyChoose.title')}
             </h2>
             <p className="text-slate-500 max-w-2xl mx-auto">
               We are committed to providing the best products and service for our customers worldwide
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { icon: Award, title: 'Authorized Dealer', desc: 'Official authorized dealer for all brands we carry. 100% genuine products with full manufacturer warranty.' },
-              { icon: DollarSign, title: 'Competitive Pricing', desc: 'Direct relationships with manufacturers allow us to offer the most competitive prices in the market.' },
-              { icon: Truck, title: 'Global DDP Shipping', desc: 'Door-to-door delivery to 50+ countries. We handle all customs, duties, and logistics for a hassle-free experience.' },
-              { icon: Shield, title: 'Quality Guarantee', desc: 'Every product is quality inspected before shipping. Full warranty support and after-sales service.' },
-              { icon: Headphones, title: 'Expert Support', desc: 'Our team of product experts is available via WhatsApp, email, and phone to help you make the right choice.' },
-              { icon: Globe, title: 'Worldwide Service', desc: 'Serving customers in over 50 countries across Europe, Americas, Southeast Asia, and the Middle East.' },
-            ].map((item) => (
-              <div key={item.title} className="bg-white rounded-xl p-6 border border-slate-200 hover:shadow-md transition-shadow">
+            {whyChooseUs.map((item) => (
+              <div key={item.titleKey} className="bg-white rounded-xl p-6 border border-slate-200 hover:shadow-md transition-shadow">
                 <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
                   <item.icon className="w-5 h-5 text-orange-500" />
                 </div>
-                <h3 className="text-base font-semibold text-slate-900 mb-2">{item.title}</h3>
-                <p className="text-sm text-slate-500 leading-relaxed">{item.desc}</p>
+                <h3 className="text-base font-semibold text-slate-900 mb-2">{t(item.titleKey)}</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">{t(item.descKey)}</p>
               </div>
             ))}
           </div>

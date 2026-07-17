@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Send, CheckCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function ContactForm() {
+  const t = useTranslations('contact');
   const searchParams = useSearchParams();
   const productSlug = searchParams.get('product') || '';
 
@@ -55,15 +57,15 @@ export function ContactForm() {
     return (
       <div className="text-center py-12">
         <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
-        <h3 className="text-xl font-semibold text-slate-900 mb-2">Message Sent!</h3>
+        <h3 className="text-xl font-semibold text-slate-900 mb-2">{t('messageSent')}</h3>
         <p className="text-slate-500 mb-6">
-          Thank you for reaching out. Our team will get back to you within 24 hours.
+          {t('messageSentDescription')}
         </p>
         <button
           onClick={() => setIsSubmitted(false)}
           className="text-sm font-medium text-orange-500 hover:text-orange-600"
         >
-          Send another message
+          {t('sendAnother')}
         </button>
       </div>
     );
@@ -84,7 +86,7 @@ export function ContactForm() {
             onChange={handleChange}
             required
             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
-            placeholder="John Smith"
+            placeholder={t('namePlaceholder')}
           />
         </div>
         <div>
@@ -99,7 +101,7 @@ export function ContactForm() {
             onChange={handleChange}
             required
             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
-            placeholder="john@example.com"
+            placeholder={t('emailPlaceholder')}
           />
         </div>
       </div>
@@ -107,7 +109,7 @@ export function ContactForm() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label htmlFor="phone" className="block text-sm font-medium text-slate-700 mb-1">
-            Phone / WhatsApp
+            {t('phoneLabel')}
           </label>
           <input
             type="tel"
@@ -116,12 +118,12 @@ export function ContactForm() {
             value={formData.phone}
             onChange={handleChange}
             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
-            placeholder="+1 234 567 8900"
+            placeholder={t('phonePlaceholder')}
           />
         </div>
         <div>
           <label htmlFor="company" className="block text-sm font-medium text-slate-700 mb-1">
-            Company
+            {t('companyLabel')}
           </label>
           <input
             type="text"
@@ -130,7 +132,7 @@ export function ContactForm() {
             value={formData.company}
             onChange={handleChange}
             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
-            placeholder="Company name"
+            placeholder={t('companyPlaceholder')}
           />
         </div>
       </div>
@@ -138,7 +140,7 @@ export function ContactForm() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label htmlFor="inquiry_type" className="block text-sm font-medium text-slate-700 mb-1">
-            Inquiry Type
+            {t('inquiryType')}
           </label>
           <select
             id="inquiry_type"
@@ -147,15 +149,15 @@ export function ContactForm() {
             onChange={handleChange}
             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 bg-white"
           >
-            <option value="general">General Inquiry</option>
-            <option value="product">Product Inquiry</option>
-            <option value="wholesale">Wholesale / B2B</option>
-            <option value="support">Technical Support</option>
+            <option value="general">{t('inquiryGeneral')}</option>
+            <option value="product">{t('inquiryProduct')}</option>
+            <option value="wholesale">{t('inquiryWholesale')}</option>
+            <option value="support">{t('inquirySupport')}</option>
           </select>
         </div>
         <div>
           <label htmlFor="subject" className="block text-sm font-medium text-slate-700 mb-1">
-            Subject
+            {t('subject')}
           </label>
           <input
             type="text"
@@ -164,14 +166,14 @@ export function ContactForm() {
             value={formData.subject}
             onChange={handleChange}
             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
-            placeholder="What is this about?"
+            placeholder={t('subjectPlaceholder')}
           />
         </div>
       </div>
 
       <div>
         <label htmlFor="message" className="block text-sm font-medium text-slate-700 mb-1">
-          Message <span className="text-red-500">*</span>
+          {t('messageLabel')} <span className="text-red-500">*</span>
         </label>
         <textarea
           id="message"
@@ -181,7 +183,7 @@ export function ContactForm() {
           required
           rows={5}
           className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 resize-none"
-          placeholder="Tell us about your requirements, quantities needed, or any questions..."
+          placeholder={t('messagePlaceholder')}
         />
       </div>
 
@@ -195,7 +197,7 @@ export function ContactForm() {
         className="inline-flex items-center gap-2 px-6 py-2.5 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white font-medium rounded-lg transition-colors text-sm"
       >
         <Send className="w-4 h-4" />
-        {isSubmitting ? 'Sending...' : 'Send Message'}
+        {isSubmitting ? t('sending') : t('sendMessage')}
       </button>
     </form>
   );

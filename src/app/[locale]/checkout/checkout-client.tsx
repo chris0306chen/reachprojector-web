@@ -5,10 +5,12 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { ArrowLeft, CreditCard, Shield, Lock } from 'lucide-react';
 import { PayPalCheckout } from '@/components/paypal-checkout';
 import { AirwallexCheckout } from '@/components/airwallex-checkout';
+import { useTranslations } from 'next-intl';
 
 type PaymentMethod = 'paypal' | 'airwallex';
 
 function CheckoutContent() {
+  const t = useTranslations('checkout');
   const router = useRouter();
   const searchParams = useSearchParams();
   const productId = searchParams.get('productId') || '';
@@ -34,10 +36,10 @@ function CheckoutContent() {
           className="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 transition-colors mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Product
+          {t('backToProduct')}
         </button>
-        <h1 className="text-3xl font-bold text-slate-900">Checkout</h1>
-        <p className="text-slate-500 mt-1">Complete your purchase securely</p>
+        <h1 className="text-3xl font-bold text-slate-900">{t('title')}</h1>
+        <p className="text-slate-500 mt-1">{t('subtitle')}</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -45,7 +47,7 @@ function CheckoutContent() {
         <div className="lg:col-span-2">
           {/* Payment Method Selector */}
           <div className="bg-white rounded-xl border border-slate-200 p-6 mb-6">
-            <h2 className="text-lg font-semibold text-slate-900 mb-4">Select Payment Method</h2>
+            <h2 className="text-lg font-semibold text-slate-900 mb-4">{t('selectPayment')}</h2>
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => setPaymentMethod('airwallex')}
@@ -58,9 +60,9 @@ function CheckoutContent() {
                 <CreditCard className={`w-5 h-5 ${paymentMethod === 'airwallex' ? 'text-orange-500' : 'text-slate-400'}`} />
                 <div className="text-left">
                   <p className={`font-medium text-sm ${paymentMethod === 'airwallex' ? 'text-orange-600' : 'text-slate-700'}`}>
-                    Card Payment
+                    {t('cardPayment')}
                   </p>
-                  <p className="text-xs text-slate-500">Visa / Mastercard / AMEX</p>
+                  <p className="text-xs text-slate-500">{t('cardPaymentDesc')}</p>
                 </div>
               </button>
               <button
@@ -78,7 +80,7 @@ function CheckoutContent() {
                   <p className={`font-medium text-sm ${paymentMethod === 'paypal' ? 'text-orange-600' : 'text-slate-700'}`}>
                     PayPal
                   </p>
-                  <p className="text-xs text-slate-500">PayPal Account / Card</p>
+                  <p className="text-xs text-slate-500">{t('paypalAccount')}</p>
                 </div>
               </button>
             </div>
@@ -111,38 +113,38 @@ function CheckoutContent() {
         {/* Order Summary */}
         <div>
           <div className="bg-white rounded-xl border border-slate-200 p-6 sticky top-24">
-            <h2 className="text-lg font-semibold text-slate-900 mb-4">Order Summary</h2>
+            <h2 className="text-lg font-semibold text-slate-900 mb-4">{t('orderSummary')}</h2>
             <div className="space-y-3 pb-4 border-b border-slate-200">
               <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Product</span>
+                <span className="text-slate-600">{t('product')}</span>
                 <span className="font-medium text-slate-900 text-right max-w-[180px] truncate">{productName}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Price</span>
+                <span className="text-slate-600">{t('price')}</span>
                 <span className="text-slate-900">${price.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Quantity</span>
+                <span className="text-slate-600">{t('quantity')}</span>
                 <span className="text-slate-900">x{quantity}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Shipping</span>
-                <span className="text-green-600 font-medium">Free</span>
+                <span className="text-slate-600">{t('shipping')}</span>
+                <span className="text-green-600 font-medium">{t('free')}</span>
               </div>
             </div>
             <div className="flex justify-between pt-4">
-              <span className="font-semibold text-slate-900">Total</span>
+              <span className="font-semibold text-slate-900">{t('total')}</span>
               <span className="text-xl font-bold text-slate-900">${totalAmount}</span>
             </div>
 
             {/* Security Badge */}
             <div className="mt-6 flex items-center gap-2 text-xs text-slate-500">
               <Shield className="w-4 h-4 text-green-500" />
-              <span>Secure payment processing</span>
+              <span>{t('securePayment')}</span>
             </div>
             <div className="mt-2 flex items-center gap-2 text-xs text-slate-500">
               <Lock className="w-4 h-4 text-slate-400" />
-              <span>256-bit SSL encryption</span>
+              <span>{t('sslEncryption')}</span>
             </div>
           </div>
         </div>

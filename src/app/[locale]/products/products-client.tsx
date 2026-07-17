@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight, SlidersHorizontal } from 'lucide-react';
 import { ProductCard } from '@/components/product-card';
+import { useTranslations } from 'next-intl';
 import type { Product } from '@/storage/database/shared/schema';
 
 interface ProductsClientProps {
@@ -26,6 +27,7 @@ export function ProductsClient({
   currentBrand,
   currentSearch,
 }: ProductsClientProps) {
+  const t = useTranslations('products');
   const buildUrl = (params: Record<string, string | undefined>) => {
     const searchParams = new URLSearchParams();
     const merged = {
@@ -48,7 +50,7 @@ export function ProductsClient({
       {/* Toolbar */}
       <div className="flex items-center justify-between mb-6">
         <p className="text-sm text-slate-500">
-          Showing <span className="font-medium text-slate-900">{total}</span> products
+          {t('showingProducts', { count: total })}
         </p>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
@@ -60,10 +62,10 @@ export function ProductsClient({
               }}
               className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
             >
-              <option value="newest">Newest First</option>
-              <option value="price_asc">Price: Low to High</option>
-              <option value="price_desc">Price: High to Low</option>
-              <option value="name">Name: A-Z</option>
+              <option value="newest">{t('sort.newest')}</option>
+              <option value="price_asc">{t('sort.priceLowHigh')}</option>
+              <option value="price_desc">{t('sort.priceHighLow')}</option>
+              <option value="name">{t('sort.nameAZ')}</option>
             </select>
           </div>
         </div>
@@ -78,10 +80,10 @@ export function ProductsClient({
         </div>
       ) : (
         <div className="text-center py-16">
-          <p className="text-lg text-slate-500 mb-2">No products found</p>
-          <p className="text-sm text-slate-400 mb-4">Try adjusting your filters or search terms</p>
+          <p className="text-lg text-slate-500 mb-2">{t('noProducts')}</p>
+          <p className="text-sm text-slate-400 mb-4">{t('noProductsDesc')}</p>
           <Link href="/products" className="text-sm font-medium text-orange-500 hover:text-orange-600">
-            View All Products
+            {t('viewAllProducts')}
           </Link>
         </div>
       )}
@@ -95,7 +97,7 @@ export function ProductsClient({
               className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
-              Prev
+              {t('prev')}
             </Link>
           )}
           <div className="flex items-center gap-1">
@@ -124,7 +126,7 @@ export function ProductsClient({
               href={buildUrl({ page: (page + 1).toString() })}
               className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
             >
-              Next
+              {t('next')}
               <ChevronRight className="w-4 h-4" />
             </Link>
           )}

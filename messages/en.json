@@ -1,4 +1,9 @@
 {
+  "metadata": {
+    "title": "REACH PROJECTOR - Premium Electronics",
+    "description": "Your trusted partner for premium projectors, printers, and computer components. Authorized dealer with competitive wholesale pricing.",
+    "keywords": "projector, printer, computer components, electronics, wholesale, B2B, REACH"
+  },
   "common": {
     "loading": "Loading...",
     "error": "Error",
@@ -81,7 +86,7 @@
     },
     "b2b": {
       "title": "B2B Wholesale Program",
-      "description": "Partner with us for competitive wholesale pricing and dedicated support for your business needs.",
+      "description": "Get exclusive wholesale pricing, priority shipping, and dedicated account management for bulk orders. Serving businesses in 50+ countries.",
       "contactUs": "Contact Us",
       "features": {
         "bulkPricing": "Bulk Pricing",
@@ -93,22 +98,24 @@
       }
     },
     "brands": {
-      "title": "Trusted Brands We Carry"
+      "title": "Trusted Brands We Carry",
+      "description": "Authorized dealer of the world's leading electronics brands"
     },
     "whyChoose": {
       "title": "Why Choose REACH PROJECTOR",
+      "description": "We are committed to providing the best products and service for our customers worldwide",
       "authorizedDealer": "Authorized Dealer",
-      "authorizedDealerDesc": "Official authorized dealer for all major brands",
+      "authorizedDealerDesc": "Official authorized dealer for all brands we carry. 100% genuine products with full manufacturer warranty.",
       "competitivePricing": "Competitive Pricing",
-      "competitivePricingDesc": "Best prices guaranteed with price match policy",
+      "competitivePricingDesc": "Direct relationships with manufacturers allow us to offer the most competitive prices in the market.",
       "globalShipping": "Global DDP Shipping",
-      "globalShippingDesc": "Door-to-door delivery to 50+ countries worldwide",
+      "globalShippingDesc": "Door-to-door delivery to 50+ countries. We handle all customs, duties, and logistics for a hassle-free experience.",
       "qualityGuarantee": "Quality Guarantee",
-      "qualityGuaranteeDesc": "100% authentic products with full manufacturer warranty",
+      "qualityGuaranteeDesc": "Every product is quality inspected before shipping. Full warranty support and after-sales service.",
       "expertSupport": "Expert Support",
-      "expertSupportDesc": "Technical experts available 24/7 for assistance",
+      "expertSupportDesc": "Our team of product experts is available via WhatsApp, email, and phone to help you make the right choice.",
       "worldwideService": "Worldwide Service",
-      "worldwideServiceDesc": "After-sales service and support across the globe"
+      "worldwideServiceDesc": "Serving customers in over 50 countries across Europe, Americas, Southeast Asia, and the Middle East."
     }
   },
   "footer": {
@@ -126,8 +133,13 @@
   },
   "products": {
     "title": "Products",
+    "breadcrumb": {
+      "home": "Home"
+    },
     "filters": {
+      "title": "Filters",
       "category": "Category",
+      "brand": "Brand",
       "priceRange": "Price Range",
       "allProducts": "All Products",
       "allCategories": "All Categories",
@@ -154,7 +166,12 @@
     "badges": {
       "bestSeller": "Best Seller",
       "new": "New"
-    }
+    },
+    "noProducts": "No products found",
+    "noProductsDesc": "Try adjusting your filters or search terms",
+    "viewAllProducts": "View All Products",
+    "prev": "Prev",
+    "next": "Next"
   },
   "productDetail": {
     "breadcrumb": {
@@ -175,11 +192,13 @@
     "relatedProducts": "Related Products"
   },
   "about": {
+    "subtitle": "About REACH PROJECTOR",
     "title": "Your Trusted Partner in Premium Electronics",
+    "description": "Founded with a mission to bring premium electronics to the global market, REACH PROJECTOR has grown into a trusted name for projectors, printers, and computer components. We bridge the gap between world-class manufacturers and customers worldwide.",
     "story": {
       "title": "Our Story",
-      "paragraph1": "Founded with a passion for premium electronics, REACH PROJECTOR has grown to become a trusted name in the industry. We specialize in high-quality projectors, printers, and computer components from the world's leading brands.",
-      "paragraph2": "Our commitment to quality, competitive pricing, and exceptional customer service has earned us the trust of customers across 50+ countries. Whether you're a home theater enthusiast, a business professional, or a wholesale buyer, we have the right solutions for you."
+      "paragraph1": "REACH PROJECTOR started as a small team of electronics enthusiasts in Shenzhen, China - the heart of the global electronics industry. Our deep connections with manufacturers and our passion for technology gave us a unique advantage.",
+      "paragraph2": "Today, we serve customers in over 50 countries, from individual consumers looking for the best home theater setup to businesses seeking bulk procurement solutions. Our commitment to quality, competitive pricing, and exceptional service has made us the preferred partner for many."
     },
     "stats": {
       "products": "Products",
@@ -189,31 +208,65 @@
     },
     "whyChoose": {
       "title": "Why Businesses Choose Us",
-      "authenticProducts": "100% Authentic Products",
-      "authenticProductsDesc": "Every product is sourced directly from manufacturers",
-      "competitivePricing": "Competitive Wholesale Pricing",
-      "competitivePricingDesc": "Volume discounts and special B2B pricing available",
-      "globalLogistics": "Global Logistics Network",
-      "globalLogisticsDesc": "Efficient shipping to 50+ countries with DDP service",
-      "expertTeam": "Expert Technical Team",
-      "expertTeamDesc": "Our specialists provide pre-sales and after-sales support"
+      "description": "We provide end-to-end solutions for B2B and B2C customers worldwide",
+      "authenticProducts": "Authorized Dealer",
+      "authenticProductsDesc": "Official authorization from all brands we carry. Every product is 100% genuine with full manufacturer warranty and support.",
+      "competitivePricing": "Competitive Pricing",
+      "competitivePricingDesc": "Direct relationships with manufacturers mean we can offer the most competitive prices. Volume discounts available for B2B orders.",
+      "globalLogistics": "DDP Global Shipping",
+      "globalLogisticsDesc": "Delivered Duty Paid service to 50+ countries. We handle all customs, duties, taxes, and logistics. Zero hassle for you.",
+      "expertTeam": "Quality Assurance",
+      "expertTeamDesc": "Every product undergoes quality inspection before shipping. We stand behind every product with comprehensive after-sales support.",
+      "globalReach": "Global Reach",
+      "globalReachDesc": "Serving customers across Europe, Americas, Southeast Asia, and the Middle East. Multi-language support available.",
+      "dedicatedSupport": "Dedicated Support",
+      "dedicatedSupportDesc": "Expert product consultation, technical support, and account management. Available via WhatsApp, email, and phone."
     },
     "cta": {
       "title": "Ready to Start a Partnership?",
-      "description": "Contact us today to discuss your requirements and discover how we can help your business grow.",
+      "description": "Whether you need a single projector or a container load of electronics, we have the products, pricing, and logistics to make it happen.",
       "contactUs": "Contact Us Today"
     }
   },
   "contact": {
     "title": "Let's Start a Conversation",
     "subtitle": "Have a question about our products? Need a wholesale quote? We're here to help.",
+    "description": "Our team is ready to help you find the perfect solution. Get in touch via WhatsApp, email, or phone.",
     "getInTouch": "Get in Touch",
     "email": "Email",
     "phone": "Phone",
     "whatsapp": "WhatsApp",
     "address": "Address",
+    "addressValue": "Shenzhen, Guangdong Province, China",
     "businessHours": "Business Hours",
     "businessHoursValue": "Mon - Sat: 9:00 AM - 6:00 PM (GMT+8)",
+    "whatsappTitle": "Quick Response via WhatsApp",
+    "whatsappDescription": "For the fastest response, message us on WhatsApp. We typically reply within 30 minutes during business hours.",
+    "chatOnWhatsapp": "Chat on WhatsApp",
+    "formTitle": "Send Us a Message",
+    "formDescription": "Fill out the form below and our team will get back to you within 24 hours.",
+    "nameLabel": "Full Name",
+    "namePlaceholder": "John Smith",
+    "emailLabel": "Email",
+    "emailPlaceholder": "john@example.com",
+    "phoneLabel": "Phone / WhatsApp",
+    "phonePlaceholder": "+1 234 567 8900",
+    "companyLabel": "Company",
+    "companyPlaceholder": "Company name",
+    "inquiryType": "Inquiry Type",
+    "inquiryGeneral": "General Inquiry",
+    "inquiryProduct": "Product Inquiry",
+    "inquiryWholesale": "Wholesale / B2B",
+    "inquirySupport": "Technical Support",
+    "subject": "Subject",
+    "subjectPlaceholder": "What is this about?",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Tell us about your requirements, quantities needed, or any questions...",
+    "sending": "Sending...",
+    "sendMessage": "Send Message",
+    "messageSent": "Message Sent!",
+    "messageSentDescription": "Thank you for reaching out. Our team will get back to you within 24 hours.",
+    "sendAnother": "Send another message",
     "quickResponse": "Quick Response via WhatsApp",
     "form": {
       "name": "Name",
@@ -244,5 +297,33 @@
     "returnsRefunds": "Returns & Refunds",
     "authorizedDealer": "Authorized Dealer Of",
     "allRightsReserved": "All rights reserved."
+  },
+  "checkout": {
+    "backToProduct": "Back to Product",
+    "title": "Checkout",
+    "subtitle": "Complete your purchase securely",
+    "selectPayment": "Select Payment Method",
+    "cardPayment": "Card Payment",
+    "cardPaymentDesc": "Visa / Mastercard / AMEX",
+    "paypalAccount": "PayPal Account / Card",
+    "orderSummary": "Order Summary",
+    "product": "Product",
+    "price": "Price",
+    "quantity": "Quantity",
+    "shipping": "Shipping",
+    "free": "Free",
+    "total": "Total",
+    "securePayment": "Secure payment processing",
+    "sslEncryption": "256-bit SSL encryption"
+  },
+  "orderSuccess": {
+    "title": "Payment Successful!",
+    "thankYou": "Thank you for purchasing {product}.",
+    "whatNext": "What happens next?",
+    "step1": "You will receive a confirmation email with your order details.",
+    "step2": "Our team will prepare your order for shipping within 1-2 business days.",
+    "step3": "You will receive tracking information once your order ships.",
+    "continueShopping": "Continue Shopping",
+    "contactSupport": "Contact Support"
   }
 }

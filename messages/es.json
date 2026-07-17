@@ -1,4 +1,9 @@
 {
+  "metadata": {
+    "title": "REACH PROJECTOR - Electrónica Premium",
+    "description": "Su socio de confianza para proyectores premium, impresoras y componentes de computadora. Distribuidor autorizado con precios competitivos al por mayor.",
+    "keywords": "proyector, impresora, componentes de computadora, electrónica, mayorista, B2B, REACH"
+  },
   "common": {
     "loading": "Cargando...",
     "error": "Error",
@@ -78,7 +83,7 @@
     },
     "b2b": {
       "title": "Programa mayorista B2B",
-      "description": "Asóciese con nosotros para obtener precios mayoristas competitivos y soporte dedicado para las necesidades de su negocio.",
+      "description": "Obtenga precios mayoristas exclusivos, envío prioritario y gestión de cuenta dedicada para pedidos a granel. Atendemos empresas en más de 50 países.",
       "contactUs": "Contáctenos",
       "features": {
         "bulkPricing": "Precios por volumen",
@@ -90,22 +95,24 @@
       }
     },
     "brands": {
-      "title": "Marcas de confianza que distribuimos"
+      "title": "Marcas de confianza que distribuimos",
+      "description": "Distribuidor autorizado de las principales marcas de electrónica del mundo"
     },
     "whyChoose": {
       "title": "Por qué elegir REACH PROJECTOR",
+      "description": "Nos comprometemos a proporcionar los mejores productos y servicios a nuestros clientes en todo el mundo",
       "authorizedDealer": "Distribuidor autorizado",
-      "authorizedDealerDesc": "Distribuidor autorizado oficial de todas las marcas principales",
+      "authorizedDealerDesc": "Distribuidor autorizado oficial de todas las marcas. Productos 100% genuinos con garantía completa del fabricante.",
       "competitivePricing": "Precios competitivos",
-      "competitivePricingDesc": "Mejores precios garantizados con política de igualación",
+      "competitivePricingDesc": "Relaciones directas con fabricantes nos permiten ofrecer los precios más competitivos del mercado.",
       "globalShipping": "Envío DDP global",
-      "globalShippingDesc": "Entrega puerta a puerta a más de 50 países",
+      "globalShippingDesc": "Entrega puerta a puerta a más de 50 países. Nos encargamos de todos los trámites aduaneros y logística.",
       "qualityGuarantee": "Garantía de calidad",
-      "qualityGuaranteeDesc": "Productos 100% auténticos con garantía completa del fabricante",
+      "qualityGuaranteeDesc": "Cada producto es inspeccionado antes del envío. Soporte completo de garantía y servicio postventa.",
       "expertSupport": "Soporte experto",
-      "expertSupportDesc": "Expertos técnicos disponibles 24/7 para asistencia",
+      "expertSupportDesc": "Nuestro equipo de expertos está disponible por WhatsApp, correo electrónico y teléfono para ayudarle.",
       "worldwideService": "Servicio mundial",
-      "worldwideServiceDesc": "Servicio postventa y soporte en todo el mundo"
+      "worldwideServiceDesc": "Atendemos clientes en más de 50 países en Europa, Américas, Sudeste Asiático y Medio Oriente."
     }
   },
   "footer": {
@@ -123,8 +130,13 @@
   },
   "products": {
     "title": "Productos",
+    "breadcrumb": {
+      "home": "Inicio"
+    },
     "filters": {
+      "title": "Filtros",
       "category": "Categoría",
+      "brand": "Marca",
       "priceRange": "Rango de precio",
       "allProducts": "Todos los productos",
       "allCategories": "Todas las categorías",
@@ -151,7 +163,12 @@
     "badges": {
       "bestSeller": "Más vendido",
       "new": "Nuevo"
-    }
+    },
+    "noProducts": "No se encontraron productos",
+    "noProductsDesc": "Intente ajustar los filtros o términos de búsqueda",
+    "viewAllProducts": "Ver todos los productos",
+    "prev": "Anterior",
+    "next": "Siguiente"
   },
   "productDetail": {
     "breadcrumb": {
@@ -172,11 +189,13 @@
     "relatedProducts": "Productos relacionados"
   },
   "about": {
+    "subtitle": "Sobre REACH PROJECTOR",
     "title": "Su socio confiable en electrónica premium",
+    "description": "Fundada con la misión de llevar electrónica premium al mercado global, REACH PROJECTOR ha crecido hasta ser un nombre confiable en proyectores, impresoras y componentes de computadora. Conectamos fabricantes de clase mundial con clientes en todo el mundo.",
     "story": {
       "title": "Nuestra historia",
-      "paragraph1": "Fundado con pasión por la electrónica premium, REACH PROJECTOR ha crecido hasta convertirse en un nombre confiable en la industria. Nos especializamos en proyectores de alta calidad, impresoras y componentes de computadora de las marcas líderes mundiales.",
-      "paragraph2": "Nuestro compromiso con la calidad, los precios competitivos y el servicio al cliente excepcional nos ha ganado la confianza de clientes en más de 50 países. Ya sea que sea un entusiasta del cine en casa, un profesional de negocios o un comprador mayorista, tenemos las soluciones adecuadas para usted."
+      "paragraph1": "REACH PROJECTOR comenzó como un pequeño equipo de entusiastas de la electrónica en Shenzhen, China - el corazón de la industria electrónica global. Nuestras profundas conexiones con fabricantes y nuestra pasión por la tecnología nos dieron una ventaja única.",
+      "paragraph2": "Hoy, atendemos clientes en más de 50 países, desde consumidores individuales que buscan el mejor cine en casa hasta empresas que buscan soluciones de compra a granel. Nuestro compromiso con la calidad, precios competitivos y servicio excepcional nos ha convertido en el socio preferido de muchos."
     },
     "stats": {
       "products": "Productos",
@@ -186,31 +205,65 @@
     },
     "whyChoose": {
       "title": "Por qué las empresas nos eligen",
-      "authenticProducts": "Productos 100% auténticos",
-      "authenticProductsDesc": "Cada producto se obtiene directamente de los fabricantes",
-      "competitivePricing": "Precios mayoristas competitivos",
-      "competitivePricingDesc": "Descuentos por volumen y precios especiales B2B disponibles",
-      "globalLogistics": "Red logística global",
-      "globalLogisticsDesc": "Envío eficiente a más de 50 países con servicio DDP",
-      "expertTeam": "Equipo técnico experto",
-      "expertTeamDesc": "Nuestros especialistas brindan soporte pre y postventa"
+      "description": "Proporcionamos soluciones integrales para clientes B2B y B2C en todo el mundo",
+      "authenticProducts": "Distribuidor autorizado",
+      "authenticProductsDesc": "Autorización oficial de todas las marcas. Cada producto es 100% genuino con garantía y soporte completo del fabricante.",
+      "competitivePricing": "Precios competitivos",
+      "competitivePricingDesc": "Relaciones directas con fabricantes nos permiten ofrecer los precios más competitivos. Descuentos por volumen disponibles para pedidos B2B.",
+      "globalLogistics": "Envío global DDP",
+      "globalLogisticsDesc": "Servicio entregado con derechos pagados a más de 50 países. Nos encargamos de aduanas, impuestos y logística.",
+      "expertTeam": "Garantía de calidad",
+      "expertTeamDesc": "Cada producto pasa por inspección de calidad antes del envío. Respaldo completo postventa.",
+      "globalReach": "Alcance global",
+      "globalReachDesc": "Atendemos clientes en Europa, Américas, Sudeste Asiático y Medio Oriente. Soporte multilingüe disponible.",
+      "dedicatedSupport": "Soporte dedicado",
+      "dedicatedSupportDesc": "Consultoría de productos, soporte técnico y gestión de cuentas. Disponible por WhatsApp, email y teléfono."
     },
     "cta": {
       "title": "¿Listo para comenzar una asociación?",
-      "description": "Contáctenos hoy para discutir sus requisitos y descubrir cómo podemos ayudar a su negocio a crecer.",
+      "description": "Ya sea que necesite un solo proyector o un contenedor de electrónica, tenemos los productos, precios y logística para hacerlo realidad.",
       "contactUs": "Contáctenos hoy"
     }
   },
   "contact": {
     "title": "Comencemos una conversación",
     "subtitle": "¿Tiene preguntas sobre nuestros productos? ¿Necesita una cotización mayorista? Estamos aquí para ayudar.",
+    "description": "Nuestro equipo está listo para ayudarle a encontrar la solución perfecta. Contáctenos por WhatsApp, correo electrónico o teléfono.",
     "getInTouch": "Póngase en contacto",
     "email": "Correo electrónico",
     "phone": "Teléfono",
     "whatsapp": "WhatsApp",
     "address": "Dirección",
+    "addressValue": "Shenzhen, Provincia de Guangdong, China",
     "businessHours": "Horario comercial",
     "businessHoursValue": "Lun - Sáb: 9:00 AM - 6:00 PM (GMT+8)",
+    "whatsappTitle": "Respuesta rápida vía WhatsApp",
+    "whatsappDescription": "Para la respuesta más rápida, envíenos un mensaje por WhatsApp. Normalmente respondemos en 30 minutos durante el horario comercial.",
+    "chatOnWhatsapp": "Chatear por WhatsApp",
+    "formTitle": "Envíenos un mensaje",
+    "formDescription": "Complete el formulario a continuación y nuestro equipo se pondrá en contacto con usted en 24 horas.",
+    "nameLabel": "Nombre completo",
+    "namePlaceholder": "Juan Pérez",
+    "emailLabel": "Correo electrónico",
+    "emailPlaceholder": "juan@example.com",
+    "phoneLabel": "Teléfono / WhatsApp",
+    "phonePlaceholder": "+1 234 567 8900",
+    "companyLabel": "Empresa",
+    "companyPlaceholder": "Nombre de la empresa",
+    "inquiryType": "Tipo de consulta",
+    "inquiryGeneral": "Consulta general",
+    "inquiryProduct": "Consulta de producto",
+    "inquiryWholesale": "Mayorista / B2B",
+    "inquirySupport": "Soporte técnico",
+    "subject": "Asunto",
+    "subjectPlaceholder": "¿Sobre qué es?",
+    "messageLabel": "Mensaje",
+    "messagePlaceholder": "Cuéntenos sobre sus requisitos, cantidades necesarias o cualquier pregunta...",
+    "sending": "Enviando...",
+    "sendMessage": "Enviar mensaje",
+    "messageSent": "¡Mensaje enviado!",
+    "messageSentDescription": "Gracias por contactarnos. Nuestro equipo se pondrá en contacto con usted en 24 horas.",
+    "sendAnother": "Enviar otro mensaje",
     "quickResponse": "Respuesta rápida vía WhatsApp",
     "form": {
       "name": "Nombre",
@@ -242,5 +295,33 @@
     "returnsRefunds": "Devoluciones y reembolsos",
     "authorizedDealer": "Distribuidor autorizado de",
     "allRightsReserved": "Todos los derechos reservados."
+  },
+  "checkout": {
+    "backToProduct": "Volver al producto",
+    "title": "Pago",
+    "subtitle": "Complete su compra de forma segura",
+    "selectPayment": "Seleccionar método de pago",
+    "cardPayment": "Pago con tarjeta",
+    "cardPaymentDesc": "Visa / Mastercard / AMEX",
+    "paypalAccount": "Cuenta PayPal / Tarjeta",
+    "orderSummary": "Resumen del pedido",
+    "product": "Producto",
+    "price": "Precio",
+    "quantity": "Cantidad",
+    "shipping": "Envío",
+    "free": "Gratis",
+    "total": "Total",
+    "securePayment": "Procesamiento de pago seguro",
+    "sslEncryption": "Cifrado SSL de 256 bits"
+  },
+  "orderSuccess": {
+    "title": "¡Pago exitoso!",
+    "thankYou": "Gracias por comprar {product}.",
+    "whatNext": "¿Qué sigue?",
+    "step1": "Recibirá un correo de confirmación con los detalles de su pedido.",
+    "step2": "Nuestro equipo preparará su pedido para envío en 1-2 días hábiles.",
+    "step3": "Recibirá información de seguimiento una vez que su pedido sea enviado.",
+    "continueShopping": "Seguir comprando",
+    "contactSupport": "Contactar soporte"
   }
 }

@@ -1,4 +1,9 @@
 {
+  "metadata": {
+    "title": "REACH PROJECTOR - 高端电子产品",
+    "description": "您值得信赖的优质投影仪、打印机和电脑配件合作伙伴。授权经销商，提供极具竞争力的批发价格。",
+    "keywords": "投影仪, 打印机, 电脑配件, 电子产品, 批发, B2B, REACH"
+  },
   "common": {
     "loading": "加载中...",
     "error": "错误",
@@ -78,7 +83,7 @@
     },
     "b2b": {
       "title": "B2B批发计划",
-      "description": "与我们合作，获得具有竞争力的批发价格和 dedicated 业务支持。",
+      "description": "获取独家批发价格、优先配送和专属客户经理服务。服务覆盖50+国家的企业客户。",
       "contactUs": "联系我们",
       "features": {
         "bulkPricing": "批量定价",
@@ -90,22 +95,24 @@
       }
     },
     "brands": {
-      "title": "我们代理的信赖品牌"
+      "title": "我们代理的信赖品牌",
+      "description": "全球领先电子品牌的授权经销商"
     },
     "whyChoose": {
       "title": "为什么选择REACH PROJECTOR",
+      "description": "我们致力于为全球客户提供最好的产品和服务",
       "authorizedDealer": "授权经销商",
-      "authorizedDealerDesc": "所有主要品牌的官方授权经销商",
+      "authorizedDealerDesc": "所有品牌均为官方授权经销，100%正品，享受完整厂家保修。",
       "competitivePricing": "具有竞争力的价格",
-      "competitivePricingDesc": "保证最优价格，支持价格匹配",
+      "competitivePricingDesc": "与制造商直接合作，为您提供市场最具竞争力的价格。",
       "globalShipping": "全球DDP配送",
-      "globalShippingDesc": "50+国家门到门配送服务",
+      "globalShippingDesc": "门到门配送覆盖50+国家，我们处理所有海关、关税和物流，让您无忧采购。",
       "qualityGuarantee": "质量保证",
-      "qualityGuaranteeDesc": "100%正品，享受完整厂商保修",
+      "qualityGuaranteeDesc": "每件产品发货前均经过质量检测，提供完整保修和售后服务。",
       "expertSupport": "专家支持",
-      "expertSupportDesc": "技术专家24/7全天候协助",
+      "expertSupportDesc": "我们的产品专家团队通过WhatsApp、邮件和电话随时为您提供专业建议。",
       "worldwideService": "全球服务",
-      "worldwideServiceDesc": "遍布全球的售后服务和支持"
+      "worldwideServiceDesc": "服务覆盖欧洲、美洲、东南亚和中东等50多个国家的客户。"
     }
   },
   "footer": {
@@ -123,8 +130,13 @@
   },
   "products": {
     "title": "产品",
+    "breadcrumb": {
+      "home": "首页"
+    },
     "filters": {
+      "title": "筛选",
       "category": "类别",
+      "brand": "品牌",
       "priceRange": "价格范围",
       "allProducts": "所有产品",
       "allCategories": "所有类别",
@@ -151,7 +163,12 @@
     "badges": {
       "bestSeller": "畅销",
       "new": "新品"
-    }
+    },
+    "noProducts": "未找到产品",
+    "noProductsDesc": "请尝试调整筛选条件或搜索关键词",
+    "viewAllProducts": "查看所有产品",
+    "prev": "上一页",
+    "next": "下一页"
   },
   "productDetail": {
     "breadcrumb": {
@@ -172,11 +189,13 @@
     "relatedProducts": "相关产品"
   },
   "about": {
+    "subtitle": "关于REACH PROJECTOR",
     "title": "您值得信赖的优质电子产品合作伙伴",
+    "description": "REACH PROJECTOR以将优质电子产品带入全球市场为使命，已发展成为投影仪、打印机和电脑配件领域的信赖品牌。我们连接世界级制造商与全球客户。",
     "story": {
       "title": "我们的故事",
-      "paragraph1": "REACH PROJECTOR以对优质电子产品的热情创立，已发展成为业内值得信赖的品牌。我们专注于来自世界领先品牌的高质量投影仪、打印机和电脑配件。",
-      "paragraph2": "我们对质量、具有竞争力的价格和卓越客户服务的承诺，赢得了50多个国家客户的信任。无论您是家庭影院爱好者、商务专业人士还是批发买家，我们都有适合您的解决方案。"
+      "paragraph1": "REACH PROJECTOR起源于中国深圳——全球电子产业的心脏地带，由一群电子爱好者组成的小团队。我们与制造商的深厚关系和对技术的热情赋予了我们独特的优势。",
+      "paragraph2": "如今，我们服务于50多个国家的客户，从寻找最佳家庭影院方案的个人消费者到寻求批量采购解决方案的企业。我们对品质、竞争力价格和卓越服务的承诺使我们成为众多客户的首选合作伙伴。"
     },
     "stats": {
       "products": "产品",
@@ -186,31 +205,65 @@
     },
     "whyChoose": {
       "title": "企业选择我们的原因",
-      "authenticProducts": "100%正品",
-      "authenticProductsDesc": "所有产品直接来源于制造商",
-      "competitivePricing": "具有竞争力的批发价格",
-      "competitivePricingDesc": "提供批量折扣和特殊B2B定价",
-      "globalLogistics": "全球物流网络",
-      "globalLogisticsDesc": "高效配送至50+国家，提供DDP服务",
-      "expertTeam": "专业技术团队",
-      "expertTeamDesc": "我们的专家提供售前和售后支持"
+      "description": "我们为全球B2B和B2C客户提供端到端解决方案",
+      "authenticProducts": "授权经销商",
+      "authenticProductsDesc": "所有代理品牌均获官方授权，每件产品100%正品，享受完整厂家保修和支持。",
+      "competitivePricing": "竞争力价格",
+      "competitivePricingDesc": "与制造商直接合作，提供最具竞争力的价格。B2B订单享有批量折扣。",
+      "globalLogistics": "DDP全球配送",
+      "globalLogisticsDesc": "DDP完税配送服务覆盖50+国家。我们处理所有海关、关税和物流，让您零烦恼。",
+      "expertTeam": "品质保证",
+      "expertTeamDesc": "每件产品发货前均经过质量检测。我们为每件产品提供全面的售后支持。",
+      "globalReach": "全球覆盖",
+      "globalReachDesc": "服务覆盖欧洲、美洲、东南亚和中东客户。提供多语言支持。",
+      "dedicatedSupport": "专属支持",
+      "dedicatedSupportDesc": "专业产品咨询、技术支持和账户管理。通过WhatsApp、邮件和电话随时为您服务。"
     },
     "cta": {
       "title": "准备开始合作？",
-      "description": "立即联系我们讨论您的需求，了解我们如何帮助您的业务增长。",
+      "description": "无论您需要一台投影仪还是一整柜电子产品，我们都有产品、价格和物流方案来实现。",
       "contactUs": "立即联系我们"
     }
   },
   "contact": {
     "title": "让我们开始对话",
     "subtitle": "对我们的产品有疑问？需要批发报价？我们随时为您服务。",
+    "description": "我们的团队随时准备为您提供最佳解决方案。通过WhatsApp、电子邮件或电话联系我们。",
     "getInTouch": "联系我们",
     "email": "邮箱",
     "phone": "电话",
     "whatsapp": "WhatsApp",
     "address": "地址",
+    "addressValue": "中国广东省深圳市",
     "businessHours": "营业时间",
     "businessHoursValue": "周一至周六：上午9:00 - 下午6:00（GMT+8）",
+    "whatsappTitle": "WhatsApp快速回复",
+    "whatsappDescription": "如需最快回复，请通过WhatsApp联系我们。营业时间通常在30分钟内回复。",
+    "chatOnWhatsapp": "在WhatsApp上聊天",
+    "formTitle": "给我们留言",
+    "formDescription": "填写以下表单，我们的团队将在24小时内与您联系。",
+    "nameLabel": "全名",
+    "namePlaceholder": "张三",
+    "emailLabel": "邮箱",
+    "emailPlaceholder": "zhang@example.com",
+    "phoneLabel": "电话 / WhatsApp",
+    "phonePlaceholder": "+86 138 0013 8000",
+    "companyLabel": "公司",
+    "companyPlaceholder": "公司名称",
+    "inquiryType": "咨询类型",
+    "inquiryGeneral": "一般咨询",
+    "inquiryProduct": "产品咨询",
+    "inquiryWholesale": "批发 / B2B",
+    "inquirySupport": "技术支持",
+    "subject": "主题",
+    "subjectPlaceholder": "关于什么？",
+    "messageLabel": "留言",
+    "messagePlaceholder": "请告诉我们您的需求、数量或任何问题...",
+    "sending": "发送中...",
+    "sendMessage": "发送消息",
+    "messageSent": "消息已发送！",
+    "messageSentDescription": "感谢您的联系。我们的团队将在24小时内与您联系。",
+    "sendAnother": "发送另一条消息",
     "quickResponse": "WhatsApp快速回复",
     "form": {
       "name": "姓名",
@@ -242,5 +295,33 @@
     "returnsRefunds": "退换货",
     "authorizedDealer": "授权经销商",
     "allRightsReserved": "版权所有"
+  },
+  "checkout": {
+    "backToProduct": "返回产品",
+    "title": "结算",
+    "subtitle": "安全完成您的购买",
+    "selectPayment": "选择支付方式",
+    "cardPayment": "银行卡支付",
+    "cardPaymentDesc": "Visa / Mastercard / AMEX",
+    "paypalAccount": "PayPal 账户 / 银行卡",
+    "orderSummary": "订单摘要",
+    "product": "产品",
+    "price": "价格",
+    "quantity": "数量",
+    "shipping": "运费",
+    "free": "免费",
+    "total": "合计",
+    "securePayment": "安全支付处理",
+    "sslEncryption": "256位SSL加密"
+  },
+  "orderSuccess": {
+    "title": "支付成功！",
+    "thankYou": "感谢您购买 {product}。",
+    "whatNext": "接下来会发生什么？",
+    "step1": "您将收到一封包含订单详情的确认邮件。",
+    "step2": "我们的团队将在1-2个工作日内为您准备发货。",
+    "step3": "订单发货后您将收到物流追踪信息。",
+    "continueShopping": "继续购物",
+    "contactSupport": "联系支持"
   }
 }
