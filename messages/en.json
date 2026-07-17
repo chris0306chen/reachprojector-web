@@ -32,6 +32,7 @@
   },
   "home": {
     "hero": {
+      "subtitle": "Authorized Dealer of Premium Electronics",
       "title1": "Premium Projectors &",
       "title2": "Electronics",
       "title3": "Worldwide",
@@ -56,6 +57,9 @@
       "components": "Components",
       "componentsDesc": "High-performance CPUs, GPUs, memory and more"
     },
+    "viewProducts": "View Products",
+    "viewAll": "View All",
+    "viewAllProducts": "View All Products",
     "bestsellers": {
       "title": "Best Sellers",
       "description": "Our most popular products chosen by customers worldwide"
@@ -188,6 +192,20 @@
     "wholesaleInquiry": "Wholesale Inquiry",
     "requestQuote": "Request Quote",
     "description": "Product Description",
+    "specifications": "Specifications",
+    "relatedProducts": "Related Products"
+  },
+  "productDetail": {
+    "inStock": "In Stock - Ready to Ship",
+    "outOfStock": "Out of Stock",
+    "keyFeatures": "Key Features",
+    "quantity": "Quantity",
+    "total": "Total",
+    "checkoutNow": "Checkout Now",
+    "whatsappInquiry": "WhatsApp Inquiry",
+    "sendInquiry": "Send Inquiry",
+    "buyWithPaypal": "Buy Now with PayPal",
+    "description": "Description",
     "specifications": "Specifications",
     "relatedProducts": "Related Products"
   },

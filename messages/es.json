@@ -29,6 +29,7 @@
   },
   "home": {
     "hero": {
+      "subtitle": "Distribuidor autorizado de electrónica premium",
       "title1": "Proyectores premium y",
       "title2": "Electrónica",
       "title3": "en todo el mundo",
@@ -53,6 +54,9 @@
       "components": "Componentes",
       "componentsDesc": "CPU, GPU, memoria y más de alto rendimiento"
     },
+    "viewProducts": "Ver productos",
+    "viewAll": "Ver todo",
+    "viewAllProducts": "Ver todos los productos",
     "bestsellers": {
       "title": "Más vendidos",
       "description": "Nuestros productos más populares elegidos por clientes en todo el mundo"
@@ -185,6 +189,20 @@
     "wholesaleInquiry": "Consulta mayorista",
     "requestQuote": "Solicitar cotización",
     "description": "Descripción del producto",
+    "specifications": "Especificaciones",
+    "relatedProducts": "Productos relacionados"
+  },
+  "productDetail": {
+    "inStock": "En stock - Listo para enviar",
+    "outOfStock": "Agotado",
+    "keyFeatures": "Características principales",
+    "quantity": "Cantidad",
+    "total": "Total",
+    "checkoutNow": "Pagar ahora",
+    "whatsappInquiry": "Consulta por WhatsApp",
+    "sendInquiry": "Enviar consulta",
+    "buyWithPaypal": "Comprar con PayPal",
+    "description": "Descripción",
     "specifications": "Especificaciones",
     "relatedProducts": "Productos relacionados"
   },

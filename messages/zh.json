@@ -29,6 +29,7 @@
   },
   "home": {
     "hero": {
+      "subtitle": "优质电子产品授权经销商",
       "title1": "优质投影仪 &",
       "title2": "电子产品",
       "title3": "全球配送",
@@ -53,6 +54,9 @@
       "components": "电脑配件",
       "componentsDesc": "高性能CPU、GPU、内存等"
     },
+    "viewProducts": "查看产品",
+    "viewAll": "查看全部",
+    "viewAllProducts": "查看所有产品",
     "bestsellers": {
       "title": "畅销产品",
       "description": "全球客户最喜爱的热门产品"
@@ -184,6 +188,20 @@
     "checkoutNow": "立即结账",
     "wholesaleInquiry": "批发咨询",
     "requestQuote": "请求报价",
+    "description": "产品描述",
+    "specifications": "规格参数",
+    "relatedProducts": "相关产品"
+  },
+  "productDetail": {
+    "inStock": "有货 - 准备发货",
+    "outOfStock": "缺货",
+    "keyFeatures": "主要特点",
+    "quantity": "数量",
+    "total": "合计",
+    "checkoutNow": "立即结算",
+    "whatsappInquiry": "WhatsApp 咨询",
+    "sendInquiry": "发送询盘",
+    "buyWithPaypal": "使用 PayPal 购买",
     "description": "产品描述",
     "specifications": "规格参数",
     "relatedProducts": "相关产品"

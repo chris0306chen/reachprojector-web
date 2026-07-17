@@ -29,6 +29,7 @@
   },
   "home": {
     "hero": {
+      "subtitle": "وكيل معتمد للإلكترونيات المتميزة",
       "title1": "أجهزة عرض متميزة و",
       "title2": "إلكترونيات",
       "title3": "حول العالم",
@@ -53,6 +54,9 @@
       "components": "مكونات",
       "componentsDesc": "وحدات معالجة مركزية ورسومية وذاكرة عالية الأداء والمزيد"
     },
+    "viewProducts": "عرض المنتجات",
+    "viewAll": "عرض الكل",
+    "viewAllProducts": "عرض جميع المنتجات",
     "bestsellers": {
       "title": "الأكثر مبيعاً",
       "description": "منتجاتنا الأكثر شعبية المختارة من قبل العملاء حول العالم"
@@ -185,6 +189,20 @@
     "wholesaleInquiry": "استفسار الجملة",
     "requestQuote": "طلب عرض سعر",
     "description": "وصف المنتج",
+    "specifications": "المواصفات",
+    "relatedProducts": "منتجات ذات صلة"
+  },
+  "productDetail": {
+    "inStock": "متوفر - جاهز للشحن",
+    "outOfStock": "نفذت الكمية",
+    "keyFeatures": "الميزات الرئيسية",
+    "quantity": "الكمية",
+    "total": "الإجمالي",
+    "checkoutNow": "إتمام الشراء الآن",
+    "whatsappInquiry": "استفسار عبر واتساب",
+    "sendInquiry": "إرسال استفسار",
+    "buyWithPaypal": "الشراء عبر PayPal",
+    "description": "الوصف",
     "specifications": "المواصفات",
     "relatedProducts": "منتجات ذات صلة"
   },

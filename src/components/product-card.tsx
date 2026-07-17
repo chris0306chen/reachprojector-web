@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ShoppingCart, Eye } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import type { Product } from '@/storage/database/shared/schema';
 
 interface ProductCardProps {
@@ -7,6 +8,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const t = useTranslations('products');
   const imageUrl = product.images?.[0] || '/images/placeholder-product.jpg';
   const price = parseFloat(product.price);
 
@@ -27,12 +29,12 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="absolute top-3 left-3 flex flex-col gap-1.5">
           {product.is_bestseller && (
             <span className="px-2 py-0.5 text-xs font-semibold bg-orange-500 text-white rounded">
-              Best Seller
+              {t('badges.bestseller')}
             </span>
           )}
           {product.is_new_arrival && (
             <span className="px-2 py-0.5 text-xs font-semibold bg-blue-500 text-white rounded">
-              New
+              {t('badges.new')}
             </span>
           )}
         </div>
@@ -74,9 +76,9 @@ export function ProductCard({ product }: ProductCardProps) {
             )}
           </div>
           {product.stock_status === 'in_stock' ? (
-            <span className="text-xs text-green-600 font-medium">In Stock</span>
+            <span className="text-xs text-green-600 font-medium">{t('stock.inStock')}</span>
           ) : (
-            <span className="text-xs text-red-500 font-medium">Out of Stock</span>
+            <span className="text-xs text-red-500 font-medium">{t('stock.outOfStock')}</span>
           )}
         </div>
       </div>

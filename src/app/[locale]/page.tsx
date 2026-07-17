@@ -76,7 +76,7 @@ export default async function HomePage() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 w-full">
           <div className="max-w-3xl">
             <p className="text-orange-400 text-sm font-semibold uppercase tracking-wider mb-4">
-              Authorized Dealer of Premium Electronics
+              {t('hero.subtitle')}
             </p>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-tight mb-6 drop-shadow-lg">
               {t('hero.title1')}<br />
@@ -157,7 +157,7 @@ export default async function HomePage() {
                     {t(cat.descKey)}
                   </p>
                   <span className="inline-flex items-center gap-1 text-xs font-medium text-orange-400 group-hover:text-orange-300 transition-colors">
-                    View Products <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                    {t('viewProducts')} <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </span>
                 </div>
               </Link>
@@ -180,7 +180,7 @@ export default async function HomePage() {
               href="/products"
               className="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-orange-500 hover:text-orange-600 transition-colors"
             >
-              View All <ArrowRight className="w-4 h-4" />
+              {t('viewAll')} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -193,7 +193,7 @@ export default async function HomePage() {
               href="/products"
               className="inline-flex items-center gap-1 text-sm font-medium text-orange-500"
             >
-              View All Products <ArrowRight className="w-4 h-4" />
+              {t('viewAllProducts')} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
@@ -214,7 +214,7 @@ export default async function HomePage() {
                 href="/products?sort=newest"
                 className="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-orange-500 hover:text-orange-600 transition-colors"
               >
-                View All <ArrowRight className="w-4 h-4" />
+                {t('viewAll')} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

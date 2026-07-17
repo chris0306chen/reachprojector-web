@@ -29,6 +29,7 @@
   },
   "home": {
     "hero": {
+      "subtitle": "Авторизованный дилер премиальной электроники",
       "title1": "Премиальные проекторы и",
       "title2": "Электроника",
       "title3": "по всему миру",
@@ -53,6 +54,9 @@
       "components": "Комплектующие",
       "componentsDesc": "Высокопроизводительные процессоры, видеокарты, память и другое"
     },
+    "viewProducts": "Смотреть продукты",
+    "viewAll": "Смотреть все",
+    "viewAllProducts": "Смотреть все продукты",
     "bestsellers": {
       "title": "Бестселлеры",
       "description": "Наши самые популярные продукты, выбранные клиентами по всему миру"
@@ -185,6 +189,20 @@
     "wholesaleInquiry": "Оптовый запрос",
     "requestQuote": "Запросить цену",
     "description": "Описание продукта",
+    "specifications": "Характеристики",
+    "relatedProducts": "Похожие продукты"
+  },
+  "productDetail": {
+    "inStock": "В наличии - готово к отправке",
+    "outOfStock": "Нет в наличии",
+    "keyFeatures": "Ключевые особенности",
+    "quantity": "Количество",
+    "total": "Итого",
+    "checkoutNow": "Оформить заказ",
+    "whatsappInquiry": "Запрос в WhatsApp",
+    "sendInquiry": "Отправить запрос",
+    "buyWithPaypal": "Купить через PayPal",
+    "description": "Описание",
     "specifications": "Характеристики",
     "relatedProducts": "Похожие продукты"
   },

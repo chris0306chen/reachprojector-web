@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ShoppingCart, MessageCircle, ArrowRight, Check, ChevronLeft, ChevronRight, Minus, Plus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import type { Product } from '@/storage/database/shared/schema';
 import { ProductCard } from '@/components/product-card';
 import { PayPalCheckout } from '@/components/paypal-checkout';
@@ -14,6 +15,7 @@ interface ProductDetailClientProps {
 }
 
 export function ProductDetailClient({ product, relatedProducts }: ProductDetailClientProps) {
+  const t = useTranslations('productDetail');
   const router = useRouter();
   const [currentImage, setCurrentImage] = useState(0);
   const [activeTab, setActiveTab] = useState<'description' | 'specs'>('description');
@@ -90,10 +92,10 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
             {product.stock_status === 'in_stock' ? (
               <>
                 <Check className="w-4 h-4 text-green-500" />
-                <span className="text-sm font-medium text-green-600">In Stock - Ready to Ship</span>
+                <span className="text-sm font-medium text-green-600">{t('inStock')}</span>
               </>
             ) : (
-              <span className="text-sm font-medium text-red-500">Out of Stock</span>
+              <span className="text-sm font-medium text-red-500">{t('outOfStock')}</span>
             )}
           </div>
 
@@ -108,7 +110,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
           {features.length > 0 && (
             <div className="mb-8">
               <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-3">
-                Key Features
+                {t('keyFeatures')}
               </h3>
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {features.map((feature, idx) => (
@@ -123,7 +125,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
 
           {/* Quantity Selector */}
           <div className="mb-6">
-            <label className="text-sm font-medium text-slate-700 mb-2 block">Quantity</label>
+            <label className="text-sm font-medium text-slate-700 mb-2 block">{t('quantity')}</label>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -139,7 +141,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
                 <Plus className="w-4 h-4" />
               </button>
               <span className="text-sm text-slate-500 ml-2">
-                Total: <span className="font-semibold text-slate-900">${(price * quantity).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                {t('total')}: <span className="font-semibold text-slate-900">${(price * quantity).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
               </span>
             </div>
           </div>
@@ -151,7 +153,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
               className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-all hover:scale-[1.02] shadow-md"
             >
               <ShoppingCart className="w-4 h-4" />
-              Checkout Now
+              {t('checkoutNow')}
             </Link>
             <a
               href={`https://wa.me/8613800138000?text=${whatsappMessage}`}
@@ -160,13 +162,13 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
               className="inline-flex items-center gap-2 px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors"
             >
               <MessageCircle className="w-4 h-4" />
-              WhatsApp Inquiry
+              {t('whatsappInquiry')}
             </a>
             <Link
               href={`/contact?product=${product.slug}`}
               className="inline-flex items-center gap-2 px-6 py-3 border-2 border-slate-300 hover:border-orange-400 text-slate-700 hover:text-orange-600 font-medium rounded-lg transition-colors"
             >
-              Send Inquiry
+              {t('sendInquiry')}
             </Link>
           </div>
 
@@ -181,7 +183,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
                   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.079-.026.175-.041.254-.93 4.783-4.13 6.515-8.227 6.515H9.668l-1.12 7.106h-.51a.641.641 0 0 0 .633.74h3.586c.457 0 .85-.334.922-.788l.038-.207.732-4.644.047-.256a.932.932 0 0 1 .922-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.773-4.445z"/>
                   </svg>
-                  Buy Now with PayPal
+                  {t('buyWithPaypal')}
                 </button>
               ) : (
                 <PayPalCheckout
@@ -209,7 +211,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
                 : 'text-slate-500 hover:text-slate-900'
             }`}
           >
-            Description
+            {t('description')}
           </button>
           <button
             onClick={() => setActiveTab('specs')}
@@ -219,7 +221,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
                 : 'text-slate-500 hover:text-slate-900'
             }`}
           >
-            Specifications
+            {t('specifications')}
           </button>
         </div>
 
@@ -244,7 +246,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
       {/* Related Products */}
       {relatedProducts.length > 0 && (
         <div>
-          <h2 className="text-xl font-bold text-slate-900 mb-6">Related Products</h2>
+          <h2 className="text-xl font-bold text-slate-900 mb-6">{t('relatedProducts')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {relatedProducts.map((p) => (
               <ProductCard key={p.id} product={p} />
