@@ -7,6 +7,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const isLoginPage = pathname === "/admin/login";
 
+  // Login page: standalone, no sidebar or header
   if (isLoginPage) {
     return <>{children}</>;
   }
@@ -14,8 +15,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="min-h-screen bg-slate-50">
       <AdminSidebar />
-      <main className="lg:ml-64 min-h-screen">
-        <div className="p-4 lg:p-8 pt-16 lg:pt-8">
+      {/* Main content: offset for mobile header (h-14) on mobile, offset for desktop sidebar (w-64) on lg+ */}
+      <main className="pt-14 lg:pt-0 lg:ml-64 min-h-screen">
+        <div className="p-4 lg:p-8">
           {children}
         </div>
       </main>
