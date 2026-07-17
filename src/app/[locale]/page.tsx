@@ -5,6 +5,7 @@ import { ProductCard } from '@/components/product-card';
 import RealWorldApplications from '@/components/real-world-applications';
 import ShippingDelivery from '@/components/shipping-delivery';
 import { getTranslations } from 'next-intl/server';
+import { generateWebSiteSchema } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 
@@ -60,6 +61,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateWebSiteSchema()) }} />
       {/* Hero Section */}
       <section className="relative min-h-[600px] lg:min-h-screen overflow-hidden flex items-center">
         {/* Background Image */}
