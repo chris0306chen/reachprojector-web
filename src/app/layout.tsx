@@ -1,15 +1,8 @@
-import './globals.css';
-
+// Root layout - minimal shell, middleware handles locale redirect
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <html lang="en">
-      <body className="antialiased">
-        {children}
-      </body>
-    </html>
-  );
+  return children;
 }
