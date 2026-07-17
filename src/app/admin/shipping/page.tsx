@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Edit2, Trash2, AlertCircle, Calculator, Package, Truck } from "lucide-react";
+import { Plus, Edit2, Trash2, AlertCircle, Calculator, Package, Truck, CheckCircle } from "lucide-react";
 
 interface ShippingTemplate {
   id: string;
@@ -21,7 +21,6 @@ export default function AdminShippingPage() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState<ShippingTemplate | null>(null);
-  const [showCalculator, setShowCalculator] = useState(false);
 
   // Calculator state
   const [calcWeight, setCalcWeight] = useState(1);
@@ -113,13 +112,6 @@ export default function AdminShippingPage() {
           <p className="text-slate-500 mt-1">管理不同地区的运费计算规则</p>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowCalculator(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50"
-          >
-            <Calculator className="w-4 h-4" />
-            运费试算
-          </button>
           <button
             onClick={() => {
               setEditingTemplate(null);
@@ -231,103 +223,100 @@ export default function AdminShippingPage() {
         />
       )}
 
-      {/* Freight Calculator Modal */}
-      {showCalculator && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-md w-full">
-            <div className="p-6 border-b border-slate-200 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                <Calculator className="w-5 h-5 text-slate-400" />
-                运费试算
-              </h2>
-              <button
-                onClick={() => {
-                  setShowCalculator(false);
-                  setCalcResult(null);
-                }}
-                className="p-2 hover:bg-slate-100 rounded-lg"
-              >
-                <span className="text-slate-500 text-lg">&times;</span>
-              </button>
+      {/* Freight Calculator Card */}
+      <div className="bg-white rounded-xl border border-slate-200">
+        <div className="p-6 border-b border-slate-200">
+          <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+            <Calculator className="w-5 h-5 text-slate-400" />
+            运费试算
+          </h2>
+          <p className="text-sm text-slate-500 mt-1">根据运费模板快速计算预估运费</p>
+        </div>
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                包裹重量 (kg)
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                min="0.1"
+                value={calcWeight}
+                onChange={(e) => setCalcWeight(parseFloat(e.target.value) || 0)}
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                placeholder="输入重量"
+              />
             </div>
-            <div className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  包裹重量 (kg)
-                </label>
-                <input
-                  type="number"
-                  step="0.1"
-                  min="0.1"
-                  value={calcWeight}
-                  onChange={(e) => setCalcWeight(parseFloat(e.target.value) || 0)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">目的地</label>
-                <select
-                  value={calcRegion}
-                  onChange={(e) => setCalcRegion(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
-                >
-                  <option value="">选择地区...</option>
-                  {regions.map((r) => (
-                    <option key={r} value={r}>
-                      {r}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">运输方式</label>
-                <select
-                  value={calcMethod}
-                  onChange={(e) => setCalcMethod(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
-                >
-                  <option value="">选择方式...</option>
-                  {methods.map((m) => (
-                    <option key={m} value={m}>
-                      {m}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <button
-                onClick={handleCalculate}
-                disabled={!calcWeight || !calcRegion || !calcMethod}
-                className="w-full py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 disabled:opacity-50"
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">目的地</label>
+              <select
+                value={calcRegion}
+                onChange={(e) => setCalcRegion(e.target.value)}
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
               >
-                计算运费
-              </button>
-              {calcResult !== null && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-                  <p className="text-sm text-green-600">预估运费</p>
-                  <p className="text-2xl font-bold text-green-700 mt-1">
-                    ${calcResult.toFixed(2)}
-                  </p>
-                </div>
-              )}
-              {calcResult === null && calcRegion && calcMethod && (
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-center">
-                  <p className="text-sm text-amber-600">未找到匹配的运费模板</p>
-                </div>
-              )}
+                <option value="">选择地区...</option>
+                {regions.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
+              </select>
             </div>
-            <div className="p-6 border-t border-slate-200 flex justify-end">
-              <button
-                onClick={() => {
-                  setShowCalculator(false);
-                  setCalcResult(null);
-                }}
-                className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium hover:bg-slate-800"
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">运输方式</label>
+              <select
+                value={calcMethod}
+                onChange={(e) => setCalcMethod(e.target.value)}
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
               >
-                关闭
-              </button>
+                <option value="">选择方式...</option>
+                {methods.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
+          <div className="mt-4 flex items-center gap-4">
+            <button
+              onClick={handleCalculate}
+              disabled={!calcWeight || !calcRegion || !calcMethod}
+              className="px-6 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 disabled:opacity-50"
+            >
+              计算运费
+            </button>
+            {calcResult !== null && (
+              <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg px-4 py-2">
+                <CheckCircle className="w-5 h-5 text-green-500" />
+                <div>
+                  <span className="text-sm text-green-600">预估运费：</span>
+                  <span className="text-lg font-bold text-green-700 ml-1">
+                    ${calcResult.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            )}
+            {calcResult === null && calcRegion && calcMethod && calcWeight > 0 && (
+              <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-4 py-2">
+                <span className="text-sm text-amber-600">未找到匹配的运费模板</span>
+              </div>
+            )}
+          </div>
         </div>
+      </div>
+
+      {/* Create/Edit Form Modal */}
+      {showForm && (
+        <TemplateFormModal
+          template={editingTemplate}
+          onClose={() => setShowForm(false)}
+          onSuccess={() => {
+            setShowForm(false);
+            fetchTemplates();
+          }}
+        />
       )}
     </div>
   );

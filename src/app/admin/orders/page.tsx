@@ -34,6 +34,8 @@ export default function AdminOrdersPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
 
@@ -106,7 +108,10 @@ export default function AdminOrdersPage() {
       typeFilter === "all" ||
       (typeFilter === "b2c" && (order.order_type || "b2c_online") === "b2c_online") ||
       (typeFilter === "b2b" && order.order_type === "b2b_offline");
-    return matchesSearch && matchesStatus && matchesType;
+    const orderDate = new Date(order.created_at);
+    const matchesStartDate = !startDate || orderDate >= new Date(startDate);
+    const matchesEndDate = !endDate || orderDate <= new Date(endDate + "T23:59:59");
+    return matchesSearch && matchesStatus && matchesType && matchesStartDate && matchesEndDate;
   });
 
   const totalRevenue = filteredOrders
@@ -215,6 +220,20 @@ export default function AdminOrdersPage() {
             <option value="after_sales">售后中</option>
             <option value="cancelled">已取消</option>
           </select>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            placeholder="开始日期"
+            className="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+          />
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            placeholder="结束日期"
+            className="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+          />
         </div>
       </div>
 
@@ -249,6 +268,9 @@ export default function AdminOrdersPage() {
                   </th>
                   <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
                     状态
+                  </th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
+                    支付状态
                   </th>
                   <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
                     物流单号
@@ -305,6 +327,19 @@ export default function AdminOrdersPage() {
                         <option value="after_sales">售后中</option>
                         <option value="cancelled">已取消</option>
                       </select>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                          order.payment_status === "paid"
+                            ? "bg-green-50 text-green-700"
+                            : order.payment_status === "partial"
+                              ? "bg-amber-50 text-amber-700"
+                              : "bg-slate-100 text-slate-600"
+                        }`}
+                      >
+                        {order.payment_status === "paid" ? "已付款" : order.payment_status === "partial" ? "部分付款" : "未付款"}
+                      </span>
                     </td>
                     <td className="px-4 py-3">
                       <input
