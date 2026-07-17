@@ -1,8 +1,21 @@
-// Root layout - minimal shell, middleware handles locale redirect
+import type { Metadata } from 'next';
+import './[locale]/globals.css';
+
+export const metadata: Metadata = {
+  title: 'REACH Projector',
+  description: 'Professional projector and electronics supplier',
+};
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return (
+    <html lang="en">
+      <body className="antialiased">
+        {children}
+      </body>
+    </html>
+  );
 }
