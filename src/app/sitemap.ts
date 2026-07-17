@@ -9,7 +9,7 @@ async function fetchProductSlugs(): Promise<{ slug: string; updatedAt: string }[
     const result = await getProducts({ pageSize: 1000 })
     return (result.products ?? []).map((p) => ({
       slug: p.slug,
-      updatedAt: (p.updated_at ?? p.created_at ?? new Date()).toISOString(),
+      updatedAt: new Date(p.updated_at ?? p.created_at ?? Date.now()).toISOString(),
     }))
   } catch (error) {
     console.error('[sitemap] Failed to fetch products:', error)
