@@ -165,7 +165,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
               {t('checkoutNow')}
             </Link>
             <a
-              href={`https://wa.me/8613800138000?text=${whatsappMessage}`}
+              href={`https://wa.me/8613655920080?text=${whatsappMessage}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors"

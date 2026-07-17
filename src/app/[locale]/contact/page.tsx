@@ -43,15 +43,15 @@ export default async function ContactPage() {
                       <p className="text-sm">info@reachprojector.com</p>
                     </div>
                   </a>
-                  <a href="tel:+8613800138000" className="flex items-start gap-3 text-slate-600 hover:text-orange-500 transition-colors">
+                  <a href="tel:+8613655920080" className="flex items-start gap-3 text-slate-600 hover:text-orange-500 transition-colors">
                     <Phone className="w-5 h-5 text-orange-500 mt-0.5 shrink-0" />
                     <div>
                       <p className="text-sm font-medium text-slate-900">{t('phone')}</p>
-                      <p className="text-sm">+86 138-0013-8000</p>
+                      <p className="text-sm">+86-13655920080</p>
                     </div>
                   </a>
                   <a
-                    href="https://wa.me/8613800138000"
+                    href="https://wa.me/8613655920080"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-start gap-3 text-slate-600 hover:text-orange-500 transition-colors"
@@ -59,7 +59,7 @@ export default async function ContactPage() {
                     <MessageCircle className="w-5 h-5 text-orange-500 mt-0.5 shrink-0" />
                     <div>
                       <p className="text-sm font-medium text-slate-900">WhatsApp</p>
-                      <p className="text-sm">+86 138-0013-8000</p>
+                      <p className="text-sm">+86-13655920080</p>
                     </div>
                   </a>
                   <div className="flex items-start gap-3 text-slate-600">
@@ -88,7 +88,7 @@ export default async function ContactPage() {
                   {t('whatsappDescription')}
                 </p>
                 <a
-                  href="https://wa.me/8613800138000?text=Hi%2C%20I%20would%20like%20to%20inquire%20about%20your%20products."
+                  href="https://wa.me/8613655920080?text=Hi%2C%20I%20would%20like%20to%20inquire%20about%20your%20products."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-medium rounded-lg transition-colors"

@@ -66,9 +66,9 @@ export function Footer() {
                 <Mail className="w-4 h-4 shrink-0" />
                 info@reachprojector.com
               </a>
-              <a href="tel:+8615860330104" className="flex items-center gap-2 text-sm text-slate-400 hover:text-orange-400 transition-colors">
+              <a href="tel:+8613655920080" className="flex items-center gap-2 text-sm text-slate-400 hover:text-orange-400 transition-colors">
                 <Phone className="w-4 h-4 shrink-0" />
-                86-15860330104
+                +86-13655920080
               </a>
               <div className="flex items-start gap-2 text-sm text-slate-400">
                 <MapPin className="w-4 h-4 shrink-0 mt-0.5" />
