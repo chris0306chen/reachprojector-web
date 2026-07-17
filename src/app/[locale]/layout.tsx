@@ -6,6 +6,7 @@ import { locales, type Locale, rtlLocales } from '@/i18n/config';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { WhatsAppButton } from '@/components/layout/whatsapp-button';
+import { generateOrganizationSchema } from '@/lib/seo';
 import './globals.css';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -59,6 +60,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} dir={dir}>
       <body className="antialiased">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateOrganizationSchema()) }} />
         <NextIntlClientProvider messages={messages}>
           <Header />
           <main className="min-h-screen">{children}</main>
