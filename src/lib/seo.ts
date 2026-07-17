@@ -195,23 +195,25 @@ export function generateOrganizationSchema() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: SITE_NAME,
-    legalName: 'HK REACH SOURCING LIMITED',
+    legalName: 'Quanzhou Reach Technology Co., Ltd.',
     url: SITE_URL,
     logo: `${SITE_URL}/logo.png`,
     description:
-      'Professional projector, printer and computer components supplier based in Hong Kong. Wholesale pricing with worldwide DDP shipping.',
-    contactPoint: {
-      '@type': 'ContactPoint',
-      contactType: 'customer service',
-      email: 'info@reachprojector.com',
-      availableLanguage: ['English', 'Chinese', 'Spanish', 'Arabic', 'Russian'],
-    },
+      'Wholesale supplier of 4K laser projectors, UST laser TVs, printers, and computer components. Serving 50+ countries with DDP shipping.',
     address: {
       '@type': 'PostalAddress',
-      addressCountry: 'HK',
-      addressLocality: 'Hong Kong',
+      addressLocality: 'Quanzhou',
+      addressRegion: 'Fujian',
+      addressCountry: 'CN',
     },
-    sameAs: [],
+    contactPoint: {
+      '@type': 'ContactPoint',
+      telephone: '+86-13655920080',
+      contactType: 'sales',
+      email: 'info@reachprojector.com',
+      availableLanguage: ['English', 'Chinese'],
+    },
+    sameAs: [] as string[],
   }
 }
 
@@ -242,34 +244,6 @@ export function generateWebSiteSchema() {
         urlTemplate: `${SITE_URL}/products?search={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
-    },
-  }
-}
-
-// ---------------------------------------------------------------------------
-// LocalBusiness Schema (JSON-LD) — for contact/about pages
-// ---------------------------------------------------------------------------
-
-export function generateLocalBusinessSchema() {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    name: SITE_NAME,
-    image: `${SITE_URL}/logo.png`,
-    url: SITE_URL,
-    telephone: '+86-13655920080',
-    email: 'info@reachprojector.com',
-    address: {
-      '@type': 'PostalAddress',
-      addressCountry: 'HK',
-      addressLocality: 'Hong Kong',
-    },
-    priceRange: '$$',
-    openingHoursSpecification: {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-      opens: '09:00',
-      closes: '18:00',
     },
   }
 }

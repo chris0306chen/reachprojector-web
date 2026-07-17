@@ -5,12 +5,16 @@ const SITE_URL = 'https://www.reachprojector.com'
 
 async function fetchProductSlugs(): Promise<{ slug: string; updatedAt: string }[]> {
   try {
-    const { createClient } = await import('@supabase/supabase-js')
-    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
-    const { data, error } = await supabase.from('products').select('slug, updated_at').eq('is_active', true)
-    if (error) { console.error('[sitemap] Failed to fetch products:', error.message); return [] }
-    return (data ?? []).map((p: { slug: string; updated_at: string | null }) => ({ slug: p.slug, updatedAt: p.updated_at ?? new Date().toISOString() }))
-  } catch (error) { console.error('[sitemap] Failed to fetch products:', error); return [] }
+    const { getProducts } = await import('@/lib/data-service')
+    const result = await getProducts({ pageSize: 1000 })
+    return (result.products ?? []).map((p) => ({
+      slug: p.slug,
+      updatedAt: (p.updated_at ?? p.created_at ?? new Date()).toISOString(),
+    }))
+  } catch (error) {
+    console.error('[sitemap] Failed to fetch products:', error)
+    return []
+  }
 }
 
 function buildAlternates(path: string) {
