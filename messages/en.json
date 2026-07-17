@@ -1,0 +1,228 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "backToHome": "Back to Home",
+    "pageNotFound": "Page Not Found",
+    "viewAll": "View All",
+    "viewProducts": "View Products",
+    "learnMore": "Learn More"
+  },
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "about": "About Us",
+    "contact": "Contact",
+    "retail": "Retail",
+    "b2b": "B2B",
+    "shopNow": "Shop Now",
+    "getQuote": "Get Quote",
+    "cart": "Cart",
+    "search": "Search",
+    "authorizedDealer": "Authorized Dealer of Premium Electronics"
+  },
+  "home": {
+    "hero": {
+      "title1": "Premium Projectors &",
+      "title2": "Electronics",
+      "title3": "Worldwide",
+      "description": "Your trusted source for 4K laser projectors, professional printers, and high-performance computer components. Competitive pricing, global shipping, and expert support.",
+      "browseProducts": "Browse Products",
+      "wholesaleInquiry": "Wholesale Inquiry",
+      "stats": {
+        "products": "Products",
+        "countries": "Countries",
+        "topBrands": "Top Brands"
+      }
+    },
+    "categories": {
+      "title": "Shop by Category",
+      "description": "Explore our wide range of premium electronics from world-leading brands",
+      "projectors": "4K Laser Projectors",
+      "projectorsDesc": "Cinema-grade 4K laser projection for home theater",
+      "ustLaser": "UST Laser TV",
+      "ustLaserDesc": "Ultra-short throw laser TV for immersive large-screen experience",
+      "printers": "Printers & Scanners",
+      "printersDesc": "Professional office printers and scanners",
+      "components": "Components",
+      "componentsDesc": "High-performance CPUs, GPUs, memory and more"
+    },
+    "bestsellers": {
+      "title": "Best Sellers",
+      "description": "Our most popular products chosen by customers worldwide"
+    },
+    "newArrivals": {
+      "title": "New Arrivals",
+      "description": "Latest products added to our catalog"
+    },
+    "applications": {
+      "title": "Real-World Applications"
+    },
+    "shipping": {
+      "title": "Shipping & Delivery",
+      "containerLoading": "Container Loading",
+      "containerLoadingDesc": "Professional container loading and shipping",
+      "warehousePacking": "Warehouse Packing",
+      "warehousePackingDesc": "Secure warehouse packing and preparation",
+      "globalShipping": "Global Shipping",
+      "globalShippingDesc": "Worldwide delivery to your doorstep",
+      "comingSoon": "Coming Soon",
+      "realShipment": "Real shipment from our warehouse to global customers",
+      "stats": {
+        "countriesShipped": "Countries Shipped",
+        "happyCustomers": "Happy Customers",
+        "ordersDelivered": "Orders Delivered",
+        "onTimeRate": "On-Time Rate"
+      }
+    },
+    "b2b": {
+      "title": "B2B Wholesale Program",
+      "description": "Partner with us for competitive wholesale pricing and dedicated support for your business needs.",
+      "contactUs": "Contact Us",
+      "features": {
+        "bulkPricing": "Bulk Pricing",
+        "bulkPricingDesc": "Competitive wholesale pricing for volume orders",
+        "dedicatedSupport": "Dedicated Support",
+        "dedicatedSupportDesc": "Personal account manager for B2B clients",
+        "fastShipping": "Fast Shipping",
+        "fastShippingDesc": "Priority processing and express delivery options"
+      }
+    },
+    "brands": {
+      "title": "Trusted Brands We Carry"
+    },
+    "whyChoose": {
+      "title": "Why Choose REACH PROJECTOR",
+      "authorizedDealer": "Authorized Dealer",
+      "authorizedDealerDesc": "Official authorized dealer for all major brands",
+      "competitivePricing": "Competitive Pricing",
+      "competitivePricingDesc": "Best prices guaranteed with price match policy",
+      "globalShipping": "Global DDP Shipping",
+      "globalShippingDesc": "Door-to-door delivery to 50+ countries worldwide",
+      "qualityGuarantee": "Quality Guarantee",
+      "qualityGuaranteeDesc": "100% authentic products with full manufacturer warranty",
+      "expertSupport": "Expert Support",
+      "expertSupportDesc": "Technical experts available 24/7 for assistance",
+      "worldwideService": "Worldwide Service",
+      "worldwideServiceDesc": "After-sales service and support across the globe"
+    }
+  },
+  "footer": {
+    "aboutTitle": "About REACH PROJECTOR",
+    "aboutText": "Your trusted partner for premium projectors, printers, and computer components. Authorized dealer of top global brands with competitive wholesale pricing.",
+    "company1": "Quanzhou Reach Technology Co., Ltd.",
+    "company2": "HK REACH SOURCING LIMITED",
+    "quickLinks": "Quick Links",
+    "contactInfo": "Contact Info",
+    "newsletter": "Newsletter",
+    "newsletterDesc": "Subscribe to get special offers and updates",
+    "subscribe": "Subscribe",
+    "allRightsReserved": "All rights reserved.",
+    "authorizedDealerOf": "Authorized Dealer Of"
+  },
+  "products": {
+    "title": "Products",
+    "filters": {
+      "category": "Category",
+      "priceRange": "Price Range",
+      "allProducts": "All Products",
+      "allCategories": "All Categories",
+      "allBrands": "All Brands",
+      "priceRanges": {
+        "under500": "Under $500",
+        "500to1000": "$500 - $1000",
+        "1000to2000": "$1000 - $2000",
+        "2000to5000": "$2000 - $5000",
+        "over5000": "Over $5000"
+      }
+    },
+    "showingProducts": "Showing {count} products",
+    "sort": {
+      "newest": "Newest First",
+      "priceLowHigh": "Price: Low to High",
+      "priceHighLow": "Price: High to Low",
+      "nameAZ": "Name: A-Z"
+    },
+    "stock": {
+      "inStock": "In Stock",
+      "outOfStock": "Out of Stock"
+    },
+    "badges": {
+      "bestSeller": "Best Seller",
+      "new": "New"
+    }
+  },
+  "productDetail": {
+    "breadcrumb": {
+      "home": "Home",
+      "products": "Products"
+    },
+    "stock": {
+      "inStock": "In Stock",
+      "outOfStock": "Out of Stock"
+    },
+    "addToCart": "Add to Cart",
+    "buyNow": "Buy Now",
+    "checkoutNow": "Checkout Now",
+    "wholesaleInquiry": "Wholesale Inquiry",
+    "requestQuote": "Request Quote",
+    "description": "Product Description",
+    "specifications": "Specifications",
+    "relatedProducts": "Related Products"
+  },
+  "about": {
+    "title": "Your Trusted Partner in Premium Electronics",
+    "story": {
+      "title": "Our Story",
+      "paragraph1": "Founded with a passion for premium electronics, REACH PROJECTOR has grown to become a trusted name in the industry. We specialize in high-quality projectors, printers, and computer components from the world's leading brands.",
+      "paragraph2": "Our commitment to quality, competitive pricing, and exceptional customer service has earned us the trust of customers across 50+ countries. Whether you're a home theater enthusiast, a business professional, or a wholesale buyer, we have the right solutions for you."
+    },
+    "stats": {
+      "products": "Products",
+      "countriesServed": "Countries Served",
+      "brandPartners": "Brand Partners",
+      "customerSatisfaction": "Customer Satisfaction"
+    },
+    "whyChoose": {
+      "title": "Why Businesses Choose Us",
+      "authenticProducts": "100% Authentic Products",
+      "authenticProductsDesc": "Every product is sourced directly from manufacturers",
+      "competitivePricing": "Competitive Wholesale Pricing",
+      "competitivePricingDesc": "Volume discounts and special B2B pricing available",
+      "globalLogistics": "Global Logistics Network",
+      "globalLogisticsDesc": "Efficient shipping to 50+ countries with DDP service",
+      "expertTeam": "Expert Technical Team",
+      "expertTeamDesc": "Our specialists provide pre-sales and after-sales support"
+    },
+    "cta": {
+      "title": "Ready to Start a Partnership?",
+      "description": "Contact us today to discuss your requirements and discover how we can help your business grow.",
+      "contactUs": "Contact Us Today"
+    }
+  },
+  "contact": {
+    "title": "Let's Start a Conversation",
+    "subtitle": "Have a question about our products? Need a wholesale quote? We're here to help.",
+    "getInTouch": "Get in Touch",
+    "email": "Email",
+    "phone": "Phone",
+    "whatsapp": "WhatsApp",
+    "address": "Address",
+    "businessHours": "Business Hours",
+    "businessHoursValue": "Mon - Sat: 9:00 AM - 6:00 PM (GMT+8)",
+    "quickResponse": "Quick Response via WhatsApp",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "company": "Company",
+      "subject": "Subject",
+      "message": "Message",
+      "sendInquiry": "Send Inquiry",
+      "sending": "Sending...",
+      "success": "Thank you! Your inquiry has been sent.",
+      "error": "Failed to send inquiry. Please try again."
+    }
+  }
+}

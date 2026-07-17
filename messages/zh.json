@@ -1,0 +1,228 @@
+{
+  "common": {
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "backToHome": "返回首页",
+    "pageNotFound": "页面未找到",
+    "viewAll": "查看全部",
+    "viewProducts": "查看产品",
+    "learnMore": "了解更多"
+  },
+  "nav": {
+    "home": "首页",
+    "products": "产品",
+    "about": "关于我们",
+    "contact": "联系我们",
+    "retail": "零售",
+    "b2b": "批发",
+    "shopNow": "立即购买",
+    "getQuote": "获取报价",
+    "cart": "购物车",
+    "search": "搜索",
+    "authorizedDealer": "优质电子产品授权经销商"
+  },
+  "home": {
+    "hero": {
+      "title1": "优质投影仪 &",
+      "title2": "电子产品",
+      "title3": "全球配送",
+      "description": "您值得信赖的4K激光投影仪、专业打印机和高性能电脑配件供应商。具有竞争力的价格、全球配送和专业技术支持。",
+      "browseProducts": "浏览产品",
+      "wholesaleInquiry": "批发咨询",
+      "stats": {
+        "products": "产品",
+        "countries": "国家",
+        "topBrands": "顶级品牌"
+      }
+    },
+    "categories": {
+      "title": "按类别选购",
+      "description": "探索我们来自世界领先品牌的各种优质电子产品",
+      "projectors": "4K激光投影仪",
+      "projectorsDesc": "家庭影院级4K激光投影",
+      "ustLaser": "超短焦激光电视",
+      "ustLaserDesc": "超短焦激光电视，沉浸式大屏体验",
+      "printers": "打印机和扫描仪",
+      "printersDesc": "专业办公打印机和扫描仪",
+      "components": "电脑配件",
+      "componentsDesc": "高性能CPU、GPU、内存等"
+    },
+    "bestsellers": {
+      "title": "畅销产品",
+      "description": "全球客户最喜爱的热门产品"
+    },
+    "newArrivals": {
+      "title": "新品上市",
+      "description": "最新添加到目录的产品"
+    },
+    "applications": {
+      "title": "实际应用场景"
+    },
+    "shipping": {
+      "title": "物流配送",
+      "containerLoading": "集装箱装柜",
+      "containerLoadingDesc": "专业的集装箱装柜和运输",
+      "warehousePacking": "仓库打包",
+      "warehousePackingDesc": "安全的仓库打包和准备",
+      "globalShipping": "全球配送",
+      "globalShippingDesc": "全球送货上门服务",
+      "comingSoon": "即将推出",
+      "realShipment": "从我们仓库到全球客户的真实发货",
+      "stats": {
+        "countriesShipped": "配送国家",
+        "happyCustomers": "满意客户",
+        "ordersDelivered": "已交付订单",
+        "onTimeRate": "准时率"
+      }
+    },
+    "b2b": {
+      "title": "B2B批发计划",
+      "description": "与我们合作，获得具有竞争力的批发价格和 dedicated 业务支持。",
+      "contactUs": "联系我们",
+      "features": {
+        "bulkPricing": "批量定价",
+        "bulkPricingDesc": "大批量订单的优惠批发价格",
+        "dedicatedSupport": "专属支持",
+        "dedicatedSupportDesc": "B2B客户专属客户经理",
+        "fastShipping": "快速配送",
+        "fastShippingDesc": "优先处理和快递配送选项"
+      }
+    },
+    "brands": {
+      "title": "我们代理的信赖品牌"
+    },
+    "whyChoose": {
+      "title": "为什么选择REACH PROJECTOR",
+      "authorizedDealer": "授权经销商",
+      "authorizedDealerDesc": "所有主要品牌的官方授权经销商",
+      "competitivePricing": "具有竞争力的价格",
+      "competitivePricingDesc": "保证最优价格，支持价格匹配",
+      "globalShipping": "全球DDP配送",
+      "globalShippingDesc": "50+国家门到门配送服务",
+      "qualityGuarantee": "质量保证",
+      "qualityGuaranteeDesc": "100%正品，享受完整厂商保修",
+      "expertSupport": "专家支持",
+      "expertSupportDesc": "技术专家24/7全天候协助",
+      "worldwideService": "全球服务",
+      "worldwideServiceDesc": "遍布全球的售后服务和支持"
+    }
+  },
+  "footer": {
+    "aboutTitle": "关于REACH PROJECTOR",
+    "aboutText": "您值得信赖的优质投影仪、打印机和电脑配件合作伙伴。顶级全球品牌授权经销商，提供具有竞争力的批发价格。",
+    "company1": "泉州锐驰科技有限公司",
+    "company2": "香港锐达采购有限公司",
+    "quickLinks": "快速链接",
+    "contactInfo": "联系信息",
+    "newsletter": "订阅通讯",
+    "newsletterDesc": "订阅获取特别优惠和更新",
+    "subscribe": "订阅",
+    "allRightsReserved": "版权所有。",
+    "authorizedDealerOf": "授权经销商"
+  },
+  "products": {
+    "title": "产品",
+    "filters": {
+      "category": "类别",
+      "priceRange": "价格范围",
+      "allProducts": "所有产品",
+      "allCategories": "所有类别",
+      "allBrands": "所有品牌",
+      "priceRanges": {
+        "under500": "500美元以下",
+        "500to1000": "500 - 1000美元",
+        "1000to2000": "1000 - 2000美元",
+        "2000to5000": "2000 - 5000美元",
+        "over5000": "5000美元以上"
+      }
+    },
+    "showingProducts": "显示 {count} 个产品",
+    "sort": {
+      "newest": "最新优先",
+      "priceLowHigh": "价格：从低到高",
+      "priceHighLow": "价格：从高到低",
+      "nameAZ": "名称：A-Z"
+    },
+    "stock": {
+      "inStock": "有货",
+      "outOfStock": "缺货"
+    },
+    "badges": {
+      "bestSeller": "畅销",
+      "new": "新品"
+    }
+  },
+  "productDetail": {
+    "breadcrumb": {
+      "home": "首页",
+      "products": "产品"
+    },
+    "stock": {
+      "inStock": "有货",
+      "outOfStock": "缺货"
+    },
+    "addToCart": "加入购物车",
+    "buyNow": "立即购买",
+    "checkoutNow": "立即结账",
+    "wholesaleInquiry": "批发咨询",
+    "requestQuote": "请求报价",
+    "description": "产品描述",
+    "specifications": "规格参数",
+    "relatedProducts": "相关产品"
+  },
+  "about": {
+    "title": "您值得信赖的优质电子产品合作伙伴",
+    "story": {
+      "title": "我们的故事",
+      "paragraph1": "REACH PROJECTOR以对优质电子产品的热情创立，已发展成为业内值得信赖的品牌。我们专注于来自世界领先品牌的高质量投影仪、打印机和电脑配件。",
+      "paragraph2": "我们对质量、具有竞争力的价格和卓越客户服务的承诺，赢得了50多个国家客户的信任。无论您是家庭影院爱好者、商务专业人士还是批发买家，我们都有适合您的解决方案。"
+    },
+    "stats": {
+      "products": "产品",
+      "countriesServed": "服务国家",
+      "brandPartners": "品牌合作伙伴",
+      "customerSatisfaction": "客户满意度"
+    },
+    "whyChoose": {
+      "title": "企业选择我们的原因",
+      "authenticProducts": "100%正品",
+      "authenticProductsDesc": "所有产品直接来源于制造商",
+      "competitivePricing": "具有竞争力的批发价格",
+      "competitivePricingDesc": "提供批量折扣和特殊B2B定价",
+      "globalLogistics": "全球物流网络",
+      "globalLogisticsDesc": "高效配送至50+国家，提供DDP服务",
+      "expertTeam": "专业技术团队",
+      "expertTeamDesc": "我们的专家提供售前和售后支持"
+    },
+    "cta": {
+      "title": "准备开始合作？",
+      "description": "立即联系我们讨论您的需求，了解我们如何帮助您的业务增长。",
+      "contactUs": "立即联系我们"
+    }
+  },
+  "contact": {
+    "title": "让我们开始对话",
+    "subtitle": "对我们的产品有疑问？需要批发报价？我们随时为您服务。",
+    "getInTouch": "联系我们",
+    "email": "邮箱",
+    "phone": "电话",
+    "whatsapp": "WhatsApp",
+    "address": "地址",
+    "businessHours": "营业时间",
+    "businessHoursValue": "周一至周六：上午9:00 - 下午6:00（GMT+8）",
+    "quickResponse": "WhatsApp快速回复",
+    "form": {
+      "name": "姓名",
+      "email": "邮箱",
+      "phone": "电话",
+      "company": "公司",
+      "subject": "主题",
+      "message": "留言",
+      "sendInquiry": "发送咨询",
+      "sending": "发送中...",
+      "success": "谢谢！您的咨询已发送。",
+      "error": "发送咨询失败，请重试。"
+    }
+  }
+}

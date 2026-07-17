@@ -1,0 +1,228 @@
+{
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "success": "نجاح",
+    "backToHome": "العودة للرئيسية",
+    "pageNotFound": "الصفحة غير موجودة",
+    "viewAll": "عرض الكل",
+    "viewProducts": "عرض المنتجات",
+    "learnMore": "اعرف المزيد"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "products": "المنتجات",
+    "about": "من نحن",
+    "contact": "اتصل بنا",
+    "retail": "تجزئة",
+    "b2b": "جملة",
+    "shopNow": "تسوق الآن",
+    "getQuote": "احصل على عرض سعر",
+    "cart": "السلة",
+    "search": "بحث",
+    "authorizedDealer": "وكيل معتمد للإلكترونيات المتميزة"
+  },
+  "home": {
+    "hero": {
+      "title1": "أجهزة عرض متميزة و",
+      "title2": "إلكترونيات",
+      "title3": "حول العالم",
+      "description": "مصدرك الموثوق لأجهزة العرض الليزرية 4K والطابعات المهنية ومكونات الكمبيوتر عالية الأداء. أسعار تنافسية وشحن عالمي ودعم فني متخصص.",
+      "browseProducts": "تصفح المنتجات",
+      "wholesaleInquiry": "استفسار الجملة",
+      "stats": {
+        "products": "منتج",
+        "countries": "دولة",
+        "topBrands": "علامة تجارية رائدة"
+      }
+    },
+    "categories": {
+      "title": "تسوق حسب الفئة",
+      "description": "استكشف مجموعتنا الواسعة من الإلكترونيات المتميزة من العلامات التجارية الرائدة عالمياً",
+      "projectors": "أجهزة عرض ليزر 4K",
+      "projectorsDesc": "عرض ليزر 4K بجودة السينما للمسرح المنزلي",
+      "ustLaser": "تلفزيون ليزر UST",
+      "ustLaserDesc": "تلفزيون ليزر فائق القصر لتجربة شاشة كبيرة غامرة",
+      "printers": "طابعات وماسحات ضوئية",
+      "printersDesc": "طابعات وماسحات ضوئية مهنية للمكاتب",
+      "components": "مكونات",
+      "componentsDesc": "وحدات معالجة مركزية ورسومية وذاكرة عالية الأداء والمزيد"
+    },
+    "bestsellers": {
+      "title": "الأكثر مبيعاً",
+      "description": "منتجاتنا الأكثر شعبية المختارة من قبل العملاء حول العالم"
+    },
+    "newArrivals": {
+      "title": "وصل حديثاً",
+      "description": "أحدث المنتجات المضافة إلى كتالوجنا"
+    },
+    "applications": {
+      "title": "تطبيقات واقعية"
+    },
+    "shipping": {
+      "title": "الشحن والتوصيل",
+      "containerLoading": "تحميل الحاويات",
+      "containerLoadingDesc": "تحميل وشحن احترافي للحاويات",
+      "warehousePacking": "تعبئة المستودع",
+      "warehousePackingDesc": "تعبئة وتحضير آمن في المستودع",
+      "globalShipping": "شحن عالمي",
+      "globalShippingDesc": "توصيل عالمي إلى باب منزلك",
+      "comingSoon": "قريباً",
+      "realShipment": "شحن حقيقي من مستودعنا إلى العملاء حول العالم",
+      "stats": {
+        "countriesShipped": "دولة تم الشحن إليها",
+        "happyCustomers": "عميل سعيد",
+        "ordersDelivered": "طلب تم توصيله",
+        "onTimeRate": "معدل في الوقت المحدد"
+      }
+    },
+    "b2b": {
+      "title": "برنامج الجملة B2B",
+      "description": "تعاون معنا للحصول على أسعار جملة تنافسية ودعم مخصص لاحتياجات عملك.",
+      "contactUs": "اتصل بنا",
+      "features": {
+        "bulkPricing": "أسعار الجملة",
+        "bulkPricingDesc": "أسعار جملة تنافسية للطلبات بالجملة",
+        "dedicatedSupport": "دعم مخصص",
+        "dedicatedSupportDesc": "مدير حساب شخصي لعملاء B2B",
+        "fastShipping": "شحن سريع",
+        "fastShippingDesc": "معالجة ذات أولوية وخيارات توصيل سريع"
+      }
+    },
+    "brands": {
+      "title": "العلامات التجارية الموثوقة التي نوزعها"
+    },
+    "whyChoose": {
+      "title": "لماذا تختار REACH PROJECTOR",
+      "authorizedDealer": "وكيل معتمد",
+      "authorizedDealerDesc": "وكيل معتمد رسمياً لجميع العلامات التجارية الرئيسية",
+      "competitivePricing": "أسعار تنافسية",
+      "competitivePricingDesc": "أفضل أسعار مضمونة مع سياسة مطابقة الأسعار",
+      "globalShipping": "شحن DDP عالمي",
+      "globalShippingDesc": "توصيل من الباب إلى الباب إلى أكثر من 50 دولة",
+      "qualityGuarantee": "ضمان الجودة",
+      "qualityGuaranteeDesc": "منتجات أصلية 100% مع ضمان كامل من الشركة المصنعة",
+      "expertSupport": "دعم فني متخصص",
+      "expertSupportDesc": "خبراء فنيون متاحون على مدار الساعة طوال أيام الأسبوع للمساعدة",
+      "worldwideService": "خدمة عالمية",
+      "worldwideServiceDesc": "خدمة ما بعد البيع والدعم في جميع أنحاء العالم"
+    }
+  },
+  "footer": {
+    "aboutTitle": "عن REACH PROJECTOR",
+    "aboutText": "شريكك الموثوق لأجهزة العرض المتميزة والطابعات ومكونات الكمبيوتر. وكيل معتمد للعلامات التجارية العالمية الرائدة بأسعار جملة تنافسية.",
+    "company1": "Quanzhou Reach Technology Co., Ltd.",
+    "company2": "HK REACH SOURCING LIMITED",
+    "quickLinks": "روابط سريعة",
+    "contactInfo": "معلومات الاتصال",
+    "newsletter": "النشرة الإخبارية",
+    "newsletterDesc": "اشترك للحصول على عروض خاصة وتحديثات",
+    "subscribe": "اشترك",
+    "allRightsReserved": "جميع الحقوق محفوظة.",
+    "authorizedDealerOf": "وكيل معتمد لـ"
+  },
+  "products": {
+    "title": "المنتجات",
+    "filters": {
+      "category": "الفئة",
+      "priceRange": "نطاق السعر",
+      "allProducts": "جميع المنتجات",
+      "allCategories": "جميع الفئات",
+      "allBrands": "جميع العلامات التجارية",
+      "priceRanges": {
+        "under500": "أقل من 500 دولار",
+        "500to1000": "500 - 1000 دولار",
+        "1000to2000": "1000 - 2000 دولار",
+        "2000to5000": "2000 - 5000 دولار",
+        "over5000": "أكثر من 5000 دولار"
+      }
+    },
+    "showingProducts": "عرض {count} منتج",
+    "sort": {
+      "newest": "الأحدث أولاً",
+      "priceLowHigh": "السعر: من الأقل إلى الأعلى",
+      "priceHighLow": "السعر: من الأعلى إلى الأقل",
+      "nameAZ": "الاسم: أ-ي"
+    },
+    "stock": {
+      "inStock": "متوفر",
+      "outOfStock": "غير متوفر"
+    },
+    "badges": {
+      "bestSeller": "الأكثر مبيعاً",
+      "new": "جديد"
+    }
+  },
+  "productDetail": {
+    "breadcrumb": {
+      "home": "الرئيسية",
+      "products": "المنتجات"
+    },
+    "stock": {
+      "inStock": "متوفر",
+      "outOfStock": "غير متوفر"
+    },
+    "addToCart": "أضف إلى السلة",
+    "buyNow": "اشتر الآن",
+    "checkoutNow": "الدفع الآن",
+    "wholesaleInquiry": "استفسار الجملة",
+    "requestQuote": "طلب عرض سعر",
+    "description": "وصف المنتج",
+    "specifications": "المواصفات",
+    "relatedProducts": "منتجات ذات صلة"
+  },
+  "about": {
+    "title": "شريكك الموثوق في الإلكترونيات المتميزة",
+    "story": {
+      "title": "قصتنا",
+      "paragraph1": "تأسست REACH PROJECTOR بشغف بالإلكترونيات المتميزة، ونمت لتصبح اسماً موثوقاً في الصناعة. نحن نتخصص في أجهزة العرض عالية الجودة والطابعات ومكونات الكمبيوتر من العلامات التجارية الرائدة عالمياً.",
+      "paragraph2": "التزامنا بالجودة والأسعار التنافسية وخدمة العملاء الاستثنائية أكسبنا ثقة العملاء في أكثر من 50 دولة. سواء كنت من عشاق المسرح المنزلي أو محترف أعمال أو مشتري جملة، لدينا الحلول المناسبة لك."
+    },
+    "stats": {
+      "products": "منتج",
+      "countriesServed": "دولة نخدمها",
+      "brandPartners": "شريك علامة تجارية",
+      "customerSatisfaction": "رضا العملاء"
+    },
+    "whyChoose": {
+      "title": "لماذا تختار الشركات لنا",
+      "authenticProducts": "منتجات أصلية 100%",
+      "authenticProductsDesc": "كل منتج يتم الحصول عليه مباشرة من الشركات المصنعة",
+      "competitivePricing": "أسعار جملة تنافسية",
+      "competitivePricingDesc": "خصومات على الكميات وتسعير B2B خاص متاح",
+      "globalLogistics": "شبكة لوجستية عالمية",
+      "globalLogisticsDesc": "شحن فعال إلى أكثر من 50 دولة مع خدمة DDP",
+      "expertTeam": "فريق فني متخصص",
+      "expertTeamDesc": "يقدم متخصصونا دعم ما قبل وبعد البيع"
+    },
+    "cta": {
+      "title": "هل أنت مستعد لبدء شراكة؟",
+      "description": "اتصل بنا اليوم لمناقشة متطلباتك واكتشاف كيف يمكننا مساعدة عملك على النمو.",
+      "contactUs": "اتصل بنا اليوم"
+    }
+  },
+  "contact": {
+    "title": "لنبدأ محادثة",
+    "subtitle": "هل لديك سؤال حول منتجاتنا؟ تحتاج إلى عرض سعر جملة؟ نحن هنا للمساعدة.",
+    "getInTouch": "تواصل معنا",
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف",
+    "whatsapp": "واتساب",
+    "address": "العنوان",
+    "businessHours": "ساعات العمل",
+    "businessHoursValue": "الاثنين - السبت: 9:00 صباحاً - 6:00 مساءً (GMT+8)",
+    "quickResponse": "رد سريع عبر واتساب",
+    "form": {
+      "name": "الاسم",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "company": "الشركة",
+      "subject": "الموضوع",
+      "message": "الرسالة",
+      "sendInquiry": "إرسال الاستفسار",
+      "sending": "جاري الإرسال...",
+      "success": "شكراً لك! تم إرسال استفسارك.",
+      "error": "فشل في إرسال الاستفسار. يرجى المحاولة مرة أخرى."
+    }
+  }
+}

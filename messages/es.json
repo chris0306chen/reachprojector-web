@@ -1,0 +1,228 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "backToHome": "Volver al inicio",
+    "pageNotFound": "Página no encontrada",
+    "viewAll": "Ver todo",
+    "viewProducts": "Ver productos",
+    "learnMore": "Más información"
+  },
+  "nav": {
+    "home": "Inicio",
+    "products": "Productos",
+    "about": "Sobre nosotros",
+    "contact": "Contacto",
+    "retail": "Minorista",
+    "b2b": "Mayorista",
+    "shopNow": "Comprar ahora",
+    "getQuote": "Solicitar cotización",
+    "cart": "Carrito",
+    "search": "Buscar",
+    "authorizedDealer": "Distribuidor autorizado de electrónica premium"
+  },
+  "home": {
+    "hero": {
+      "title1": "Proyectores premium y",
+      "title2": "Electrónica",
+      "title3": "en todo el mundo",
+      "description": "Su fuente confiable de proyectores láser 4K, impresoras profesionales y componentes de computadora de alto rendimiento. Precios competitivos, envío global y soporte experto.",
+      "browseProducts": "Explorar productos",
+      "wholesaleInquiry": "Consulta mayorista",
+      "stats": {
+        "products": "Productos",
+        "countries": "Países",
+        "topBrands": "Marcas principales"
+      }
+    },
+    "categories": {
+      "title": "Comprar por categoría",
+      "description": "Explore nuestra amplia gama de electrónica premium de marcas líderes mundiales",
+      "projectors": "Proyectores láser 4K",
+      "projectorsDesc": "Proyección láser 4K de grado cinematográfico para cine en casa",
+      "ustLaser": "TV láser UST",
+      "ustLaserDesc": "TV láser de tiro ultra corto para experiencia inmersiva en pantalla grande",
+      "printers": "Impresoras y escáneres",
+      "printersDesc": "Impresoras y escáneres profesionales de oficina",
+      "components": "Componentes",
+      "componentsDesc": "CPU, GPU, memoria y más de alto rendimiento"
+    },
+    "bestsellers": {
+      "title": "Más vendidos",
+      "description": "Nuestros productos más populares elegidos por clientes en todo el mundo"
+    },
+    "newArrivals": {
+      "title": "Nuevos productos",
+      "description": "Últimos productos añadidos a nuestro catálogo"
+    },
+    "applications": {
+      "title": "Aplicaciones del mundo real"
+    },
+    "shipping": {
+      "title": "Envío y entrega",
+      "containerLoading": "Carga de contenedores",
+      "containerLoadingDesc": "Carga y envío profesional de contenedores",
+      "warehousePacking": "Embalaje en almacén",
+      "warehousePackingDesc": "Embalaje seguro y preparación en almacén",
+      "globalShipping": "Envío global",
+      "globalShippingDesc": "Entrega mundial a su puerta",
+      "comingSoon": "Próximamente",
+      "realShipment": "Envío real de nuestro almacén a clientes globales",
+      "stats": {
+        "countriesShipped": "Países enviados",
+        "happyCustomers": "Clientes satisfechos",
+        "ordersDelivered": "Pedidos entregados",
+        "onTimeRate": "Tasa puntual"
+      }
+    },
+    "b2b": {
+      "title": "Programa mayorista B2B",
+      "description": "Asóciese con nosotros para obtener precios mayoristas competitivos y soporte dedicado para las necesidades de su negocio.",
+      "contactUs": "Contáctenos",
+      "features": {
+        "bulkPricing": "Precios por volumen",
+        "bulkPricingDesc": "Precios mayoristas competitivos para pedidos por volumen",
+        "dedicatedSupport": "Soporte dedicado",
+        "dedicatedSupportDesc": "Gerente de cuenta personal para clientes B2B",
+        "fastShipping": "Envío rápido",
+        "fastShippingDesc": "Procesamiento prioritario y opciones de entrega exprés"
+      }
+    },
+    "brands": {
+      "title": "Marcas de confianza que distribuimos"
+    },
+    "whyChoose": {
+      "title": "Por qué elegir REACH PROJECTOR",
+      "authorizedDealer": "Distribuidor autorizado",
+      "authorizedDealerDesc": "Distribuidor autorizado oficial de todas las marcas principales",
+      "competitivePricing": "Precios competitivos",
+      "competitivePricingDesc": "Mejores precios garantizados con política de igualación",
+      "globalShipping": "Envío DDP global",
+      "globalShippingDesc": "Entrega puerta a puerta a más de 50 países",
+      "qualityGuarantee": "Garantía de calidad",
+      "qualityGuaranteeDesc": "Productos 100% auténticos con garantía completa del fabricante",
+      "expertSupport": "Soporte experto",
+      "expertSupportDesc": "Expertos técnicos disponibles 24/7 para asistencia",
+      "worldwideService": "Servicio mundial",
+      "worldwideServiceDesc": "Servicio postventa y soporte en todo el mundo"
+    }
+  },
+  "footer": {
+    "aboutTitle": "Sobre REACH PROJECTOR",
+    "aboutText": "Su socio confiable para proyectores premium, impresoras y componentes de computadora. Distribuidor autorizado de marcas globales líderes con precios mayoristas competitivos.",
+    "company1": "Quanzhou Reach Technology Co., Ltd.",
+    "company2": "HK REACH SOURCING LIMITED",
+    "quickLinks": "Enlaces rápidos",
+    "contactInfo": "Información de contacto",
+    "newsletter": "Boletín",
+    "newsletterDesc": "Suscríbase para recibir ofertas especiales y actualizaciones",
+    "subscribe": "Suscribirse",
+    "allRightsReserved": "Todos los derechos reservados.",
+    "authorizedDealerOf": "Distribuidor autorizado de"
+  },
+  "products": {
+    "title": "Productos",
+    "filters": {
+      "category": "Categoría",
+      "priceRange": "Rango de precio",
+      "allProducts": "Todos los productos",
+      "allCategories": "Todas las categorías",
+      "allBrands": "Todas las marcas",
+      "priceRanges": {
+        "under500": "Menos de $500",
+        "500to1000": "$500 - $1000",
+        "1000to2000": "$1000 - $2000",
+        "2000to5000": "$2000 - $5000",
+        "over5000": "Más de $5000"
+      }
+    },
+    "showingProducts": "Mostrando {count} productos",
+    "sort": {
+      "newest": "Más recientes",
+      "priceLowHigh": "Precio: menor a mayor",
+      "priceHighLow": "Precio: mayor a menor",
+      "nameAZ": "Nombre: A-Z"
+    },
+    "stock": {
+      "inStock": "En stock",
+      "outOfStock": "Agotado"
+    },
+    "badges": {
+      "bestSeller": "Más vendido",
+      "new": "Nuevo"
+    }
+  },
+  "productDetail": {
+    "breadcrumb": {
+      "home": "Inicio",
+      "products": "Productos"
+    },
+    "stock": {
+      "inStock": "En stock",
+      "outOfStock": "Agotado"
+    },
+    "addToCart": "Añadir al carrito",
+    "buyNow": "Comprar ahora",
+    "checkoutNow": "Pagar ahora",
+    "wholesaleInquiry": "Consulta mayorista",
+    "requestQuote": "Solicitar cotización",
+    "description": "Descripción del producto",
+    "specifications": "Especificaciones",
+    "relatedProducts": "Productos relacionados"
+  },
+  "about": {
+    "title": "Su socio confiable en electrónica premium",
+    "story": {
+      "title": "Nuestra historia",
+      "paragraph1": "Fundado con pasión por la electrónica premium, REACH PROJECTOR ha crecido hasta convertirse en un nombre confiable en la industria. Nos especializamos en proyectores de alta calidad, impresoras y componentes de computadora de las marcas líderes mundiales.",
+      "paragraph2": "Nuestro compromiso con la calidad, los precios competitivos y el servicio al cliente excepcional nos ha ganado la confianza de clientes en más de 50 países. Ya sea que sea un entusiasta del cine en casa, un profesional de negocios o un comprador mayorista, tenemos las soluciones adecuadas para usted."
+    },
+    "stats": {
+      "products": "Productos",
+      "countriesServed": "Países atendidos",
+      "brandPartners": "Socios de marca",
+      "customerSatisfaction": "Satisfacción del cliente"
+    },
+    "whyChoose": {
+      "title": "Por qué las empresas nos eligen",
+      "authenticProducts": "Productos 100% auténticos",
+      "authenticProductsDesc": "Cada producto se obtiene directamente de los fabricantes",
+      "competitivePricing": "Precios mayoristas competitivos",
+      "competitivePricingDesc": "Descuentos por volumen y precios especiales B2B disponibles",
+      "globalLogistics": "Red logística global",
+      "globalLogisticsDesc": "Envío eficiente a más de 50 países con servicio DDP",
+      "expertTeam": "Equipo técnico experto",
+      "expertTeamDesc": "Nuestros especialistas brindan soporte pre y postventa"
+    },
+    "cta": {
+      "title": "¿Listo para comenzar una asociación?",
+      "description": "Contáctenos hoy para discutir sus requisitos y descubrir cómo podemos ayudar a su negocio a crecer.",
+      "contactUs": "Contáctenos hoy"
+    }
+  },
+  "contact": {
+    "title": "Comencemos una conversación",
+    "subtitle": "¿Tiene preguntas sobre nuestros productos? ¿Necesita una cotización mayorista? Estamos aquí para ayudar.",
+    "getInTouch": "Póngase en contacto",
+    "email": "Correo electrónico",
+    "phone": "Teléfono",
+    "whatsapp": "WhatsApp",
+    "address": "Dirección",
+    "businessHours": "Horario comercial",
+    "businessHoursValue": "Lun - Sáb: 9:00 AM - 6:00 PM (GMT+8)",
+    "quickResponse": "Respuesta rápida vía WhatsApp",
+    "form": {
+      "name": "Nombre",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "company": "Empresa",
+      "subject": "Asunto",
+      "message": "Mensaje",
+      "sendInquiry": "Enviar consulta",
+      "sending": "Enviando...",
+      "success": "¡Gracias! Su consulta ha sido enviada.",
+      "error": "Error al enviar la consulta. Inténtelo de nuevo."
+    }
+  }
+}
