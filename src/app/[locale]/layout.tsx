@@ -6,7 +6,6 @@ import { locales, type Locale, rtlLocales } from '@/i18n/config';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { WhatsAppButton } from '@/components/layout/whatsapp-button';
-import './globals.css';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -57,15 +56,13 @@ export default async function LocaleLayout({
   const dir = isRtl ? 'rtl' : 'ltr';
 
   return (
-    <html lang={locale} dir={dir}>
-      <body className="antialiased">
-        <NextIntlClientProvider messages={messages}>
-          <Header />
-          <main className="min-h-screen">{children}</main>
-          <Footer />
-          <WhatsAppButton />
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <div lang={locale} dir={dir}>
+      <NextIntlClientProvider messages={messages}>
+        <Header />
+        <main className="min-h-screen">{children}</main>
+        <Footer />
+        <WhatsAppButton />
+      </NextIntlClientProvider>
+    </div>
   );
 }
