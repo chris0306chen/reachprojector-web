@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ShoppingCart, MessageCircle, ArrowRight, Check, ChevronLeft, ChevronRight, Minus, Plus } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useMessages } from 'next-intl';
 import type { Product } from '@/storage/database/shared/schema';
 import { ProductCard } from '@/components/product-card';
 import { PayPalCheckout } from '@/components/paypal-checkout';
@@ -26,13 +26,22 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
   const specs = product.specifications || {};
   const features = product.features || [];
 
+  // Get translated product name and description with fallback
+  const messages = useMessages();
+  const productItems = (messages as Record<string, unknown>)?.products as Record<string, unknown> | undefined;
+  const items = productItems?.items as Record<string, { name?: string; shortDescription?: string; description?: string }> | undefined;
+  const translatedItem = items?.[product.slug];
+  const displayName = translatedItem?.name || product.name;
+  const displayShortDesc = translatedItem?.shortDescription || product.short_description;
+  const displayDescription = translatedItem?.description || product.description;
+
   const whatsappMessage = encodeURIComponent(
-    `Hi, I am interested in ${product.name} (${product.brand}). Could you please provide more details and pricing?`
+    `Hi, I am interested in ${displayName} (${product.brand}). Could you please provide more details and pricing?`
   );
 
   const handlePayPalSuccess = () => {
     setTimeout(() => {
-      router.push('/order-success?product=' + encodeURIComponent(product.name));
+      router.push('/order-success?product=' + encodeURIComponent(displayName));
     }, 2000);
   };
 
@@ -45,7 +54,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
           <div className="aspect-square bg-slate-100 rounded-xl overflow-hidden mb-4">
             <img
               src={images[currentImage]}
-              alt={product.name}
+              alt={displayName}
               className="w-full h-full object-cover"
             />
           </div>
@@ -72,7 +81,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
             {product.brand}
           </p>
           <h1 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-4">
-            {product.name}
+            {displayName}
           </h1>
 
           {/* Price */}
@@ -100,9 +109,9 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
           </div>
 
           {/* Short Description */}
-          {product.short_description && (
+          {displayShortDesc && (
             <p className="text-slate-600 mb-6 leading-relaxed">
-              {product.short_description}
+              {displayShortDesc}
             </p>
           )}
 
@@ -149,7 +158,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
           {/* CTA Buttons */}
           <div className="flex flex-wrap gap-3 mb-6">
             <Link
-              href={`/checkout?productId=${product.id}&productName=${encodeURIComponent(product.name)}&price=${price}&quantity=${quantity}`}
+              href={`/checkout?productId=${product.id}&productName=${encodeURIComponent(displayName)}&price=${price}&quantity=${quantity}`}
               className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-all hover:scale-[1.02] shadow-md"
             >
               <ShoppingCart className="w-4 h-4" />
@@ -188,7 +197,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
               ) : (
                 <PayPalCheckout
                   productId={product.id}
-                  productName={product.name}
+                  productName={displayName}
                   price={price}
                   quantity={quantity}
                   currency="USD"
@@ -225,9 +234,9 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
           </button>
         </div>
 
-        {activeTab === 'description' && product.description && (
+        {activeTab === 'description' && displayDescription && (
           <div className="prose prose-slate max-w-none">
-            <p className="text-slate-600 leading-relaxed">{product.description}</p>
+            <p className="text-slate-600 leading-relaxed">{displayDescription}</p>
           </div>
         )}
 

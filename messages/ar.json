@@ -172,25 +172,164 @@
     "noProductsDesc": "حاول تعديل الفلاتر أو كلمات البحث",
     "viewAllProducts": "عرض جميع المنتجات",
     "prev": "السابق",
-    "next": "التالي"
-  },
-  "productDetail": {
-    "breadcrumb": {
-      "home": "الرئيسية",
-      "products": "المنتجات"
-    },
-    "stock": {
-      "inStock": "متوفر",
-      "outOfStock": "غير متوفر"
-    },
-    "addToCart": "أضف إلى السلة",
-    "buyNow": "اشتر الآن",
-    "checkoutNow": "الدفع الآن",
-    "wholesaleInquiry": "استفسار الجملة",
-    "requestQuote": "طلب عرض سعر",
-    "description": "وصف المنتج",
-    "specifications": "المواصفات",
-    "relatedProducts": "منتجات ذات صلة"
+    "next": "التالي",
+    "items": {
+      "jmgo-n5s-ultra-max-4k": {
+        "name": "JMGO N5S ULTRA MAX 4K",
+        "shortDescription": "Premium 4K laser projector with exceptional brightness and color accuracy for home theater.",
+        "description": "The JMGO N5S ULTRA MAX 4K delivers an immersive cinematic experience with its advanced laser light source, delivering stunning 4K resolution with vivid colors and deep contrasts. Perfect for dedicated home theater setups."
+      },
+      "xgimi-rs-10-ultra-4k": {
+        "name": "XGIMI RS 10 Ultra 4K",
+        "shortDescription": "Flagship 4K laser projector with dual laser engine and Dolby Vision support.",
+        "description": "The XGIMI RS 10 Ultra represents the pinnacle of home projection technology. Featuring a dual laser engine that delivers unparalleled brightness and color volume, with Dolby Vision and HDR10+ for the most lifelike images."
+      },
+      "xgimi-rs-10-mini-4k": {
+        "name": "XGIMI RS 10 Mini 4K",
+        "shortDescription": "Compact 4K laser projector with premium features in a smaller form factor.",
+        "description": "The XGIMI RS 10 Mini 4K brings flagship performance to a compact design. Perfect for smaller rooms while maintaining incredible image quality and smart features."
+      },
+      "hisense-vidda-c5-master-4k": {
+        "name": "Hisense VIDDA C5 Master 4K",
+        "shortDescription": "Professional-grade 4K laser projector with cinema-level color accuracy.",
+        "description": "The Hisense VIDDA C5 Master 4K is engineered for the most demanding home theater enthusiasts. With cinema-grade color accuracy and advanced laser technology, every frame comes alive with breathtaking detail."
+      },
+      "hisense-px2-pro-4k-ust": {
+        "name": "Hisense PX2-Pro 4K UST",
+        "shortDescription": "Ultra Short Throw 4K laser TV with 120\" image from inches away.",
+        "description": "The Hisense PX2-Pro transforms any wall into a massive 120-inch 4K display from just inches away. Its ultra-short throw design eliminates shadows and glare, delivering a true cinema experience in your living room."
+      },
+      "awol-vision-ltv-3500-4k": {
+        "name": "AWOL Vision LTV-3500 4K",
+        "shortDescription": "Premium RGB triple laser UST projector with unmatched brightness.",
+        "description": "The AWOL Vision LTV-3500 is the ultimate ultra-short throw projector featuring an RGB triple laser system that delivers extraordinary brightness and a color volume that surpasses any other projector in its class."
+      },
+      "formovie-theater-4k": {
+        "name": "Formovie Theater 4K",
+        "shortDescription": "Award-winning UST laser projector with ALPD 4.5 technology.",
+        "description": "The Formovie Theater combines ALPD 4.5 laser technology with an ultra-short throw design to deliver stunning 4K images. Winner of multiple awards for its exceptional picture quality and value."
+      },
+      "jmgo-u2-4k-laser-tv": {
+        "name": "JMGO U2 4K Laser TV",
+        "shortDescription": "Sleek 4K laser TV with superior optics and smart features.",
+        "description": "The JMGO U2 brings cinematic 4K quality to your living room with its compact laser TV design. Featuring advanced optics and smart connectivity for effortless entertainment."
+      },
+      "xgimi-horizon-ultra": {
+        "name": "XGIMI Horizon Ultra",
+        "shortDescription": "Premium 4K HDR projector with Dolby Vision and hybrid light source.",
+        "description": "The XGIMI Horizon Ultra combines a hybrid light source (LED + Laser) for exceptional brightness and color accuracy. With Dolby Vision support and premium audio, it delivers a complete entertainment experience."
+      },
+      "xgimi-mogo-3-pro": {
+        "name": "XGIMI MoGo 3 Pro",
+        "shortDescription": "Portable 1080p projector with built-in battery and Android TV.",
+        "description": "Take your entertainment anywhere with the XGIMI MoGo 3 Pro. This portable projector features a built-in battery for cord-free viewing and delivers impressive 1080p image quality."
+      },
+      "jmgo-n1-ultra-4k": {
+        "name": "JMGO N1 Ultra 4K",
+        "shortDescription": "Compact 4K laser projector with innovative gimbal design.",
+        "description": "The JMGO N1 Ultra features an innovative built-in gimbal stand that allows 360-degree rotation and easy angle adjustment. Combined with 4K laser projection, it offers unmatched versatility."
+      },
+      "hisense-pl1-4k-laser-tv": {
+        "name": "Hisense PL1 4K Laser TV",
+        "shortDescription": "Affordable 4K UST laser TV with impressive performance.",
+        "description": "The Hisense PL1 offers 4K ultra-short throw projection at an accessible price point. Perfect for those wanting a large-screen experience without the premium price tag."
+      },
+      "hp-laserjet-pro-m404dn": {
+        "name": "HP LaserJet Pro M404dn",
+        "shortDescription": "Fast monochrome laser printer for busy offices.",
+        "description": "The HP LaserJet Pro M404dn delivers fast, reliable monochrome printing for busy workgroups. With automatic duplex printing and network connectivity, it handles high-volume office tasks efficiently."
+      },
+      "canon-imageclass-lbp226dw": {
+        "name": "Canon imageCLASS LBP226dw",
+        "shortDescription": "Compact wireless monochrome laser printer with duplex printing.",
+        "description": "The Canon imageCLASS LBP226dw combines compact design with powerful performance. Wireless connectivity and automatic duplex printing make it ideal for small offices and home offices."
+      },
+      "brother-hl-l2370dw": {
+        "name": "Brother HL-L2370DW",
+        "shortDescription": "Reliable wireless monochrome laser printer for home and small office.",
+        "description": "The Brother HL-L2370DW offers reliable, cost-effective monochrome printing with wireless connectivity. Its compact design and fast print speeds make it perfect for home offices."
+      },
+      "epson-ecotank-et-4850": {
+        "name": "Epson EcoTank ET-4850",
+        "shortDescription": "All-in-one color inkjet with ultra-low cost per page.",
+        "description": "The Epson EcoTank ET-4850 revolutionizes printing with its cartridge-free design. Fill the tanks instead of replacing cartridges and save up to 90% on ink costs."
+      },
+      "hp-color-laserjet-pro-m479fdw": {
+        "name": "HP Color LaserJet Pro M479fdw",
+        "shortDescription": "Multifunction color laser printer with advanced security features.",
+        "description": "The HP Color LaserJet Pro M479fdw delivers professional color printing, scanning, copying, and faxing in one device. Advanced security features protect your business data."
+      },
+      "canon-maxify-gx7020": {
+        "name": "Canon MAXIFY GX7020",
+        "shortDescription": "High-volume refillable ink tank all-in-one printer.",
+        "description": "The Canon MAXIFY GX7020 is built for high-volume business printing with its refillable ink tank system. Print thousands of pages before refilling, with professional-quality color output."
+      },
+      "brother-mfc-l3770cdw": {
+        "name": "Brother MFC-L3770CDW",
+        "shortDescription": "Wireless color laser all-in-one with fast duplex printing.",
+        "description": "The Brother MFC-L3770CDW delivers fast color laser printing, scanning, copying, and faxing. Its wireless connectivity and mobile printing capabilities make it perfect for modern offices."
+      },
+      "epson-workforce-pro-wf-c5790": {
+        "name": "Epson WorkForce Pro WF-C5790",
+        "shortDescription": "Business color inkjet with PrecisionCore technology.",
+        "description": "The Epson WorkForce Pro WF-C5790 uses PrecisionCore heat-free technology for fast, energy-efficient color printing. Replace Pack ink system reduces waste and lowers cost per page."
+      },
+      "intel-core-i9-14900k": {
+        "name": "Intel Core i9-14900K",
+        "shortDescription": "Flagship 24-core desktop processor with 6.0 GHz boost.",
+        "description": "The Intel Core i9-14900K is the ultimate desktop processor with 24 cores (8P + 16E), 32 threads, and boost clocks up to 6.0 GHz. Built on Intel 7 process for exceptional gaming and productivity performance."
+      },
+      "amd-ryzen-9-7950x": {
+        "name": "AMD Ryzen 9 7950X",
+        "shortDescription": "16-core Zen 4 processor with exceptional multi-threaded performance.",
+        "description": "The AMD Ryzen 9 7950X delivers 16 cores of Zen 4 performance on the AM5 platform. With boost clocks up to 5.7 GHz and support for DDR5 and PCIe 5.0, it excels at both gaming and content creation."
+      },
+      "intel-core-i7-14700k": {
+        "name": "Intel Core i7-14700K",
+        "shortDescription": "High-performance 20-core processor for gaming and productivity.",
+        "description": "The Intel Core i7-14700K offers 20 cores (8P + 12E) and 28 threads, delivering excellent performance for gaming, streaming, and content creation at a more accessible price point."
+      },
+      "amd-ryzen-7-7800x3d": {
+        "name": "AMD Ryzen 7 7800X3D",
+        "shortDescription": "Best gaming CPU with 3D V-Cache technology.",
+        "description": "The AMD Ryzen 7 7800X3D features AMD 3D V-Cache technology with 96MB of L3 cache, making it the ultimate gaming processor. Its 8 cores and 16 threads handle any game with ease."
+      },
+      "nvidia-rtx-4090": {
+        "name": "NVIDIA GeForce RTX 4090",
+        "shortDescription": "Ultimate GPU with Ada Lovelace architecture and 24GB GDDR6X.",
+        "description": "The NVIDIA GeForce RTX 4090 is the most powerful consumer GPU ever made. With 16384 CUDA cores, 24GB GDDR6X memory, and DLSS 3.0, it delivers unprecedented performance for gaming, AI, and content creation."
+      },
+      "msi-rtx-4080-super": {
+        "name": "MSI GeForce RTX 4080 SUPER",
+        "shortDescription": "High-end GPU with 16GB GDDR6X for 4K gaming.",
+        "description": "The MSI GeForce RTX 4080 SUPER delivers exceptional 4K gaming performance with 10240 CUDA cores and 16GB GDDR6X memory. MSI cooling ensures quiet, cool operation under heavy loads."
+      },
+      "corsair-vengeance-ddr5-6000-32gb": {
+        "name": "Corsair Vengeance DDR5-6000 32GB",
+        "shortDescription": "High-performance DDR5 memory kit optimized for AMD and Intel.",
+        "description": "Corsair Vengeance DDR5-6000 32GB (2x16GB) kit delivers excellent performance for both gaming and productivity. Optimized for AMD EXPO and Intel XMP 3.0 platforms."
+      },
+      "samsung-990-pro-2tb-ssd": {
+        "name": "Samsung 990 Pro 2TB SSD",
+        "shortDescription": "PCIe 4.0 NVMe SSD with sequential read up to 7450 MB/s.",
+        "description": "The Samsung 990 Pro 2TB delivers blazing-fast storage performance with sequential reads up to 7450 MB/s. Built on Samsung V-NAND technology and a proprietary controller for maximum reliability."
+      },
+      "wd-black-sn850x-2tb-ssd": {
+        "name": "WD Black SN850X 2TB SSD",
+        "shortDescription": "High-performance gaming SSD with up to 7300 MB/s read speed.",
+        "description": "The WD Black SN850X 2TB is engineered for gamers and content creators. With PCIe 4.0 performance and Game Mode 2.0, it delivers the speed and responsiveness needed for modern gaming."
+      },
+      "asus-rog-strix-z790-e": {
+        "name": "ASUS ROG Strix Z790-E",
+        "shortDescription": "Premium Intel Z790 ATX motherboard with PCIe 5.0 and DDR5.",
+        "description": "The ASUS ROG Strix Z790-E Gaming WiFi is a premium motherboard built for Intel 13th/14th Gen processors. Features PCIe 5.0, DDR5 support, WiFi 6E, and robust power delivery for overclocking."
+      },
+      "gigabyte-x670e-aorus-master": {
+        "name": "Gigabyte X670E Aorus Master",
+        "shortDescription": "Premium AMD X670E motherboard with full PCIe 5.0 support.",
+        "description": "The Gigabyte X670E Aorus Master is the ultimate motherboard for AMD Ryzen 7000 series processors. Full PCIe 5.0 support across GPU and M.2 slots, with a massive 18+2+2 power stage design."
+      }
+    }
   },
   "productDetail": {
     "inStock": "متوفر - جاهز للشحن",
@@ -295,8 +434,7 @@
       "success": "شكراً لك! تم إرسال استفسارك.",
       "error": "فشل في إرسال الاستفسار. يرجى المحاولة مرة أخرى."
     }
-  }
-,
+  },
   "Footer": {
     "description": "شريكك الموثوق لأجهزة العرض المتميزة والطابعات وقطع غيار الكمبيوتر. وكيل معتمد لأفضل العلامات التجارية العالمية بأسعار جملة تنافسية.",
     "addressFujian": "رقم 1108 طريق تشوان آن الشمالي، مدينة جينجيانغ، مدينة تشوانتشو، مقاطعة فوجيان",

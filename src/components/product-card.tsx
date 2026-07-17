@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ShoppingCart, Eye } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useMessages } from 'next-intl';
 import type { Product } from '@/storage/database/shared/schema';
 
 interface ProductCardProps {
@@ -9,8 +9,16 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const t = useTranslations('products');
+  const messages = useMessages();
   const imageUrl = product.images?.[0] || '/images/placeholder-product.jpg';
   const price = parseFloat(product.price);
+
+  // Get translated product name and description with fallback
+  const productItems = (messages as Record<string, unknown>)?.products as Record<string, unknown> | undefined;
+  const items = productItems?.items as Record<string, { name?: string; shortDescription?: string }> | undefined;
+  const translatedItem = items?.[product.slug];
+  const displayName = translatedItem?.name || product.name;
+  const displayShortDesc = translatedItem?.shortDescription || product.short_description;
 
   return (
     <Link
@@ -21,7 +29,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <div className="relative aspect-[4/3] bg-slate-100 overflow-hidden">
         <img
           src={imageUrl}
-          alt={product.name}
+          alt={displayName}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
         />
@@ -29,7 +37,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="absolute top-3 left-3 flex flex-col gap-1.5">
           {product.is_bestseller && (
             <span className="px-2 py-0.5 text-xs font-semibold bg-orange-500 text-white rounded">
-              {t('badges.bestseller')}
+              {t('badges.bestSeller')}
             </span>
           )}
           {product.is_new_arrival && (
@@ -57,11 +65,11 @@ export function ProductCard({ product }: ProductCardProps) {
           {product.brand}
         </p>
         <h3 className="text-sm font-semibold text-slate-900 line-clamp-2 mb-2 group-hover:text-orange-500 transition-colors">
-          {product.name}
+          {displayName}
         </h3>
-        {product.short_description && (
+        {displayShortDesc && (
           <p className="text-xs text-slate-500 line-clamp-2 mb-3">
-            {product.short_description}
+            {displayShortDesc}
           </p>
         )}
         <div className="flex items-center justify-between">

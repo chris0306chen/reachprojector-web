@@ -172,25 +172,164 @@
     "noProductsDesc": "请尝试调整筛选条件或搜索关键词",
     "viewAllProducts": "查看所有产品",
     "prev": "上一页",
-    "next": "下一页"
-  },
-  "productDetail": {
-    "breadcrumb": {
-      "home": "首页",
-      "products": "产品"
-    },
-    "stock": {
-      "inStock": "有货",
-      "outOfStock": "缺货"
-    },
-    "addToCart": "加入购物车",
-    "buyNow": "立即购买",
-    "checkoutNow": "立即结账",
-    "wholesaleInquiry": "批发咨询",
-    "requestQuote": "请求报价",
-    "description": "产品描述",
-    "specifications": "规格参数",
-    "relatedProducts": "相关产品"
+    "next": "下一页",
+    "items": {
+      "jmgo-n5s-ultra-max-4k": {
+        "name": "JMGO N5S ULTRA MAX 4K",
+        "shortDescription": "高端4K激光投影仪，卓越亮度和色彩精准度，家庭影院首选。",
+        "description": "JMGO N5S ULTRA MAX 4K 采用先进激光光源，带来沉浸式影院体验，呈现惊艳的4K分辨率，色彩鲜艳，对比深邃。专为家庭影院打造。"
+      },
+      "xgimi-rs-10-ultra-4k": {
+        "name": "XGIMI RS 10 Ultra 4K",
+        "shortDescription": "旗舰4K激光投影仪，双激光引擎，支持杜比视界。",
+        "description": "XGIMI RS 10 Ultra 代表家用投影技术的巅峰。双激光引擎带来无与伦比的亮度和色彩表现，支持杜比视界和HDR10+，呈现最逼真的画面。"
+      },
+      "xgimi-rs-10-mini-4k": {
+        "name": "XGIMI RS 10 Mini 4K",
+        "shortDescription": "紧凑型4K激光投影仪，小体积大性能。",
+        "description": "XGIMI RS 10 Mini 4K 将旗舰性能融入紧凑设计。适合较小空间，同时保持出色的画质和智能功能。"
+      },
+      "hisense-vidda-c5-master-4k": {
+        "name": "Hisense VIDDA C5 Master 4K",
+        "shortDescription": "专业级4K激光投影仪，影院级色彩精准度。",
+        "description": "Hisense VIDDA C5 Master 4K 专为最苛刻的家庭影院爱好者打造。影院级色彩精准度配合先进激光技术，每一帧都栩栩如生。"
+      },
+      "hisense-px2-pro-4k-ust": {
+        "name": "Hisense PX2-Pro 4K UST",
+        "shortDescription": "超短焦4K激光电视，几英寸距离投射120英寸画面。",
+        "description": "Hisense PX2-Pro 将任何墙面变成120英寸4K大屏，仅需几英寸距离。超短焦设计消除阴影和眩光，在客厅带来真正的影院体验。"
+      },
+      "awol-vision-ltv-3500-4k": {
+        "name": "AWOL Vision LTV-3500 4K",
+        "shortDescription": "高端RGB三激光超短焦投影仪，无与伦比的亮度。",
+        "description": "AWOL Vision LTV-3500 是终极超短焦投影仪，采用RGB三激光系统，提供卓越亮度和超越同级的色彩表现。"
+      },
+      "formovie-theater-4k": {
+        "name": "Formovie Theater 4K",
+        "shortDescription": "获奖超短焦激光投影仪，ALPD 4.5技术。",
+        "description": "Formovie Theater 结合ALPD 4.5激光技术和超短焦设计，呈现惊艳4K画面。多次获奖，画质与性价比兼具。"
+      },
+      "jmgo-u2-4k-laser-tv": {
+        "name": "JMGO U2 4K 激光电视",
+        "shortDescription": "超短焦4K激光电视，150英寸沉浸式体验。",
+        "description": "JMGO U2 4K激光电视采用超短焦设计，仅需几厘米距离即可投射150英寸4K画面。ALPD激光技术确保出色的亮度和色彩表现。"
+      },
+      "xgimi-horizon-ultra": {
+        "name": "XGIMI Horizon Ultra",
+        "shortDescription": "旗舰4K激光投影仪，杜比视界和HDR10+。",
+        "description": "XGIMI Horizon Ultra 是高端家庭影院投影仪，支持杜比视界和HDR10+，带来影院级画质。激光光源提供卓越亮度和色彩精准度。"
+      },
+      "xgimi-mogo-3-pro": {
+        "name": "XGIMI MoGo 3 Pro",
+        "shortDescription": "便携式智能投影仪，Android TV内置。",
+        "description": "XGIMI MoGo 3 Pro 是完美的便携投影仪。内置Android TV，电池续航长达2小时，随时随地享受大屏体验。"
+      },
+      "jmgo-n1-ultra-4k": {
+        "name": "JMGO N1 Ultra 4K",
+        "shortDescription": "紧凑型4K激光投影仪，云台设计。",
+        "description": "JMGO N1 Ultra 4K 采用独特的云台设计，轻松调节投射角度。MALC目氪激光引擎提供出色的亮度和色彩，紧凑便携。"
+      },
+      "hisense-pl1-4k-laser-tv": {
+        "name": "Hisense PL1 4K 激光电视",
+        "shortDescription": "4K激光电视，超短焦设计，100英寸画面。",
+        "description": "Hisense PL1 4K激光电视采用超短焦设计，在短距离内投射100英寸4K画面。激光光源提供出色的亮度和色彩，内置智能电视系统。"
+      },
+      "hp-laserjet-pro-m404dn": {
+        "name": "HP LaserJet Pro M404dn",
+        "shortDescription": "高速黑白激光打印机，适合繁忙办公室。",
+        "description": "HP LaserJet Pro M404dn 专为繁忙办公室设计，每分钟40页高速打印，自动双面打印，网络安全功能。紧凑设计适合任何办公环境。"
+      },
+      "canon-imageclass-lbp226dw": {
+        "name": "Canon imageCLASS LBP226dw",
+        "shortDescription": "紧凑型黑白激光打印机，自动双面打印。",
+        "description": "Canon imageCLASS LBP226dw 是可靠紧凑的黑白激光打印机，自动双面打印，无线连接，适合小型办公室和家庭办公。"
+      },
+      "brother-hl-l2370dw": {
+        "name": "Brother HL-L2370DW",
+        "shortDescription": "紧凑型黑白激光打印机，无线双面打印。",
+        "description": "Brother HL-L2370DW 是经济高效的黑白激光打印机，无线双面打印，适合家庭和小型办公室。可靠且易于维护。"
+      },
+      "epson-ecotank-et-4850": {
+        "name": "Epson EcoTank ET-4850",
+        "shortDescription": "无线彩色多功能墨仓式打印机，灌装墨水成本极低。",
+        "description": "Epson EcoTank ET-4850 革命性的无墨盒设计，配备可灌装墨水仓，打印成本极低。打印、复印、扫描三合一，适合高印量用户。"
+      },
+      "hp-color-laserjet-pro-m479fdw": {
+        "name": "HP Color LaserJet Pro M479fdw",
+        "shortDescription": "多功能彩色激光打印机，打印复印扫描传真。",
+        "description": "HP Color LaserJet Pro M479fdw 是专业级多功能彩色激光打印机，打印、复印、扫描、传真四合一。高速彩色输出，企业级安全功能。"
+      },
+      "canon-maxify-gx7020": {
+        "name": "Canon MAXIFY GX7020",
+        "shortDescription": "商用彩色墨仓式多功能打印机，可灌装墨水。",
+        "description": "Canon MAXIFY GX7020 是高性能商用彩色多功能打印机，配备可灌装墨水系统，打印成本极低。自动双面打印，50页自动进稿器。"
+      },
+      "brother-mfc-l3770cdw": {
+        "name": "Brother MFC-L3770CDW",
+        "shortDescription": "多功能彩色激光打印机，无线双面打印。",
+        "description": "Brother MFC-L3770CDW 是多功能彩色激光一体机，打印、复印、扫描、传真，无线双面打印，触摸屏控制，适合小型办公室。"
+      },
+      "epson-workforce-pro-wf-c5790dw": {
+        "name": "Epson WorkForce Pro WF-C5790DW",
+        "shortDescription": "商用彩色多功能喷墨打印机，替代激光打印机。",
+        "description": "Epson WorkForce Pro WF-C5790DW 是高性能商用彩色多功能打印机，采用PrecisionCore打印头技术，速度媲美激光，色彩出众，能耗更低。"
+      },
+      "intel-core-i9-14900k": {
+        "name": "Intel Core i9-14900K",
+        "shortDescription": "旗舰桌面处理器，24核心，高达6.0GHz。",
+        "description": "Intel Core i9-14900K 是旗舰桌面处理器，24核心（8P+16E），32线程，睿频高达6.0GHz。采用Intel 7工艺，支持DDR5和PCIe 5.0。"
+      },
+      "amd-ryzen-9-7950x": {
+        "name": "AMD Ryzen 9 7950X",
+        "shortDescription": "16核心32线程桌面处理器，高达5.7GHz。",
+        "description": "AMD Ryzen 9 7950X 基于Zen 4架构，16核心32线程，睿频高达5.7GHz。AM5平台支持DDR5和PCIe 5.0，多线程性能卓越。"
+      },
+      "intel-core-i7-14700k": {
+        "name": "Intel Core i7-14700K",
+        "shortDescription": "高性能桌面处理器，20核心，高达5.6GHz。",
+        "description": "Intel Core i7-14700K 提供出色的性价比，20核心（8P+12E），28线程，睿频高达5.6GHz。适合游戏和内容创作。"
+      },
+      "amd-ryzen-7-7800x3d": {
+        "name": "AMD Ryzen 7 7800X3D",
+        "shortDescription": "游戏处理器，8核心，AMD 3D V-Cache技术。",
+        "description": "AMD Ryzen 7 7800X3D 是顶级游戏处理器，8核心16线程，搭载AMD 3D V-Cache技术，超大缓存带来极致游戏性能。"
+      },
+      "nvidia-rtx-4090": {
+        "name": "NVIDIA GeForce RTX 4090",
+        "shortDescription": "旗舰GPU，24GB GDDR6X，Ada Lovelace架构。",
+        "description": "NVIDIA GeForce RTX 4090 是消费级最强显卡，Ada Lovelace架构，16384个CUDA核心，24GB GDDR6X显存。4K游戏和AI工作负载的终极选择。"
+      },
+      "msi-rtx-4080-super": {
+        "name": "MSI RTX 4080 Super",
+        "shortDescription": "高端GPU，16GB GDDR6X，出色4K性能。",
+        "description": "MSI RTX 4080 Super 提供出色4K游戏性能，10240个CUDA核心，16GB GDDR6X显存。先进散热系统确保安静低温运行。"
+      },
+      "corsair-vengeance-ddr5-6000-32gb": {
+        "name": "Corsair Vengeance DDR5 6000 32GB",
+        "shortDescription": "高性能DDR5内存套装，6000MHz CL36。",
+        "description": "Corsair Vengeance DDR5 6000MHz 32GB套装（2x16GB）为DDR5平台优化，Intel XMP 3.0支持，铝制散热片确保稳定运行。"
+      },
+      "samsung-990-pro-2tb-ssd": {
+        "name": "Samsung 990 Pro 2TB SSD",
+        "shortDescription": "高端PCIe 4.0 NVMe固态硬盘，7450 MB/s读取。",
+        "description": "Samsung 990 Pro 2TB 是旗舰PCIe 4.0 NVMe固态硬盘，顺序读取7450 MB/s，写入6900 MB/s。Samsung V-NAND技术，5年质保。"
+      },
+      "wd-black-sn850x-2tb-ssd": {
+        "name": "WD Black SN850X 2TB SSD",
+        "shortDescription": "高性能游戏SSD，7300 MB/s读取速度。",
+        "description": "WD Black SN850X 2TB 专为游戏玩家和内容创作者打造，PCIe 4.0性能，Game Mode 2.0技术，提供现代游戏所需的速度和响应能力。"
+      },
+      "asus-rog-strix-z790-e": {
+        "name": "ASUS ROG Strix Z790-E",
+        "shortDescription": "高端Intel Z790 ATX主板，PCIe 5.0，DDR5。",
+        "description": "ASUS ROG Strix Z790-E Gaming WiFi 是面向Intel 13/14代处理器的高端主板，支持PCIe 5.0、DDR5、WiFi 6E，强劲供电设计支持超频。"
+      },
+      "gigabyte-x670e-aorus-master": {
+        "name": "Gigabyte X670E Aorus Master",
+        "shortDescription": "高端AMD X670E主板，全面PCIe 5.0支持。",
+        "description": "Gigabyte X670E Aorus Master 是AMD Ryzen 7000系列处理器的终极主板，全面PCIe 5.0支持，18+2+2相供电设计。"
+      }
+    }
   },
   "productDetail": {
     "inStock": "有货 - 准备发货",
@@ -295,8 +434,7 @@
       "success": "谢谢！您的咨询已发送。",
       "error": "发送咨询失败，请重试。"
     }
-  }
-,
+  },
   "Footer": {
     "description": "您值得信赖的优质投影仪、打印机和电脑配件合作伙伴。全球顶级品牌授权经销商，提供极具竞争力的批发价格。",
     "addressFujian": "福建省泉州市晋江市泉安北路1108号",
