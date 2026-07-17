@@ -19,13 +19,13 @@ import {
 import { useState, useEffect } from "react";
 
 const navItems = [
-  { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/products", label: "Products", icon: Package },
-  { href: "/admin/products/import", label: "Import Products", icon: Download },
-  { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
-  { href: "/admin/inquiries", label: "Inquiries", icon: MessageSquare },
-  { href: "/admin/shipping", label: "Shipping", icon: Truck },
-  { href: "/admin/users", label: "Users", icon: Users },
+  { href: "/admin/dashboard", label: "仪表盘", icon: LayoutDashboard },
+  { href: "/admin/products", label: "产品管理", icon: Package },
+  { href: "/admin/products/import", label: "导入产品", icon: Download },
+  { href: "/admin/orders", label: "订单管理", icon: ShoppingCart },
+  { href: "/admin/inquiries", label: "询盘管理", icon: MessageSquare },
+  { href: "/admin/shipping", label: "物流管理", icon: Truck },
+  { href: "/admin/users", label: "用户管理", icon: Users },
 ];
 
 export function AdminSidebar() {
@@ -86,14 +86,14 @@ export function AdminSidebar() {
         className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors"
       >
         <ExternalLink className="w-5 h-5 flex-shrink-0" />
-        <span>View Site</span>
+        <span>查看网站</span>
       </Link>
       <button
         onClick={handleLogout}
         className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 w-full text-left transition-colors"
       >
         <LogOut className="w-5 h-5 flex-shrink-0" />
-        <span>Logout</span>
+        <span>退出登录</span>
       </button>
     </div>
   );
@@ -105,7 +105,7 @@ export function AdminSidebar() {
         <button
           onClick={() => setMobileOpen(true)}
           className="p-2 -ml-2 rounded-lg hover:bg-slate-100 transition-colors"
-          aria-label="Open menu"
+          aria-label="打开菜单"
         >
           <Menu className="w-5 h-5 text-slate-700" />
         </button>
@@ -113,7 +113,7 @@ export function AdminSidebar() {
           <div className="w-7 h-7 bg-orange-500 rounded-md flex items-center justify-center">
             <span className="text-white font-bold text-xs">R</span>
           </div>
-          <span className="font-bold text-slate-900 text-sm">REACH Admin</span>
+          <span className="font-bold text-slate-900 text-sm">REACH 管理后台</span>
         </div>
       </header>
 
@@ -140,13 +140,13 @@ export function AdminSidebar() {
             </div>
             <div>
               <h1 className="font-bold text-slate-900 text-sm leading-tight">REACH</h1>
-              <p className="text-xs text-slate-500 leading-tight">Admin Panel</p>
+              <p className="text-xs text-slate-500 leading-tight">管理后台</p>
             </div>
           </Link>
           <button
             onClick={() => setMobileOpen(false)}
             className="p-2 rounded-lg hover:bg-slate-100 transition-colors"
-            aria-label="Close menu"
+            aria-label="关闭菜单"
           >
             <X className="w-5 h-5 text-slate-500" />
           </button>
@@ -165,7 +165,7 @@ export function AdminSidebar() {
             </div>
             <div>
               <h1 className="font-bold text-slate-900 text-sm leading-tight">REACH</h1>
-              <p className="text-xs text-slate-500 leading-tight">Admin Panel</p>
+              <p className="text-xs text-slate-500 leading-tight">管理后台</p>
             </div>
           </Link>
         </div>

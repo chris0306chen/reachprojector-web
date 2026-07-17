@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Users, Plus, Edit2, Trash2, Shield } from "lucide-react";
+import { Plus, Pencil, Trash2, Users, Shield, X, Check } from "lucide-react";
 
 interface User {
   id: string;
@@ -10,99 +10,261 @@ interface User {
   role: string;
   permissions: string[];
   is_active: boolean;
-  last_login_at: string | null;
   created_at: string;
 }
 
-const allPermissions = [
-  "view_orders", "manage_orders", "ship_orders",
-  "view_products", "manage_products",
-  "view_inquiries", "reply_inquiries",
-  "view_users",
+const ALL_PERMISSIONS = [
+  { key: "products", label: "产品管理" },
+  { key: "orders", label: "订单管理" },
+  { key: "inquiries", label: "询盘管理" },
+  { key: "shipping", label: "物流管理" },
+  { key: "users", label: "用户管理" },
+  { key: "import", label: "产品导入" },
 ];
+
+const emptyForm = {
+  email: "",
+  password: "",
+  name: "",
+  role: "staff",
+  permissions: [] as string[],
+  is_active: true,
+};
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: "", email: "", password: "", role: "staff", permissions: [] as string[] });
+  const [form, setForm] = useState(emptyForm);
+  const [saving, setSaving] = useState(false);
 
-  useEffect(() => { fetchUsers(); }, []);
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const fetchUsers = async () => {
     try {
       const res = await fetch("/api/admin/users");
       const data = await res.json();
-      setUsers(data.data || []);
-    } catch (err) { console.error("Failed to fetch users:", err); }
-    finally { setLoading(false); }
+      setUsers(data);
+    } catch (err) {
+      console.error("Failed to fetch users:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSubmit = async () => {
-    const payload: Record<string, unknown> = { name: form.name, email: form.email, role: form.role, permissions: form.permissions };
-    if (form.password) payload.password = form.password;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
 
     try {
-      if (editingId) {
-        await fetch(`/api/admin/users/${editingId}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      } else {
-        payload.password = form.password;
-        await fetch("/api/admin/users", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      }
+      const method = editingId ? "PUT" : "POST";
+      const body = editingId ? { ...form, id: editingId } : form;
+
+      await fetch("/api/admin/users", {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
       setShowForm(false);
       setEditingId(null);
-      setForm({ name: "", email: "", password: "", role: "staff", permissions: [] });
+      setForm(emptyForm);
       fetchUsers();
-    } catch (err) { console.error("Failed to save user:", err); }
+    } catch (err) {
+      console.error("Failed to save user:", err);
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const editUser = (u: User) => {
-    setForm({ name: u.name, email: u.email, password: "", role: u.role, permissions: u.permissions || [] });
+  const handleEdit = (u: User) => {
+    setForm({
+      email: u.email,
+      password: "",
+      name: u.name,
+      role: u.role,
+      permissions: u.permissions,
+      is_active: u.is_active,
+    });
     setEditingId(u.id);
     setShowForm(true);
   };
 
-  const deleteUser = async (id: string) => {
-    if (!confirm("Delete this user?")) return;
+  const handleDelete = async (id: string) => {
+    if (!confirm("确定要删除这个用户吗？")) return;
     try {
-      await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
-      setUsers(users.filter((u) => u.id !== id));
-    } catch (err) { console.error("Failed to delete user:", err); }
+      await fetch(`/api/admin/users?id=${id}`, { method: "DELETE" });
+      fetchUsers();
+    } catch (err) {
+      console.error("Failed to delete user:", err);
+    }
   };
 
-  const togglePermission = (perm: string) => {
-    setForm({
-      ...form,
-      permissions: form.permissions.includes(perm)
-        ? form.permissions.filter((p) => p !== perm)
-        : [...form.permissions, perm],
-    });
+  const togglePermission = (key: string) => {
+    setForm((prev) => ({
+      ...prev,
+      permissions: prev.permissions.includes(key)
+        ? prev.permissions.filter((p) => p !== key)
+        : [...prev.permissions, key],
+    }));
   };
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">User Management</h1>
-        <button onClick={() => { setShowForm(true); setEditingId(null); setForm({ name: "", email: "", password: "", role: "staff", permissions: [] }); }} className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm hover:bg-slate-800 flex items-center gap-2">
-          <Plus className="w-4 h-4" /> Add User
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">用户管理</h1>
+          <p className="text-slate-500 text-sm mt-1">管理后台用户和权限</p>
+        </div>
+        <button
+          onClick={() => { setForm(emptyForm); setEditingId(null); setShowForm(true); }}
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-orange-600 text-white text-sm font-medium rounded-lg hover:bg-orange-700 transition-colors"
+        >
+          <Plus className="w-4 h-4" />
+          添加用户
         </button>
       </div>
 
+      {/* Form Modal */}
+      {showForm && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg">
+            <div className="flex items-center justify-between p-5 border-b border-slate-200">
+              <h2 className="text-lg font-semibold text-slate-900">
+                {editingId ? "编辑用户" : "添加用户"}
+              </h2>
+              <button onClick={() => setShowForm(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+                <X className="w-5 h-5 text-slate-500" />
+              </button>
+            </div>
+            <form onSubmit={handleSubmit} className="p-5 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">姓名</label>
+                <input
+                  type="text"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  required
+                  placeholder="用户姓名"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">邮箱</label>
+                <input
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  required
+                  placeholder="user@example.com"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  密码 {editingId && <span className="text-slate-400 font-normal">（留空则不修改）</span>}
+                </label>
+                <input
+                  type="password"
+                  value={form.password}
+                  onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  required={!editingId}
+                  placeholder={editingId ? "••••••••" : "输入密码"}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">角色</label>
+                <select
+                  value={form.role}
+                  onChange={(e) => setForm({ ...form, role: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
+                >
+                  <option value="admin">管理员</option>
+                  <option value="staff">员工</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">权限</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {ALL_PERMISSIONS.map((perm) => (
+                    <label
+                      key={perm.key}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-colors ${
+                        form.permissions.includes(perm.key)
+                          ? "border-orange-500 bg-orange-50"
+                          : "border-slate-200 hover:border-slate-300"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={form.permissions.includes(perm.key)}
+                        onChange={() => togglePermission(perm.key)}
+                        className="w-4 h-4 rounded border-slate-300 text-orange-600 focus:ring-orange-500"
+                      />
+                      <span className="text-sm text-slate-700">{perm.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="user_active"
+                  checked={form.is_active}
+                  onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
+                  className="w-4 h-4 rounded border-slate-300 text-orange-600 focus:ring-orange-500"
+                />
+                <label htmlFor="user_active" className="text-sm text-slate-700">启用此用户</label>
+              </div>
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowForm(false)}
+                  className="px-4 py-2 border border-slate-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50"
+                >
+                  取消
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 disabled:opacity-50"
+                >
+                  {saving ? "保存中..." : editingId ? "更新" : "创建"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Users Table */}
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
         {loading ? (
-          <div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-6 w-6 border-b-2 border-slate-900" /></div>
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900" />
+          </div>
+        ) : users.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 text-slate-500">
+            <Users className="w-12 h-12 mb-3 text-slate-300" />
+            <p>暂无用户</p>
+            <p className="text-sm mt-1">点击"添加用户"创建子账号</p>
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead>
-                <tr className="bg-slate-50 text-left">
-                  <th className="px-4 py-3 text-xs font-medium text-slate-500 uppercase">Name</th>
-                  <th className="px-4 py-3 text-xs font-medium text-slate-500 uppercase">Email</th>
-                  <th className="px-4 py-3 text-xs font-medium text-slate-500 uppercase">Role</th>
-                  <th className="px-4 py-3 text-xs font-medium text-slate-500 uppercase">Permissions</th>
-                  <th className="px-4 py-3 text-xs font-medium text-slate-500 uppercase">Status</th>
-                  <th className="px-4 py-3 text-xs font-medium text-slate-500 uppercase">Actions</th>
+              <thead className="bg-slate-50 border-b border-slate-200">
+                <tr>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">姓名</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">邮箱</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">角色</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">权限</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">状态</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">创建日期</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">操作</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -111,27 +273,51 @@ export default function AdminUsersPage() {
                     <td className="px-4 py-3 text-sm font-medium text-slate-900">{u.name}</td>
                     <td className="px-4 py-3 text-sm text-slate-600">{u.email}</td>
                     <td className="px-4 py-3">
-                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${u.role === "admin" ? "bg-orange-100 text-orange-700" : "bg-slate-100 text-slate-600"}`}>
-                        {u.role === "admin" && <Shield className="w-3 h-3" />}
-                        {u.role}
+                      <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                        u.role === "admin" ? "bg-purple-100 text-purple-700" : "bg-blue-100 text-blue-700"
+                      }`}>
+                        <Shield className="w-3 h-3" />
+                        {u.role === "admin" ? "管理员" : "员工"}
                       </span>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex flex-wrap gap-1">
-                        {(u.permissions || []).map((p) => (
-                          <span key={p} className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{p}</span>
+                        {u.permissions.map((p) => (
+                          <span key={p} className="inline-flex px-1.5 py-0.5 rounded text-xs bg-slate-100 text-slate-600">
+                            {ALL_PERMISSIONS.find((ap) => ap.key === p)?.label || p}
+                          </span>
                         ))}
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${u.is_active ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                        {u.is_active ? "Active" : "Inactive"}
+                      <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                        u.is_active ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"
+                      }`}>
+                        {u.is_active ? <Check className="w-3 h-3" /> : null}
+                        {u.is_active ? "启用" : "停用"}
                       </span>
+                    </td>
+                    <td className="px-4 py-3 text-sm text-slate-500">
+                      {new Date(u.created_at).toLocaleDateString("zh-CN")}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1">
-                        <button onClick={() => editUser(u)} className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500"><Edit2 className="w-4 h-4" /></button>
-                        {u.role !== "admin" && <button onClick={() => deleteUser(u.id)} className="p-1.5 rounded-lg hover:bg-red-50 text-slate-500 hover:text-red-600"><Trash2 className="w-4 h-4" /></button>}
+                        <button
+                          onClick={() => handleEdit(u)}
+                          className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors"
+                          title="编辑"
+                        >
+                          <Pencil className="w-4 h-4 text-slate-500" />
+                        </button>
+                        {u.role !== "admin" && (
+                          <button
+                            onClick={() => handleDelete(u.id)}
+                            className="p-1.5 hover:bg-red-50 rounded-lg transition-colors"
+                            title="删除"
+                          >
+                            <Trash2 className="w-4 h-4 text-red-500" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -141,53 +327,6 @@ export default function AdminUsersPage() {
           </div>
         )}
       </div>
-
-      {/* Form Modal */}
-      {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md max-h-[80vh] overflow-y-auto">
-            <h3 className="text-lg font-semibold mb-4">{editingId ? "Edit" : "Add"} User</h3>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Name</label>
-                <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
-                <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">{editingId ? "New Password (leave blank to keep)" : "Password"}</label>
-                <input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Role</label>
-                <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
-                  <option value="staff">Staff</option>
-                  <option value="admin">Admin</option>
-                </select>
-              </div>
-              {form.role === "staff" && (
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Permissions</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {allPermissions.map((p) => (
-                      <label key={p} className="flex items-center gap-2 text-sm">
-                        <input type="checkbox" checked={form.permissions.includes(p)} onChange={() => togglePermission(p)} className="rounded border-slate-300" />
-                        <span className="text-slate-600">{p.replace(/_/g, " ")}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="flex gap-2 mt-6">
-              <button onClick={() => setShowForm(false)} className="flex-1 py-2 border border-slate-300 rounded-lg text-sm hover:bg-slate-50">Cancel</button>
-              <button onClick={handleSubmit} className="flex-1 py-2 bg-slate-900 text-white rounded-lg text-sm hover:bg-slate-800">Save</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
