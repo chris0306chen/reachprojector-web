@@ -1,25 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createInquiry } from '@/lib/data-service';
-import nodemailer from 'nodemailer';
-
-const SMTP_HOST = process.env.SMTP_HOST || 'smtp.qiye.aliyun.com';
-const SMTP_PORT = parseInt(process.env.SMTP_PORT || '465');
-const SMTP_USER = process.env.SMTP_USER || 'Reach001@reachtronics.com';
-const SMTP_PASS = process.env.SMTP_PASS || 'LC314frHyYJOgZxq';
-const SMTP_FROM = process.env.SMTP_FROM || 'info@reachtronics.com';
-
-function createTransport() {
-  return nodemailer.createTransport({
-    host: SMTP_HOST,
-    port: SMTP_PORT,
-    secure: true,
-    auth: {
-      user: SMTP_USER,
-      pass: SMTP_PASS,
-    },
-    connectionTimeout: 10000,
-  });
-}
+import { sendEmail } from '@/lib/email';
 
 function sendInquiryNotification(inquiry: {
   name: string;
@@ -29,8 +10,6 @@ function sendInquiryNotification(inquiry: {
   subject?: string;
   inquiry_type?: string;
 }) {
-  const transporter = createTransport();
-  const fromAddress = SMTP_FROM;
   const toAddress = 'info@reachtronics.com';
   const now = new Date().toLocaleString('en-US', { timeZone: 'Asia/Shanghai' });
 
@@ -78,31 +57,24 @@ ${inquiry.message}
         </div>
       </div>
       <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
-      <p style="font-size: 12px; color: #94a3b8;">
-        This is an automated notification from REACH Projector website.
+      <p style="font-size: 12px; color: #94a3b8; text-align: center;">
+        Sent from REACH PROJECTOR Contact Form
       </p>
     </div>
   `;
 
-  transporter
-    .sendMail({
-      from: fromAddress,
-      to: toAddress,
-      subject: `New Inquiry from ${inquiry.name} - REACH Projector`,
-      html,
-    })
-    .then((info) => {
-      console.log('Inquiry notification email sent:', info.messageId);
-    })
-    .catch((err) => {
-      console.error('Failed to send inquiry notification email:', err);
-    });
+  return sendEmail({
+    to: toAddress,
+    subject: `New Inquiry: ${inquiry.subject || inquiry.name}`,
+    html,
+    replyTo: inquiry.email,
+  });
 }
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, phone, company, subject, message, inquiry_type } = body;
+    const { name, email, company, message, subject, inquiry_type } = body;
 
     if (!name || !email || !message) {
       return NextResponse.json(
@@ -111,33 +83,24 @@ export async function POST(request: Request) {
       );
     }
 
-    const inquiryData = {
-      name: String(name),
-      email: String(email),
-      phone: phone ? String(phone) : undefined,
-      company: company ? String(company) : undefined,
-      subject: subject ? String(subject) : undefined,
-      message: String(message),
-      inquiry_type: inquiry_type ? String(inquiry_type) : 'general',
-    } as const;
-
-    const inquiry = await createInquiry(inquiryData as any);
-
-    // Send email notification (fire and forget)
-    sendInquiryNotification({
-      name: String(name),
-      email: String(email),
-      company: company ? String(company) : undefined,
-      message: String(message),
-      subject: subject ? String(subject) : undefined,
-      inquiry_type: inquiry_type ? String(inquiry_type) : 'general',
+    const inquiry = await createInquiry({
+      name,
+      email,
+      company,
+      message,
+      subject,
+      inquiry_type,
     });
+
+    // Send email notification (fire and forget - don't fail inquiry if email fails)
+    sendInquiryNotification({ name, email, company, message, subject, inquiry_type })
+      .catch((err) => console.error('Email notification failed:', err));
 
     return NextResponse.json({ success: true, data: inquiry }, { status: 201 });
   } catch (error) {
-    console.error('Failed to create inquiry:', error);
+    console.error('Error creating inquiry:', error);
     return NextResponse.json(
-      { error: 'Failed to submit inquiry. Please try again.' },
+      { error: 'Failed to create inquiry' },
       { status: 500 }
     );
   }
