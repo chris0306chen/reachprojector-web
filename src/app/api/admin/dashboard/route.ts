@@ -5,57 +5,94 @@ export async function GET() {
   try {
     const supabase = await getSupabaseClient();
 
+    // Fetch all data in parallel
     const [
       { count: totalProducts },
-      { count: totalOrders },
-      { count: pendingInquiries },
+      { data: allOrders },
+      { count: totalInquiries },
       { data: recentOrders },
-      { data: topProducts },
+      { data: recentInquiries },
     ] = await Promise.all([
-      supabase.from("products").select("*", { count: "exact", head: true }).eq("is_active", true),
-      supabase.from("orders").select("*", { count: "exact", head: true }),
-      supabase.from("inquiries").select("*", { count: "exact", head: true }).eq("status", "pending"),
-      supabase.from("orders").select("*").order("created_at", { ascending: false }).limit(5),
-      supabase.rpc("get_top_products", { limit_count: 5 }).then(({ data }) => ({ data })),
+      supabase.from("products").select("*", { count: "exact", head: true }),
+      supabase.from("orders").select("*"),
+      supabase.from("inquiries").select("*", { count: "exact", head: true }),
+      supabase.from("orders").select("*").order("created_at", { ascending: false }).limit(10),
+      supabase.from("inquiries").select("*").order("created_at", { ascending: false }).limit(5),
     ]);
 
-    // Calculate total revenue
-    const { data: allOrders } = await supabase
-      .from("orders")
-      .select("amount")
-      .in("status", ["paid", "shipped", "delivered"]);
+    const orders = allOrders || [];
 
-    const totalRevenue = allOrders?.reduce((sum, o) => sum + parseFloat(o.amount), 0) || 0;
+    // Calculate total revenue (all non-cancelled orders)
+    const totalRevenue = orders
+      .filter((o) => o.status !== "cancelled")
+      .reduce((sum, o) => sum + parseFloat(o.amount || 0), 0);
 
-    // Handle case where RPC function doesn't exist
-    let topProductsData = topProducts;
-    if (!topProductsData) {
-      const { data: orderProducts } = await supabase
-        .from("orders")
-        .select("product_name, amount, quantity")
-        .order("created_at", { ascending: false })
-        .limit(5);
-      topProductsData = orderProducts?.map((o) => ({
-        product_name: o.product_name,
-        total_sold: o.quantity,
-        total_revenue: parseFloat(o.amount),
-      })) || [];
-    }
+    // Count orders by status
+    const pendingPaymentOrders = orders.filter((o) =>
+      ["pending", "pending_payment"].includes(o.status)
+    ).length;
+    const pendingShipOrders = orders.filter((o) =>
+      ["paid", "preparing"].includes(o.status)
+    ).length;
+
+    // New inquiries count (status = 'new' or 'pending')
+    const allInquiries = (await supabase.from("inquiries").select("status")).data || [];
+    const newInquiriesCount = allInquiries.filter((i) =>
+      ["new", "pending"].includes(i.status)
+    ).length;
+
+    // Sales by country
+    const byCountry: Record<string, { total_sales: number; order_count: number }> = {};
+    orders
+      .filter((o) => o.status !== "cancelled")
+      .forEach((o) => {
+        const country = o.country || "Unknown";
+        if (!byCountry[country]) byCountry[country] = { total_sales: 0, order_count: 0 };
+        byCountry[country].order_count++;
+        byCountry[country].total_sales += parseFloat(o.amount || 0);
+      });
+
+    const byCountryArray = Object.entries(byCountry)
+      .map(([country, data]) => ({ country, ...data }))
+      .sort((a, b) => b.total_sales - a.total_sales)
+      .slice(0, 10);
+
+    // Sales by product
+    const byProduct: Record<string, { total_quantity: number; total_sales: number }> = {};
+    orders
+      .filter((o) => o.status !== "cancelled")
+      .forEach((o) => {
+        const productName = o.product_name || "Unknown";
+        if (!byProduct[productName]) byProduct[productName] = { total_quantity: 0, total_sales: 0 };
+        byProduct[productName].total_quantity += o.quantity || 1;
+        byProduct[productName].total_sales += parseFloat(o.amount || 0);
+      });
+
+    const byProductArray = Object.entries(byProduct)
+      .map(([product_name, data]) => ({ product_name, ...data }))
+      .sort((a, b) => b.total_quantity - a.total_quantity)
+      .slice(0, 10);
 
     return NextResponse.json({
       stats: {
-        totalProducts: totalProducts || 0,
-        totalOrders: totalOrders || 0,
         totalRevenue,
-        pendingInquiries: pendingInquiries || 0,
+        totalOrders: orders.length,
+        totalProducts: totalProducts || 0,
+        totalInquiries: totalInquiries || 0,
+        totalSales: totalRevenue,
+        pendingPaymentOrders,
+        pendingShipOrders,
+        newInquiriesCount,
       },
+      byCountry: byCountryArray,
+      byProduct: byProductArray,
       recentOrders: recentOrders || [],
-      topProducts: topProductsData || [],
+      recentInquiries: recentInquiries || [],
     });
   } catch (error) {
     console.error("Dashboard stats error:", error);
     return NextResponse.json(
-      { error: "Failed to fetch dashboard stats" },
+      { error: "Failed to fetch dashboard stats", details: String(error) },
       { status: 500 }
     );
   }
