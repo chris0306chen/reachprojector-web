@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, Search, ChevronDown, ShoppingCart, Store, Building2 } from 'lucide-react';
+import { LanguageSwitcher } from './language-switcher';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -108,6 +109,9 @@ export function Header() {
 
           {/* Right Actions */}
           <div className="flex items-center gap-3">
+            {/* Language Switcher */}
+            <LanguageSwitcher />
+
             {/* Retail/B2B Toggle - Desktop */}
             <div className="hidden md:flex items-center bg-slate-100 rounded-lg p-1">
               <button
