@@ -225,4 +225,22 @@
       "error": "发送咨询失败，请重试。"
     }
   }
+,
+  "Footer": {
+    "description": "您值得信赖的优质投影仪、打印机和电脑配件合作伙伴。全球顶级品牌授权经销商，提供极具竞争力的批发价格。",
+    "addressFujian": "福建省泉州市晋江市泉安北路1108号",
+    "addressHongKong": "香港尖沙咀加连威老道61-65号资本广场2楼S007室",
+    "products": "产品",
+    "company": "公司",
+    "support": "支持",
+    "allProducts": "所有产品",
+    "whyChooseUs": "为何选择我们",
+    "wholesaleInquiry": "批发咨询",
+    "technicalSupport": "技术支持",
+    "warrantyPolicy": "保修政策",
+    "shippingInfo": "配送信息",
+    "returnsRefunds": "退换货",
+    "authorizedDealer": "授权经销商",
+    "allRightsReserved": "版权所有"
+  }
 }

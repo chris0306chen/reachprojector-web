@@ -225,4 +225,22 @@
       "error": "Error al enviar la consulta. Inténtelo de nuevo."
     }
   }
+,
+  "Footer": {
+    "description": "Su socio de confianza para proyectores premium, impresoras y componentes de computadora. Distribuidor autorizado de las mejores marcas globales con precios competitivos al por mayor.",
+    "addressFujian": "No. 1108 Quan'an North Road, Jinjiang City, Quanzhou City, Fujian Province",
+    "addressHongKong": "Room S007, 2/F, Capital Plaza, 61-65 Chatham Road South, Tsim Sha Tsui, Hong Kong",
+    "products": "Productos",
+    "company": "Empresa",
+    "support": "Soporte",
+    "allProducts": "Todos los productos",
+    "whyChooseUs": "Por qué elegirnos",
+    "wholesaleInquiry": "Consulta mayorista",
+    "technicalSupport": "Soporte técnico",
+    "warrantyPolicy": "Política de garantía",
+    "shippingInfo": "Información de envío",
+    "returnsRefunds": "Devoluciones y reembolsos",
+    "authorizedDealer": "Distribuidor autorizado de",
+    "allRightsReserved": "Todos los derechos reservados."
+  }
 }

@@ -225,4 +225,22 @@
       "error": "Не удалось отправить запрос. Пожалуйста, попробуйте снова."
     }
   }
+,
+  "Footer": {
+    "description": "Ваш надежный партнер по премиальным проекторам, принтерам и компьютерным комплектующим. Авторизованный дилер ведущих мировых брендов по конкурентоспособным оптовым ценам.",
+    "addressFujian": "No. 1108 Quan'an North Road, Jinjiang City, Quanzhou City, Fujian Province",
+    "addressHongKong": "Room S007, 2/F, Capital Plaza, 61-65 Chatham Road South, Tsim Sha Tsui, Hong Kong",
+    "products": "Продукция",
+    "company": "Компания",
+    "support": "Поддержка",
+    "allProducts": "Все продукты",
+    "whyChooseUs": "Почему выбирают нас",
+    "wholesaleInquiry": "Оптовый запрос",
+    "technicalSupport": "Техническая поддержка",
+    "warrantyPolicy": "Гарантийная политика",
+    "shippingInfo": "Информация о доставке",
+    "returnsRefunds": "Возврат и возврат средств",
+    "authorizedDealer": "Авторизованный дилер",
+    "allRightsReserved": "Все права защищены."
+  }
 }

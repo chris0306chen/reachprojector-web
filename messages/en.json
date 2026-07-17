@@ -20,7 +20,10 @@
     "getQuote": "Get Quote",
     "cart": "Cart",
     "search": "Search",
-    "authorizedDealer": "Authorized Dealer of Premium Electronics"
+    "authorizedDealer": "Authorized Dealer of Premium Electronics",
+    "projectors": "Projectors",
+    "printers": "Printers",
+    "components": "Components"
   },
   "home": {
     "hero": {
@@ -224,5 +227,22 @@
       "success": "Thank you! Your inquiry has been sent.",
       "error": "Failed to send inquiry. Please try again."
     }
+  },
+  "Footer": {
+    "description": "Your trusted partner for premium projectors, printers, and computer components. Authorized dealer of top global brands with competitive wholesale pricing.",
+    "addressFujian": "No. 1108 Quan'an North Road, Jinjiang City, Quanzhou City, Fujian Province",
+    "addressHongKong": "Room S007, 2/F, Capital Plaza, 61-65 Chatham Road South, Tsim Sha Tsui, Hong Kong",
+    "products": "Products",
+    "company": "Company",
+    "support": "Support",
+    "allProducts": "All Products",
+    "whyChooseUs": "Why Choose Us",
+    "wholesaleInquiry": "Wholesale Inquiry",
+    "technicalSupport": "Technical Support",
+    "warrantyPolicy": "Warranty Policy",
+    "shippingInfo": "Shipping Info",
+    "returnsRefunds": "Returns & Refunds",
+    "authorizedDealer": "Authorized Dealer Of",
+    "allRightsReserved": "All rights reserved."
   }
 }

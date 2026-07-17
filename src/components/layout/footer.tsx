@@ -1,30 +1,37 @@
+'use client';
+
 import Link from 'next/link';
 import { Mail, Phone, MapPin } from 'lucide-react';
-
-const footerLinks = {
-  products: [
-    { href: '/products?category=projectors', label: 'Projectors' },
-    { href: '/products?category=printers', label: 'Printers' },
-    { href: '/products?category=components', label: 'Components' },
-    { href: '/products', label: 'All Products' },
-  ],
-  company: [
-    { href: '/about', label: 'About Us' },
-    { href: '/contact', label: 'Contact' },
-    { href: '/about', label: 'Why Choose Us' },
-    { href: '/contact', label: 'Wholesale Inquiry' },
-  ],
-  support: [
-    { href: '/contact', label: 'Technical Support' },
-    { href: '/contact', label: 'Warranty Policy' },
-    { href: '/contact', label: 'Shipping Info' },
-    { href: '/contact', label: 'Returns & Refunds' },
-  ],
-};
+import { useTranslations, useLocale } from 'next-intl';
 
 const brands = ['XGIMI', 'Hisense', 'JMGO', 'HP', 'Canon', 'Intel', 'AMD', 'Samsung'];
 
 export function Footer() {
+  const t = useTranslations('Footer');
+  const tNav = useTranslations('nav');
+  const locale = useLocale();
+
+  const footerLinks = {
+    products: [
+      { href: `/${locale}/products?category=projectors`, label: tNav('projectors') },
+      { href: `/${locale}/products?category=printers`, label: tNav('printers') },
+      { href: `/${locale}/products?category=components`, label: tNav('components') },
+      { href: `/${locale}/products`, label: t('allProducts') },
+    ],
+    company: [
+      { href: `/${locale}/about`, label: tNav('about') },
+      { href: `/${locale}/contact`, label: tNav('contact') },
+      { href: `/${locale}/about`, label: t('whyChooseUs') },
+      { href: `/${locale}/contact`, label: t('wholesaleInquiry') },
+    ],
+    support: [
+      { href: `/${locale}/contact`, label: t('technicalSupport') },
+      { href: `/${locale}/contact`, label: t('warrantyPolicy') },
+      { href: `/${locale}/contact`, label: t('shippingInfo') },
+      { href: `/${locale}/contact`, label: t('returnsRefunds') },
+    ],
+  };
+
   return (
     <footer className="bg-slate-900 text-slate-300">
       {/* Main Footer */}
@@ -46,8 +53,7 @@ export function Footer() {
               </div>
             </div>
             <p className="text-sm text-slate-400 mb-6 max-w-sm leading-relaxed">
-              Your trusted partner for premium projectors, printers, and computer components.
-              Authorized dealer of top global brands with competitive wholesale pricing.
+              {t('description')}
             </p>
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm text-slate-400 mb-3">
@@ -66,18 +72,18 @@ export function Footer() {
               </a>
               <div className="flex items-start gap-2 text-sm text-slate-400">
                 <MapPin className="w-4 h-4 shrink-0 mt-0.5" />
-                <span>No. 1108 Quan'an North Road, Jinjiang City, Quanzhou City, Fujian Province</span>
+                <span>{t('addressFujian')}</span>
               </div>
               <div className="flex items-start gap-2 text-sm text-slate-400">
                 <MapPin className="w-4 h-4 shrink-0 mt-0.5" />
-                <span>Room S007, 2/F, Capital Plaza, 61-65 Chatham Road South, Tsim Sha Tsui, Hong Kong</span>
+                <span>{t('addressHongKong')}</span>
               </div>
             </div>
           </div>
 
           {/* Products */}
           <div>
-            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Products</h3>
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">{t('products')}</h3>
             <ul className="space-y-2.5">
               {footerLinks.products.map((link, idx) => (
                 <li key={`product-${idx}`}>
@@ -91,7 +97,7 @@ export function Footer() {
 
           {/* Company */}
           <div>
-            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Company</h3>
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">{t('company')}</h3>
             <ul className="space-y-2.5">
               {footerLinks.company.map((link, idx) => (
                 <li key={`company-${idx}`}>
@@ -105,7 +111,7 @@ export function Footer() {
 
           {/* Support */}
           <div>
-            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Support</h3>
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">{t('support')}</h3>
             <ul className="space-y-2.5">
               {footerLinks.support.map((link, idx) => (
                 <li key={`support-${idx}`}>
@@ -120,7 +126,7 @@ export function Footer() {
 
         {/* Brands */}
         <div className="mt-12 pt-8 border-t border-slate-800">
-          <p className="text-xs text-slate-500 uppercase tracking-wider mb-4">Authorized Dealer Of</p>
+          <p className="text-xs text-slate-500 uppercase tracking-wider mb-4">{t('authorizedDealer')}</p>
           <div className="flex flex-wrap gap-6">
             {brands.map((brand) => (
               <span key={brand} className="text-sm font-medium text-slate-500 hover:text-slate-300 transition-colors cursor-default">
@@ -135,7 +141,7 @@ export function Footer() {
       <div className="border-t border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-slate-500">
-            &copy; 2026 HK REACH SOURCING LIMITED. All rights reserved.
+            &copy; 2026 HK REACH SOURCING LIMITED. {t('allRightsReserved')}
           </p>
           <div className="flex items-center gap-4">
             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-xs text-slate-500 hover:text-orange-400 transition-colors">

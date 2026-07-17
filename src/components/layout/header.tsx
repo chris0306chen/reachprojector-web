@@ -2,32 +2,20 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useLocale, useTranslations } from 'next-intl';
 import { Menu, X, Search, ChevronDown, ShoppingCart, Store, Building2 } from 'lucide-react';
 import { LanguageSwitcher } from './language-switcher';
-
-const navLinks = [
-  { href: '/', label: 'Home' },
-  {
-    href: '/products',
-    label: 'Products',
-    children: [
-      { href: '/products?category=projectors', label: 'Projectors' },
-      { href: '/products?category=printers', label: 'Printers' },
-      { href: '/products?category=components', label: 'Components' },
-    ],
-  },
-  { href: '/about', label: 'About Us' },
-  { href: '/contact', label: 'Contact' },
-];
 
 type BusinessMode = 'retail' | 'b2b';
 
 export function Header() {
+  const locale = useLocale();
+  const t = useTranslations('nav');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [businessMode, setBusinessMode] = useState<BusinessMode>('retail');
-  const [cartCount] = useState(0); // Placeholder for cart count
+  const [cartCount] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,6 +24,21 @@ export function Header() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const navLinks = [
+    { href: `/${locale}`, label: t('home') },
+    {
+      href: `/${locale}/products`,
+      label: t('products'),
+      children: [
+        { href: `/${locale}/products?category=projectors`, label: t('projectors') },
+        { href: `/${locale}/products?category=printers`, label: t('printers') },
+        { href: `/${locale}/products?category=components`, label: t('components') },
+      ],
+    },
+    { href: `/${locale}/about`, label: t('about') },
+    { href: `/${locale}/contact`, label: t('contact') },
+  ];
 
   return (
     <header
@@ -48,7 +51,7 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 shrink-0">
+          <Link href={`/${locale}`} className="flex items-center gap-2 shrink-0">
             <img src="/images/logo.png" alt="RC Logo" className="h-10 w-auto" />
             <div className="flex flex-col leading-tight">
               <span className="text-2xl font-extrabold tracking-wide">
@@ -123,7 +126,7 @@ export function Header() {
                 }`}
               >
                 <Store className="w-3.5 h-3.5" />
-                Retail
+                {t('retail')}
               </button>
               <button
                 onClick={() => setBusinessMode('b2b')}
@@ -140,7 +143,7 @@ export function Header() {
 
             {/* Search */}
             <Link
-              href="/products"
+              href={`/${locale}/products`}
               className="hidden sm:flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 transition-colors"
             >
               <Search className="w-4 h-4" />
@@ -148,7 +151,7 @@ export function Header() {
 
             {/* Shopping Cart */}
             <Link
-              href="/cart"
+              href={`/${locale}/cart`}
               className="relative flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 transition-colors"
             >
               <ShoppingCart className="w-5 h-5" />
@@ -161,10 +164,10 @@ export function Header() {
 
             {/* CTA Button */}
             <Link
-              href={businessMode === 'b2b' ? '/contact' : '/products'}
+              href={businessMode === 'b2b' ? `/${locale}/contact` : `/${locale}/products`}
               className="hidden sm:inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition-colors"
             >
-              {businessMode === 'b2b' ? 'Get Quote' : 'Shop Now'}
+              {businessMode === 'b2b' ? t('getQuote') : t('shopNow')}
             </Link>
 
             {/* Mobile Menu Toggle */}
@@ -183,6 +186,11 @@ export function Header() {
       {isMobileMenuOpen && (
         <div className="lg:hidden bg-white border-t border-slate-200">
           <nav className="max-w-7xl mx-auto px-4 py-4 space-y-1">
+            {/* Mobile Language Switcher */}
+            <div className="mb-4 pb-4 border-b border-slate-200">
+              <LanguageSwitcher />
+            </div>
+
             {/* Mobile Retail/B2B Toggle */}
             <div className="flex items-center bg-slate-100 rounded-lg p-1 mb-4">
               <button
@@ -194,7 +202,7 @@ export function Header() {
                 }`}
               >
                 <Store className="w-4 h-4" />
-                Retail
+                {t('retail')}
               </button>
               <button
                 onClick={() => setBusinessMode('b2b')}
@@ -232,19 +240,19 @@ export function Header() {
             ))}
             <div className="pt-3 border-t border-slate-200 flex gap-2">
               <Link
-                href="/cart"
+                href={`/${locale}/cart`}
                 className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <ShoppingCart className="w-4 h-4" />
-                Cart {cartCount > 0 && `(${cartCount})`}
+                {t('cart')} {cartCount > 0 && `(${cartCount})`}
               </Link>
               <Link
-                href={businessMode === 'b2b' ? '/contact' : '/products'}
+                href={businessMode === 'b2b' ? `/${locale}/contact` : `/${locale}/products`}
                 className="flex-1 text-center py-2.5 text-sm font-medium text-white bg-orange-500 rounded-lg"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                {businessMode === 'b2b' ? 'Get Quote' : 'Shop Now'}
+                {businessMode === 'b2b' ? t('getQuote') : t('shopNow')}
               </Link>
             </div>
           </nav>
