@@ -3,21 +3,17 @@ import { getSupabaseClient } from "@/storage/database/supabase-client";
 
 /**
  * POST /api/admin/upload
- * Upload files to Supabase Storage
+ * Upload files to Supabase Storage "attachments" bucket
  *
  * Body: multipart/form-data with 'file' field
- * Query params:
- * - bucket: Storage bucket name (default: 'attachments')
- * - folder: Folder path within bucket (default: '')
+ * File path: uploads/{timestamp}_{filename}
  *
- * Returns: { url, path, size, type }
+ * Returns: { url: string, name: string, size: number }
  */
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File;
-    const bucket = request.nextUrl.searchParams.get("bucket") || "attachments";
-    const folder = request.nextUrl.searchParams.get("folder") || "";
 
     if (!file) {
       return NextResponse.json(
@@ -36,24 +32,35 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = await getSupabaseClient();
+    const bucket = "attachments";
 
-    // Generate unique filename
+    // Ensure bucket exists
+    const { data: buckets } = await supabase.storage.listBuckets();
+    const bucketExists = buckets?.some((b) => b.name === bucket);
+    if (!bucketExists) {
+      await supabase.storage.createBucket(bucket, {
+        public: true,
+        fileSizeLimit: 10 * 1024 * 1024,
+      });
+    }
+
+    // Generate file path: uploads/{timestamp}_{filename}
     const timestamp = Date.now();
-    const sanitizedFilename = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-    const path = folder ? `${folder}/${timestamp}_${sanitizedFilename}` : `${timestamp}_${sanitizedFilename}`;
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const storagePath = `uploads/${timestamp}_${safeName}`;
 
     // Upload to Supabase Storage
-    const { data, error } = await supabase.storage
+    const { data: uploadData, error: uploadError } = await supabase.storage
       .from(bucket)
-      .upload(path, file, {
+      .upload(storagePath, file, {
         cacheControl: "3600",
         upsert: false,
       });
 
-    if (error) {
-      console.error("Upload error:", error);
+    if (uploadError) {
+      console.error("Upload error:", uploadError);
       return NextResponse.json(
-        { error: "Upload failed", details: error.message },
+        { error: "Upload failed", details: uploadError.message },
         { status: 500 }
       );
     }
@@ -61,55 +68,15 @@ export async function POST(request: NextRequest) {
     // Get public URL
     const { data: urlData } = supabase.storage
       .from(bucket)
-      .getPublicUrl(data.path);
+      .getPublicUrl(uploadData.path);
 
     return NextResponse.json({
-      success: true,
       url: urlData.publicUrl,
-      path: data.path,
-      size: file.size,
-      type: file.type,
       name: file.name,
+      size: file.size,
     });
   } catch (error) {
     console.error("Upload error:", error);
-    return NextResponse.json(
-      { error: "Internal server error", details: String(error) },
-      { status: 500 }
-    );
-  }
-}
-
-/**
- * GET /api/admin/upload
- * List files in a bucket
- */
-export async function GET(request: NextRequest) {
-  try {
-    const bucket = request.nextUrl.searchParams.get("bucket") || "attachments";
-    const folder = request.nextUrl.searchParams.get("folder") || "";
-
-    const supabase = await getSupabaseClient();
-
-    const { data, error } = await supabase.storage
-      .from(bucket)
-      .list(folder, {
-        limit: 100,
-        offset: 0,
-        sortBy: { column: "created_at", order: "desc" },
-      });
-
-    if (error) {
-      console.error("List error:", error);
-      return NextResponse.json(
-        { error: "Failed to list files", details: error.message },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ files: data || [] });
-  } catch (error) {
-    console.error("List error:", error);
     return NextResponse.json(
       { error: "Internal server error", details: String(error) },
       { status: 500 }

@@ -134,25 +134,20 @@ export default function AdminProductsPage() {
   const handleBatchAction = async () => {
     if (selectedIds.size === 0 || !batchAction) return;
 
-    const actionMap: Record<string, { action: string; value?: string }> = {
-      activate: { action: "update_status", value: "active" },
-      deactivate: { action: "update_status", value: "inactive" },
-      delete: { action: "delete" },
-      feature: { action: "update_featured", value: "true" },
-      unfeature: { action: "update_featured", value: "false" },
+    const actionMap: Record<string, { action: string; value: unknown }> = {
+      activate: { action: "toggle_active", value: true },
+      deactivate: { action: "toggle_active", value: false },
     };
 
     const batchOp = actionMap[batchAction];
     if (!batchOp) return;
-
-    if (batchAction === "delete" && !confirm(`确定要删除 ${selectedIds.size} 个产品吗？`)) return;
 
     try {
       const res = await fetch("/api/admin/products/batch-update", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          product_ids: Array.from(selectedIds),
+          ids: Array.from(selectedIds),
           ...batchOp,
         }),
       });
@@ -259,9 +254,6 @@ export default function AdminProductsPage() {
               <option value="">选择操作...</option>
               <option value="activate">批量上架</option>
               <option value="deactivate">批量下架</option>
-              <option value="feature">批量设为推荐</option>
-              <option value="unfeature">批量取消推荐</option>
-              <option value="delete">批量删除</option>
             </select>
             <button
               onClick={handleBatchAction}

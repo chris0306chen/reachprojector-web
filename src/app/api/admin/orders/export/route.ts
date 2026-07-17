@@ -1,12 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
 
+/**
+ * GET /api/admin/orders/export
+ * Export orders as CSV
+ *
+ * Query params:
+ * - status: filter by order status
+ * - start_date: filter orders created after this date
+ * - end_date: filter orders created before this date
+ *
+ * Returns: CSV file download
+ */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
-    const startDate = searchParams.get("startDate");
-    const endDate = searchParams.get("endDate");
+    const startDate = searchParams.get("start_date");
+    const endDate = searchParams.get("end_date");
 
     const supabase = await getSupabaseClient();
 
@@ -25,31 +36,26 @@ export async function GET(request: NextRequest) {
     }
 
     const { data: orders, error } = await query;
-
     if (error) throw error;
 
-    // Generate CSV
+    // CSV headers (matching spec exactly)
     const headers = [
       "订单号",
       "订单类型",
-      "客户姓名",
-      "客户邮箱",
-      "客户公司",
+      "客户名称",
+      "邮箱",
+      "公司",
       "产品",
       "数量",
       "金额",
       "币种",
-      "国家",
-      "收货地址",
-      "物流方式",
-      "运费",
-      "状态",
+      "支付方式",
       "支付状态",
-      "PI号",
-      "定金",
-      "尾款",
+      "国家",
+      "物流方式",
+      "运单号",
+      "状态",
       "备注",
-      "产品规格",
       "创建时间",
     ];
 
@@ -63,17 +69,13 @@ export async function GET(request: NextRequest) {
       o.quantity || 1,
       o.amount || 0,
       o.currency || "USD",
-      o.country || "",
-      o.shipping_address || "",
-      o.shipping_method || "",
-      o.shipping_cost || 0,
-      translateStatus(o.status),
+      o.payment_method || "PayPal",
       translatePaymentStatus(o.payment_status),
-      o.pi_number || "",
-      o.deposit_amount || 0,
-      o.final_payment_amount || 0,
+      o.country || "",
+      o.shipping_method || "",
+      o.tracking_number || "",
+      translateStatus(o.status),
       o.notes || "",
-      o.product_specs || "",
       formatDate(o.created_at),
     ]);
 

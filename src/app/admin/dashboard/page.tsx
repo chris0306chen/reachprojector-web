@@ -15,35 +15,24 @@ import {
 import Link from "next/link";
 
 interface DashboardData {
-  stats: {
-    totalRevenue: number;
-    totalOrders: number;
-    totalProducts: number;
-    totalInquiries: number;
-    totalSales?: number;
-    pendingPaymentOrders?: number;
-    pendingShipOrders?: number;
-    newInquiriesCount?: number;
-  };
-  byCountry?: Array<{ country: string; total_sales: number; order_count: number }>;
-  byProduct?: Array<{ product_name: string; total_quantity: number; total_sales: number }>;
-  recentOrders: Array<{
+  total_revenue: number;
+  pending_payment_count: number;
+  pending_ship_count: number;
+  new_inquiries_count: number;
+  total_products: number;
+  total_orders: number;
+  total_inquiries: number;
+  by_country: Array<{ country: string; total_amount: number; order_count: number }>;
+  by_product: Array<{ product_name: string; total_quantity: number; total_sales: number }>;
+  recent_orders: Array<{
     id: string;
     order_id: string;
     customer_name?: string;
+    customer_email?: string;
     payer_email: string;
     product_name: string;
     amount: number;
     currency: string;
-    status: string;
-    created_at: string;
-  }>;
-  recentInquiries: Array<{
-    id: string;
-    name: string;
-    email: string;
-    subject: string;
-    message: string;
     status: string;
     created_at: string;
   }>;
@@ -98,11 +87,10 @@ export default function AdminDashboardPage() {
     );
   }
 
-  const stats = data?.stats;
-  const totalSales = stats?.totalSales ?? stats?.totalRevenue ?? 0;
-  const pendingPayment = stats?.pendingPaymentOrders ?? 0;
-  const pendingShip = stats?.pendingShipOrders ?? 0;
-  const newInquiries = stats?.newInquiriesCount ?? stats?.totalInquiries ?? 0;
+  const totalSales = data?.total_revenue ?? 0;
+  const pendingPayment = data?.pending_payment_count ?? 0;
+  const pendingShip = data?.pending_ship_count ?? 0;
+  const newInquiries = data?.new_inquiries_count ?? 0;
 
   return (
     <div className="space-y-6">
@@ -152,7 +140,7 @@ export default function AdminDashboardPage() {
           </div>
           <div>
             <p className="text-sm text-slate-500">总订单数</p>
-            <p className="text-xl font-bold text-slate-900">{stats?.totalOrders ?? 0}</p>
+            <p className="text-xl font-bold text-slate-900">{data?.total_orders ?? 0}</p>
           </div>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4 flex items-center gap-4">
@@ -161,7 +149,7 @@ export default function AdminDashboardPage() {
           </div>
           <div>
             <p className="text-sm text-slate-500">产品总数</p>
-            <p className="text-xl font-bold text-slate-900">{stats?.totalProducts ?? 0}</p>
+            <p className="text-xl font-bold text-slate-900">{data?.total_products ?? 0}</p>
           </div>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4 flex items-center gap-4">
@@ -170,7 +158,7 @@ export default function AdminDashboardPage() {
           </div>
           <div>
             <p className="text-sm text-slate-500">询盘总数</p>
-            <p className="text-xl font-bold text-slate-900">{stats?.totalInquiries ?? 0}</p>
+            <p className="text-xl font-bold text-slate-900">{data?.total_inquiries ?? 0}</p>
           </div>
         </div>
       </div>
@@ -183,9 +171,9 @@ export default function AdminDashboardPage() {
             <TrendingUp className="w-5 h-5 text-slate-400" />
             按国家销售统计
           </h2>
-          {data?.byCountry && data.byCountry.length > 0 ? (
+          {data?.by_country && data.by_country.length > 0 ? (
             <div className="space-y-3">
-              {data.byCountry.slice(0, 5).map((item, idx) => (
+              {data.by_country.slice(0, 5).map((item, idx) => (
                 <div key={idx} className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">{item.country || "未知"}</span>
                   <div className="flex items-center gap-3">
@@ -193,12 +181,12 @@ export default function AdminDashboardPage() {
                       <div
                         className="h-full bg-orange-500 rounded-full"
                         style={{
-                          width: `${Math.min(100, (item.total_sales / Math.max(...data.byCountry.map(c => c.total_sales), 1)) * 100)}%`,
+                          width: `${Math.min(100, (item.total_amount / Math.max(...data.by_country.map(c => c.total_amount), 1)) * 100)}%`,
                         }}
                       />
                     </div>
                     <span className="text-sm font-medium text-slate-900 w-20 text-right">
-                      ${item.total_sales.toLocaleString()}
+                      ${item.total_amount.toLocaleString()}
                     </span>
                   </div>
                 </div>
@@ -215,9 +203,9 @@ export default function AdminDashboardPage() {
             <Package className="w-5 h-5 text-slate-400" />
             产品销量排行
           </h2>
-          {data?.byProduct && data.byProduct.length > 0 ? (
+          {data?.by_product && data.by_product.length > 0 ? (
             <div className="space-y-3">
-              {data.byProduct.slice(0, 5).map((item, idx) => (
+              {data.by_product.slice(0, 5).map((item, idx) => (
                 <div key={idx} className="flex items-center justify-between">
                   <span className="text-sm text-slate-600 truncate max-w-[180px]">
                     {item.product_name}
@@ -245,7 +233,7 @@ export default function AdminDashboardPage() {
             查看全部
           </Link>
         </div>
-        {data?.recentOrders && data.recentOrders.length > 0 ? (
+        {data?.recent_orders && data.recent_orders.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -271,7 +259,7 @@ export default function AdminDashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
-                {data.recentOrders.slice(0, 10).map((order) => (
+                {data.recent_orders.slice(0, 10).map((order) => (
                   <tr key={order.id} className="hover:bg-slate-50">
                     <td className="px-4 py-3 text-sm font-mono text-slate-900">
                       {order.order_id}
@@ -304,62 +292,6 @@ export default function AdminDashboardPage() {
         )}
       </div>
 
-      {/* Recent Inquiries */}
-      <div className="bg-white rounded-xl border border-slate-200">
-        <div className="p-4 border-b border-slate-200 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">最近询盘</h2>
-          <Link href="/admin/inquiries" className="text-sm text-orange-600 hover:underline">
-            查看全部
-          </Link>
-        </div>
-        {data?.recentInquiries && data.recentInquiries.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-slate-200 bg-slate-50">
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
-                    姓名
-                  </th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
-                    邮箱
-                  </th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
-                    主题
-                  </th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
-                    状态
-                  </th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
-                    时间
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200">
-                {data.recentInquiries.slice(0, 5).map((inquiry) => (
-                  <tr key={inquiry.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3 text-sm text-slate-900">{inquiry.name}</td>
-                    <td className="px-4 py-3 text-sm text-slate-600">{inquiry.email}</td>
-                    <td className="px-4 py-3 text-sm text-slate-600 max-w-[200px] truncate">
-                      {inquiry.subject}
-                    </td>
-                    <td className="px-4 py-3">
-                      <InquiryStatusBadge status={inquiry.status} />
-                    </td>
-                    <td className="px-4 py-3 text-sm text-slate-500">
-                      {new Date(inquiry.created_at).toLocaleDateString("zh-CN")}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="p-8 text-center text-slate-400">
-            <MessageSquare className="w-12 h-12 mx-auto mb-2 opacity-50" />
-            <p>暂无询盘</p>
-          </div>
-        )}
-      </div>
     </div>
   );
 }
@@ -402,27 +334,6 @@ function OrderStatusBadge({ status }: { status: string }) {
     paid: { label: "已付款", className: "bg-blue-50 text-blue-700" },
     delivered: { label: "已完成", className: "bg-green-50 text-green-700" },
     cancelled: { label: "已取消", className: "bg-slate-100 text-slate-600" },
-  };
-  const { label, className } = config[status] || { label: status, className: "bg-slate-100 text-slate-600" };
-  return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${className}`}>
-      {label}
-    </span>
-  );
-}
-
-function InquiryStatusBadge({ status }: { status: string }) {
-  const config: Record<string, { label: string; className: string }> = {
-    new: { label: "新询盘", className: "bg-blue-50 text-blue-700" },
-    following_up: { label: "跟进中", className: "bg-amber-50 text-amber-700" },
-    quoted: { label: "已报价", className: "bg-indigo-50 text-indigo-700" },
-    negotiating: { label: "谈判中", className: "bg-purple-50 text-purple-700" },
-    won: { label: "已成交", className: "bg-green-50 text-green-700" },
-    lost: { label: "已流失", className: "bg-red-50 text-red-700" },
-    // Legacy
-    pending: { label: "待处理", className: "bg-amber-50 text-amber-700" },
-    replied: { label: "已回复", className: "bg-green-50 text-green-700" },
-    closed: { label: "已关闭", className: "bg-slate-100 text-slate-600" },
   };
   const { label, className } = config[status] || { label: status, className: "bg-slate-100 text-slate-600" };
   return (

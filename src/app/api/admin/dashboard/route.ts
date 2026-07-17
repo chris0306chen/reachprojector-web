@@ -1,9 +1,27 @@
 import { NextResponse } from "next/server";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
 
+/**
+ * GET /api/admin/dashboard
+ * Enhanced dashboard statistics
+ *
+ * Returns:
+ * - total_revenue: sum of completed orders
+ * - pending_payment_count: orders with status=pending_payment
+ * - pending_ship_count: orders with status=preparing
+ * - new_inquiries_count: inquiries from last 7 days
+ * - by_country: order count & amount grouped by country
+ * - by_product: top 10 products by sales
+ * - recent_orders: last 10 orders
+ */
 export async function GET() {
   try {
     const supabase = await getSupabaseClient();
+
+    // Calculate date 7 days ago for new inquiries
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const sevenDaysAgoStr = sevenDaysAgo.toISOString();
 
     // Fetch all data in parallel
     const [
@@ -11,83 +29,78 @@ export async function GET() {
       { data: allOrders },
       { count: totalInquiries },
       { data: recentOrders },
-      { data: recentInquiries },
+      { count: newInquiriesCount },
     ] = await Promise.all([
       supabase.from("products").select("*", { count: "exact", head: true }),
       supabase.from("orders").select("*"),
       supabase.from("inquiries").select("*", { count: "exact", head: true }),
       supabase.from("orders").select("*").order("created_at", { ascending: false }).limit(10),
-      supabase.from("inquiries").select("*").order("created_at", { ascending: false }).limit(5),
+      supabase
+        .from("inquiries")
+        .select("*", { count: "exact", head: true })
+        .gte("created_at", sevenDaysAgoStr),
     ]);
 
     const orders = allOrders || [];
 
-    // Calculate total revenue (all non-cancelled orders)
+    // total_revenue: sum of completed orders
     const totalRevenue = orders
-      .filter((o) => o.status !== "cancelled")
-      .reduce((sum, o) => sum + parseFloat(o.amount || 0), 0);
+      .filter((o) => o.status === "completed" || o.status === "delivered")
+      .reduce((sum, o) => sum + parseFloat(String(o.amount || 0)), 0);
 
-    // Count orders by status
-    const pendingPaymentOrders = orders.filter((o) =>
-      ["pending", "pending_payment"].includes(o.status)
-    ).length;
-    const pendingShipOrders = orders.filter((o) =>
-      ["paid", "preparing"].includes(o.status)
+    // pending_payment_count
+    const pendingPaymentCount = orders.filter(
+      (o) => o.status === "pending_payment" || o.status === "pending"
     ).length;
 
-    // New inquiries count (status = 'new' or 'pending')
-    const allInquiries = (await supabase.from("inquiries").select("status")).data || [];
-    const newInquiriesCount = allInquiries.filter((i) =>
-      ["new", "pending"].includes(i.status)
+    // pending_ship_count
+    const pendingShipCount = orders.filter(
+      (o) => o.status === "preparing" || o.status === "paid"
     ).length;
 
-    // Sales by country
-    const byCountry: Record<string, { total_sales: number; order_count: number }> = {};
+    // by_country: aggregate by country field
+    const countryMap: Record<string, { order_count: number; total_amount: number }> = {};
     orders
       .filter((o) => o.status !== "cancelled")
       .forEach((o) => {
         const country = o.country || "Unknown";
-        if (!byCountry[country]) byCountry[country] = { total_sales: 0, order_count: 0 };
-        byCountry[country].order_count++;
-        byCountry[country].total_sales += parseFloat(o.amount || 0);
+        if (!countryMap[country]) countryMap[country] = { order_count: 0, total_amount: 0 };
+        countryMap[country].order_count++;
+        countryMap[country].total_amount += parseFloat(String(o.amount || 0));
       });
 
-    const byCountryArray = Object.entries(byCountry)
+    const byCountry = Object.entries(countryMap)
       .map(([country, data]) => ({ country, ...data }))
-      .sort((a, b) => b.total_sales - a.total_sales)
-      .slice(0, 10);
+      .sort((a, b) => b.total_amount - a.total_amount);
 
-    // Sales by product
-    const byProduct: Record<string, { total_quantity: number; total_sales: number }> = {};
+    // by_product: top 10 by sales quantity
+    const productMap: Record<string, { total_quantity: number; total_sales: number }> = {};
     orders
       .filter((o) => o.status !== "cancelled")
       .forEach((o) => {
         const productName = o.product_name || "Unknown";
-        if (!byProduct[productName]) byProduct[productName] = { total_quantity: 0, total_sales: 0 };
-        byProduct[productName].total_quantity += o.quantity || 1;
-        byProduct[productName].total_sales += parseFloat(o.amount || 0);
+        if (!productMap[productName])
+          productMap[productName] = { total_quantity: 0, total_sales: 0 };
+        productMap[productName].total_quantity += o.quantity || 1;
+        productMap[productName].total_sales += parseFloat(String(o.amount || 0));
       });
 
-    const byProductArray = Object.entries(byProduct)
+    const byProduct = Object.entries(productMap)
       .map(([product_name, data]) => ({ product_name, ...data }))
       .sort((a, b) => b.total_quantity - a.total_quantity)
       .slice(0, 10);
 
     return NextResponse.json({
-      stats: {
-        totalRevenue,
-        totalOrders: orders.length,
-        totalProducts: totalProducts || 0,
-        totalInquiries: totalInquiries || 0,
-        totalSales: totalRevenue,
-        pendingPaymentOrders,
-        pendingShipOrders,
-        newInquiriesCount,
-      },
-      byCountry: byCountryArray,
-      byProduct: byProductArray,
-      recentOrders: recentOrders || [],
-      recentInquiries: recentInquiries || [],
+      total_revenue: Math.round(totalRevenue * 100) / 100,
+      pending_payment_count: pendingPaymentCount,
+      pending_ship_count: pendingShipCount,
+      new_inquiries_count: newInquiriesCount || 0,
+      total_products: totalProducts || 0,
+      total_orders: orders.length,
+      total_inquiries: totalInquiries || 0,
+      by_country: byCountry,
+      by_product: byProduct,
+      recent_orders: recentOrders || [],
     });
   } catch (error) {
     console.error("Dashboard stats error:", error);
