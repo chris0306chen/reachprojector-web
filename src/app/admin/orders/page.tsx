@@ -36,6 +36,7 @@ const statusColors: Record<string, string> = {
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
@@ -45,11 +46,21 @@ export default function AdminOrdersPage() {
 
   const fetchOrders = async () => {
     try {
+      setError(null);
       const res = await fetch("/api/admin/orders");
       const data = await res.json();
-      setOrders(data);
+      if (Array.isArray(data)) {
+        setOrders(data);
+      } else if (data.error) {
+        setError(data.error);
+        setOrders([]);
+      } else {
+        setOrders([]);
+      }
     } catch (err) {
       console.error("Failed to fetch orders:", err);
+      setError("加载订单失败，请稍后重试");
+      setOrders([]);
     } finally {
       setLoading(false);
     }
@@ -97,6 +108,13 @@ export default function AdminOrdersPage() {
           <p className="text-slate-500 text-sm mt-1">管理和跟踪所有订单</p>
         </div>
       </div>
+
+      {/* Error message */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+          <p className="text-red-600 text-sm">{error}</p>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="bg-white rounded-xl border border-slate-200 p-4 mb-6">

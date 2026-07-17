@@ -18,6 +18,7 @@ interface Inquiry {
 export default function AdminInquiriesPage() {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
@@ -30,9 +31,14 @@ export default function AdminInquiriesPage() {
     try {
       const res = await fetch("/api/admin/inquiries");
       const data = await res.json();
-      setInquiries(data);
+      if (Array.isArray(data)) {
+        setInquiries(data);
+      } else {
+        setError(data.error || "加载询盘失败");
+      }
     } catch (err) {
       console.error("Failed to fetch inquiries:", err);
+      setError("加载询盘失败，请稍后重试");
     } finally {
       setLoading(false);
     }
@@ -71,6 +77,12 @@ export default function AdminInquiriesPage() {
           <p className="text-slate-500 text-sm mt-1">查看和回复客户询盘</p>
         </div>
       </div>
+
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+          {error}
+        </div>
+      )}
 
       {/* Filters */}
       <div className="bg-white rounded-xl border border-slate-200 p-4 mb-6">

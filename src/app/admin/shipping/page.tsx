@@ -30,6 +30,7 @@ const emptyForm = {
 export default function AdminShippingPage() {
   const [templates, setTemplates] = useState<ShippingTemplate[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
@@ -41,11 +42,13 @@ export default function AdminShippingPage() {
 
   const fetchTemplates = async () => {
     try {
+      setError(null);
       const res = await fetch("/api/admin/shipping");
       const data = await res.json();
-      setTemplates(data);
+      setTemplates(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Failed to fetch shipping templates:", err);
+      setError("加载物流模板失败，请刷新重试");
     } finally {
       setLoading(false);
     }
@@ -142,6 +145,12 @@ export default function AdminShippingPage() {
           添加运费模板
         </button>
       </div>
+
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+          {error}
+        </div>
+      )}
 
       {/* Form Modal */}
       {showForm && (

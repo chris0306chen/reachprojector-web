@@ -34,6 +34,7 @@ const emptyForm = {
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
@@ -47,9 +48,14 @@ export default function AdminUsersPage() {
     try {
       const res = await fetch("/api/admin/users");
       const data = await res.json();
-      setUsers(data);
+      if (Array.isArray(data)) {
+        setUsers(data);
+      } else {
+        setError(data.error || "加载用户失败");
+      }
     } catch (err) {
       console.error("Failed to fetch users:", err);
+      setError("加载用户失败，请稍后重试");
     } finally {
       setLoading(false);
     }
@@ -119,6 +125,11 @@ export default function AdminUsersPage() {
           <h1 className="text-2xl font-bold text-slate-900">用户管理</h1>
           <p className="text-slate-500 text-sm mt-1">管理后台用户和权限</p>
         </div>
+        {error && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+            {error}
+          </div>
+        )}
         <button
           onClick={() => { setForm(emptyForm); setEditingId(null); setShowForm(true); }}
           className="inline-flex items-center gap-2 px-4 py-2.5 bg-orange-600 text-white text-sm font-medium rounded-lg hover:bg-orange-700 transition-colors"
