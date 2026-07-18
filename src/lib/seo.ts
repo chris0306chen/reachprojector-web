@@ -187,6 +187,30 @@ export function generateFAQSchema(faqs: FAQItem[]) {
 }
 
 // ---------------------------------------------------------------------------
+// ItemList Schema (JSON-LD) — for product listing pages
+// ---------------------------------------------------------------------------
+
+export function generateItemListSchema(
+  items: { name: string; slug: string; price: number }[]
+) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      url: `${SITE_URL}/products/${item.slug}`,
+      offers: {
+        '@type': 'Offer',
+        price: item.price,
+        priceCurrency: 'USD',
+      },
+    })),
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Organization Schema (JSON-LD) — for layout.tsx
 // ---------------------------------------------------------------------------
 
