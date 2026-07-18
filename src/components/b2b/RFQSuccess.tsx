@@ -132,3 +132,5 @@ export function RFQSuccess({ formData, onClose }: RFQSuccessProps) {
     </div>
   );
 }
+
+export default RFQSuccess;
