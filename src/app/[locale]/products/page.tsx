@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { generateItemListSchema } from '@/lib/seo';
 import Link from 'next/link';
 import { getProducts, getCategories, getBrands } from '@/lib/data-service';
 import { ProductCard } from '@/components/product-card';
@@ -6,6 +7,37 @@ import { ProductsClient } from './products-client';
 import { getTranslations } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
+
+const CATEGORY_META: Record<string, { title: string; description: string; keywords: string[] }> = {
+  '4k-laser-projectors': {
+    title: '4K Laser Projectors Wholesale | XGIMI, Hisense, JMGO',
+    description: 'Shop wholesale 4K laser projectors. Triple laser, ultra-short throw, up to 120-inch. Bulk pricing, DDP shipping to 50+ countries.',
+    keywords: ['4k laser projector', 'wholesale 4k projector', 'xgimi 4k projector', 'hisense 4k laser'],
+  },
+  'ust-laser-tv': {
+    title: 'UST Laser TV Wholesale | Ultra Short Throw | Hisense, Formovie',
+    description: 'Wholesale ultra-short throw laser TVs. 100-120 inch display. Bulk pricing with DDP global shipping.',
+    keywords: ['ust laser tv', 'ultra short throw projector', 'hisense laser tv', 'formovie theater'],
+  },
+  'printers-scanners': {
+    title: 'Wholesale Printers & Scanners | HP, Canon, Brother | Bulk Supply',
+    description: 'Wholesale printers and scanners. Laser, inkjet, multifunction. Bulk pricing with DDP shipping worldwide.',
+    keywords: ['wholesale printer supplier', 'hp printer wholesale', 'canon printer bulk', 'brother printer distributor'],
+  },
+  'components': {
+    title: 'Wholesale Computer Components | Intel, AMD, NVIDIA | Bulk Supply',
+    description: 'Wholesale computer components: Intel CPUs, AMD processors, NVIDIA GPUs, Samsung SSDs. Bulk pricing, global DDP shipping.',
+    keywords: ['wholesale computer components', 'intel cpu wholesale', 'amd processor bulk', 'nvidia gpu supplier'],
+  },
+}
+
+export async function generateMetadata({ searchParams }: ProductsPageProps): Promise<Metadata> {
+  const params = await searchParams
+  const category = params?.category
+  const meta = category ? CATEGORY_META[category] : null
+  if (!meta) return { title: 'All Products | REACH PROJECTOR' }
+  return { title: meta.title, description: meta.description, keywords: meta.keywords }
+}
 
 interface ProductsPageProps {
   searchParams: Promise<{
@@ -147,6 +179,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           </div>
         </div>
       </div>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateItemListSchema(
+        result.products.map(p => ({ name: p.name, slug: p.slug, price: Number(p.price) || 0 }))
+      )) }} />
     </div>
   );
 }
