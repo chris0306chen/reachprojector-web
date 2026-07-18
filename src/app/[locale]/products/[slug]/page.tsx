@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getProductBySlug, getRelatedProducts, getCategories } from '@/lib/data-service';
 import { ProductDetailClient } from './product-detail-client';
+import PricingRFQWrapper from '@/components/b2b/PricingRFQWrapper';
 import { generateProductSchema, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
@@ -60,6 +61,14 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       </div>
 
       <ProductDetailClient product={product} relatedProducts={relatedProducts} />
+
+      <PricingRFQWrapper
+        basePrice={Number(product.price)}
+        productName={product.name}
+        productSlug={product.slug}
+        productBrand={product.brand}
+        productImage={product.images?.[0] || ''}
+      />
 
       {/* Product Schema */}
       <script
