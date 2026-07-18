@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import { locales, type Locale, rtlLocales } from '@/i18n/config';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
-import { WhatsAppButton } from '@/components/layout/whatsapp-button';
+import { WhatsAppFloat } from '@/components/WhatsAppFloat';
 import { generateOrganizationSchema } from '@/lib/seo';
 import './globals.css';
 
@@ -65,7 +65,7 @@ export default async function LocaleLayout({
           <Header />
           <main className="min-h-screen">{children}</main>
           <Footer />
-          <WhatsAppButton />
+          <WhatsAppFloat />
         </NextIntlClientProvider>
       </body>
     </html>
