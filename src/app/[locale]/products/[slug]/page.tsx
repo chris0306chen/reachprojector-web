@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getProductBySlug, getRelatedProducts, getCategories } from '@/lib/data-service';
 import { ProductDetailClient } from './product-detail-client';
+import { generateProductSchema, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 
@@ -60,27 +61,44 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
       <ProductDetailClient product={product} relatedProducts={relatedProducts} />
 
-      {/* JSON-LD Structured Data */}
+      {/* Product Schema */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Product',
+          __html: JSON.stringify(generateProductSchema({
             name: product.name,
-            brand: { '@type': 'Brand', name: product.brand },
-            description: product.description || product.short_description,
-            image: product.images?.[0] || '',
-            offers: {
-              '@type': 'Offer',
-              price: product.price,
-              priceCurrency: 'USD',
-              availability: product.stock_status === 'in_stock'
-                ? 'https://schema.org/InStock'
-                : 'https://schema.org/OutOfStock',
-              seller: { '@type': 'Organization', name: 'REACH PROJECTOR' },
-            },
-          }),
+            brand: product.brand || 'REACH PROJECTOR',
+            description: (product.description || '').slice(0, 200),
+            image: product.images?.[0] || '/og/default-og.jpg',
+            price: Number(product.price),
+            currency: 'USD',
+            sku: product.slug,
+            category: category?.name || 'Electronics',
+            availability: product.stock_status === 'in_stock' ? 'in_stock' : 'out_of_stock',
+          })),
+        }}
+      />
+      {/* Breadcrumb Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(generateBreadcrumbSchema([
+            { name: 'Home', url: '/' },
+            { name: 'Products', url: '/products' },
+            { name: product.name, url: `/products/${product.slug}` },
+          ])),
+        }}
+      />
+      {/* FAQ Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(generateFAQSchema([
+            { question: `What is the warranty for ${product.name}?`, answer: 'All products come with full manufacturer warranty and pre-shipment quality inspection.' },
+            { question: 'Do you offer wholesale pricing?', answer: 'Yes, tiered wholesale pricing for bulk orders. Contact via WhatsApp or RFQ form.' },
+            { question: 'How long does shipping take?', answer: 'DDP delivery typically 7-15 business days to 50+ countries.' },
+            { question: 'Which countries do you ship to?', answer: '50+ countries across Europe, Americas, Southeast Asia, and Middle East.' },
+          ])),
         }}
       />
     </div>
