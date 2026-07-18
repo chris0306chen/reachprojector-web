@@ -479,5 +479,60 @@
     "step3": "订单发货后您将收到物流追踪信息。",
     "continueShopping": "继续购物",
     "contactSupport": "联系支持"
+  },
+  "rfq": {
+    "form": {
+      "title": "请求报价",
+      "subtitle": "填写以下信息，我们的团队将在24小时内回复您",
+      "product": "产品",
+      "quantity": "数量",
+      "quantityPlaceholder": "输入数量",
+      "targetPrice": "目标价格（可选）",
+      "intendedUse": "用途",
+      "selectIntendedUse": "选择用途",
+      "companyInfo": "公司信息",
+      "companyName": "公司名称",
+      "companyNamePlaceholder": "您的公司名称",
+      "contactName": "联系人",
+      "contactNamePlaceholder": "您的姓名",
+      "country": "国家/地区",
+      "selectCountry": "选择国家/地区",
+      "email": "邮箱",
+      "phone": "电话",
+      "whatsapp": "WhatsApp（可选）",
+      "message": "补充说明（可选）",
+      "messagePlaceholder": "任何特殊要求、问题或详情...",
+      "acceptMarketing": "我同意接收REACH Projector的产品更新和促销信息",
+      "submit": "提交询价",
+      "submitting": "提交中...",
+      "whatsappQuick": "WhatsApp快速询价",
+      "tierDiscount": "批量折扣",
+      "tierApplies": "订购{min}+台可享{discount}%折扣"
+    },
+    "intendedUses": {
+      "resale": "转售/零售",
+      "corporate": "企业/办公",
+      "education": "教育/培训",
+      "government": "政府/军队",
+      "rental": "租赁",
+      "installation": "安装/集成",
+      "distribution": "分销/批发",
+      "other": "其他"
+    },
+    "errors": {
+      "required": "此字段为必填项",
+      "invalidEmail": "请输入有效的邮箱地址",
+      "minQuantity": "数量至少为1",
+      "submitFailed": "提交失败，请重试或通过WhatsApp联系我们。"
+    },
+    "success": {
+      "title": "询价提交成功！",
+      "subtitle": "感谢您的询价，我们团队将在24小时内审核并回复。",
+      "referenceNumber": "参考编号",
+      "inquirySummary": "询价摘要",
+      "emailConfirmation": "确认邮件已发送至您的邮箱",
+      "whatsappFollowUp": "通过WhatsApp跟进",
+      "close": "关闭"
+    }
   }
 }

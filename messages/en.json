@@ -482,5 +482,60 @@
     "step3": "You will receive tracking information once your order ships.",
     "continueShopping": "Continue Shopping",
     "contactSupport": "Contact Support"
+  },
+  "rfq": {
+    "form": {
+      "title": "Request a Quote",
+      "subtitle": "Fill in the details below and our team will respond within 24 hours",
+      "product": "Product",
+      "quantity": "Quantity",
+      "quantityPlaceholder": "Enter quantity",
+      "targetPrice": "Target Price (Optional)",
+      "intendedUse": "Intended Use",
+      "selectIntendedUse": "Select intended use",
+      "companyInfo": "Company Information",
+      "companyName": "Company Name",
+      "companyNamePlaceholder": "Your company name",
+      "contactName": "Contact Name",
+      "contactNamePlaceholder": "Your full name",
+      "country": "Country",
+      "selectCountry": "Select your country",
+      "email": "Email",
+      "phone": "Phone",
+      "whatsapp": "WhatsApp (Optional)",
+      "message": "Additional Message (Optional)",
+      "messagePlaceholder": "Any specific requirements, questions, or details you'd like to share...",
+      "acceptMarketing": "I agree to receive product updates and promotional offers from REACH Projector",
+      "submit": "Submit RFQ",
+      "submitting": "Submitting...",
+      "whatsappQuick": "WhatsApp Quick Inquiry",
+      "tierDiscount": "Volume Discount",
+      "tierApplies": "{discount}% off for orders of {min}+ units"
+    },
+    "intendedUses": {
+      "resale": "Resale / Retail",
+      "corporate": "Corporate / Office",
+      "education": "Education / Training",
+      "government": "Government / Military",
+      "rental": "Rental / Leasing",
+      "installation": "Installation / Integration",
+      "distribution": "Distribution / Wholesale",
+      "other": "Other"
+    },
+    "errors": {
+      "required": "This field is required",
+      "invalidEmail": "Please enter a valid email address",
+      "minQuantity": "Quantity must be at least 1",
+      "submitFailed": "Failed to submit. Please try again or contact us via WhatsApp."
+    },
+    "success": {
+      "title": "RFQ Submitted Successfully!",
+      "subtitle": "Thank you for your inquiry. Our team will review and respond within 24 hours.",
+      "referenceNumber": "Reference Number",
+      "inquirySummary": "Inquiry Summary",
+      "emailConfirmation": "A confirmation email has been sent to your inbox",
+      "whatsappFollowUp": "Follow Up on WhatsApp",
+      "close": "Close"
+    }
   }
 }
