@@ -63,3 +63,5 @@ export function WhatsAppFloat() {
     </div>
   );
 }
+
+export default WhatsAppFloat;
