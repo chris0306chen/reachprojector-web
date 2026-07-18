@@ -175,8 +175,58 @@ export const insertInquirySchema = z.object({
 export type Inquiry = typeof inquiries.$inferSelect;
 export type InsertInquiry = z.infer<typeof insertInquirySchema>;
 
+export const rfqRequests = pgTable(
+	"rfq_requests",
+	{
+		id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
+		rfq_number: varchar("rfq_number", { length: 20 }).notNull().unique(),
+		product_name: varchar("product_name", { length: 255 }),
+		product_slug: varchar("product_slug", { length: 255 }),
+		quantity: integer("quantity").notNull(),
+		target_price: numeric("target_price", { precision: 10, scale: 2 }),
+		intended_use: text("intended_use"),
+		company_name: varchar("company_name", { length: 200 }).notNull(),
+		contact_name: varchar("contact_name", { length: 100 }).notNull(),
+		country: varchar("country", { length: 100 }).notNull(),
+		email: varchar("email", { length: 255 }).notNull(),
+		phone: varchar("phone", { length: 50 }).notNull(),
+		whatsapp: varchar("whatsapp", { length: 50 }),
+		message: text("message"),
+		accept_marketing: boolean("accept_marketing").default(false),
+		status: varchar("status", { length: 20 }).default("pending").notNull(),
+		assigned_to: varchar("assigned_to", { length: 100 }),
+		notes: text("notes"),
+		created_at: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+		updated_at: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+	},
+	(table) => [
+		index("idx_rfq_status").on(table.status),
+		index("idx_rfq_created").on(table.created_at),
+		index("idx_rfq_email").on(table.email),
+	]
+);
+
+export const productTiers = pgTable(
+	"product_tiers",
+	{
+		id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
+		product_slug: varchar("product_slug", { length: 255 }).notNull(),
+		tier_min: integer("tier_min").notNull(),
+		tier_max: integer("tier_max"),
+		discount_percent: numeric("discount_percent", { precision: 5, scale: 2 }).notNull(),
+		tier_label: varchar("tier_label", { length: 50 }),
+		is_active: boolean("is_active").default(true).notNull(),
+		created_at: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+	},
+	(table) => [
+		index("idx_tiers_product").on(table.product_slug),
+	]
+);
+
 export type Category = typeof categories.$inferSelect;
 export type Product = typeof products.$inferSelect;
 export type Order = typeof orders.$inferSelect;
 export type User = typeof users.$inferSelect;
 export type ShippingTemplate = typeof shipping_templates.$inferSelect;
+export type RfqRequest = typeof rfqRequests.$inferSelect;
+export type ProductTier = typeof productTiers.$inferSelect;
