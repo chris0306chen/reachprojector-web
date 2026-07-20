@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "title": "REACH PROJECTOR - 高端电子产品",
-    "description": "您值得信赖的优质投影仪、打印机和电脑配件合作伙伴。授权经销商，提供极具竞争力的批发价格。",
-    "keywords": "投影仪, 打印机, 电脑配件, 电子产品, 批发, B2B, REACH"
+    "title": "REACH PROJECTOR - OEM/ODM投影解决方案",
+    "description": "您的OEM/ODM投影合作伙伴。为酒店、零售、活动和教育提供一站式投影解决方案。白标定制、批量部署和AI驱动的营销素材。",
+    "keywords": "OEM投影仪, ODM投影仪, 投影解决方案, 白标投影仪, 酒店投影, 教育投影, 活动投影, B2B, REACH"
   },
   "common": {
     "loading": "加载中...",
@@ -25,45 +25,97 @@
     "getQuote": "获取报价",
     "cart": "购物车",
     "search": "搜索",
-    "authorizedDealer": "优质电子产品授权经销商"
+    "authorizedDealer": "您的OEM/ODM投影合作伙伴",
+    "projectors": "投影仪",
+    "printers": "打印机",
+    "components": "配件",
+    "solutions": "解决方案",
+    "oemOdmProjectors": "OEM/ODM投影仪",
+    "educationCorporate": "商教工程",
+    "hospitalityLiving": "民宿/卧室影院",
+    "eventsRentals": "活动租赁",
+    "retailChannels": "渠道分销/OEM",
+    "shopByScene": "场景化购物",
+    "bedroomCinema": "卧室影院",
+    "backyardCamping": "露营",
+    "portableScreen": "便携屏",
+    "resources": "资料下载",
+    "compatibilityGuide": "兼容性数据库",
+    "installationGuides": "安装视频/PDF",
+    "certificates": "认证文件",
+    "partnerWithUs": "成为伙伴",
+    "privateLabelStore": "品牌专卖"
   },
   "home": {
     "hero": {
-      "subtitle": "优质电子产品授权经销商",
-      "title1": "优质投影仪 &",
-      "title2": "电子产品",
-      "title3": "全球配送",
-      "description": "您值得信赖的4K激光投影仪、专业打印机和高性能电脑配件供应商。具有竞争力的价格、全球配送和专业技术支持。",
-      "browseProducts": "浏览产品",
-      "wholesaleInquiry": "批发咨询",
+      "subtitle": "您的OEM/ODM投影合作伙伴",
+      "title1": "打造您的投影品牌",
+      "title2": "一站式",
+      "title3": "解决方案",
+      "description": "从概念到上架 — 我们提供OEM/ODM投影仪、场景化配件和AI驱动的营销素材。",
+      "getOemQuote": "获取OEM报价",
+      "exploreKits": "探索场景方案",
       "stats": {
-        "products": "产品",
         "countries": "国家",
-        "topBrands": "顶级品牌"
+        "oemProjects": "OEM项目",
+        "coreScenarios": "核心场景"
       }
-    },
-    "categories": {
-      "title": "按类别选购",
-      "description": "探索我们来自世界领先品牌的各种优质电子产品",
-      "projectors": "4K激光投影仪",
-      "projectorsDesc": "家庭影院级4K激光投影",
-      "ustLaser": "超短焦激光电视",
-      "ustLaserDesc": "超短焦激光电视，沉浸式大屏体验",
-      "printers": "打印机和扫描仪",
-      "printersDesc": "专业办公打印机和扫描仪",
-      "components": "电脑配件",
-      "componentsDesc": "高性能CPU、GPU、内存等"
     },
     "viewProducts": "查看产品",
     "viewAll": "查看全部",
     "viewAllProducts": "查看所有产品",
-    "bestsellers": {
-      "title": "畅销产品",
-      "description": "全球客户最喜爱的热门产品"
+    "solutions": {
+      "title": "为每个场景量身定制解决方案",
+      "description": "为您特定的业务需求设计的一站式投影解决方案。所有方案均可白标/OEM定制。",
+      "hospitality": {
+        "title": "民宿/卧室影院",
+        "desc": "为酒店、Airbnb和住宅影院提供高端客房娱乐和大堂安装方案。支持定制品牌和批量部署。",
+        "oem": "支持白标 / OEM定制"
+      },
+      "retail": {
+        "title": "渠道分销/OEM",
+        "desc": "为零售连锁、分销商和在线卖家提供完整产品线方案。白标包装、营销物料和代发支持。",
+        "oem": "支持白标 / OEM定制"
+      },
+      "events": {
+        "title": "活动租赁",
+        "desc": "为会议、展览、现场活动和租赁业务提供高亮度便携投影系统。坚固设计，适合频繁搬运。",
+        "oem": "支持白标 / OEM定制"
+      },
+      "education": {
+        "title": "商教工程",
+        "desc": "为教室、会议室和培训中心提供可靠投影解决方案。安装简便、维护成本低、批量优惠价。",
+        "oem": "支持白标 / OEM定制"
+      }
     },
-    "newArrivals": {
-      "title": "新品上市",
-      "description": "最新添加到目录的产品"
+    "whyPartner": {
+      "title": "为什么选择我们合作",
+      "cards": [
+        {
+          "title": "端到端技术支持",
+          "desc": "从光学参数调校到认证指导（CE、FCC、RoHS），我们处理完整技术流程，让您专注于销售。"
+        },
+        {
+          "title": "差异化产品组合",
+          "desc": "投影仪+支架+幕布+配件捆绑方案。用精心策划的场景化套餐从竞争对手中脱颖而出。"
+        },
+        {
+          "title": "AI驱动营销素材",
+          "desc": "我们提供AI生成的产品图片、场景渲染、SEO内容和社交媒体物料 — 拿来即用，直接投放您的渠道。"
+        }
+      ]
+    },
+    "contentStudio": {
+      "title": "用我们的内容工作室加速您的上线",
+      "desc": "不只是采购硬件 — 利用我们AI驱动的内容库更快推出您的品牌。每项OEM合作均附赠专业产品摄影、场景渲染、营销文案和社交媒体素材。",
+      "cta": "探索内容服务"
+    },
+    "inspiration": {
+      "title": "为您的空间寻找灵感",
+      "desc": "探索我们的投影解决方案如何将日常空间变成非凡体验。",
+      "bedroom": "卧室影院",
+      "camping": "露营",
+      "shopScene": "选购此场景"
     },
     "applications": {
       "title": "实际应用场景"
@@ -86,9 +138,9 @@
       }
     },
     "b2b": {
-      "title": "B2B批发计划",
-      "description": "获取独家批发价格、优先配送和专属客户经理服务。服务覆盖50+国家的企业客户。",
-      "contactUs": "联系我们",
+      "title": "准备打造您的品牌？",
+      "description": "无论您需要10台还是10,000台，我们提供产品、品牌和内容，让您的投影业务取得成功。",
+      "cta": "开始合作",
       "features": {
         "bulkPricing": "批量定价",
         "bulkPricingDesc": "大批量订单的优惠批发价格",
@@ -97,31 +149,11 @@
         "fastShipping": "快速配送",
         "fastShippingDesc": "优先处理和快递配送选项"
       }
-    },
-    "brands": {
-      "title": "我们代理的信赖品牌",
-      "description": "全球领先电子品牌的授权经销商"
-    },
-    "whyChoose": {
-      "title": "为什么选择REACH PROJECTOR",
-      "description": "我们致力于为全球客户提供最好的产品和服务",
-      "authorizedDealer": "授权经销商",
-      "authorizedDealerDesc": "所有品牌均为官方授权经销，100%正品，享受完整厂家保修。",
-      "competitivePricing": "具有竞争力的价格",
-      "competitivePricingDesc": "与制造商直接合作，为您提供市场最具竞争力的价格。",
-      "globalShipping": "全球DDP配送",
-      "globalShippingDesc": "门到门配送覆盖50+国家，我们处理所有海关、关税和物流，让您无忧采购。",
-      "qualityGuarantee": "质量保证",
-      "qualityGuaranteeDesc": "每件产品发货前均经过质量检测，提供完整保修和售后服务。",
-      "expertSupport": "专家支持",
-      "expertSupportDesc": "我们的产品专家团队通过WhatsApp、邮件和电话随时为您提供专业建议。",
-      "worldwideService": "全球服务",
-      "worldwideServiceDesc": "服务覆盖欧洲、美洲、东南亚和中东等50多个国家的客户。"
     }
   },
   "footer": {
     "aboutTitle": "关于REACH PROJECTOR",
-    "aboutText": "您值得信赖的优质投影仪、打印机和电脑配件合作伙伴。顶级全球品牌授权经销商，提供具有竞争力的批发价格。",
+    "aboutText": "您的OEM/ODM投影合作伙伴。我们提供投影仪、支架、幕布和配件，支持白标定制和批量部署，服务全球企业。",
     "company1": "泉州锐驰科技有限公司",
     "company2": "香港锐达采购有限公司",
     "quickLinks": "快速链接",
@@ -233,101 +265,6 @@
         "name": "Hisense PL1 4K 激光电视",
         "shortDescription": "4K激光电视，超短焦设计，100英寸画面。",
         "description": "Hisense PL1 4K激光电视采用超短焦设计，在短距离内投射100英寸4K画面。激光光源提供出色的亮度和色彩，内置智能电视系统。"
-      },
-      "hp-laserjet-pro-m404dn": {
-        "name": "HP LaserJet Pro M404dn",
-        "shortDescription": "高速黑白激光打印机，适合繁忙办公室。",
-        "description": "HP LaserJet Pro M404dn 专为繁忙办公室设计，每分钟40页高速打印，自动双面打印，网络安全功能。紧凑设计适合任何办公环境。"
-      },
-      "canon-imageclass-lbp226dw": {
-        "name": "Canon imageCLASS LBP226dw",
-        "shortDescription": "紧凑型黑白激光打印机，自动双面打印。",
-        "description": "Canon imageCLASS LBP226dw 是可靠紧凑的黑白激光打印机，自动双面打印，无线连接，适合小型办公室和家庭办公。"
-      },
-      "brother-hl-l2370dw": {
-        "name": "Brother HL-L2370DW",
-        "shortDescription": "紧凑型黑白激光打印机，无线双面打印。",
-        "description": "Brother HL-L2370DW 是经济高效的黑白激光打印机，无线双面打印，适合家庭和小型办公室。可靠且易于维护。"
-      },
-      "epson-ecotank-et-4850": {
-        "name": "Epson EcoTank ET-4850",
-        "shortDescription": "无线彩色多功能墨仓式打印机，灌装墨水成本极低。",
-        "description": "Epson EcoTank ET-4850 革命性的无墨盒设计，配备可灌装墨水仓，打印成本极低。打印、复印、扫描三合一，适合高印量用户。"
-      },
-      "hp-color-laserjet-pro-m479fdw": {
-        "name": "HP Color LaserJet Pro M479fdw",
-        "shortDescription": "多功能彩色激光打印机，打印复印扫描传真。",
-        "description": "HP Color LaserJet Pro M479fdw 是专业级多功能彩色激光打印机，打印、复印、扫描、传真四合一。高速彩色输出，企业级安全功能。"
-      },
-      "canon-maxify-gx7020": {
-        "name": "Canon MAXIFY GX7020",
-        "shortDescription": "商用彩色墨仓式多功能打印机，可灌装墨水。",
-        "description": "Canon MAXIFY GX7020 是高性能商用彩色多功能打印机，配备可灌装墨水系统，打印成本极低。自动双面打印，50页自动进稿器。"
-      },
-      "brother-mfc-l3770cdw": {
-        "name": "Brother MFC-L3770CDW",
-        "shortDescription": "多功能彩色激光打印机，无线双面打印。",
-        "description": "Brother MFC-L3770CDW 是多功能彩色激光一体机，打印、复印、扫描、传真，无线双面打印，触摸屏控制，适合小型办公室。"
-      },
-      "epson-workforce-pro-wf-c5790dw": {
-        "name": "Epson WorkForce Pro WF-C5790DW",
-        "shortDescription": "商用彩色多功能喷墨打印机，替代激光打印机。",
-        "description": "Epson WorkForce Pro WF-C5790DW 是高性能商用彩色多功能打印机，采用PrecisionCore打印头技术，速度媲美激光，色彩出众，能耗更低。"
-      },
-      "intel-core-i9-14900k": {
-        "name": "Intel Core i9-14900K",
-        "shortDescription": "旗舰桌面处理器，24核心，高达6.0GHz。",
-        "description": "Intel Core i9-14900K 是旗舰桌面处理器，24核心（8P+16E），32线程，睿频高达6.0GHz。采用Intel 7工艺，支持DDR5和PCIe 5.0。"
-      },
-      "amd-ryzen-9-7950x": {
-        "name": "AMD Ryzen 9 7950X",
-        "shortDescription": "16核心32线程桌面处理器，高达5.7GHz。",
-        "description": "AMD Ryzen 9 7950X 基于Zen 4架构，16核心32线程，睿频高达5.7GHz。AM5平台支持DDR5和PCIe 5.0，多线程性能卓越。"
-      },
-      "intel-core-i7-14700k": {
-        "name": "Intel Core i7-14700K",
-        "shortDescription": "高性能桌面处理器，20核心，高达5.6GHz。",
-        "description": "Intel Core i7-14700K 提供出色的性价比，20核心（8P+12E），28线程，睿频高达5.6GHz。适合游戏和内容创作。"
-      },
-      "amd-ryzen-7-7800x3d": {
-        "name": "AMD Ryzen 7 7800X3D",
-        "shortDescription": "游戏处理器，8核心，AMD 3D V-Cache技术。",
-        "description": "AMD Ryzen 7 7800X3D 是顶级游戏处理器，8核心16线程，搭载AMD 3D V-Cache技术，超大缓存带来极致游戏性能。"
-      },
-      "nvidia-rtx-4090": {
-        "name": "NVIDIA GeForce RTX 4090",
-        "shortDescription": "旗舰GPU，24GB GDDR6X，Ada Lovelace架构。",
-        "description": "NVIDIA GeForce RTX 4090 是消费级最强显卡，Ada Lovelace架构，16384个CUDA核心，24GB GDDR6X显存。4K游戏和AI工作负载的终极选择。"
-      },
-      "msi-rtx-4080-super": {
-        "name": "MSI RTX 4080 Super",
-        "shortDescription": "高端GPU，16GB GDDR6X，出色4K性能。",
-        "description": "MSI RTX 4080 Super 提供出色4K游戏性能，10240个CUDA核心，16GB GDDR6X显存。先进散热系统确保安静低温运行。"
-      },
-      "corsair-vengeance-ddr5-6000-32gb": {
-        "name": "Corsair Vengeance DDR5 6000 32GB",
-        "shortDescription": "高性能DDR5内存套装，6000MHz CL36。",
-        "description": "Corsair Vengeance DDR5 6000MHz 32GB套装（2x16GB）为DDR5平台优化，Intel XMP 3.0支持，铝制散热片确保稳定运行。"
-      },
-      "samsung-990-pro-2tb-ssd": {
-        "name": "Samsung 990 Pro 2TB SSD",
-        "shortDescription": "高端PCIe 4.0 NVMe固态硬盘，7450 MB/s读取。",
-        "description": "Samsung 990 Pro 2TB 是旗舰PCIe 4.0 NVMe固态硬盘，顺序读取7450 MB/s，写入6900 MB/s。Samsung V-NAND技术，5年质保。"
-      },
-      "wd-black-sn850x-2tb-ssd": {
-        "name": "WD Black SN850X 2TB SSD",
-        "shortDescription": "高性能游戏SSD，7300 MB/s读取速度。",
-        "description": "WD Black SN850X 2TB 专为游戏玩家和内容创作者打造，PCIe 4.0性能，Game Mode 2.0技术，提供现代游戏所需的速度和响应能力。"
-      },
-      "asus-rog-strix-z790-e": {
-        "name": "ASUS ROG Strix Z790-E",
-        "shortDescription": "高端Intel Z790 ATX主板，PCIe 5.0，DDR5。",
-        "description": "ASUS ROG Strix Z790-E Gaming WiFi 是面向Intel 13/14代处理器的高端主板，支持PCIe 5.0、DDR5、WiFi 6E，强劲供电设计支持超频。"
-      },
-      "gigabyte-x670e-aorus-master": {
-        "name": "Gigabyte X670E Aorus Master",
-        "shortDescription": "高端AMD X670E主板，全面PCIe 5.0支持。",
-        "description": "Gigabyte X670E Aorus Master 是AMD Ryzen 7000系列处理器的终极主板，全面PCIe 5.0支持，18+2+2相供电设计。"
       }
     }
   },
@@ -347,12 +284,12 @@
   },
   "about": {
     "subtitle": "关于REACH PROJECTOR",
-    "title": "您值得信赖的优质电子产品合作伙伴",
-    "description": "REACH PROJECTOR以将优质电子产品带入全球市场为使命，已发展成为投影仪、打印机和电脑配件领域的信赖品牌。我们连接世界级制造商与全球客户。",
+    "title": "您的OEM/ODM投影合作伙伴",
+    "description": "REACH PROJECTOR以赋能全球企业的一站式投影解决方案为使命，已发展成为投影仪、支架、幕布和场景化配件领域值得信赖的OEM/ODM合作伙伴。",
     "story": {
       "title": "我们的故事",
-      "paragraph1": "REACH PROJECTOR起源于中国深圳——全球电子产业的心脏地带，由一群电子爱好者组成的小团队。我们与制造商的深厚关系和对技术的热情赋予了我们独特的优势。",
-      "paragraph2": "如今，我们服务于50多个国家的客户，从寻找最佳家庭影院方案的个人消费者到寻求批量采购解决方案的企业。我们对品质、竞争力价格和卓越服务的承诺使我们成为众多客户的首选合作伙伴。"
+      "paragraph1": "REACH PROJECTOR起源于中国深圳——全球电子产业的心脏地带，由一群投影爱好者组成的小团队。我们与制造商的深厚关系和对技术的热情赋予了我们独特的优势。",
+      "paragraph2": "如今，我们服务于50多个国家的客户，从寻求定制品牌投影仪的中小企业到需要批量部署方案的大型企业。我们对品质、竞争力价格和卓越服务的承诺使我们成为众多客户的首选合作伙伴。"
     },
     "stats": {
       "products": "产品",
@@ -436,7 +373,7 @@
     }
   },
   "Footer": {
-    "description": "您值得信赖的优质投影仪、打印机和电脑配件合作伙伴。全球顶级品牌授权经销商，提供极具竞争力的批发价格。",
+    "description": "您的OEM/ODM投影合作伙伴。我们提供投影仪、支架、幕布和配件，支持白标定制和批量部署，服务全球企业。",
     "addressFujian": "福建省泉州市晋江市泉安北路1108号",
     "addressHongKong": "香港尖沙咀加连威老道61-65号资本广场2楼S007室",
     "products": "产品",

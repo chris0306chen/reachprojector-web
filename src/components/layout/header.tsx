@@ -8,12 +8,26 @@ import { LanguageSwitcher } from './language-switcher';
 
 type BusinessMode = 'retail' | 'b2b';
 
+interface NavChild {
+  href: string;
+  label: string;
+  description?: string;
+}
+
+interface NavLink {
+  href?: string;
+  label: string;
+  sectionLabel?: string;
+  children?: NavChild[];
+}
+
 export function Header() {
   const locale = useLocale();
   const t = useTranslations('nav');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(null);
   const [businessMode, setBusinessMode] = useState<BusinessMode>('retail');
   const [cartCount] = useState(0);
 
@@ -25,20 +39,100 @@ export function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
-    { href: `/${locale}`, label: t('home') },
+  // Close mobile menu on route change / resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsMobileMenuOpen(false);
+        setOpenMobileDropdown(null);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const navLinks: NavLink[] = [
     {
-      href: `/${locale}/products`,
-      label: t('products'),
+      label: t('solutions'),
+      sectionLabel: 'SOLUTIONS',
       children: [
-        { href: `/${locale}/products?category=projectors`, label: t('projectors') },
-        { href: `/${locale}/products?category=printers`, label: t('printers') },
-        { href: `/${locale}/products?category=components`, label: t('components') },
+        {
+          href: `/${locale}/products?category=projectors`,
+          label: t('oemOdmProjectors'),
+        },
+        {
+          href: `/${locale}/contact`,
+          label: t('educationCorporate'),
+        },
+        {
+          href: `/${locale}/contact`,
+          label: t('hospitalityLiving'),
+        },
+        {
+          href: `/${locale}/contact`,
+          label: t('eventsRentals'),
+        },
+        {
+          href: `/${locale}/contact`,
+          label: t('retailChannels'),
+        },
       ],
     },
-    { href: `/${locale}/about`, label: t('about') },
-    { href: `/${locale}/contact`, label: t('contact') },
+    {
+      label: t('shopByScene'),
+      children: [
+        {
+          href: `/${locale}/products?scene=bedroom`,
+          label: t('bedroomCinema'),
+        },
+        {
+          href: `/${locale}/products?scene=camping`,
+          label: t('backyardCamping'),
+        },
+        {
+          href: `/${locale}/products?scene=portable`,
+          label: t('portableScreen'),
+        },
+      ],
+    },
+    {
+      label: t('resources'),
+      children: [
+        {
+          href: `/${locale}/about`,
+          label: t('compatibilityGuide'),
+        },
+        {
+          href: `/${locale}/about`,
+          label: t('installationGuides'),
+        },
+        {
+          href: `/${locale}/about`,
+          label: t('certificates'),
+        },
+      ],
+    },
+    {
+      href: `/${locale}/products`,
+      label: t('privateLabelStore'),
+    },
+    {
+      href: `/${locale}/contact`,
+      label: t('partnerWithUs'),
+    },
   ];
+
+  const handleDropdownEnter = (label: string) => {
+    setOpenDropdown(label);
+  };
+
+  const handleDropdownLeave = () => {
+    setOpenDropdown(null);
+  };
+
+  const toggleMobileDropdown = (label: string) => {
+    setOpenMobileDropdown(openMobileDropdown === label ? null : label);
+  };
 
   return (
     <header
@@ -66,30 +160,37 @@ export function Header() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-6">
             {navLinks.map((link) =>
               link.children ? (
                 <div
-                  key={link.href}
+                  key={link.label}
                   className="relative"
-                  onMouseEnter={() => setIsDropdownOpen(true)}
-                  onMouseLeave={() => setIsDropdownOpen(false)}
+                  onMouseEnter={() => handleDropdownEnter(link.label)}
+                  onMouseLeave={handleDropdownLeave}
                 >
-                  <Link
-                    href={link.href}
+                  <button
                     className="flex items-center gap-1 text-sm font-medium text-slate-700 hover:text-orange-500 transition-colors"
                   >
                     {link.label}
-                    <ChevronDown className="w-3.5 h-3.5" />
-                  </Link>
-                  {isDropdownOpen && (
-                    <div className="absolute top-full left-0 pt-2">
-                      <div className="bg-white rounded-lg shadow-lg border border-slate-200 py-2 min-w-[180px]">
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${openDropdown === link.label ? 'rotate-180' : ''}`} />
+                  </button>
+                  {openDropdown === link.label && (
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2">
+                      <div className="bg-white rounded-xl shadow-lg border border-slate-200 py-3 min-w-[260px]">
+                        {/* Section label for Solutions dropdown */}
+                        {link.sectionLabel && (
+                          <div className="px-5 pb-2 mb-1 border-b border-slate-100">
+                            <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                              {link.sectionLabel}
+                            </span>
+                          </div>
+                        )}
                         {link.children.map((child) => (
                           <Link
-                            key={child.href}
+                            key={child.label}
                             href={child.href}
-                            className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-orange-500 transition-colors"
+                            className="block px-5 py-2.5 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
                           >
                             {child.label}
                           </Link>
@@ -100,8 +201,8 @@ export function Header() {
                 </div>
               ) : (
                 <Link
-                  key={link.href}
-                  href={link.href}
+                  key={link.label}
+                  href={link.href!}
                   className="text-sm font-medium text-slate-700 hover:text-orange-500 transition-colors"
                 >
                   {link.label}
@@ -137,7 +238,7 @@ export function Header() {
                 }`}
               >
                 <Building2 className="w-3.5 h-3.5" />
-                B2B
+                {t('b2b')}
               </button>
             </div>
 
@@ -145,6 +246,7 @@ export function Header() {
             <Link
               href={`/${locale}/products`}
               className="hidden sm:flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 transition-colors"
+              aria-label={t('search')}
             >
               <Search className="w-4 h-4" />
             </Link>
@@ -153,6 +255,7 @@ export function Header() {
             <Link
               href={`/${locale}/cart`}
               className="relative flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 transition-colors"
+              aria-label={t('cart')}
             >
               <ShoppingCart className="w-5 h-5" />
               {cartCount > 0 && (
@@ -213,31 +316,59 @@ export function Header() {
                 }`}
               >
                 <Building2 className="w-4 h-4" />
-                B2B
+                {t('b2b')}
               </button>
             </div>
 
             {navLinks.map((link) => (
-              <div key={link.href}>
-                <Link
-                  href={link.href}
-                  className="block py-2.5 text-base font-medium text-slate-700 hover:text-orange-500"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
-                {link.children?.map((child) => (
+              <div key={link.label}>
+                {link.children ? (
+                  <>
+                    <button
+                      className="flex items-center justify-between w-full py-2.5 text-base font-medium text-slate-700 hover:text-orange-500"
+                      onClick={() => toggleMobileDropdown(link.label)}
+                    >
+                      {link.label}
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform duration-200 ${
+                          openMobileDropdown === link.label ? 'rotate-180' : ''
+                        }`}
+                      />
+                    </button>
+                    {openMobileDropdown === link.label && (
+                      <div className="pl-4 space-y-0.5">
+                        {link.sectionLabel && (
+                          <div className="py-1.5 px-2">
+                            <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                              {link.sectionLabel}
+                            </span>
+                          </div>
+                        )}
+                        {link.children.map((child) => (
+                          <Link
+                            key={child.label}
+                            href={child.href}
+                            className="block py-2 pl-2 text-sm text-slate-500 hover:text-orange-500 border-l-2 border-slate-200 hover:border-orange-500 ml-1"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                ) : (
                   <Link
-                    key={child.href}
-                    href={child.href}
-                    className="block py-2 pl-4 text-sm text-slate-500 hover:text-orange-500"
+                    href={link.href!}
+                    className="block py-2.5 text-base font-medium text-slate-700 hover:text-orange-500"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    {child.label}
+                    {link.label}
                   </Link>
-                ))}
+                )}
               </div>
             ))}
+
             <div className="pt-3 border-t border-slate-200 flex gap-2">
               <Link
                 href={`/${locale}/cart`}
