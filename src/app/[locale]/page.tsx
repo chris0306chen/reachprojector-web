@@ -1,5 +1,7 @@
 import Link from 'next/link';
-import { ArrowRight, Settings, Package, Sparkles } from 'lucide-react';
+import { ArrowRight, Settings, Package, Sparkles, Monitor, Tv, Wrench, RectangleVertical } from 'lucide-react';
+import { getProducts } from '@/lib/data-service';
+import { ProductCard } from '@/components/product-card';
 import RealWorldApplications from '@/components/real-world-applications';
 import ShippingDelivery from '@/components/shipping-delivery';
 import { getTranslations } from 'next-intl/server';
@@ -10,34 +12,69 @@ export const dynamic = 'force-dynamic';
 export default async function HomePage() {
   const t = await getTranslations('home');
 
+  const [bestsellers] = await Promise.all([
+    getProducts({ pageSize: 8 }),
+  ]);
+
+  const categories = [
+    {
+      icon: Monitor,
+      titleKey: 'categories.projectors',
+      descKey: 'categories.projectorsDesc',
+      href: '/products?category=4k-laser-projectors',
+      image: '/images/categories/4k-laser-projector.jpg',
+    },
+    {
+      icon: Tv,
+      titleKey: 'categories.ustLaser',
+      descKey: 'categories.ustLaserDesc',
+      href: '/products?category=ust-laser-tv',
+      image: '/images/categories/ust-laser-tv.jpg',
+    },
+    {
+      icon: Wrench,
+      titleKey: 'categories.mounts',
+      descKey: 'categories.mountsDesc',
+      href: '/products?category=projector-mounts',
+      image: '/images/categories/projector-mount.jpg',
+    },
+    {
+      icon: RectangleVertical,
+      titleKey: 'categories.screens',
+      descKey: 'categories.screensDesc',
+      href: '/products?category=projection-screens',
+      image: '/images/categories/projection-screen.jpg',
+    },
+  ];
+
   const solutions = [
     {
       titleKey: 'solutions.hospitality.title',
       descKey: 'solutions.hospitality.desc',
       oemKey: 'solutions.hospitality.oem',
       image: '/images/scenarios/hospitality.jpg',
-      href: '/contact',
+      href: '/products',
     },
     {
       titleKey: 'solutions.retail.title',
       descKey: 'solutions.retail.desc',
       oemKey: 'solutions.retail.oem',
       image: '/images/scenarios/retail-oem.jpg',
-      href: '/contact',
+      href: '/products',
     },
     {
       titleKey: 'solutions.events.title',
       descKey: 'solutions.events.desc',
       oemKey: 'solutions.events.oem',
       image: '/images/scenarios/events.jpg',
-      href: '/contact',
+      href: '/products',
     },
     {
       titleKey: 'solutions.education.title',
       descKey: 'solutions.education.desc',
       oemKey: 'solutions.education.oem',
       image: '/images/scenarios/education.jpg',
-      href: '/contact',
+      href: '/products',
     },
   ];
 
@@ -65,17 +102,13 @@ export default async function HomePage() {
 
       {/* ── 1. Hero Section ── */}
       <section className="relative min-h-[600px] lg:min-h-screen overflow-hidden flex items-center">
-        {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: 'url(/images/hero/hero-bg.jpg)' }}
         />
-        {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black/60" />
-        {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-slate-900/40 to-transparent" />
 
-        {/* Content */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 w-full">
           <div className="max-w-3xl">
             <p className="text-orange-400 text-sm font-semibold uppercase tracking-wider mb-4">
@@ -90,17 +123,17 @@ export default async function HomePage() {
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
-                href="/contact"
+                href="/products"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-all hover:scale-105 shadow-lg"
               >
-                {t('hero.getOemQuote')}
+                {t('hero.browseProducts')}
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
-                href="#solutions"
+                href="/contact"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-medium rounded-lg border border-white/30 backdrop-blur-sm transition-all hover:scale-105"
               >
-                {t('hero.exploreKits')}
+                {t('hero.getOemQuote')}
               </Link>
             </div>
             {/* Stats */}
@@ -122,7 +155,83 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── 2. Tailored Solutions ── */}
+      {/* ── 2. Category Navigation Cards ── */}
+      <section className="py-16 lg:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-3">
+              {t('categories.title')}
+            </h2>
+            <p className="text-slate-500 max-w-2xl mx-auto">
+              {t('categories.description')}
+            </p>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+            {categories.map((cat) => (
+              <Link
+                key={cat.titleKey}
+                href={cat.href}
+                className="group relative h-[200px] sm:h-[280px] lg:h-[350px] rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                  style={{ backgroundImage: `url(${cat.image})` }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20 group-hover:via-black/50 transition-all duration-300" />
+                <div className="relative z-10 h-full flex flex-col justify-end p-4 lg:p-5">
+                  <div className="w-10 h-10 lg:w-12 lg:h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-3 border border-white/10">
+                    <cat.icon className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
+                  </div>
+                  <h3 className="text-sm lg:text-lg font-bold text-white mb-1 drop-shadow-md">
+                    {t(cat.titleKey)}
+                  </h3>
+                  <p className="text-xs lg:text-sm text-white/80 mb-2 lg:mb-3 leading-relaxed line-clamp-2">
+                    {t(cat.descKey)}
+                  </p>
+                  <span className="inline-flex items-center gap-1 text-xs font-medium text-orange-400 group-hover:text-orange-300 transition-colors">
+                    {t('viewProducts')} <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 3. Best Sellers ── */}
+      <section className="py-16 lg:py-20 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-2">
+                {t('bestsellers.title')}
+              </h2>
+              <p className="text-slate-500">{t('bestsellers.description')}</p>
+            </div>
+            <Link
+              href="/products"
+              className="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-orange-500 hover:text-orange-600 transition-colors"
+            >
+              {t('viewAll')} <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {bestsellers.products.slice(0, 8).map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+          <div className="mt-8 text-center sm:hidden">
+            <Link
+              href="/products"
+              className="inline-flex items-center gap-1 text-sm font-medium text-orange-500"
+            >
+              {t('viewAllProducts')} <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 4. Tailored Solutions ── */}
       <section id="solutions" className="py-16 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -140,15 +249,11 @@ export default async function HomePage() {
                 href={sol.href}
                 className="group relative h-[350px] lg:h-[400px] rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
               >
-                {/* Background Image */}
                 <div
                   className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
                   style={{ backgroundImage: `url(${sol.image})` }}
                 />
-                {/* Dark gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 group-hover:via-black/50 transition-all duration-300" />
-
-                {/* Content */}
                 <div className="relative z-10 h-full flex flex-col justify-end p-5 lg:p-6">
                   <h3 className="text-lg lg:text-xl font-bold text-white mb-2 drop-shadow-md">
                     {t(sol.titleKey)}
@@ -169,7 +274,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── 3. Why Partner With Us ── */}
+      {/* ── 5. Why Partner With Us ── */}
       <section className="py-16 lg:py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -191,11 +296,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── 4. Content Studio / Launch Kit ── */}
+      {/* ── 6. Content Studio / Launch Kit ── */}
       <section className="py-16 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left: Text */}
             <div>
               <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-4">
                 {t('contentStudio.title')}
@@ -211,7 +315,6 @@ export default async function HomePage() {
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
-            {/* Right: Overlapping image cards */}
             <div className="relative h-[350px] lg:h-[400px]">
               <div
                 className="absolute top-0 right-0 w-[70%] h-[85%] rounded-xl bg-cover bg-center shadow-xl"
@@ -226,7 +329,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── 5. Inspiration for Your Space ── */}
+      {/* ── 7. Inspiration for Your Space ── */}
       <section className="py-16 lg:py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -238,9 +341,8 @@ export default async function HomePage() {
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {/* Bedroom Cinema */}
             <Link
-              href="/products"
+              href="/products?category=4k-laser-projectors"
               className="group relative h-[300px] lg:h-[350px] rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
             >
               <div
@@ -257,14 +359,11 @@ export default async function HomePage() {
                 </span>
               </div>
             </Link>
-            {/* Backyard & Camping */}
             <Link
               href="/products"
               className="group relative h-[300px] lg:h-[350px] rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
             >
-              {/* Gradient placeholder background */}
               <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-indigo-900 to-slate-900 transition-transform duration-500 group-hover:scale-110" />
-              {/* Star pattern overlay */}
               <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
               <div className="relative z-10 h-full flex flex-col justify-end p-6">
                 <h3 className="text-xl font-bold text-white mb-2 drop-shadow-md">
@@ -279,13 +378,13 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── 6. Real-World Applications ── */}
+      {/* ── 8. Real-World Applications ── */}
       <RealWorldApplications />
 
-      {/* ── 7. Shipping & Delivery ── */}
+      {/* ── 9. Shipping & Delivery ── */}
       <ShippingDelivery />
 
-      {/* ── 8. B2B CTA ── */}
+      {/* ── 10. B2B CTA ── */}
       <section className="py-16 lg:py-20 bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl lg:text-3xl font-bold text-white mb-4">

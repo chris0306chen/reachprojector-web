@@ -114,7 +114,7 @@ export function Header() {
     },
     {
       href: `/${locale}/products`,
-      label: t('privateLabelStore'),
+      label: t('allProducts'),
     },
     {
       href: `/${locale}/contact`,

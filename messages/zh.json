@@ -44,7 +44,8 @@
     "installationGuides": "安装视频/PDF",
     "certificates": "认证文件",
     "partnerWithUs": "成为伙伴",
-    "privateLabelStore": "品牌专卖"
+    "privateLabelStore": "品牌专卖",
+    "allProducts": "全部产品"
   },
   "home": {
     "hero": {
@@ -54,6 +55,7 @@
       "title3": "解决方案",
       "description": "从概念到上架 — 我们提供OEM/ODM投影仪、场景化配件和AI驱动的营销素材。",
       "getOemQuote": "获取OEM报价",
+      "browseProducts": "浏览产品",
       "exploreKits": "探索场景方案",
       "stats": {
         "countries": "国家",
@@ -64,6 +66,22 @@
     "viewProducts": "查看产品",
     "viewAll": "查看全部",
     "viewAllProducts": "查看所有产品",
+    "categories": {
+      "title": "按品类选购",
+      "description": "浏览我们完整的投影设备和配件产品线",
+      "projectors": "4K激光投影仪",
+      "projectorsDesc": "XGIMI、海信、极米等品牌高端4K激光投影仪",
+      "ustLaser": "超短焦激光电视",
+      "ustLaserDesc": "超短焦激光电视，几英寸距离投射100-120英寸画面",
+      "mounts": "投影仪支架",
+      "mountsDesc": "吊装、壁挂、落地支架及超短焦可调支架，适配各种安装场景",
+      "screens": "投影幕布",
+      "screensDesc": "电动幕、固定框幕、便携幕及抗光幕，适配各类环境"
+    },
+    "bestsellers": {
+      "title": "热销产品",
+      "description": "全球客户最受欢迎的投影设备"
+    },
     "solutions": {
       "title": "为每个场景量身定制解决方案",
       "description": "为您特定的业务需求设计的一站式投影解决方案。所有方案均可白标/OEM定制。",

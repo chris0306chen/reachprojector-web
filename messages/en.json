@@ -44,7 +44,8 @@
     "installationGuides": "Installation Guides/PDF",
     "certificates": "Certificates",
     "partnerWithUs": "Partner With Us",
-    "privateLabelStore": "Private Label Store"
+    "privateLabelStore": "Private Label Store",
+    "allProducts": "All Products"
   },
   "home": {
     "hero": {
@@ -54,6 +55,7 @@
       "title3": "Solutions",
       "description": "From concept to shelf — we provide OEM/ODM projectors, scenario-based accessories, and AI-powered marketing assets.",
       "getOemQuote": "Get OEM Quote",
+      "browseProducts": "Browse Products",
       "exploreKits": "Explore Scenario Kits",
       "stats": {
         "countries": "Countries",
@@ -64,6 +66,22 @@
     "viewProducts": "View Products",
     "viewAll": "View All",
     "viewAllProducts": "View All Products",
+    "categories": {
+      "title": "Shop by Category",
+      "description": "Browse our complete range of projection equipment and accessories",
+      "projectors": "4K Laser Projectors",
+      "projectorsDesc": "Premium 4K projectors from XGIMI, Hisense, JMGO with laser light source",
+      "ustLaser": "UST Laser TV",
+      "ustLaserDesc": "Ultra short throw laser TVs, 100-120\" from inches away",
+      "mounts": "Projector Mounts",
+      "mountsDesc": "Ceiling, wall, floor stands & UST adjustable mounts for every setup",
+      "screens": "Projection Screens",
+      "screensDesc": "Motorized, fixed frame, portable & ALR screens for any environment"
+    },
+    "bestsellers": {
+      "title": "Best Sellers",
+      "description": "Most popular projection equipment chosen by our global customers"
+    },
     "solutions": {
       "title": "Tailored Solutions for Every Scenario",
       "description": "Turnkey projection solutions designed for your specific business needs. All solutions available for white-label / OEM.",
