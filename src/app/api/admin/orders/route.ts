@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
       query = query.eq("status", status);
     }
 
-    const { data, error, count } = await query;
+    const { data, error } = await query;
 
     if (error) throw error;
 
@@ -44,7 +44,7 @@ export async function PUT(request: NextRequest) {
     const supabase = await getSupabaseClient();
 
     const updateData: Record<string, unknown> = {};
-    if (body.status !== undefined) updateData.status = body.status;
+    // Status changes use /api/admin/orders/[id]/status so transition rules cannot be bypassed.
     if (body.tracking_number !== undefined) updateData.tracking_number = body.tracking_number;
     if (body.shipping_method !== undefined) updateData.shipping_method = body.shipping_method;
     if (body.notes !== undefined) updateData.notes = body.notes;

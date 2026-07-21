@@ -1,6 +1,5 @@
-import { pgTable, serial, timestamp, varchar, text, numeric, boolean, jsonb, integer, index } from "drizzle-orm/pg-core"
+import { pgTable, serial, timestamp, varchar, text, numeric, boolean, jsonb, integer, index, uniqueIndex } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
-import { createSchemaFactory, createInsertSchema } from "drizzle-zod"
 import { z } from "zod"
 
 export const healthCheck = pgTable("health_check", {
@@ -113,7 +112,7 @@ export const orders = pgTable(
 		index("orders_order_id_idx").on(table.order_id),
 		index("orders_product_id_idx").on(table.product_id),
 		index("orders_status_idx").on(table.status),
-		index("orders_paypal_order_id_idx").on(table.paypal_order_id),
+		uniqueIndex("orders_paypal_order_id_unique").on(table.paypal_order_id),
 		index("orders_airwallex_intent_id_idx").on(table.airwallex_intent_id),
 		index("orders_payment_method_idx").on(table.payment_method),
 		index("orders_created_at_idx").on(table.created_at),

@@ -270,3 +270,14 @@ export async function updateOrderStatus(id: string, status: string): Promise<Ord
   if (error) throw new Error(`Failed to update order: ${error.message}`);
   return data as Order;
 }
+
+export async function updateOrderStatusByPayPalId(paypalOrderId: string, status: string): Promise<Order | null> {
+  const { data, error } = await client
+    .from('orders')
+    .update({ status, updated_at: new Date().toISOString() })
+    .eq('paypal_order_id', paypalOrderId)
+    .select()
+    .maybeSingle();
+  if (error) throw new Error(`Failed to update PayPal order: ${error.message}`);
+  return data as Order | null;
+}
