@@ -2,11 +2,15 @@ import { SignJWT, jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
-import { users, type User } from "@/storage/database/shared/schema";
+import { type User } from "@/storage/database/shared/schema";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "reach-projector-admin-secret-key-change-in-production"
-);
+function getJwtSecret(): Uint8Array {
+  const secret = process.env.JWT_SECRET;
+  if (!secret || secret.length < 32) {
+    throw new Error("JWT_SECRET must be configured with at least 32 characters");
+  }
+  return new TextEncoder().encode(secret);
+}
 
 const TOKEN_COOKIE_NAME = "admin_token";
 const TOKEN_MAX_AGE = 60 * 60 * 24; // 24 hours
@@ -38,14 +42,14 @@ export async function createToken(user: User): Promise<string> {
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime(`${TOKEN_MAX_AGE}s`)
-    .sign(JWT_SECRET);
+    .sign(getJwtSecret());
 
   return token;
 }
 
 export async function verifyToken(token: string): Promise<JWTPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const { payload } = await jwtVerify(token, getJwtSecret());
     return payload as unknown as JWTPayload;
   } catch {
     return null;

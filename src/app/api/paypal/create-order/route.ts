@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getCheckoutItem } from '@/lib/checkout';
 
 const PAYPAL_BASE_URL = process.env.PAYPAL_BASE_URL || 'https://api-m.paypal.com';
 
@@ -31,14 +32,17 @@ async function getAccessToken(): Promise<string> {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { productId, productName, price, quantity = 1, currency = 'USD' } = body;
+    const { productId, quantity = 1 } = body;
 
-    if (!productId || !productName || !price) {
+    if (!productId) {
       return NextResponse.json(
-        { error: 'Missing required fields: productId, productName, price' },
+        { error: 'Missing required field: productId' },
         { status: 400 }
       );
     }
+
+    // Price, name and currency always come from the catalog, never the browser.
+    const item = await getCheckoutItem(productId, quantity);
 
     // Check if PayPal is configured
     const clientId = process.env.PAYPAL_CLIENT_ID;
@@ -63,11 +67,11 @@ export async function POST(request: NextRequest) {
         intent: 'CAPTURE',
         purchase_units: [
           {
-            reference_id: productId,
-            description: productName,
+            reference_id: item.id,
+            description: item.name,
             amount: {
-              currency_code: currency,
-              value: (parseFloat(price) * quantity).toFixed(2),
+              currency_code: item.currency,
+              value: item.total,
             },
           },
         ],

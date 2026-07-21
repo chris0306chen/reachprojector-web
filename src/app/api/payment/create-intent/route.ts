@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getCheckoutItem } from '@/lib/checkout';
 
 const AIRWALLEX_API_URL = process.env.AIRWALLEX_API_URL || 'https://api.airwallex.com';
 
@@ -39,14 +40,16 @@ async function getAccessToken(): Promise<string | null> {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { productId, productName, price, quantity = 1, currency = 'USD', returnUrl } = body;
+    const { productId, quantity = 1 } = body;
 
-    if (!productId || !productName || !price) {
+    if (!productId) {
       return NextResponse.json(
-        { error: 'Missing required fields: productId, productName, price' },
+        { error: 'Missing required field: productId' },
         { status: 400 }
       );
     }
+
+    const item = await getCheckoutItem(productId, quantity);
 
     // Check if Airwallex is configured
     const clientId = process.env.AIRWALLEX_CLIENT_ID;
@@ -66,7 +69,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const totalAmount = (parseFloat(price) * quantity).toFixed(2);
+    const totalAmount = item.total;
     const merchantOrderId = `AWX-${Date.now()}`;
 
     // Create Payment Intent
@@ -79,15 +82,15 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         amount: totalAmount,
-        currency,
+        currency: item.currency,
         merchant_order_id: merchantOrderId,
         request_id: `req-${Date.now()}`,
-        return_url: returnUrl || `${process.env.COZE_PROJECT_DOMAIN_DEFAULT || 'http://localhost:5000'}/order-success?payment=airwallex`,
+        return_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://reachprojector.com'}/en/order-success?payment=airwallex`,
         cancel_url: `${process.env.COZE_PROJECT_DOMAIN_DEFAULT || 'http://localhost:5000'}/products/${productId}`,
         metadata: {
-          product_id: productId,
-          product_name: productName,
-          quantity: quantity.toString(),
+          product_id: item.id,
+          product_name: item.name,
+          quantity: item.quantity.toString(),
         },
       }),
     });
@@ -107,7 +110,7 @@ export async function POST(request: NextRequest) {
       client_secret: intentData.client_secret,
       intent_id: intentData.id,
       amount: totalAmount,
-      currency,
+      currency: item.currency,
       merchant_order_id: merchantOrderId,
     });
   } catch (error) {

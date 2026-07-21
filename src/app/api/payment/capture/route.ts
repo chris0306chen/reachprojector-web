@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createOrder } from '@/lib/data-service';
+import { getCheckoutItem } from '@/lib/checkout';
 
 const AIRWALLEX_API_URL = process.env.AIRWALLEX_API_URL || 'https://api.airwallex.com';
 
@@ -32,14 +33,16 @@ async function getAccessToken(): Promise<string> {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { intent_id, client_secret, productId, productName, price, quantity = 1, currency = 'USD' } = body;
+    const { intent_id, productId, quantity = 1 } = body;
 
-    if (!intent_id || !client_secret) {
+    if (!intent_id || !productId) {
       return NextResponse.json(
-        { error: 'Missing required fields: intent_id, client_secret' },
+        { error: 'Missing required fields: intent_id, productId' },
         { status: 400 }
       );
     }
+
+    const item = await getCheckoutItem(productId, quantity);
 
     const clientId = process.env.AIRWALLEX_CLIENT_ID;
     const apiKey = process.env.AIRWALLEX_API_KEY;
@@ -75,23 +78,31 @@ export async function POST(request: NextRequest) {
     }
 
     const confirmData = await confirmResponse.json();
-    const status = confirmData.status || 'completed';
+    const status = confirmData.status;
+    if (
+      status !== 'SUCCEEDED' && status !== 'succeeded' ||
+      Number(confirmData.amount) !== Number(item.total) ||
+      confirmData.currency !== item.currency ||
+      confirmData.metadata?.product_id !== item.id
+    ) {
+      return NextResponse.json({ error: 'Payment intent does not match the order' }, { status: 409 });
+    }
 
     // Record order in database
     try {
       await createOrder({
         order_id: `AWX-${Date.now()}`,
-        product_id: productId || null,
-        product_name: productName || 'Unknown Product',
-        quantity: parseInt(quantity.toString()),
-        amount: price.toString(),
-        currency,
+        product_id: item.id,
+        product_name: item.name,
+        quantity: item.quantity,
+        amount: item.total,
+        currency: item.currency,
         payer_email: null,
         payer_name: null,
         paypal_order_id: null,
         airwallex_intent_id: intent_id,
         payment_method: 'airwallex',
-        status: status === 'succeeded' ? 'completed' : 'pending',
+        status: 'completed',
       });
     } catch (dbError) {
       console.error('Failed to record order:', dbError);

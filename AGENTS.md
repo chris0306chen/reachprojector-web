@@ -83,7 +83,7 @@ src/
 ## 后台管理员账号
 
 - **管理员邮箱**: admin@reachtronics.com
-- **管理员密码**: Reach@2024Admin
+- **管理员密码**: 通过 `ADMIN_PASSWORD` 环境变量在初始化时提供，禁止写入仓库
 - **后台地址**: /admin
 - **子账号**: 通过 /admin/users 创建，可配置权限
 
