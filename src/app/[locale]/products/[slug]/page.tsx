@@ -9,17 +9,20 @@ import { generateProductSchema, generateBreadcrumbSchema, generateFAQSchema } fr
 export const dynamic = 'force-dynamic';
 
 interface ProductDetailPageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }
 
 export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) return { title: 'Product Not Found' };
 
   return {
     title: `${product.name} - ${product.brand}`,
     description: product.short_description || `${product.name} by ${product.brand}. Premium quality electronics at competitive prices.`,
+    alternates: {
+      canonical: `/${locale}/products/${product.slug}`,
+    },
     openGraph: {
       title: `${product.name} - ${product.brand} | REACH PROJECTOR`,
       description: product.short_description || '',
@@ -29,7 +32,7 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
 }
 
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) notFound();
 
@@ -43,13 +46,13 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       <div className="border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <nav className="flex items-center gap-2 text-sm">
-            <Link href="/" className="text-slate-500 hover:text-slate-900 transition-colors">Home</Link>
+            <Link href={`/${locale}`} className="text-slate-500 hover:text-slate-900 transition-colors">Home</Link>
             <span className="text-slate-300">/</span>
-            <Link href="/products" className="text-slate-500 hover:text-slate-900 transition-colors">Products</Link>
+            <Link href={`/${locale}/products`} className="text-slate-500 hover:text-slate-900 transition-colors">Products</Link>
             <span className="text-slate-300">/</span>
             {category && (
               <>
-                <Link href={`/products?category=${category.slug}`} className="text-slate-500 hover:text-slate-900 transition-colors">
+                <Link href={`/${locale}/products?category=${category.slug}`} className="text-slate-500 hover:text-slate-900 transition-colors">
                   {category.name}
                 </Link>
                 <span className="text-slate-300">/</span>
@@ -84,6 +87,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             sku: product.slug,
             category: category?.name || 'Electronics',
             availability: product.stock_status === 'in_stock' ? 'in_stock' : 'out_of_stock',
+            locale,
           })),
         }}
       />
@@ -92,9 +96,9 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(generateBreadcrumbSchema([
-            { name: 'Home', url: '/' },
-            { name: 'Products', url: '/products' },
-            { name: product.name, url: `/products/${product.slug}` },
+            { name: 'Home', url: `/${locale}` },
+            { name: 'Products', url: `/${locale}/products` },
+            { name: product.name, url: `/${locale}/products/${product.slug}` },
           ])),
         }}
       />

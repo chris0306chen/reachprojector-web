@@ -12,7 +12,7 @@
 // Constants
 // ---------------------------------------------------------------------------
 
-export const SITE_URL = 'https://www.reachprojector.com'
+export const SITE_URL = 'https://reachprojector.com'
 export const SITE_NAME = 'REACH PROJECTOR'
 
 // ---------------------------------------------------------------------------
@@ -32,6 +32,7 @@ export interface ProductSEOData {
   availability: 'in_stock' | 'out_of_stock' | 'preorder'
   rating?: number
   reviewCount?: number
+  locale?: string
 }
 
 export interface BreadcrumbItem {
@@ -121,7 +122,7 @@ export function generateProductSchema(product: ProductSEOData) {
       price: product.price,
       priceCurrency: product.currency,
       availability: availabilityMap[product.availability],
-      url: `${SITE_URL}/products/${product.sku}`,
+      url: `${SITE_URL}/${product.locale || 'en'}/products/${product.sku}`,
       seller: {
         '@type': 'Organization',
         name: SITE_NAME,
@@ -221,9 +222,9 @@ export function generateOrganizationSchema() {
     name: SITE_NAME,
     legalName: 'Quanzhou Reach Technology Co., Ltd.',
     url: SITE_URL,
-    logo: `${SITE_URL}/logo.png`,
+    logo: `${SITE_URL}/images/logo.png`,
     description:
-      'Wholesale supplier of 4K laser projectors, UST laser TVs, printers, and computer components. Serving 50+ countries with DDP shipping.',
+      'Projection solutions supplier for home cinema, hospitality, education, events, integrators, and retail partners.',
     address: {
       '@type': 'PostalAddress',
       addressLocality: 'Quanzhou',
@@ -252,20 +253,20 @@ export function generateWebSiteSchema() {
     name: SITE_NAME,
     url: SITE_URL,
     description:
-      'Professional projector, printer and computer components supplier. Wholesale pricing with worldwide DDP shipping.',
+      'Projectors, projection screens, mounts, and scenario-based projection solutions for retail and business customers.',
     publisher: {
       '@type': 'Organization',
       name: SITE_NAME,
       logo: {
         '@type': 'ImageObject',
-        url: `${SITE_URL}/logo.png`,
+        url: `${SITE_URL}/images/logo.png`,
       },
     },
     potentialAction: {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `${SITE_URL}/products?search={search_term_string}`,
+        urlTemplate: `${SITE_URL}/en/products?search={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
     },
