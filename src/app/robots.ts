@@ -19,7 +19,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/api/', '/admin/'],
       },
     ],
-    sitemap: 'https://www.reachprojector.com/sitemap.xml',
-    host: 'https://www.reachprojector.com',
+    sitemap: 'https://reachprojector.com/sitemap.xml',
+    host: 'https://reachprojector.com',
   }
 }

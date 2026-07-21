@@ -99,9 +99,6 @@ export default async function HomePage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateWebSiteSchema()) }} />
-
-
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateWebSiteSchema()) }} />
       {/* ── 1. Hero Section ── */}
       <section className="relative min-h-[600px] lg:min-h-screen overflow-hidden flex items-center">
         <div
