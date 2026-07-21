@@ -235,7 +235,7 @@ export function generateOrganizationSchema() {
       '@type': 'ContactPoint',
       telephone: '+86-13655920080',
       contactType: 'sales',
-      email: 'info@reachprojector.com',
+      email: 'info@reachtronics.com',
       availableLanguage: ['English', 'Chinese'],
     },
     sameAs: [] as string[],

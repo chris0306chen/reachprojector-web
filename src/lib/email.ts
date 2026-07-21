@@ -28,7 +28,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<SendEmailRes
     throw new Error('RESEND_API_KEY environment variable is not set');
   }
 
-  const fromAddress = options.from || 'REACH PROJECTOR <info@reachprojector.com>';
+  const fromAddress = options.from || 'REACH PROJECTOR <info@reachtronics.com>';
 
   const payload: Record<string, unknown> = {
     from: fromAddress,

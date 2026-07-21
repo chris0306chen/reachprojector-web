@@ -51,6 +51,6 @@ export async function GET() {
   return NextResponse.json({
     provider: 'resend',
     apiKeyConfigured: hasApiKey,
-    defaultFrom: 'info@reachprojector.com',
+    defaultFrom: 'info@reachtronics.com',
   });
 }
