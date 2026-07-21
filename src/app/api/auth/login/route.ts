@@ -34,7 +34,15 @@ export async function POST(request: NextRequest) {
       .eq("is_active", true)
       .single();
 
-    if (error || !user) {
+    if (error && error.code !== 'PGRST116') {
+      console.error('Admin login database error:', error);
+      return NextResponse.json(
+        { error: 'Admin database is not initialized' },
+        { status: 503 }
+      );
+    }
+
+    if (!user) {
       recordLoginFailure(attemptKey);
       return NextResponse.json(
         { error: "Invalid email or password" },
