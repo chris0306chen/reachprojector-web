@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
-import { hashPassword } from "@/lib/auth";
+import { getCurrentUser, hashPassword } from "@/lib/auth";
 
 /**
  * POST /api/admin/register
@@ -9,6 +9,11 @@ import { hashPassword } from "@/lib/auth";
  */
 export async function POST(request: NextRequest) {
   try {
+    const currentUser = await getCurrentUser();
+    if (currentUser?.role !== "admin") {
+      return NextResponse.json({ error: "Administrator access required" }, { status: 403 });
+    }
+
     const body = await request.json();
     const { email, password, role } = body;
 
@@ -19,9 +24,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (password.length < 8) {
+    if (password.length < 12) {
       return NextResponse.json(
-        { error: "Password must be at least 8 characters" },
+        { error: "Password must be at least 12 characters" },
         { status: 400 }
       );
     }
