@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, hasPermission } from "@/lib/auth";
 
 export async function PUT(
   request: NextRequest,
@@ -11,6 +11,9 @@ export async function PUT(
     const user = await getCurrentUser();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!hasPermission(user, "inquiries")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const { id } = await params;
