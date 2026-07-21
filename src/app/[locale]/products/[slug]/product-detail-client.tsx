@@ -197,7 +197,6 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
               ) : (
                 <PayPalCheckout
                   productId={product.id}
-                  productName={displayName}
                   price={price}
                   quantity={quantity}
                   currency="USD"
