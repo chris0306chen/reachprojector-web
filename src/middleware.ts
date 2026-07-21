@@ -33,6 +33,7 @@ function requiredPermission(pathname: string): string | null {
   if (pathname.startsWith('/api/admin/products') || pathname.startsWith('/api/admin/categories')) return 'products';
   if (pathname.startsWith('/api/admin/orders')) return 'orders';
   if (pathname.startsWith('/api/admin/inquiries')) return 'inquiries';
+  if (pathname.startsWith('/api/admin/email-test')) return 'inquiries';
   if (pathname.startsWith('/api/admin/shipping')) return 'shipping';
   return null;
 }
