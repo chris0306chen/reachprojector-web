@@ -132,6 +132,7 @@ export default function AdminInquiriesPage() {
   const [editNotes, setEditNotes] = useState<string>("");
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
+  const [emailTestMsg, setEmailTestMsg] = useState<string | null>(null);
 
   /* ---- Fetch ---- */
   const fetchInquiries = useCallback(
@@ -149,7 +150,7 @@ export default function AdminInquiriesPage() {
         if (!res.ok) throw new Error("获取询价列表失败");
         const json = await res.json();
         setInquiries(json.data || []);
-        setPagination(json.pagination || pagination);
+        setPagination((current) => json.pagination || current);
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : "加载失败，请稍后重试";
         setError(msg);
@@ -198,6 +199,18 @@ export default function AdminInquiriesPage() {
     }
   };
 
+  const handleEmailTest = async () => {
+    setEmailTestMsg("发送中...");
+    try {
+      const res = await fetch("/api/admin/email-test", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "发送失败");
+      setEmailTestMsg(`测试邮件已发送（ID: ${data.messageId}）`);
+    } catch (error) {
+      setEmailTestMsg(error instanceof Error ? error.message : "发送失败");
+    }
+  };
+
   /* ---- Filter by search ---- */
   const filtered = search
     ? inquiries.filter((inq) => {
@@ -226,6 +239,16 @@ export default function AdminInquiriesPage() {
           <p className="text-slate-500 text-sm mt-1">
             共 {pagination.total} 条询价记录
           </p>
+        </div>
+        <div className="flex flex-col items-end gap-1">
+          <button
+            type="button"
+            onClick={handleEmailTest}
+            className="px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-medium hover:bg-slate-800"
+          >
+            发送测试邮件
+          </button>
+          {emailTestMsg && <p className="text-xs text-slate-500">{emailTestMsg}</p>}
         </div>
       </div>
 
