@@ -5,7 +5,7 @@ export async function POST() {
   try {
     const sentAt = new Date().toISOString();
     const result = await sendEmail({
-      to: 'info@reachprojector.com',
+      to: 'info@reachtronics.com',
       subject: 'REACH PROJECTOR email delivery test',
       html: `<h2>Email delivery is working</h2><p>Resend accepted this test at ${sentAt}.</p>`,
     });
