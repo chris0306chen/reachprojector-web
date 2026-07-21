@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { locales, type Locale, rtlLocales } from '@/i18n/config';
+import { locales, type Locale } from '@/i18n/config';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { WhatsAppFloat } from '@/components/WhatsAppFloat';
