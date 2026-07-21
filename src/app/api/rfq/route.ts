@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseClient } from '@/storage/database/supabase-client';
 import { getCurrentUser } from '@/lib/auth';
+import { hasPermission } from '@/lib/auth';
+import { sendEmail } from '@/lib/email';
+import { z } from 'zod';
 
 // Generate RFQ number: RFQ-XXXXXXXX (8-char hex)
 function generateRfqNumber(): string {
@@ -10,7 +13,13 @@ function generateRfqNumber(): string {
   return `RFQ-${hex}`;
 }
 
-// Send RFQ notification email via /api/send-email
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>'"]/g, (char) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;',
+  })[char] || char);
+}
+
+// Send RFQ notification directly from the server.
 async function sendRfqNotification(rfq: {
   rfqNumber: string;
   productName: string;
@@ -26,20 +35,32 @@ async function sendRfqNotification(rfq: {
   message: string | null;
 }) {
   const now = new Date().toLocaleString('en-US', { timeZone: 'Asia/Shanghai' });
+  const safe = {
+    rfqNumber: escapeHtml(rfq.rfqNumber),
+    productName: escapeHtml(rfq.productName),
+    companyName: escapeHtml(rfq.companyName),
+    contactName: escapeHtml(rfq.contactName),
+    country: escapeHtml(rfq.country),
+    email: escapeHtml(rfq.email),
+    phone: escapeHtml(rfq.phone),
+    whatsapp: rfq.whatsapp ? escapeHtml(rfq.whatsapp) : null,
+    intendedUse: rfq.intendedUse ? escapeHtml(rfq.intendedUse) : null,
+    message: rfq.message ? escapeHtml(rfq.message) : null,
+  };
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <h2 style="color: #0F172A; border-bottom: 2px solid #F97316; padding-bottom: 8px;">
-        New RFQ: ${rfq.rfqNumber}
+        New RFQ: ${safe.rfqNumber}
       </h2>
       <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
         <tr>
           <td style="padding: 8px 12px; background: #f8fafc; font-weight: 600; width: 140px; border: 1px solid #e2e8f0;">RFQ Number</td>
-          <td style="padding: 8px 12px; border: 1px solid #e2e8f0; font-weight: 700; color: #F97316;">${rfq.rfqNumber}</td>
+          <td style="padding: 8px 12px; border: 1px solid #e2e8f0; font-weight: 700; color: #F97316;">${safe.rfqNumber}</td>
         </tr>
         <tr>
           <td style="padding: 8px 12px; background: #f8fafc; font-weight: 600; border: 1px solid #e2e8f0;">Product</td>
-          <td style="padding: 8px 12px; border: 1px solid #e2e8f0;">${rfq.productName}</td>
+          <td style="padding: 8px 12px; border: 1px solid #e2e8f0;">${safe.productName}</td>
         </tr>
         <tr>
           <td style="padding: 8px 12px; background: #f8fafc; font-weight: 600; border: 1px solid #e2e8f0;">Quantity</td>
@@ -51,38 +72,38 @@ async function sendRfqNotification(rfq: {
           <td style="padding: 8px 12px; border: 1px solid #e2e8f0;">$${rfq.targetPrice.toFixed(2)}</td>
         </tr>
         ` : ''}
-        ${rfq.intendedUse ? `
+        ${safe.intendedUse ? `
         <tr>
           <td style="padding: 8px 12px; background: #f8fafc; font-weight: 600; border: 1px solid #e2e8f0;">Intended Use</td>
-          <td style="padding: 8px 12px; border: 1px solid #e2e8f0;">${rfq.intendedUse}</td>
+          <td style="padding: 8px 12px; border: 1px solid #e2e8f0;">${safe.intendedUse}</td>
         </tr>
         ` : ''}
         <tr>
           <td style="padding: 8px 12px; background: #f8fafc; font-weight: 600; border: 1px solid #e2e8f0;">Company</td>
-          <td style="padding: 8px 12px; border: 1px solid #e2e8f0;">${rfq.companyName}</td>
+          <td style="padding: 8px 12px; border: 1px solid #e2e8f0;">${safe.companyName}</td>
         </tr>
         <tr>
           <td style="padding: 8px 12px; background: #f8fafc; font-weight: 600; border: 1px solid #e2e8f0;">Contact</td>
-          <td style="padding: 8px 12px; border: 1px solid #e2e8f0;">${rfq.contactName}</td>
+          <td style="padding: 8px 12px; border: 1px solid #e2e8f0;">${safe.contactName}</td>
         </tr>
         <tr>
           <td style="padding: 8px 12px; background: #f8fafc; font-weight: 600; border: 1px solid #e2e8f0;">Country</td>
-          <td style="padding: 8px 12px; border: 1px solid #e2e8f0;">${rfq.country}</td>
+          <td style="padding: 8px 12px; border: 1px solid #e2e8f0;">${safe.country}</td>
         </tr>
         <tr>
           <td style="padding: 8px 12px; background: #f8fafc; font-weight: 600; border: 1px solid #e2e8f0;">Email</td>
           <td style="padding: 8px 12px; border: 1px solid #e2e8f0;">
-            <a href="mailto:${rfq.email}" style="color: #F97316;">${rfq.email}</a>
+            <a href="mailto:${safe.email}" style="color: #F97316;">${safe.email}</a>
           </td>
         </tr>
         <tr>
           <td style="padding: 8px 12px; background: #f8fafc; font-weight: 600; border: 1px solid #e2e8f0;">Phone</td>
-          <td style="padding: 8px 12px; border: 1px solid #e2e8f0;">${rfq.phone}</td>
+          <td style="padding: 8px 12px; border: 1px solid #e2e8f0;">${safe.phone}</td>
         </tr>
-        ${rfq.whatsapp ? `
+        ${safe.whatsapp ? `
         <tr>
           <td style="padding: 8px 12px; background: #f8fafc; font-weight: 600; border: 1px solid #e2e8f0;">WhatsApp</td>
-          <td style="padding: 8px 12px; border: 1px solid #e2e8f0;">${rfq.whatsapp}</td>
+          <td style="padding: 8px 12px; border: 1px solid #e2e8f0;">${safe.whatsapp}</td>
         </tr>
         ` : ''}
         <tr>
@@ -90,11 +111,11 @@ async function sendRfqNotification(rfq: {
           <td style="padding: 8px 12px; border: 1px solid #e2e8f0;">${now}</td>
         </tr>
       </table>
-      ${rfq.message ? `
+      ${safe.message ? `
       <div style="margin: 16px 0;">
         <h3 style="color: #0F172A; margin-bottom: 8px;">Message</h3>
         <div style="padding: 12px 16px; background: #f8fafc; border-left: 3px solid #F97316; border-radius: 4px; white-space: pre-wrap;">
-${rfq.message}
+${safe.message}
         </div>
       </div>
       ` : ''}
@@ -106,25 +127,12 @@ ${rfq.message}
   `;
 
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : 'http://localhost:3000';
-
-    const response = await fetch(`${baseUrl}/api/send-email`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        to: 'info@reachprojector.com',
-        subject: `New RFQ ${rfq.rfqNumber}: ${rfq.productName} x${rfq.quantity}`,
-        html,
-        replyTo: rfq.email,
-      }),
+    await sendEmail({
+      to: 'info@reachprojector.com',
+      subject: `New RFQ ${rfq.rfqNumber}: ${escapeHtml(rfq.productName)} x${rfq.quantity}`,
+      html,
+      replyTo: rfq.email,
     });
-
-    if (!response.ok) {
-      const err = await response.text();
-      console.error('RFQ email notification failed:', err);
-    }
   } catch (err) {
     console.error('RFQ email notification error:', err);
   }
@@ -134,36 +142,47 @@ ${rfq.message}
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    const normalized = {
+      product_name: body.product_name ?? body.productName,
+      product_slug: body.product_slug ?? body.productSlug,
+      quantity: body.quantity,
+      target_price: body.target_price ?? body.targetPrice,
+      company_name: body.company_name ?? body.companyName,
+      contact_name: body.contact_name ?? body.contactName,
+      country: body.country,
+      email: body.email,
+      phone: body.phone,
+      whatsapp: body.whatsapp,
+      intended_use: body.intended_use ?? body.intendedUse,
+      message: body.message,
+      accept_marketing: body.accept_marketing ?? body.acceptMarketing ?? false,
+    };
+    const schema = z.object({
+      product_name: z.string().trim().min(1).max(255),
+      product_slug: z.string().trim().max(255).optional().default(''),
+      quantity: z.coerce.number().int().min(1).max(100000),
+      target_price: z.coerce.number().positive().max(10000000).nullable().optional(),
+      company_name: z.string().trim().min(1).max(200),
+      contact_name: z.string().trim().min(1).max(100),
+      country: z.string().trim().min(1).max(100),
+      email: z.string().trim().email().max(255),
+      phone: z.string().trim().max(50).optional().default(''),
+      whatsapp: z.string().trim().max(50).optional().default(''),
+      intended_use: z.string().trim().min(1).max(200),
+      message: z.string().trim().max(3000).optional().default(''),
+      accept_marketing: z.boolean().default(false),
+    }).refine((value) => value.phone || value.whatsapp, {
+      message: 'Phone or WhatsApp is required',
+    });
+    const parsed = schema.safeParse(normalized);
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid RFQ data', issues: parsed.error.flatten() }, { status: 400 });
+    }
     const {
-      product_name,
-      product_slug,
-      quantity,
-      target_price,
-      company_name,
-      contact_name,
-      country,
-      email,
-      phone,
-      whatsapp,
-      intended_use,
-      message,
-    } = body;
-
-    // Validation
-    if (!product_name || !quantity || !company_name || !contact_name || !country || !email || !phone) {
-      return NextResponse.json(
-        { error: 'Missing required fields: product_name, quantity, company_name, contact_name, country, email, phone' },
-        { status: 400 }
-      );
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Invalid email format' },
-        { status: 400 }
-      );
-    }
+      product_name, product_slug, quantity, target_price, company_name,
+      contact_name, country, email, phone, whatsapp, intended_use, message,
+      accept_marketing,
+    } = parsed.data;
 
     const supabase = getSupabaseClient();
     const rfqNumber = generateRfqNumber();
@@ -187,6 +206,7 @@ export async function POST(request: Request) {
           whatsapp,
           intended_use,
           message,
+          accept_marketing,
         }),
         inquiry_type: 'rfq',
         status: 'pending',
@@ -196,8 +216,8 @@ export async function POST(request: Request) {
 
     if (error) throw error;
 
-    // Send notification email (fire and forget)
-    sendRfqNotification({
+    // Await the notification so serverless execution is not terminated early.
+    await sendRfqNotification({
       rfqNumber,
       productName: product_name,
       quantity,
@@ -210,7 +230,7 @@ export async function POST(request: Request) {
       whatsapp,
       intendedUse: intended_use,
       message,
-    }).catch((err) => console.error('RFQ notification failed:', err));
+    });
 
     return NextResponse.json(
       { success: true, data: { ...data, rfq_number: rfqNumber } },
@@ -231,6 +251,9 @@ export async function GET(request: NextRequest) {
     const user = await getCurrentUser();
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (!hasPermission(user, 'inquiries')) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const { searchParams } = new URL(request.url);

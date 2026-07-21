@@ -1,9 +1,15 @@
 // Email sending API - uses Resend REST API
 import { NextResponse } from 'next/server';
 import { sendEmail } from '@/lib/email';
+import { getCurrentUser, hasPermission } from '@/lib/auth';
 
 export async function POST(request: Request) {
   try {
+    const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!hasPermission(user, 'inquiries')) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
     const body = await request.json();
     const { to, subject, html, from, replyTo, cc, bcc } = body;
 
@@ -39,13 +45,12 @@ export async function POST(request: Request) {
 }
 
 export async function GET() {
+  const user = await getCurrentUser();
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const hasApiKey = !!process.env.RESEND_API_KEY;
   return NextResponse.json({
     provider: 'resend',
     apiKeyConfigured: hasApiKey,
-    apiKeyPreview: hasApiKey
-      ? process.env.RESEND_API_KEY!.substring(0, 8) + '...'
-      : 'not set',
-    defaultFrom: 'info@reachtronics.com',
+    defaultFrom: 'info@reachprojector.com',
   });
 }
