@@ -10,16 +10,37 @@ const intlMiddleware = createMiddleware({
   localePrefix: 'always',
 });
 
-async function verifyAdminToken(token: string): Promise<boolean> {
+interface AdminTokenPayload {
+  role?: string;
+  permissions?: string[];
+}
+
+async function verifyAdminToken(token: string): Promise<AdminTokenPayload | null> {
   const secret = process.env.JWT_SECRET;
-  if (!secret || secret.length < 32) return false;
+  if (!secret || secret.length < 32) return null;
 
   try {
-    await jwtVerify(token, new TextEncoder().encode(secret));
-    return true;
+    const { payload } = await jwtVerify(token, new TextEncoder().encode(secret));
+    return payload as AdminTokenPayload;
   } catch {
-    return false;
+    return null;
   }
+}
+
+function requiredPermission(pathname: string): string | null {
+  if (pathname.startsWith('/api/admin/users') || pathname === '/api/admin/register') return 'users';
+  if (pathname.startsWith('/api/admin/products/import')) return 'import';
+  if (pathname.startsWith('/api/admin/products') || pathname.startsWith('/api/admin/categories')) return 'products';
+  if (pathname.startsWith('/api/admin/orders')) return 'orders';
+  if (pathname.startsWith('/api/admin/inquiries')) return 'inquiries';
+  if (pathname.startsWith('/api/admin/shipping')) return 'shipping';
+  return null;
+}
+
+function canAccess(payload: AdminTokenPayload, permission: string | null): boolean {
+  if (!permission) return true;
+  if (payload.role === 'admin') return true;
+  return payload.permissions?.includes('all') === true || payload.permissions?.includes(permission) === true;
 }
 
 export default async function middleware(request: NextRequest) {
@@ -33,8 +54,12 @@ export default async function middleware(request: NextRequest) {
   // Protect the API itself. Hiding the admin pages is not authorization.
   if (pathname.startsWith('/api/admin')) {
     const token = request.cookies.get('admin_token')?.value;
-    if (!token || !(await verifyAdminToken(token))) {
+    const payload = token ? await verifyAdminToken(token) : null;
+    if (!payload) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (!canAccess(payload, requiredPermission(pathname))) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
     return NextResponse.next();
   }
