@@ -1,14 +1,17 @@
 import bcrypt from "bcryptjs";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
-import { users } from "@/storage/database/shared/schema";
 
 async function seedAdmin() {
   const supabase = await getSupabaseClient();
-  const password = "Reach@2024Admin";
+  const password = process.env.ADMIN_PASSWORD;
+  const email = process.env.ADMIN_EMAIL;
+  if (!password || password.length < 12 || !email) {
+    throw new Error("ADMIN_EMAIL and ADMIN_PASSWORD (12+ characters) are required");
+  }
   const passwordHash = await bcrypt.hash(password, 10);
 
   const { data, error } = await supabase.from("users").insert({
-    email: "admin@reachtronics.com",
+    email: email.toLowerCase().trim(),
     password_hash: passwordHash,
     name: "Admin",
     role: "admin",

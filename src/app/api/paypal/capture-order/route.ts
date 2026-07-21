@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createOrder } from '@/lib/data-service';
+import { getCheckoutItem } from '@/lib/checkout';
 
 const PAYPAL_BASE_URL = process.env.PAYPAL_BASE_URL || 'https://api-m.paypal.com';
 
@@ -32,7 +33,7 @@ async function getAccessToken(): Promise<string> {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { orderId, productId, productName, price, quantity = 1, currency = 'USD' } = body;
+    const { orderId, productId, quantity = 1 } = body;
 
     if (!orderId) {
       return NextResponse.json(
@@ -71,6 +72,18 @@ export async function POST(request: NextRequest) {
 
     const captureData = await captureResponse.json();
 
+    const item = await getCheckoutItem(productId, quantity);
+    const purchaseUnit = captureData.purchase_units?.[0];
+    const captured = purchaseUnit?.payments?.captures?.[0]?.amount;
+    if (
+      captureData.status !== 'COMPLETED' ||
+      purchaseUnit?.reference_id !== item.id ||
+      captured?.currency_code !== item.currency ||
+      captured?.value !== item.total
+    ) {
+      return NextResponse.json({ error: 'Captured payment does not match the order' }, { status: 409 });
+    }
+
     // Extract payer info
     const payer = captureData.payer || {};
     const payerEmail = payer.email_address || null;
@@ -81,11 +94,11 @@ export async function POST(request: NextRequest) {
     // Save order to database
     const orderRecord = await createOrder({
       order_id: `ORD-${Date.now()}`,
-      product_id: productId || null,
-      product_name: productName || 'Unknown Product',
-      quantity: quantity || 1,
-      amount: price || captureData.purchase_units?.[0]?.payments?.captures?.[0]?.amount?.value || '0',
-      currency: currency || 'USD',
+      product_id: item.id,
+      product_name: item.name,
+      quantity: item.quantity,
+      amount: item.total,
+      currency: item.currency,
       payer_email: payerEmail,
       payer_name: payerName,
       paypal_order_id: orderId,
