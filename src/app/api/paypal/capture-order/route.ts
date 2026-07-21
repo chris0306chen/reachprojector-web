@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createOrder } from '@/lib/data-service';
+import { createOrder, getOrderByPayPalId } from '@/lib/data-service';
 import { getCheckoutItem } from '@/lib/checkout';
 
 const PAYPAL_BASE_URL = process.env.PAYPAL_BASE_URL || 'https://api-m.paypal.com';
@@ -40,6 +40,17 @@ export async function POST(request: NextRequest) {
         { error: 'Missing required field: orderId' },
         { status: 400 }
       );
+    }
+
+    // A browser retry must return the original order instead of capturing twice.
+    const existingOrder = await getOrderByPayPalId(orderId);
+    if (existingOrder) {
+      return NextResponse.json({
+        success: true,
+        status: 'COMPLETED',
+        order: existingOrder,
+        idempotent: true,
+      });
     }
 
     // Check if PayPal is configured
@@ -92,20 +103,28 @@ export async function POST(request: NextRequest) {
       : null;
 
     // Save order to database
-    const orderRecord = await createOrder({
-      order_id: `ORD-${Date.now()}`,
-      product_id: item.id,
-      product_name: item.name,
-      quantity: item.quantity,
-      amount: item.total,
-      currency: item.currency,
-      payer_email: payerEmail,
-      payer_name: payerName,
-      paypal_order_id: orderId,
-      airwallex_intent_id: null,
-      payment_method: 'paypal',
-      status: captureData.status === 'COMPLETED' ? 'completed' : 'pending',
-    });
+    let orderRecord;
+    try {
+      orderRecord = await createOrder({
+        order_id: `ORD-${Date.now()}`,
+        product_id: item.id,
+        product_name: item.name,
+        quantity: item.quantity,
+        amount: item.total,
+        currency: item.currency,
+        payer_email: payerEmail,
+        payer_name: payerName,
+        paypal_order_id: orderId,
+        airwallex_intent_id: null,
+        payment_method: 'paypal',
+        status: 'paid',
+      });
+    } catch (writeError) {
+      // With the unique PayPal order index, concurrent retries converge here.
+      const concurrentOrder = await getOrderByPayPalId(orderId);
+      if (!concurrentOrder) throw writeError;
+      orderRecord = concurrentOrder;
+    }
 
     return NextResponse.json({
       success: true,
