@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
 import { hashPassword } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth";
+
+async function requireAdministrator() {
+  const user = await getCurrentUser();
+  return user?.role === "admin" ? user : null;
+}
 
 export async function GET() {
   try {
+    if (!(await requireAdministrator())) {
+      return NextResponse.json({ error: "Administrator access required" }, { status: 403 });
+    }
+
     const supabase = await getSupabaseClient();
     const { data, error } = await supabase
       .from("users")
@@ -20,11 +30,27 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!(await requireAdministrator())) {
+      return NextResponse.json({ error: "Administrator access required" }, { status: 403 });
+    }
+
     const body = await request.json();
     const { email, password, name, role, permissions } = body;
 
     if (!email || !password || !name) {
       return NextResponse.json({ error: "Email, password, and name are required" }, { status: 400 });
+    }
+
+    if (password.length < 12) {
+      return NextResponse.json({ error: "Password must be at least 12 characters" }, { status: 400 });
+    }
+
+    if (role !== "admin" && role !== "staff") {
+      return NextResponse.json({ error: "Invalid user role" }, { status: 400 });
+    }
+
+    if (!Array.isArray(permissions) || !permissions.every((permission) => typeof permission === "string")) {
+      return NextResponse.json({ error: "Invalid permissions" }, { status: 400 });
     }
 
     const supabase = await getSupabaseClient();

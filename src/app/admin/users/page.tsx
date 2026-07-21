@@ -48,8 +48,9 @@ export default function AdminUsersPage() {
     try {
       const res = await fetch("/api/admin/users");
       const data = await res.json();
-      if (Array.isArray(data)) {
-        setUsers(data);
+      if (Array.isArray(data.data)) {
+        setUsers(data.data);
+        setError(null);
       } else {
         setError(data.error || "加载用户失败");
       }
@@ -67,13 +68,15 @@ export default function AdminUsersPage() {
 
     try {
       const method = editingId ? "PUT" : "POST";
-      const body = editingId ? { ...form, id: editingId } : form;
+      const endpoint = editingId ? `/api/admin/users/${editingId}` : "/api/admin/users";
 
-      await fetch("/api/admin/users", {
+      const res = await fetch(endpoint, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify(form),
       });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to save user");
 
       setShowForm(false);
       setEditingId(null);
@@ -81,6 +84,7 @@ export default function AdminUsersPage() {
       fetchUsers();
     } catch (err) {
       console.error("Failed to save user:", err);
+      setError(err instanceof Error ? err.message : "Failed to save user");
     } finally {
       setSaving(false);
     }
@@ -102,10 +106,13 @@ export default function AdminUsersPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("确定要删除这个用户吗？")) return;
     try {
-      await fetch(`/api/admin/users?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to delete user");
       fetchUsers();
     } catch (err) {
       console.error("Failed to delete user:", err);
+      setError(err instanceof Error ? err.message : "Failed to delete user");
     }
   };
 
@@ -262,7 +269,7 @@ export default function AdminUsersPage() {
           <div className="flex flex-col items-center justify-center py-12 text-slate-500">
             <Users className="w-12 h-12 mb-3 text-slate-300" />
             <p>暂无用户</p>
-            <p className="text-sm mt-1">点击"添加用户"创建子账号</p>
+            <p className="text-sm mt-1">点击“添加用户”创建子账号</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
