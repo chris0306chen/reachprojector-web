@@ -4,10 +4,10 @@ import { useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { ArrowLeft, CreditCard, Shield, Lock } from 'lucide-react';
 import { PayPalCheckout } from '@/components/paypal-checkout';
-import { AirwallexCheckout } from '@/components/airwallex-checkout';
+import { StripeCheckout } from '@/components/stripe-checkout';
 import { useTranslations } from 'next-intl';
 
-type PaymentMethod = 'paypal' | 'airwallex';
+type PaymentMethod = 'paypal' | 'stripe';
 
 function CheckoutContent() {
   const t = useTranslations('checkout');
@@ -17,7 +17,7 @@ function CheckoutContent() {
   const productName = searchParams.get('productName') || 'Product';
   const price = parseFloat(searchParams.get('price') || '0');
   const quantity = parseInt(searchParams.get('quantity') || '1');
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('airwallex');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('stripe');
 
   const totalAmount = (price * quantity).toFixed(2);
 
@@ -50,16 +50,16 @@ function CheckoutContent() {
             <h2 className="text-lg font-semibold text-slate-900 mb-4">{t('selectPayment')}</h2>
             <div className="grid grid-cols-2 gap-3">
               <button
-                onClick={() => setPaymentMethod('airwallex')}
+                onClick={() => setPaymentMethod('stripe')}
                 className={`flex items-center gap-3 p-4 rounded-lg border-2 transition-all ${
-                  paymentMethod === 'airwallex'
+                  paymentMethod === 'stripe'
                     ? 'border-orange-500 bg-orange-50'
                     : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
-                <CreditCard className={`w-5 h-5 ${paymentMethod === 'airwallex' ? 'text-orange-500' : 'text-slate-400'}`} />
+                <CreditCard className={`w-5 h-5 ${paymentMethod === 'stripe' ? 'text-orange-500' : 'text-slate-400'}`} />
                 <div className="text-left">
-                  <p className={`font-medium text-sm ${paymentMethod === 'airwallex' ? 'text-orange-600' : 'text-slate-700'}`}>
+                  <p className={`font-medium text-sm ${paymentMethod === 'stripe' ? 'text-orange-600' : 'text-slate-700'}`}>
                     {t('cardPayment')}
                   </p>
                   <p className="text-xs text-slate-500">{t('cardPaymentDesc')}</p>
@@ -88,15 +88,8 @@ function CheckoutContent() {
 
           {/* Payment Form */}
           <div className="bg-white rounded-xl border border-slate-200 p-6">
-            {paymentMethod === 'airwallex' ? (
-              <AirwallexCheckout
-                productId={productId}
-                productName={productName}
-                price={price}
-                quantity={quantity}
-                currency="USD"
-                onSuccess={handleSuccess}
-              />
+            {paymentMethod === 'stripe' ? (
+              <StripeCheckout productId={productId} quantity={quantity} />
             ) : (
               <PayPalCheckout
                 productId={productId}
