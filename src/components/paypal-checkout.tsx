@@ -10,7 +10,6 @@ import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 
 interface PayPalCheckoutProps {
   productId: string;
-  productName: string;
   price: number;
   quantity?: number;
   currency?: string;
@@ -21,7 +20,6 @@ type PaymentStatus = 'idle' | 'processing' | 'success' | 'error';
 
 export function PayPalCheckout({
   productId,
-  productName,
   price,
   quantity = 1,
   currency = 'USD',
@@ -45,10 +43,7 @@ export function PayPalCheckout({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           productId,
-          productName,
-          price: price.toString(),
           quantity,
-          currency,
         }),
       });
 
@@ -75,10 +70,7 @@ export function PayPalCheckout({
         body: JSON.stringify({
           orderId: data.orderID,
           productId,
-          productName,
-          price: totalAmount,
           quantity,
-          currency,
         }),
       });
 

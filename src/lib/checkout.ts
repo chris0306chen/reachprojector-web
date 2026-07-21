@@ -1,0 +1,43 @@
+import { getSupabaseClient } from '@/storage/database/supabase-client';
+
+const MAX_RETAIL_QUANTITY = 20;
+
+export interface CheckoutItem {
+  id: string;
+  name: string;
+  unitPrice: number;
+  quantity: number;
+  currency: 'USD';
+  total: string;
+}
+
+export async function getCheckoutItem(productId: unknown, quantityValue: unknown): Promise<CheckoutItem> {
+  if (typeof productId !== 'string' || !productId) throw new Error('INVALID_PRODUCT');
+
+  const quantity = Number(quantityValue ?? 1);
+  if (!Number.isSafeInteger(quantity) || quantity < 1 || quantity > MAX_RETAIL_QUANTITY) {
+    throw new Error('INVALID_QUANTITY');
+  }
+
+  const supabase = await getSupabaseClient();
+  const { data, error } = await supabase
+    .from('products')
+    .select('id, name, price, stock_status')
+    .eq('id', productId)
+    .single();
+
+  if (error || !data) throw new Error('PRODUCT_NOT_FOUND');
+  if (data.stock_status !== 'in_stock') throw new Error('PRODUCT_UNAVAILABLE');
+
+  const unitPrice = Number(data.price);
+  if (!Number.isFinite(unitPrice) || unitPrice <= 0) throw new Error('INVALID_CATALOG_PRICE');
+
+  return {
+    id: data.id,
+    name: data.name,
+    unitPrice,
+    quantity,
+    currency: 'USD',
+    total: (unitPrice * quantity).toFixed(2),
+  };
+}
