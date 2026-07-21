@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { locales, type Locale, rtlLocales } from '@/i18n/config';
+import { locales, type Locale } from '@/i18n/config';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { WhatsAppFloat } from '@/components/WhatsAppFloat';
@@ -54,12 +54,7 @@ export default async function LocaleLayout({
   }
 
   const messages = await getMessages();
-  const isRtl = rtlLocales.includes(locale as Locale);
-  const dir = isRtl ? 'rtl' : 'ltr';
-
-  return (
-    <html lang={locale} dir={dir}>
-      <body className="antialiased">
+  return (\n    <>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateOrganizationSchema()) }} />
         <NextIntlClientProvider messages={messages}>
           <Header />
@@ -67,7 +62,6 @@ export default async function LocaleLayout({
           <Footer />
           <WhatsAppFloat />
         </NextIntlClientProvider>
-      </body>
-    </html>
+    </>
   );
 }
