@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
 import { verifyPassword, createToken, setAuthCookie } from "@/lib/auth";
+import { clearLoginFailures, isLoginBlocked, recordLoginFailure } from "@/lib/login-rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,15 +15,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const normalizedEmail = String(email).toLowerCase().trim();
+    const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const attemptKey = `${clientIp}:${normalizedEmail}`;
+    const rateLimit = isLoginBlocked(attemptKey);
+    if (rateLimit.blocked) {
+      return NextResponse.json(
+        { error: "Too many login attempts. Please try again later." },
+        { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } }
+      );
+    }
+
     const supabase = await getSupabaseClient();
     const { data: user, error } = await supabase
       .from("users")
       .select("*")
-      .eq("email", email.toLowerCase().trim())
+      .eq("email", normalizedEmail)
       .eq("is_active", true)
       .single();
 
     if (error || !user) {
+      recordLoginFailure(attemptKey);
       return NextResponse.json(
         { error: "Invalid email or password" },
         { status: 401 }
@@ -31,6 +44,7 @@ export async function POST(request: NextRequest) {
 
     const isValid = await verifyPassword(password, user.password_hash);
     if (!isValid) {
+      recordLoginFailure(attemptKey);
       return NextResponse.json(
         { error: "Invalid email or password" },
         { status: 401 }
@@ -39,6 +53,7 @@ export async function POST(request: NextRequest) {
 
     const token = await createToken(user);
     await setAuthCookie(token);
+    clearLoginFailures(attemptKey);
 
     // Update last login
     await supabase

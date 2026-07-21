@@ -13,7 +13,7 @@ function getJwtSecret(): Uint8Array {
 }
 
 const TOKEN_COOKIE_NAME = "admin_token";
-const TOKEN_MAX_AGE = 60 * 60 * 24; // 24 hours
+const TOKEN_MAX_AGE = 60 * 60 * 8; // 8 hours
 
 export interface JWTPayload {
   userId: string;
