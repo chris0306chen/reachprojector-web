@@ -27,8 +27,6 @@
     "search": "Search",
     "authorizedDealer": "Your OEM/ODM Projection Partner",
     "projectors": "Projectors",
-    "printers": "Printers",
-    "components": "Components",
     "solutions": "Solutions",
     "oemOdmProjectors": "OEM / ODM Projectors",
     "educationCorporate": "Education & Corporate",
@@ -45,7 +43,9 @@
     "certificates": "Certificates",
     "partnerWithUs": "Partner With Us",
     "privateLabelStore": "Private Label Store",
-    "allProducts": "All Products"
+    "allProducts": "All Products",
+    "mounts": "Projector Mounts",
+    "screens": "Projection Screens"
   },
   "home": {
     "hero": {

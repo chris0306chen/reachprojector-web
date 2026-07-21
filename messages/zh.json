@@ -27,8 +27,6 @@
     "search": "搜索",
     "authorizedDealer": "您的OEM/ODM投影合作伙伴",
     "projectors": "投影仪",
-    "printers": "打印机",
-    "components": "配件",
     "solutions": "解决方案",
     "oemOdmProjectors": "OEM/ODM投影仪",
     "educationCorporate": "商教工程",
@@ -45,7 +43,9 @@
     "certificates": "认证文件",
     "partnerWithUs": "成为伙伴",
     "privateLabelStore": "品牌专卖",
-    "allProducts": "全部产品"
+    "allProducts": "全部产品",
+    "mounts": "投影仪支架",
+    "screens": "投影幕布"
   },
   "home": {
     "hero": {

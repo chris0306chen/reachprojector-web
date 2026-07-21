@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 
-const brands = ['XGIMI', 'Hisense', 'JMGO', 'HP', 'Canon', 'Intel', 'AMD', 'Samsung'];
+const brands = ['XGIMI', 'Hisense', 'JMGO', 'Formovie', 'AWOL Vision', 'Elite Screens', 'Screen Innovations'];
 
 export function Footer() {
   const t = useTranslations('Footer');
@@ -13,9 +13,10 @@ export function Footer() {
 
   const footerLinks = {
     products: [
-      { href: `/${locale}/products?category=projectors`, label: tNav('projectors') },
-      { href: `/${locale}/products?category=printers`, label: tNav('printers') },
-      { href: `/${locale}/products?category=components`, label: tNav('components') },
+      { href: `/${locale}/products?category=4k-laser-projectors`, label: t('home.categories.projectors') },
+      { href: `/${locale}/products?category=ust-laser-tv`, label: t('home.categories.ustLaser') },
+      { href: `/${locale}/products?category=projector-mounts`, label: t('home.categories.mounts') },
+      { href: `/${locale}/products?category=projection-screens`, label: t('home.categories.screens') },
       { href: `/${locale}/products`, label: t('allProducts') },
     ],
     company: [

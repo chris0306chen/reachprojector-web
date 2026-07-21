@@ -82,7 +82,7 @@ export default function WholesalePage() {
               </div>
               <div className="absolute -right-6 -bottom-6 h-40 w-40 rounded-full bg-white/10" />
             </a>
-            <a href="/products?category=printers-scanners" className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900 to-gray-700 p-8 text-white shadow-lg transition hover:shadow-xl">
+            <a href="/products?category=projector-mounts" className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900 to-gray-700 p-8 text-white shadow-lg transition hover:shadow-xl">
               <div className="relative z-10">
                 <h3 className="text-2xl font-bold">Printers &amp; Scanners</h3>
                 <p className="mt-2 text-gray-300">Reliable office printers and high-speed scanners for every business environment.</p>

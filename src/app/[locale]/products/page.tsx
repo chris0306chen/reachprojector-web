@@ -19,15 +19,15 @@ const CATEGORY_META: Record<string, { title: string; description: string; keywor
     description: 'Wholesale ultra-short throw laser TVs. 100-120 inch display. Bulk pricing with DDP global shipping.',
     keywords: ['ust laser tv', 'ultra short throw projector', 'hisense laser tv', 'formovie theater'],
   },
-  'printers-scanners': {
-    title: 'Wholesale Printers & Scanners | HP, Canon, Brother | Bulk Supply',
-    description: 'Wholesale printers and scanners. Laser, inkjet, multifunction. Bulk pricing with DDP shipping worldwide.',
-    keywords: ['wholesale printer supplier', 'hp printer wholesale', 'canon printer bulk', 'brother printer distributor'],
+  'projector-mounts': {
+    title: 'Projector Mounts Wholesale | Ceiling, Wall, Floor Stands',
+    description: 'Wholesale projector mounts and brackets. Ceiling, wall, floor stands and UST adjustable mounts. Bulk pricing with global DDP shipping.',
+    keywords: ['projector mount', 'wholesale projector bracket', 'ceiling projector mount', 'UST projector stand'],
   },
-  'components': {
-    title: 'Wholesale Computer Components | Intel, AMD, NVIDIA | Bulk Supply',
-    description: 'Wholesale computer components: Intel CPUs, AMD processors, NVIDIA GPUs, Samsung SSDs. Bulk pricing, global DDP shipping.',
-    keywords: ['wholesale computer components', 'intel cpu wholesale', 'amd processor bulk', 'nvidia gpu supplier'],
+  'projection-screens': {
+    title: 'Projection Screens Wholesale | Motorized, ALR, Fixed Frame',
+    description: 'Wholesale projection screens. Motorized, fixed frame, portable and ALR screens for any environment. Bulk pricing, worldwide DDP shipping.',
+    keywords: ['projection screen', 'wholesale projector screen', 'ALR screen', 'motorized screen', 'fixed frame screen'],
   },
 }
 
