@@ -128,7 +128,7 @@ ${safe.message}
 
   try {
     await sendEmail({
-      to: 'info@reachprojector.com',
+      to: 'info@reachtronics.com',
       subject: `New RFQ ${rfq.rfqNumber}: ${escapeHtml(rfq.productName)} x${rfq.quantity}`,
       html,
       replyTo: rfq.email,
