@@ -235,8 +235,11 @@ export interface CreateOrderInput {
   payer_email: string | null;
   payer_name: string | null;
   paypal_order_id: string | null;
+  stripe_session_id?: string | null;
+  stripe_payment_intent_id?: string | null;
   airwallex_intent_id: string | null;
   payment_method: string;
+  payment_status?: string;
   status: string;
 }
 
@@ -257,6 +260,30 @@ export async function getOrderByPayPalId(paypalOrderId: string): Promise<Order |
     .eq('paypal_order_id', paypalOrderId)
     .maybeSingle();
   if (error) throw new Error(`Failed to fetch order: ${error.message}`);
+  return data as Order | null;
+}
+
+export async function getOrderByStripeSessionId(stripeSessionId: string): Promise<Order | null> {
+  const { data, error } = await client
+    .from('orders')
+    .select('*')
+    .eq('stripe_session_id', stripeSessionId)
+    .maybeSingle();
+  if (error) throw new Error(`Failed to fetch Stripe order: ${error.message}`);
+  return data as Order | null;
+}
+
+export async function updateOrderStatusByStripePaymentIntent(
+  paymentIntentId: string,
+  status: string
+): Promise<Order | null> {
+  const { data, error } = await client
+    .from('orders')
+    .update({ status, payment_status: status, updated_at: new Date().toISOString() })
+    .eq('stripe_payment_intent_id', paymentIntentId)
+    .select()
+    .maybeSingle();
+  if (error) throw new Error(`Failed to update Stripe order: ${error.message}`);
   return data as Order | null;
 }
 
