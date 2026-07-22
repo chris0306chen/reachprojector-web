@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createOrder, getOrderByPayPalId } from '@/lib/data-service';
 import { getCheckoutItem } from '@/lib/checkout';
+import { sendOrderConfirmation } from '@/lib/order-email';
 
 const PAYPAL_BASE_URL = process.env.PAYPAL_BASE_URL || 'https://api-m.paypal.com';
 
@@ -104,6 +105,7 @@ export async function POST(request: NextRequest) {
 
     // Save order to database
     let orderRecord;
+    let orderWasCreated = false;
     try {
       orderRecord = await createOrder({
         order_id: `ORD-${Date.now()}`,
@@ -119,11 +121,24 @@ export async function POST(request: NextRequest) {
         payment_method: 'paypal',
         status: 'paid',
       });
+      orderWasCreated = true;
     } catch (writeError) {
       // With the unique PayPal order index, concurrent retries converge here.
       const concurrentOrder = await getOrderByPayPalId(orderId);
       if (!concurrentOrder) throw writeError;
       orderRecord = concurrentOrder;
+    }
+
+    if (orderWasCreated) {
+      sendOrderConfirmation({
+        orderId: orderRecord.order_id,
+        productName: item.name,
+        quantity: item.quantity,
+        amount: item.total,
+        currency: item.currency,
+        customerEmail: payerEmail,
+        paymentMethod: 'paypal',
+      }).catch((emailError) => console.error('PayPal confirmation email failed:', emailError));
     }
 
     return NextResponse.json({
