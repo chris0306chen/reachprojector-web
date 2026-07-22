@@ -13,8 +13,7 @@ interface Product {
   sale_price?: number;
   moq?: number;
   stock: number;
-  status: string;
-  is_active?: boolean;
+  is_active: boolean;
   is_featured: boolean;
   weight?: number;
   weight_kg?: number;
@@ -57,7 +56,12 @@ export default function AdminProductsPage() {
         setError(data.error || "加载产品失败");
         return;
       }
-      setProducts(Array.isArray(data) ? data : []);
+      const rows = (Array.isArray(data.data) ? data.data : []) as Array<Product & { compare_at_price?: number | string }>;
+      setProducts(rows.map((product) => ({
+        ...product,
+        price: Number(product.price) || 0,
+        sale_price: product.compare_at_price ? Number(product.compare_at_price) : undefined,
+      })));
     } catch (err) {
       setError("网络错误，请检查连接");
     } finally {
@@ -80,7 +84,7 @@ export default function AdminProductsPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("确定要删除此产品吗？")) return;
     try {
-      const res = await fetch(`/api/admin/products?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/products/${id}`, { method: "DELETE" });
       if (res.ok) {
         fetchProducts();
       }
@@ -89,33 +93,35 @@ export default function AdminProductsPage() {
     }
   };
 
-  const handleToggleStatus = async (id: string, currentStatus: string) => {
+  const handleToggleStatus = async (id: string, isActive: boolean) => {
     try {
-      const res = await fetch(`/api/admin/products?id=${id}`, {
+      const res = await fetch(`/api/admin/products/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: currentStatus === "active" ? "inactive" : "active" }),
+        body: JSON.stringify({ is_active: !isActive }),
       });
-      if (res.ok) {
-        fetchProducts();
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to update product status");
+      fetchProducts();
     } catch (err) {
       console.error("Failed to toggle status:", err);
+      setError(err instanceof Error ? err.message : "Failed to update product status");
     }
   };
 
   const handleToggleFeatured = async (id: string, isFeatured: boolean) => {
     try {
-      const res = await fetch(`/api/admin/products?id=${id}`, {
+      const res = await fetch(`/api/admin/products/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ is_featured: !isFeatured }),
       });
-      if (res.ok) {
-        fetchProducts();
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to update featured status");
+      fetchProducts();
     } catch (err) {
       console.error("Failed to toggle featured:", err);
+      setError(err instanceof Error ? err.message : "Failed to update featured status");
     }
   };
 
@@ -172,7 +178,7 @@ export default function AdminProductsPage() {
       product.name?.toLowerCase().includes(search.toLowerCase()) ||
       product.slug?.toLowerCase().includes(search.toLowerCase());
     const matchesCategory = categoryFilter === "all" || product.category_id === categoryFilter;
-    const matchesStatus = statusFilter === "all" || product.status === statusFilter;
+    const matchesStatus = statusFilter === "all" || (statusFilter === "active" ? product.is_active : !product.is_active);
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
@@ -404,14 +410,14 @@ export default function AdminProductsPage() {
                     </td>
                     <td className="px-4 py-3 text-center">
                       <button
-                        onClick={() => handleToggleStatus(product.id, product.status)}
+                        onClick={() => handleToggleStatus(product.id, product.is_active)}
                         className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${
-                          product.status === "active"
+                          product.is_active
                             ? "bg-green-50 text-green-700"
                             : "bg-slate-100 text-slate-600"
                         }`}
                       >
-                        {product.status === "active" ? (
+                        {product.is_active ? (
                           <>
                             <ArrowUp className="w-3 h-3" />
                             上架
@@ -499,7 +505,7 @@ function ProductEditModal({
     setSubmitting(true);
     setError(null);
     try {
-      const res = await fetch(`/api/admin/products?id=${product.id}`, {
+      const res = await fetch(`/api/admin/products/${product.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
