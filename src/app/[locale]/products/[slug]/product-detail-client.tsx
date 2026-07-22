@@ -144,7 +144,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
               </button>
               <span className="w-12 text-center font-medium text-slate-900">{quantity}</span>
               <button
-                onClick={() => setQuantity(Math.min(99, quantity + 1))}
+                onClick={() => setQuantity(Math.min(20, quantity + 1))}
                 className="w-9 h-9 flex items-center justify-center border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
               >
                 <Plus className="w-4 h-4" />
