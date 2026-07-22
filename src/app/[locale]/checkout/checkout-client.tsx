@@ -1,8 +1,8 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Shield, Lock, CreditCard } from 'lucide-react';
+import { ArrowLeft, Shield, Lock, CreditCard, Loader2 } from 'lucide-react';
 import { PayPalCheckout } from '@/components/paypal-checkout';
 import { StripeCheckout } from '@/components/stripe-checkout';
 import { useTranslations } from 'next-intl';
@@ -12,14 +12,37 @@ function CheckoutContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const productId = searchParams.get('productId') || '';
-  const productName = searchParams.get('productName') || 'Product';
-  const parsedPrice = Number(searchParams.get('price'));
   const parsedQuantity = Number(searchParams.get('quantity'));
-  const price = Number.isFinite(parsedPrice) && parsedPrice > 0 ? parsedPrice : 0;
   const quantity = Number.isSafeInteger(parsedQuantity) && parsedQuantity >= 1 && parsedQuantity <= 20 ? parsedQuantity : 1;
   const stripeEnabled = process.env.NEXT_PUBLIC_STRIPE_ENABLED === 'true';
+  const [item, setItem] = useState<{ productId: string; productName: string; unitPrice: number; total: string } | null>(null);
+  const [catalogError, setCatalogError] = useState('');
 
-  const totalAmount = (price * quantity).toFixed(2);
+  useEffect(() => {
+    let active = true;
+    setCatalogError('');
+    setItem(null);
+
+    fetch('/api/checkout/item', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId, quantity }),
+    })
+      .then(async (response) => {
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Product is unavailable');
+        if (active) setItem(data);
+      })
+      .catch((error) => {
+        if (active) setCatalogError(error instanceof Error ? error.message : 'Product is unavailable');
+      });
+
+    return () => { active = false; };
+  }, [productId, quantity]);
+
+  const productName = item?.productName || 'Product';
+  const price = item?.unitPrice || 0;
+  const totalAmount = item?.total || '0.00';
 
   const handleSuccess = () => {
     setTimeout(() => {
@@ -72,9 +95,19 @@ function CheckoutContent() {
 
           {/* Payment Form */}
           <div className="bg-white rounded-xl border border-slate-200 p-6">
-            {stripeEnabled && (
+            {catalogError && (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                {catalogError}
+              </div>
+            )}
+            {!item && !catalogError && (
+              <div className="flex items-center justify-center gap-2 py-8 text-sm text-slate-500">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Loading verified product price鈥?              </div>
+            )}
+            {item && stripeEnabled && (
               <>
-                <StripeCheckout productId={productId} quantity={quantity} />
+                <StripeCheckout productId={item.productId} quantity={quantity} />
                 <div className="flex items-center gap-3 my-6">
                   <div className="h-px flex-1 bg-slate-200" />
                   <span className="text-xs uppercase tracking-wide text-slate-400">or pay with PayPal</span>
@@ -82,13 +115,15 @@ function CheckoutContent() {
                 </div>
               </>
             )}
-            <PayPalCheckout
-              productId={productId}
-              price={price}
-              quantity={quantity}
-              currency="USD"
-              onSuccess={handleSuccess}
-            />
+            {item && (
+              <PayPalCheckout
+                productId={item.productId}
+                price={price}
+                quantity={quantity}
+                currency="USD"
+                onSuccess={handleSuccess}
+              />
+            )}
           </div>
         </div>
 
