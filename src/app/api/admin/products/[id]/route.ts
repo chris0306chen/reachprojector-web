@@ -9,10 +9,34 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
 
+    const allowedFields = new Set([
+      "name", "slug", "brand", "category_id", "price", "compare_at_price",
+      "description", "short_description", "images", "specifications", "features",
+      "stock_status", "is_bestseller", "is_new_arrival", "is_featured", "is_active",
+      "sort_order", "weight_kg", "oem_available", "oem_notes", "attachments",
+    ]);
+    const updateData = Object.fromEntries(
+      Object.entries(body).filter(([key]) => allowedFields.has(key))
+    ) as Record<string, unknown>;
+
+    // The legacy admin form calls compare-at price "sale_price".
+    if (Object.prototype.hasOwnProperty.call(body, "sale_price")) {
+      updateData.compare_at_price = body.sale_price || null;
+    }
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ error: "No valid product fields supplied" }, { status: 400 });
+    }
+    if (updateData.is_active !== undefined && typeof updateData.is_active !== "boolean") {
+      return NextResponse.json({ error: "is_active must be a boolean" }, { status: 400 });
+    }
+    if (updateData.price !== undefined && (!Number.isFinite(Number(updateData.price)) || Number(updateData.price) <= 0)) {
+      return NextResponse.json({ error: "price must be greater than zero" }, { status: 400 });
+    }
+
     const supabase = await getSupabaseClient();
     const { data, error } = await supabase
       .from("products")
-      .update({ ...body, updated_at: new Date().toISOString() })
+      .update({ ...updateData, updated_at: new Date().toISOString() })
       .eq("id", id)
       .select()
       .single();
