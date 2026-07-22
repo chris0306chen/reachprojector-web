@@ -101,6 +101,15 @@ export async function POST(request: NextRequest) {
         { status: 503 }
       );
     }
+    if (message === 'PRODUCT_NOT_FOUND') {
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+    }
+    if (['PRODUCT_UNAVAILABLE', 'INVALID_CATALOG_PRICE'].includes(message)) {
+      return NextResponse.json({ error: 'Product is unavailable' }, { status: 409 });
+    }
+    if (['INVALID_PRODUCT', 'INVALID_QUANTITY'].includes(message)) {
+      return NextResponse.json({ error: 'Invalid checkout request' }, { status: 400 });
+    }
     return NextResponse.json(
       { error: 'Unable to start PayPal checkout' },
       { status: 502 }
