@@ -23,8 +23,8 @@ async function getAccessToken(): Promise<string> {
   });
 
   if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`Failed to get access token: ${error}`);
+    console.error('PayPal access token request failed:', response.status);
+    throw new Error('PAYPAL_AUTH_FAILED');
   }
 
   const data = await response.json();
@@ -78,8 +78,8 @@ export async function POST(request: NextRequest) {
     );
 
     if (!captureResponse.ok) {
-      const error = await captureResponse.text();
-      throw new Error(`PayPal capture failed: ${error}`);
+      console.error('PayPal capture failed:', captureResponse.status);
+      throw new Error('PAYPAL_CAPTURE_FAILED');
     }
 
     const captureData = await captureResponse.json();
@@ -159,9 +159,15 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+    if (message === 'PAYPAL_AUTH_FAILED') {
+      return NextResponse.json(
+        { error: 'PayPal is temporarily unavailable' },
+        { status: 503 }
+      );
+    }
     return NextResponse.json(
-      { error: message },
-      { status: 500 }
+      { error: 'Unable to capture PayPal payment' },
+      { status: 502 }
     );
   }
 }
