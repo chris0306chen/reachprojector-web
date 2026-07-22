@@ -21,8 +21,8 @@ async function getAccessToken(): Promise<string> {
   });
 
   if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`Failed to get access token: ${error}`);
+    console.error('PayPal access token request failed:', response.status);
+    throw new Error('PAYPAL_AUTH_FAILED');
   }
 
   const data = await response.json();
@@ -79,8 +79,8 @@ export async function POST(request: NextRequest) {
     });
 
     if (!paypalResponse.ok) {
-      const error = await paypalResponse.text();
-      throw new Error(`PayPal order creation failed: ${error}`);
+      console.error('PayPal order creation failed:', paypalResponse.status);
+      throw new Error('PAYPAL_ORDER_FAILED');
     }
 
     const order = await paypalResponse.json();
@@ -95,9 +95,15 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+    if (message === 'PAYPAL_AUTH_FAILED') {
+      return NextResponse.json(
+        { error: 'PayPal is temporarily unavailable' },
+        { status: 503 }
+      );
+    }
     return NextResponse.json(
-      { error: message },
-      { status: 500 }
+      { error: 'Unable to start PayPal checkout' },
+      { status: 502 }
     );
   }
 }
