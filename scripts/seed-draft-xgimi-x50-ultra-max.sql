@@ -6,6 +6,49 @@
 -- supplier quotation. Confirm landed cost, margin, warranty, plug, language,
 -- shipping and final selling price before setting is_active to true.
 
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+CREATE TABLE IF NOT EXISTS public.categories (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name VARCHAR(100) NOT NULL,
+  slug VARCHAR(100) NOT NULL UNIQUE,
+  description TEXT,
+  image_url TEXT,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ
+);
+
+CREATE TABLE IF NOT EXISTS public.products (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name VARCHAR(255) NOT NULL,
+  slug VARCHAR(255) NOT NULL UNIQUE,
+  brand VARCHAR(100) NOT NULL,
+  category_id UUID NOT NULL REFERENCES public.categories(id),
+  price NUMERIC(10,2) NOT NULL CHECK (price >= 0),
+  compare_at_price NUMERIC(10,2),
+  description TEXT,
+  short_description TEXT,
+  images JSONB NOT NULL DEFAULT '[]'::jsonb,
+  specifications JSONB NOT NULL DEFAULT '{}'::jsonb,
+  features JSONB NOT NULL DEFAULT '[]'::jsonb,
+  stock_status VARCHAR(20) NOT NULL DEFAULT 'in_stock',
+  is_bestseller BOOLEAN NOT NULL DEFAULT false,
+  is_new_arrival BOOLEAN NOT NULL DEFAULT false,
+  is_featured BOOLEAN NOT NULL DEFAULT false,
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ
+);
+
+CREATE INDEX IF NOT EXISTS categories_sort_order_idx ON public.categories(sort_order);
+CREATE INDEX IF NOT EXISTS products_category_id_idx ON public.products(category_id);
+CREATE INDEX IF NOT EXISTS products_brand_idx ON public.products(brand);
+CREATE INDEX IF NOT EXISTS products_is_active_idx ON public.products(is_active);
+CREATE INDEX IF NOT EXISTS products_created_at_idx ON public.products(created_at DESC);
+
 DO $$
 DECLARE
   projector_category_id UUID;
