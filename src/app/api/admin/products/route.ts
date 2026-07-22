@@ -13,7 +13,11 @@ export async function GET(request: NextRequest) {
     const supabase = await getSupabaseClient();
     let query = supabase
       .from("products")
-      .select("*, categories(name)", { count: "exact" })
+      // Do not depend on PostgREST's relationship cache here. Fresh databases
+      // can have the foreign key in PostgreSQL before the embedded
+      // `categories(name)` relationship becomes visible to PostgREST, which
+      // made the whole admin product list fail after the first product import.
+      .select("*", { count: "exact" })
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
