@@ -57,8 +57,21 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ url: session.url });
   } catch (error) {
     const message = error instanceof Error ? error.message : '';
-    const status = ['INVALID_PRODUCT', 'INVALID_QUANTITY'].includes(message) ? 400 : 500;
+    const status = ['INVALID_PRODUCT', 'INVALID_QUANTITY'].includes(message)
+      ? 400
+      : message === 'PRODUCT_NOT_FOUND'
+        ? 404
+        : ['PRODUCT_UNAVAILABLE', 'INVALID_CATALOG_PRICE'].includes(message)
+          ? 409
+          : 500;
     console.error('Stripe Checkout error:', message || error);
-    return NextResponse.json({ error: status === 400 ? 'Invalid checkout request' : 'Unable to start card checkout' }, { status });
+    const publicMessage = status === 400
+      ? 'Invalid checkout request'
+      : status === 404
+        ? 'Product not found'
+        : status === 409
+          ? 'Product is unavailable'
+          : 'Unable to start card checkout';
+    return NextResponse.json({ error: publicMessage }, { status });
   }
 }
