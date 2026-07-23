@@ -10,6 +10,9 @@ interface Product {
   slug: string;
   category_id?: string;
   price: number;
+  purchase_price?: number;
+  purchase_currency?: string | null;
+  supplier_url?: string;
   sale_price?: number;
   moq?: number;
   stock: number;
@@ -53,7 +56,7 @@ export default function AdminProductsPage() {
       const res = await fetch("/api/admin/products");
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "加载产品失败");
+        setError(data.error || "鍔犺浇浜у搧澶辫触");
         return;
       }
       const rows = (Array.isArray(data.data) ? data.data : []) as Array<Product & { compare_at_price?: number | string }>;
@@ -63,7 +66,7 @@ export default function AdminProductsPage() {
         sale_price: product.compare_at_price ? Number(product.compare_at_price) : undefined,
       })));
     } catch (err) {
-      setError("网络错误，请检查连接");
+      setError("缃戠粶閿欒锛岃妫€鏌ヨ繛鎺?);
     } finally {
       setLoading(false);
     }
@@ -82,7 +85,7 @@ export default function AdminProductsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("确定要删除此产品吗？")) return;
+    if (!confirm("纭畾瑕佸垹闄ゆ浜у搧鍚楋紵")) return;
     try {
       const res = await fetch(`/api/admin/products/${id}`, { method: "DELETE" });
       if (res.ok) {
@@ -185,7 +188,7 @@ export default function AdminProductsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-slate-500">加载中...</div>
+        <div className="text-slate-500">鍔犺浇涓?..</div>
       </div>
     );
   }
@@ -195,15 +198,15 @@ export default function AdminProductsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">产品管理</h1>
-          <p className="text-slate-500 mt-1">管理所有产品信息</p>
+          <h1 className="text-2xl font-bold text-slate-900">浜у搧绠＄悊</h1>
+          <p className="text-slate-500 mt-1">绠＄悊鎵€鏈変骇鍝佷俊鎭?/p>
         </div>
         <Link
           href="/admin/products/import"
           className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 w-fit"
         >
           <Plus className="w-4 h-4" />
-          采集产品
+          閲囬泦浜у搧
         </Link>
       </div>
 
@@ -221,7 +224,7 @@ export default function AdminProductsPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="搜索产品名称..."
+              placeholder="鎼滅储浜у搧鍚嶇О..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
@@ -232,7 +235,7 @@ export default function AdminProductsPage() {
             onChange={(e) => setCategoryFilter(e.target.value)}
             className="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
           >
-            <option value="all">全部分类</option>
+            <option value="all">鍏ㄩ儴鍒嗙被</option>
             {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.name}
@@ -244,9 +247,9 @@ export default function AdminProductsPage() {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
           >
-            <option value="all">全部状态</option>
-            <option value="active">上架</option>
-            <option value="inactive">下架</option>
+            <option value="all">鍏ㄩ儴鐘舵€?/option>
+            <option value="active">涓婃灦</option>
+            <option value="inactive">涓嬫灦</option>
           </select>
         </div>
       </div>
@@ -255,24 +258,23 @@ export default function AdminProductsPage() {
       {selectedIds.size > 0 && (
         <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
           <span className="text-sm font-medium text-orange-800">
-            已选择 {selectedIds.size} 个产品
-          </span>
+            宸查€夋嫨 {selectedIds.size} 涓骇鍝?          </span>
           <div className="flex items-center gap-2 flex-wrap">
             <select
               value={batchAction}
               onChange={(e) => setBatchAction(e.target.value)}
               className="px-3 py-1.5 border border-orange-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20"
             >
-              <option value="">选择操作...</option>
-              <option value="activate">批量上架</option>
-              <option value="deactivate">批量下架</option>
+              <option value="">閫夋嫨鎿嶄綔...</option>
+              <option value="activate">鎵归噺涓婃灦</option>
+              <option value="deactivate">鎵归噺涓嬫灦</option>
             </select>
             <button
               onClick={handleBatchAction}
               disabled={!batchAction}
               className="px-3 py-1.5 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 disabled:opacity-50"
             >
-              执行
+              鎵ц
             </button>
             <button
               onClick={() => {
@@ -281,7 +283,7 @@ export default function AdminProductsPage() {
               }}
               className="px-3 py-1.5 text-orange-700 text-sm hover:underline"
             >
-              取消选择
+              鍙栨秷閫夋嫨
             </button>
           </div>
         </div>
@@ -294,8 +296,8 @@ export default function AdminProductsPage() {
             <Search className="w-12 h-12 text-slate-300 mx-auto mb-3" />
             <p className="text-slate-500">
               {search || categoryFilter !== "all" || statusFilter !== "all"
-                ? "没有找到匹配的产品"
-                : "暂无产品"}
+                ? "娌℃湁鎵惧埌鍖归厤鐨勪骇鍝?
+                : "鏆傛棤浜у搧"}
             </p>
           </div>
         ) : (
@@ -313,28 +315,29 @@ export default function AdminProductsPage() {
                     </button>
                   </th>
                   <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
-                    产品
+                    浜у搧
                   </th>
                   <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
-                    价格
+                    浠锋牸
                   </th>
+                  <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
+                    閲囪喘浠?                  </th>
                   <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
                     MOQ
                   </th>
                   <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
-                    重量
+                    閲嶉噺
                   </th>
                   <th className="text-center text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
                     OEM
                   </th>
                   <th className="text-center text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
-                    推荐
+                    鎺ㄨ崘
                   </th>
                   <th className="text-center text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
-                    状态
-                  </th>
+                    鐘舵€?                  </th>
                   <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
-                    操作
+                    鎿嶄綔
                   </th>
                 </tr>
               </thead>
@@ -360,7 +363,7 @@ export default function AdminProductsPage() {
                           />
                         ) : (
                           <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center">
-                            <span className="text-xs text-slate-400">无图</span>
+                            <span className="text-xs text-slate-400">鏃犲浘</span>
                           </div>
                         )}
                         <div>
@@ -384,14 +387,31 @@ export default function AdminProductsPage() {
                       )}
                     </td>
                     <td className="px-4 py-3 text-sm text-right text-slate-600">
-                      {product.moq || 1}
+                      {product.purchase_price !== undefined ? (
+                        product.supplier_url ? (
+                          <a
+                            href={product.supplier_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-medium text-blue-600 hover:text-blue-700"
+                            title="鏌ョ湅渚涘簲鍟嗛〉闈?
+                          >
+                            {product.purchase_currency || "甯佺寰呯‘璁?} {product.purchase_price.toFixed(2)}
+                          </a>
+                        ) : (
+                          <span>{product.purchase_currency || "甯佺寰呯‘璁?} {product.purchase_price.toFixed(2)}</span>
+                        )
+                      ) : "-"}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-right text-slate-600">
+                      {product.moq || "-"}
                     </td>
                     <td className="px-4 py-3 text-sm text-right text-slate-600">
                       {product.weight_kg || product.weight ? `${(product.weight_kg || product.weight)}kg` : "-"}
                     </td>
                     <td className="px-4 py-3 text-center">
                       {(product.oem_available || product.support_oem) ? (
-                        <span className="text-green-600 text-xs font-medium">支持</span>
+                        <span className="text-green-600 text-xs font-medium">鏀寔</span>
                       ) : (
                         <span className="text-slate-400 text-xs">-</span>
                       )}
@@ -405,7 +425,7 @@ export default function AdminProductsPage() {
                             : "bg-slate-100 text-slate-500"
                         }`}
                       >
-                        {product.is_featured ? "推荐" : "普通"}
+                        {product.is_featured ? "鎺ㄨ崘" : "鏅€?}
                       </button>
                     </td>
                     <td className="px-4 py-3 text-center">
@@ -420,12 +440,12 @@ export default function AdminProductsPage() {
                         {product.is_active ? (
                           <>
                             <ArrowUp className="w-3 h-3" />
-                            上架
+                            涓婃灦
                           </>
                         ) : (
                           <>
                             <ArrowDown className="w-3 h-3" />
-                            下架
+                            涓嬫灦
                           </>
                         )}
                       </button>
@@ -435,14 +455,14 @@ export default function AdminProductsPage() {
                         <button
                           onClick={() => setEditingProduct(product)}
                           className="p-1.5 text-slate-500 hover:bg-slate-100 rounded-lg"
-                          title="编辑"
+                          title="缂栬緫"
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDelete(product.id)}
                           className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg"
-                          title="删除"
+                          title="鍒犻櫎"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -499,7 +519,7 @@ function ProductEditModal({
 
   const handleSubmit = async () => {
     if (!form.name) {
-      setError("请填写产品名称");
+      setError("璇峰～鍐欎骇鍝佸悕绉?);
       return;
     }
     setSubmitting(true);
@@ -519,10 +539,10 @@ function ProductEditModal({
         onSuccess();
       } else {
         const data = await res.json();
-        setError(data.error || "保存失败");
+        setError(data.error || "淇濆瓨澶辫触");
       }
     } catch (err) {
-      setError("网络错误");
+      setError("缃戠粶閿欒");
     } finally {
       setSubmitting(false);
     }
@@ -543,10 +563,10 @@ function ProductEditModal({
         const data = await res.json();
         setAttachments([...attachments, { url: data.url, name: data.name, size: data.size }]);
       } else {
-        setError("上传失败");
+        setError("涓婁紶澶辫触");
       }
     } catch (err) {
-      setError("上传失败");
+      setError("涓婁紶澶辫触");
     } finally {
       setUploading(false);
       e.target.value = "";
@@ -561,7 +581,7 @@ function ProductEditModal({
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6 border-b border-slate-200 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">编辑产品</h2>
+          <h2 className="text-lg font-semibold text-slate-900">缂栬緫浜у搧</h2>
           <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-lg">
             <X className="w-5 h-5 text-slate-500" />
           </button>
@@ -569,7 +589,7 @@ function ProductEditModal({
         <div className="p-6 space-y-4">
           {error && <div className="rounded-lg bg-red-50 p-3 text-red-600 text-sm">{error}</div>}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">产品名称</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">浜у搧鍚嶇О</label>
             <input
               type="text"
               value={form.name}
@@ -579,7 +599,7 @@ function ProductEditModal({
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">价格 (USD)</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">浠锋牸 (USD)</label>
               <input
                 type="number"
                 step="0.01"
@@ -589,13 +609,13 @@ function ProductEditModal({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">促销价</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">淇冮攢浠?/label>
               <input
                 type="number"
                 step="0.01"
                 value={form.sale_price || ""}
                 onChange={(e) => setForm({ ...form, sale_price: e.target.value ? parseFloat(e.target.value) : null })}
-                placeholder="无促销价"
+                placeholder="鏃犱績閿€浠?
                 className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
               />
             </div>
@@ -611,13 +631,13 @@ function ProductEditModal({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">重量 (kg)</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">閲嶉噺 (kg)</label>
               <input
                 type="number"
                 step="0.01"
                 value={form.weight_kg || ""}
                 onChange={(e) => setForm({ ...form, weight_kg: e.target.value ? parseFloat(e.target.value) : null })}
-                placeholder="产品重量"
+                placeholder="浜у搧閲嶉噺"
                 className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
               />
             </div>
@@ -632,22 +652,22 @@ function ProductEditModal({
               />
               <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-orange-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
             </label>
-            <span className="text-sm font-medium text-slate-700">支持 OEM 定制</span>
+            <span className="text-sm font-medium text-slate-700">鏀寔 OEM 瀹氬埗</span>
           </div>
           {form.oem_available && (
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">OEM 说明</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">OEM 璇存槑</label>
               <textarea
                 value={form.oem_notes}
                 onChange={(e) => setForm({ ...form, oem_notes: e.target.value })}
                 rows={2}
-                placeholder="OEM 定制要求、最低起订量等"
+                placeholder="OEM 瀹氬埗瑕佹眰銆佹渶浣庤捣璁㈤噺绛?
                 className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
               />
             </div>
           )}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">附件</label>
+            <label className="block text-sm font-medium text-slate-700 mb-2">闄勪欢</label>
             <div className="space-y-2">
               {attachments.map((att, idx) => (
                 <div key={idx} className="flex items-center justify-between bg-slate-50 rounded-lg px-3 py-2">
@@ -670,7 +690,7 @@ function ProductEditModal({
               ))}
               <label className="flex items-center gap-2 px-3 py-2 border border-dashed border-slate-300 rounded-lg cursor-pointer hover:bg-slate-50">
                 <Upload className="w-4 h-4 text-slate-400" />
-                <span className="text-sm text-slate-500">{uploading ? "上传中..." : "点击上传附件"}</span>
+                <span className="text-sm text-slate-500">{uploading ? "涓婁紶涓?.." : "鐐瑰嚮涓婁紶闄勪欢"}</span>
                 <input
                   type="file"
                   onChange={handleUpload}
@@ -686,14 +706,14 @@ function ProductEditModal({
             onClick={onClose}
             className="px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50"
           >
-            取消
+            鍙栨秷
           </button>
           <button
             onClick={handleSubmit}
             disabled={submitting}
             className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 disabled:opacity-50"
           >
-            {submitting ? "保存中..." : "保存"}
+            {submitting ? "淇濆瓨涓?.." : "淇濆瓨"}
           </button>
         </div>
       </div>

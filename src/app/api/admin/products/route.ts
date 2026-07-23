@@ -27,8 +27,41 @@ export async function GET(request: NextRequest) {
     const { data, error, count } = await query;
     if (error) throw error;
 
+    const productIds = (data || []).map((product) => product.id);
+    const sourcingByProduct = new Map<string, {
+      purchase_price: number;
+      purchase_currency: string | null;
+      moq: number | null;
+      supplier_url: string;
+      sourcing_notes: string | null;
+    }>();
+
+    if (productIds.length > 0) {
+      const { data: sourcingRows, error: sourcingError } = await supabase
+        .from("product_sourcing")
+        .select("product_id, purchase_price, purchase_currency, moq, supplier_url, notes")
+        .in("product_id", productIds);
+
+      if (!sourcingError) {
+        for (const row of sourcingRows || []) {
+          sourcingByProduct.set(row.product_id, {
+            purchase_price: Number(row.purchase_price),
+            purchase_currency: row.purchase_currency,
+            moq: row.moq,
+            supplier_url: row.supplier_url,
+            sourcing_notes: row.notes,
+          });
+        }
+      } else if (sourcingError.code !== "42P01") {
+        console.error("Failed to fetch product sourcing data:", sourcingError);
+      }
+    }
+
     return NextResponse.json({
-      data,
+      data: (data || []).map((product) => ({
+        ...product,
+        ...sourcingByProduct.get(product.id),
+      })),
       pagination: { page, limit, total: count || 0, totalPages: Math.ceil((count || 0) / limit) },
     });
   } catch (error) {
