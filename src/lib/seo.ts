@@ -12,7 +12,7 @@
 // Constants
 // ---------------------------------------------------------------------------
 
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.reachprojector.com').replace(/\/$/, '')
+export const SITE_URL = 'https://www.reachprojector.com'
 export const SITE_NAME = 'REACH PROJECTOR'
 
 // ---------------------------------------------------------------------------
