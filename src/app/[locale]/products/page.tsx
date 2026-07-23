@@ -11,22 +11,22 @@ export const dynamic = 'force-dynamic';
 const CATEGORY_META: Record<string, { title: string; description: string; keywords: string[] }> = {
   '4k-laser-projectors': {
     title: '4K Laser Projectors Wholesale | XGIMI, Hisense, JMGO',
-    description: 'Shop wholesale 4K laser projectors. Triple laser, ultra-short throw, up to 120-inch. Bulk pricing, DDP shipping to 50+ countries.',
+    description: 'Shop wholesale 4K laser projectors. Triple laser and ultra-short throw options with bulk pricing and destination-specific shipping terms.',
     keywords: ['4k laser projector', 'wholesale 4k projector', 'xgimi 4k projector', 'hisense 4k laser'],
   },
   'ust-laser-tv': {
     title: 'UST Laser TV Wholesale | Ultra Short Throw | Hisense, Formovie',
-    description: 'Wholesale ultra-short throw laser TVs. 100-120 inch display. Bulk pricing with DDP global shipping.',
+    description: 'Wholesale ultra-short throw laser TVs for large-screen installations. Bulk pricing and shipping terms are confirmed by destination.',
     keywords: ['ust laser tv', 'ultra short throw projector', 'hisense laser tv', 'formovie theater'],
   },
   'projector-mounts': {
     title: 'Projector Mounts Wholesale | Ceiling, Wall, Floor Stands',
-    description: 'Wholesale projector mounts and brackets. Ceiling, wall, floor stands and UST adjustable mounts. Bulk pricing with global DDP shipping.',
+    description: 'Wholesale projector mounts and brackets. Ceiling, wall, floor, and UST adjustable mounts with destination-specific shipping.',
     keywords: ['projector mount', 'wholesale projector bracket', 'ceiling projector mount', 'UST projector stand'],
   },
   'projection-screens': {
     title: 'Projection Screens Wholesale | Motorized, ALR, Fixed Frame',
-    description: 'Wholesale projection screens. Motorized, fixed frame, portable and ALR screens for any environment. Bulk pricing, worldwide DDP shipping.',
+    description: 'Wholesale projection screens including motorized, fixed-frame, portable, and ALR options. Oversize shipping is quoted by destination.',
     keywords: ['projection screen', 'wholesale projector screen', 'ALR screen', 'motorized screen', 'fixed frame screen'],
   },
 }

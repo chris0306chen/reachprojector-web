@@ -109,8 +109,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           __html: JSON.stringify(generateFAQSchema([
             { question: `What is the warranty for ${product.name}?`, answer: 'All products come with full manufacturer warranty and pre-shipment quality inspection.' },
             { question: 'Do you offer wholesale pricing?', answer: 'Yes, tiered wholesale pricing for bulk orders. Contact via WhatsApp or RFQ form.' },
-            { question: 'How long does shipping take?', answer: 'DDP delivery typically 7-15 business days to 50+ countries.' },
-            { question: 'Which countries do you ship to?', answer: '50+ countries across Europe, Americas, Southeast Asia, and Middle East.' },
+            { question: 'How long does shipping take?', answer: 'Transit time depends on the destination, product size, and selected service. It is confirmed at checkout or in your quotation.' },
+            { question: 'Which countries do you ship to?', answer: 'International shipping is available for selected destinations. DDP or DAP availability is confirmed for each destination and order.' },
           ])),
         }}
       />

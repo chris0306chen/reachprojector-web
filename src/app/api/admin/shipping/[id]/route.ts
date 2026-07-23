@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
+import { normalizeShippingTemplate } from "@/lib/shipping-template";
 
 export async function PUT(
   request: NextRequest,
@@ -7,12 +8,12 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
-    const body = await request.json();
+    const body = normalizeShippingTemplate(await request.json());
 
     const supabase = await getSupabaseClient();
     const { data, error } = await supabase
       .from("shipping_templates")
-      .update({ ...body, updated_at: new Date().toISOString() })
+      .update(body)
       .eq("id", id)
       .select()
       .single();
@@ -21,7 +22,12 @@ export async function PUT(
     return NextResponse.json({ success: true, data });
   } catch (error) {
     console.error("Failed to update shipping template:", error);
-    return NextResponse.json({ error: "Failed to update shipping template" }, { status: 500 });
+    const message = error instanceof Error ? error.message : "";
+    const invalid = message.startsWith("INVALID_");
+    return NextResponse.json(
+      { error: invalid ? "Invalid shipping rule" : "Failed to update shipping template" },
+      { status: invalid ? 400 : 500 }
+    );
   }
 }
 
@@ -32,7 +38,10 @@ export async function DELETE(
   try {
     const { id } = await params;
     const supabase = await getSupabaseClient();
-    const { error } = await supabase.from("shipping_templates").delete().eq("id", id);
+    const { error } = await supabase
+      .from("shipping_templates")
+      .update({ is_active: false, updated_at: new Date().toISOString() })
+      .eq("id", id);
     if (error) throw error;
     return NextResponse.json({ success: true });
   } catch (error) {
