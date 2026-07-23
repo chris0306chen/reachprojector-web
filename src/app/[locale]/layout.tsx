@@ -28,9 +28,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     },
     alternates: {
       canonical: `/${locale}`,
-      languages: Object.fromEntries(
-        locales.map((l) => [l, `/${l}`])
-      ),
+      languages: {
+        ...Object.fromEntries(locales.map((l) => [l, `/${l}`])),
+        'x-default': '/en',
+      },
     },
   };
 }
