@@ -5,6 +5,7 @@
 -- 2. Purchase prices and supplier URLs live in product_sourcing, not products.
 -- 3. PI.xlsx did not specify the purchase-price currency, so it remains NULL.
 -- 4. Existing public prices are never overwritten by this import.
+-- Verified alongside a successful local Next.js production build.
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
