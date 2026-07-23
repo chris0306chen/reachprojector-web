@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './[locale]/globals.css';
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.reachprojector.com'),
+  metadataBase: new URL('https://www.reachprojector.com'),
   title: 'REACH Projector',
   description: 'Professional projector and electronics supplier',
 };

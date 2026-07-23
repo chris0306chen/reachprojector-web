@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { locales } from '@/i18n/config'
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.reachprojector.com').replace(/\/$/, '')
+const SITE_URL = 'https://www.reachprojector.com'
 
 async function fetchProductSlugs(): Promise<{ slug: string; updatedAt: string }[]> {
   try {
