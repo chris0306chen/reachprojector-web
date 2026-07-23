@@ -55,7 +55,7 @@ export function generateProductMetadata(product: ProductSEOData) {
     product.description.length > 155
       ? `${product.description.slice(0, 155)}...`
       : product.description
-  const description = `${truncatedDesc} In stock, ready to ship worldwide with DDP. Wholesale pricing available.`
+  const description = `${truncatedDesc} International shipping and DDP are available for selected destinations, subject to confirmation. Wholesale pricing available.`
 
   return {
     title,
