@@ -12,7 +12,7 @@
 // Constants
 // ---------------------------------------------------------------------------
 
-export const SITE_URL = 'https://reachprojector.com'
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.reachprojector.com').replace(/\/$/, '')
 export const SITE_NAME = 'REACH PROJECTOR'
 
 // ---------------------------------------------------------------------------
@@ -188,7 +188,7 @@ export function generateFAQSchema(faqs: FAQItem[]) {
 }
 
 // ---------------------------------------------------------------------------
-// ItemList Schema (JSON-LD) — for product listing pages
+// ItemList Schema (JSON-LD) 鈥?for product listing pages
 // ---------------------------------------------------------------------------
 
 export function generateItemListSchema(
@@ -212,7 +212,7 @@ export function generateItemListSchema(
 }
 
 // ---------------------------------------------------------------------------
-// Organization Schema (JSON-LD) — for layout.tsx
+// Organization Schema (JSON-LD) 鈥?for layout.tsx
 // ---------------------------------------------------------------------------
 
 export function generateOrganizationSchema() {
@@ -220,17 +220,11 @@ export function generateOrganizationSchema() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: SITE_NAME,
-    legalName: 'Quanzhou Reach Technology Co., Ltd.',
+    legalName: 'HK REACH SOURCING LIMITED',
     url: SITE_URL,
     logo: `${SITE_URL}/images/logo.png`,
     description:
       'Projection solutions supplier for home cinema, hospitality, education, events, integrators, and retail partners.',
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: 'Quanzhou',
-      addressRegion: 'Fujian',
-      addressCountry: 'CN',
-    },
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: '+86-13655920080',
@@ -243,7 +237,7 @@ export function generateOrganizationSchema() {
 }
 
 // ---------------------------------------------------------------------------
-// WebSite Schema (JSON-LD) — for homepage
+// WebSite Schema (JSON-LD) 鈥?for homepage
 // ---------------------------------------------------------------------------
 
 export function generateWebSiteSchema() {

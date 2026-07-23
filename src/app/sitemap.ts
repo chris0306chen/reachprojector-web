@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { locales } from '@/i18n/config'
 
-const SITE_URL = 'https://reachprojector.com'
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.reachprojector.com').replace(/\/$/, '')
 
 async function fetchProductSlugs(): Promise<{ slug: string; updatedAt: string }[]> {
   try {
@@ -20,6 +20,7 @@ async function fetchProductSlugs(): Promise<{ slug: string; updatedAt: string }[
 function buildAlternates(path: string) {
   const languages: Record<string, string> = {}
   for (const locale of locales) { languages[locale] = `${SITE_URL}/${locale}${path}` }
+  languages['x-default'] = `${SITE_URL}/en${path}`
   return { languages }
 }
 
