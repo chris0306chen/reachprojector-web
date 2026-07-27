@@ -19,8 +19,8 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
   if (!product) return { title: 'Product Not Found' };
 
   return {
-    title: `${product.name} - ${product.brand}`,
-    description: product.short_description || `${product.name} by ${product.brand}. Premium quality electronics at competitive prices.`,
+    title: product.seo_title || `${product.name} - ${product.brand}`,
+    description: product.meta_description || product.short_description || `${product.name} by ${product.brand}.`,
     alternates: {
       canonical: `/${locale}/products/${product.slug}`,
     },
@@ -41,6 +41,10 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const categories = await getCategories();
   const category = categories.find((c) => c.id === product.category_id);
   const structuredDetail = normalizeProductDetail(product.detail_content);
+  const geoContent = product.import_data && typeof product.import_data === "object"
+    ? (product.import_data as { geo_content?: { faq?: Array<{ question: string; answer: string }> } }).geo_content
+    : undefined;
+  const verifiedFaq = Array.isArray(geoContent?.faq) ? geoContent.faq : [];
 
   return (
     <div className="bg-white min-h-screen">
@@ -85,8 +89,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             description: (product.description || '').slice(0, 200),
             image: product.images?.[0] || '/og/default-og.jpg',
             price: Number(product.price),
-            currency: 'USD',
-            sku: product.slug,
+            currency: product.currency || 'USD',
+            sku: product.sku || product.slug,
             category: category?.name || 'Electronics',
             availability: product.stock_status === 'in_stock' ? 'in_stock' : 'out_of_stock',
             locale,
@@ -108,18 +112,12 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           ])),
         }}
       />
-      {/* FAQ Schema */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateFAQSchema([
-            { question: `What is the warranty for ${product.name}?`, answer: 'All products come with full manufacturer warranty and pre-shipment quality inspection.' },
-            { question: 'Do you offer wholesale pricing?', answer: 'Yes, tiered wholesale pricing for bulk orders. Contact via WhatsApp or RFQ form.' },
-            { question: 'How long does shipping take?', answer: 'Transit time depends on the destination, product size, and selected service. It is confirmed at checkout or in your quotation.' },
-            { question: 'Which countries do you ship to?', answer: 'International shipping is available for selected destinations. DDP or DAP availability is confirmed for each destination and order.' },
-          ])),
-        }}
-      />
+      {verifiedFaq.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(generateFAQSchema(verifiedFaq)) }}
+        />
+      )}
     </div>
   );
 }

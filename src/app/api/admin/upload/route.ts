@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
+import { getCurrentUser, hasPermission } from "@/lib/auth";
 
 /**
  * POST /api/admin/upload
@@ -12,9 +13,14 @@ import { getSupabaseClient } from "@/storage/database/supabase-client";
  */
 export async function POST(request: NextRequest) {
   try {
+    const user = await getCurrentUser();
+    if (!user || !hasPermission(user, "products")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const formData = await request.formData();
     const file = formData.get("file") as File;
     const kind = formData.get("kind");
+    const requestedName = formData.get("storageName");
 
     if (!file) {
       return NextResponse.json(
@@ -56,8 +62,9 @@ export async function POST(request: NextRequest) {
 
     // Generate file path: uploads/{timestamp}_{filename}
     const timestamp = Date.now();
-    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-    const storagePath = `uploads/${timestamp}_${safeName}`;
+    const candidateName = typeof requestedName === "string" && requestedName ? requestedName : file.name;
+    const safeName = candidateName.toLowerCase().replace(/[^a-z0-9._-]/g, "-").slice(0, 255);
+    const storagePath = `products/${timestamp}-${safeName}`;
 
     // Upload to Supabase Storage
     const { data: uploadData, error: uploadError } = await supabase.storage
