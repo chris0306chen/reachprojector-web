@@ -16,6 +16,9 @@ export async function PUT(
       "stock_status", "is_bestseller", "is_new_arrival", "is_featured", "is_active",
       "sort_order", "weight_kg", "oem_available", "oem_notes", "attachments",
       "detail_content",
+      "product_length_cm", "product_width_cm", "product_height_cm", "net_weight_kg",
+      "packed_weight_kg", "package_length_cm", "package_width_cm", "package_height_cm",
+      "shipping_class", "package_count", "shipping_quote_required",
     ]);
     const updateData = Object.fromEntries(
       Object.entries(body).filter(([key]) => allowedFields.has(key))
@@ -37,6 +40,38 @@ export async function PUT(
     if (updateData.detail_content !== undefined) {
       const detailError = validateProductDetail(updateData.detail_content);
       if (detailError) return NextResponse.json({ error: detailError }, { status: 400 });
+    }
+    const positiveNumericFields = [
+      "product_length_cm", "product_width_cm", "product_height_cm", "net_weight_kg",
+      "packed_weight_kg", "package_length_cm", "package_width_cm", "package_height_cm",
+    ];
+    for (const field of positiveNumericFields) {
+      if (updateData[field] !== undefined && updateData[field] !== null &&
+          (!Number.isFinite(Number(updateData[field])) || Number(updateData[field]) <= 0)) {
+        return NextResponse.json({ error: `${field} must be greater than zero` }, { status: 400 });
+      }
+    }
+    if (updateData.shipping_class !== undefined && !["parcel", "freight"].includes(String(updateData.shipping_class))) {
+      return NextResponse.json({ error: "shipping_class must be parcel or freight" }, { status: 400 });
+    }
+    if (updateData.package_count !== undefined &&
+        (!Number.isInteger(Number(updateData.package_count)) || Number(updateData.package_count) < 1)) {
+      return NextResponse.json({ error: "package_count must be a positive integer" }, { status: 400 });
+    }
+    if (updateData.shipping_quote_required === false) {
+      const requiredPackaging = ["packed_weight_kg", "package_length_cm", "package_width_cm", "package_height_cm"];
+      if (requiredPackaging.some((field) => !Number.isFinite(Number(updateData[field])) || Number(updateData[field]) <= 0)) {
+        return NextResponse.json(
+          { error: "Gross weight and package length, width and height are required for automatic shipping" },
+          { status: 400 }
+        );
+      }
+      if (updateData.shipping_class !== "parcel" || Number(updateData.package_count || 1) !== 1) {
+        return NextResponse.json(
+          { error: "Automatic shipping is only available for one parcel package" },
+          { status: 400 }
+        );
+      }
     }
 
     const supabase = await getSupabaseClient();

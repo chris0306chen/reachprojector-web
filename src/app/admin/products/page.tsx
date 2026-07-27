@@ -22,6 +22,17 @@ interface Product {
   is_featured: boolean;
   weight?: number;
   weight_kg?: number;
+  product_length_cm?: number;
+  product_width_cm?: number;
+  product_height_cm?: number;
+  net_weight_kg?: number;
+  packed_weight_kg?: number;
+  package_length_cm?: number;
+  package_width_cm?: number;
+  package_height_cm?: number;
+  shipping_class?: "parcel" | "freight";
+  package_count?: number;
+  shipping_quote_required?: boolean;
   support_oem?: boolean;
   oem_available?: boolean;
   oem_notes?: string;
@@ -513,6 +524,17 @@ function ProductEditModal({
     moq: product.moq || 1,
     stock: product.stock || 0,
     weight_kg: product.weight_kg || product.weight || null as number | null,
+    product_length_cm: product.product_length_cm || null as number | null,
+    product_width_cm: product.product_width_cm || null as number | null,
+    product_height_cm: product.product_height_cm || null as number | null,
+    net_weight_kg: product.net_weight_kg || null as number | null,
+    packed_weight_kg: product.packed_weight_kg || null as number | null,
+    package_length_cm: product.package_length_cm || null as number | null,
+    package_width_cm: product.package_width_cm || null as number | null,
+    package_height_cm: product.package_height_cm || null as number | null,
+    shipping_class: product.shipping_class || "parcel",
+    package_count: product.package_count || 1,
+    shipping_quote_required: product.shipping_quote_required ?? true,
     oem_available: product.oem_available || product.support_oem || false,
     oem_notes: product.oem_notes || "",
   });
@@ -525,6 +547,12 @@ function ProductEditModal({
   const [detailContent, setDetailContent] = useState<ProductDetailContent>(
     normalizeProductDetail(product.detail_content)
   );
+  const estimatedVolumetricWeight = form.package_length_cm && form.package_width_cm && form.package_height_cm
+    ? (form.package_length_cm * form.package_width_cm * form.package_height_cm) / 5000
+    : null;
+  const estimatedChargeableWeight = estimatedVolumetricWeight && form.packed_weight_kg
+    ? Math.max(estimatedVolumetricWeight, form.packed_weight_kg)
+    : null;
 
   const handleSubmit = async () => {
     if (!form.name) {
@@ -664,6 +692,67 @@ function ProductEditModal({
             </label>
             <span className="text-sm font-medium text-slate-700">支持 OEM 定制</span>
           </div>
+          <section className="rounded-xl border border-slate-200 p-4 space-y-4">
+            <div>
+              <h3 className="font-semibold text-slate-900">Dimensions & Shipping</h3>
+              <p className="text-xs text-slate-500">Use cm and kg. Automatic shipping uses the higher of gross and volumetric weight.</p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {[
+                ["Product length (cm)", "product_length_cm"],
+                ["Product width (cm)", "product_width_cm"],
+                ["Product height (cm)", "product_height_cm"],
+                ["Net weight (kg)", "net_weight_kg"],
+                ["Package length (cm)", "package_length_cm"],
+                ["Package width (cm)", "package_width_cm"],
+                ["Package height (cm)", "package_height_cm"],
+                ["Gross weight (kg)", "packed_weight_kg"],
+              ].map(([label, field]) => (
+                <label key={field} className="text-sm text-slate-700">
+                  <span className="mb-1 block">{label}</span>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={form[field as keyof typeof form] as number || ""}
+                    onChange={(event) => setForm({
+                      ...form,
+                      [field]: event.target.value ? Number(event.target.value) : null,
+                    })}
+                    className="w-full rounded-lg border border-slate-200 px-3 py-2"
+                  />
+                </label>
+              ))}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <label className="text-sm text-slate-700">
+                <span className="mb-1 block">Shipping class</span>
+                <select
+                  value={form.shipping_class}
+                  onChange={(event) => setForm({ ...form, shipping_class: event.target.value as "parcel" | "freight" })}
+                  className="w-full rounded-lg border border-slate-200 px-3 py-2"
+                >
+                  <option value="parcel">Parcel — automatic rate</option>
+                  <option value="freight">Freight — manual quote</option>
+                </select>
+              </label>
+              <label className="text-sm text-slate-700">
+                <span className="mb-1 block">Package count</span>
+                <input type="number" min="1" step="1" value={form.package_count}
+                  onChange={(event) => setForm({ ...form, package_count: Math.max(1, Number(event.target.value) || 1) })}
+                  className="w-full rounded-lg border border-slate-200 px-3 py-2" />
+              </label>
+              <label className="flex items-center gap-2 pt-6 text-sm text-slate-700">
+                <input type="checkbox" checked={form.shipping_quote_required}
+                  onChange={(event) => setForm({ ...form, shipping_quote_required: event.target.checked })} />
+                Require manual shipping quote
+              </label>
+            </div>
+            <div className="rounded-lg bg-slate-50 p-3 text-sm text-slate-700">
+              Estimated volumetric weight (÷5000): {estimatedVolumetricWeight ? `${estimatedVolumetricWeight.toFixed(2)} kg` : "Incomplete"}
+              {" · "}Estimated chargeable weight: {estimatedChargeableWeight ? `${estimatedChargeableWeight.toFixed(2)} kg` : "Incomplete"}
+            </div>
+          </section>
           {form.oem_available && (
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">OEM 说明</label>
