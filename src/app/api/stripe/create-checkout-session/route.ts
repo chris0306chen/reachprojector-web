@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCheckoutItem } from '@/lib/checkout';
+import { getShippingQuote } from '@/lib/shipping';
 import { locales, defaultLocale } from '@/i18n/config';
 
 const STRIPE_API_URL = 'https://api.stripe.com/v1/checkout/sessions';
@@ -18,6 +19,11 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const item = await getCheckoutItem(body.productId, body.quantity);
+    const countryCode = typeof body.countryCode === 'string' ? body.countryCode.trim().toUpperCase() : '';
+    const shipping = await getShippingQuote(item.id, countryCode, item.quantity);
+    if (shipping.mode !== 'automatic' || shipping.currency !== item.currency) {
+      return NextResponse.json({ error: 'Automatic shipping is unavailable for this order' }, { status: 409 });
+    }
     const requestedLocale = typeof body.locale === 'string' ? body.locale : defaultLocale;
     const locale = locales.includes(requestedLocale as (typeof locales)[number]) ? requestedLocale : defaultLocale;
     const unitAmount = Math.round(item.unitPrice * 100);
@@ -35,8 +41,15 @@ export async function POST(request: NextRequest) {
     append(params, 'line_items[0][price_data][unit_amount]', unitAmount);
     append(params, 'line_items[0][price_data][product_data][name]', item.name);
     append(params, 'line_items[0][quantity]', item.quantity);
+    append(params, 'line_items[1][price_data][currency]', item.currency.toLowerCase());
+    append(params, 'line_items[1][price_data][unit_amount]', Math.round(shipping.shippingCost * 100));
+    append(params, 'line_items[1][price_data][product_data][name]', `Shipping (${shipping.tradeTerms})`);
+    append(params, 'line_items[1][quantity]', 1);
     append(params, 'metadata[product_id]', item.id);
     append(params, 'metadata[quantity]', item.quantity);
+    append(params, 'metadata[country_code]', countryCode);
+    append(params, 'metadata[shipping_template_id]', shipping.templateId);
+    append(params, 'metadata[shipping_cost]', shipping.shippingCost.toFixed(2));
 
     const response = await fetch(STRIPE_API_URL, {
       method: 'POST',

@@ -240,6 +240,9 @@ export interface CreateOrderInput {
   airwallex_intent_id: string | null;
   payment_method: string;
   payment_status?: string;
+  country?: string | null;
+  shipping_method?: string | null;
+  shipping_cost?: string | null;
   status: string;
 }
 

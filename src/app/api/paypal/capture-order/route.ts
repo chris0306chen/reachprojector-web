@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createOrder, getOrderByPayPalId } from '@/lib/data-service';
 import { getCheckoutItem } from '@/lib/checkout';
 import { sendOrderConfirmation } from '@/lib/order-email';
+import { getShippingQuote } from '@/lib/shipping';
 
 const PAYPAL_BASE_URL = process.env.PAYPAL_BASE_URL || 'https://api-m.paypal.com';
 
@@ -35,6 +36,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { orderId, productId, quantity = 1 } = body;
+    const countryCode = typeof body.countryCode === 'string' ? body.countryCode.trim().toUpperCase() : '';
 
     if (!orderId) {
       return NextResponse.json(
@@ -85,13 +87,18 @@ export async function POST(request: NextRequest) {
     const captureData = await captureResponse.json();
 
     const item = await getCheckoutItem(productId, quantity);
+    const shipping = await getShippingQuote(item.id, countryCode, item.quantity);
+    if (shipping.mode !== 'automatic' || shipping.currency !== item.currency) {
+      return NextResponse.json({ error: 'Automatic shipping is unavailable for this order' }, { status: 409 });
+    }
+    const expectedTotal = (Number(item.total) + shipping.shippingCost).toFixed(2);
     const purchaseUnit = captureData.purchase_units?.[0];
     const captured = purchaseUnit?.payments?.captures?.[0]?.amount;
     if (
       captureData.status !== 'COMPLETED' ||
       purchaseUnit?.reference_id !== item.id ||
       captured?.currency_code !== item.currency ||
-      captured?.value !== item.total
+      captured?.value !== expectedTotal
     ) {
       return NextResponse.json({ error: 'Captured payment does not match the order' }, { status: 409 });
     }
@@ -112,13 +119,16 @@ export async function POST(request: NextRequest) {
         product_id: item.id,
         product_name: item.name,
         quantity: item.quantity,
-        amount: item.total,
+        amount: expectedTotal,
         currency: item.currency,
         payer_email: payerEmail,
         payer_name: payerName,
         paypal_order_id: orderId,
         airwallex_intent_id: null,
         payment_method: 'paypal',
+        country: countryCode,
+        shipping_method: `${shipping.method} (${shipping.tradeTerms})`,
+        shipping_cost: shipping.shippingCost.toFixed(2),
         status: 'paid',
       });
       orderWasCreated = true;
@@ -134,7 +144,7 @@ export async function POST(request: NextRequest) {
         orderId: orderRecord.order_id,
         productName: item.name,
         quantity: item.quantity,
-        amount: item.total,
+        amount: expectedTotal,
         currency: item.currency,
         customerEmail: payerEmail,
         paymentMethod: 'paypal',

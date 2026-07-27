@@ -7,6 +7,16 @@ import { PayPalCheckout } from '@/components/paypal-checkout';
 import { StripeCheckout } from '@/components/stripe-checkout';
 import { useTranslations } from 'next-intl';
 
+type ShippingQuote = {
+  mode: 'automatic';
+  shippingCost: number;
+  tradeTerms: 'DDP' | 'DAP';
+  dutiesIncluded: boolean;
+  method: string;
+  estimatedDaysMin: number | null;
+  estimatedDaysMax: number | null;
+};
+
 function CheckoutContent() {
   const t = useTranslations('checkout');
   const router = useRouter();
@@ -17,6 +27,11 @@ function CheckoutContent() {
   const stripeEnabled = process.env.NEXT_PUBLIC_STRIPE_ENABLED === 'true';
   const [item, setItem] = useState<{ productId: string; productName: string; unitPrice: number; total: string } | null>(null);
   const [catalogError, setCatalogError] = useState('');
+  const [countries, setCountries] = useState<string[]>([]);
+  const [countryCode, setCountryCode] = useState('');
+  const [shipping, setShipping] = useState<ShippingQuote | null>(null);
+  const [shippingError, setShippingError] = useState('');
+  const [shippingLoading, setShippingLoading] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -40,9 +55,46 @@ function CheckoutContent() {
     return () => { active = false; };
   }, [productId, quantity]);
 
+  useEffect(() => {
+    fetch('/api/shipping/quote')
+      .then((response) => response.json())
+      .then((data) => setCountries(Array.isArray(data.countries) ? data.countries : []))
+      .catch(() => setCountries([]));
+  }, []);
+
+  useEffect(() => {
+    if (!item || !countryCode) {
+      setShipping(null);
+      setShippingError('');
+      return;
+    }
+    let active = true;
+    setShippingLoading(true);
+    setShipping(null);
+    setShippingError('');
+    fetch('/api/shipping/quote', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId: item.productId, quantity, countryCode }),
+    })
+      .then(async (response) => {
+        const data = await response.json();
+        if (!response.ok || data.mode !== 'automatic') throw new Error('Online shipping is unavailable. Please request a quote.');
+        if (active) setShipping(data);
+      })
+      .catch((error) => {
+        if (active) setShippingError(error instanceof Error ? error.message : 'Shipping quote unavailable');
+      })
+      .finally(() => {
+        if (active) setShippingLoading(false);
+      });
+    return () => { active = false; };
+  }, [item, countryCode, quantity]);
+
   const productName = item?.productName || 'Product';
   const price = item?.unitPrice || 0;
   const totalAmount = item?.total || '0.00';
+  const grandTotal = (Number(totalAmount) + (shipping?.shippingCost || 0)).toFixed(2);
 
   const handleSuccess = () => {
     setTimeout(() => {
@@ -70,6 +122,26 @@ function CheckoutContent() {
         <div className="lg:col-span-2">
           {/* Payment Method */}
           <div className="bg-white rounded-xl border border-slate-200 p-6 mb-6">
+            <label htmlFor="shipping-country" className="block text-sm font-medium text-slate-700 mb-2">
+              Shipping country
+            </label>
+            <select
+              id="shipping-country"
+              value={countryCode}
+              onChange={(event) => setCountryCode(event.target.value)}
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm mb-4"
+            >
+              <option value="">Select destination</option>
+              {countries.map((code) => <option key={code} value={code}>{code}</option>)}
+            </select>
+            {shippingLoading && <p className="text-sm text-slate-500 mb-4">Calculating shipping...</p>}
+            {shippingError && <p className="text-sm text-amber-700 mb-4">{shippingError}</p>}
+            {shipping && (
+              <p className="text-sm text-green-700 mb-4">
+                {shipping.tradeTerms} shipping: ${shipping.shippingCost.toFixed(2)}
+                {shipping.dutiesIncluded ? ' (duties included)' : ' (duties paid by recipient)'}
+              </p>
+            )}
             <h2 className="text-lg font-semibold text-slate-900 mb-4">{t('selectPayment')}</h2>
             <div className="grid sm:grid-cols-2 gap-3">
               {stripeEnabled && (
@@ -105,9 +177,9 @@ function CheckoutContent() {
                 <Loader2 className="w-4 h-4 animate-spin" />
                 Loading verified product price鈥?              </div>
             )}
-            {item && stripeEnabled && (
+            {item && shipping && stripeEnabled && (
               <>
-                <StripeCheckout productId={item.productId} quantity={quantity} />
+                <StripeCheckout productId={item.productId} quantity={quantity} countryCode={countryCode} />
                 <div className="flex items-center gap-3 my-6">
                   <div className="h-px flex-1 bg-slate-200" />
                   <span className="text-xs uppercase tracking-wide text-slate-400">or pay with PayPal</span>
@@ -115,12 +187,13 @@ function CheckoutContent() {
                 </div>
               </>
             )}
-            {item && (
+            {item && shipping && (
               <PayPalCheckout
                 productId={item.productId}
                 price={price}
                 quantity={quantity}
                 currency="USD"
+                countryCode={countryCode}
                 onSuccess={handleSuccess}
               />
             )}
@@ -146,12 +219,14 @@ function CheckoutContent() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-slate-600">{t('shipping')}</span>
-                <span className="text-green-600 font-medium">{t('free')}</span>
+                <span className="text-slate-900 font-medium">
+                  {shipping ? `$${shipping.shippingCost.toFixed(2)} ${shipping.tradeTerms}` : 'Select country'}
+                </span>
               </div>
             </div>
             <div className="flex justify-between pt-4">
               <span className="font-semibold text-slate-900">{t('total')}</span>
-              <span className="text-xl font-bold text-slate-900">${totalAmount}</span>
+              <span className="text-xl font-bold text-slate-900">${grandTotal}</span>
             </div>
 
             {/* Security Badge */}

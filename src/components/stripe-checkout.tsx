@@ -7,9 +7,10 @@ import { useLocale } from 'next-intl';
 interface StripeCheckoutProps {
   productId: string;
   quantity: number;
+  countryCode: string;
 }
 
-export function StripeCheckout({ productId, quantity }: StripeCheckoutProps) {
+export function StripeCheckout({ productId, quantity, countryCode }: StripeCheckoutProps) {
   const locale = useLocale();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -21,7 +22,7 @@ export function StripeCheckout({ productId, quantity }: StripeCheckoutProps) {
       const response = await fetch('/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId, quantity, locale }),
+        body: JSON.stringify({ productId, quantity, locale, countryCode }),
       });
       const data = await response.json();
       if (!response.ok || typeof data.url !== 'string') {
@@ -39,7 +40,7 @@ export function StripeCheckout({ productId, quantity }: StripeCheckoutProps) {
       <button
         type="button"
         onClick={startCheckout}
-        disabled={loading || !productId}
+        disabled={loading || !productId || !countryCode}
         className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
       >
         {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <CreditCard className="w-5 h-5" />}

@@ -7,6 +7,7 @@ import {
   updateOrderStatusByStripePaymentIntent,
 } from '@/lib/data-service';
 import { sendOrderConfirmation } from '@/lib/order-email';
+import { getShippingQuote } from '@/lib/shipping';
 
 export const runtime = 'nodejs';
 
@@ -58,6 +59,7 @@ export async function POST(request: NextRequest) {
       const paymentStatus = stringValue(object.payment_status);
       const metadata = (object.metadata || {}) as Record<string, unknown>;
       const productId = stringValue(metadata.product_id);
+      const countryCode = stringValue(metadata.country_code)?.toUpperCase() || '';
       const quantity = Number(metadata.quantity);
       if (!sessionId || paymentStatus !== 'paid' || !productId) {
         return NextResponse.json({ received: true });
@@ -66,9 +68,15 @@ export async function POST(request: NextRequest) {
       const existing = await getOrderByStripeSessionId(sessionId);
       if (!existing) {
         const item = await getCheckoutItem(productId, quantity);
+        const shipping = await getShippingQuote(item.id, countryCode, item.quantity);
+        if (shipping.mode !== 'automatic' || shipping.currency !== item.currency) {
+          console.error('Stripe paid session shipping could not be verified:', event.id);
+          return NextResponse.json({ error: 'Shipping amount mismatch' }, { status: 409 });
+        }
+        const orderTotal = (Number(item.total) + shipping.shippingCost).toFixed(2);
         const amountTotal = Number(object.amount_total);
         const currency = stringValue(object.currency)?.toUpperCase();
-        if (amountTotal !== Math.round(Number(item.total) * 100) || currency !== item.currency) {
+        if (amountTotal !== Math.round(Number(orderTotal) * 100) || currency !== item.currency) {
           console.error('Stripe paid session did not match catalog:', event.id);
           return NextResponse.json({ error: 'Payment amount mismatch' }, { status: 409 });
         }
@@ -79,7 +87,7 @@ export async function POST(request: NextRequest) {
           product_id: item.id,
           product_name: item.name,
           quantity: item.quantity,
-          amount: item.total,
+          amount: orderTotal,
           currency: item.currency,
           payer_email: stringValue(customerDetails.email),
           payer_name: stringValue(customerDetails.name),
@@ -89,13 +97,16 @@ export async function POST(request: NextRequest) {
           airwallex_intent_id: null,
           payment_method: 'stripe',
           payment_status: 'paid',
+          country: countryCode,
+          shipping_method: `${shipping.method} (${shipping.tradeTerms})`,
+          shipping_cost: shipping.shippingCost.toFixed(2),
           status: 'paid',
         });
         sendOrderConfirmation({
           orderId: order.order_id,
           productName: item.name,
           quantity: item.quantity,
-          amount: item.total,
+          amount: orderTotal,
           currency: item.currency,
           customerEmail: stringValue(customerDetails.email),
           paymentMethod: 'stripe',

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCheckoutItem } from '@/lib/checkout';
+import { getShippingQuote } from '@/lib/shipping';
 
 const PAYPAL_BASE_URL = process.env.PAYPAL_BASE_URL || 'https://api-m.paypal.com';
 
@@ -43,6 +44,13 @@ export async function POST(request: NextRequest) {
 
     // Price, name and currency always come from the catalog, never the browser.
     const item = await getCheckoutItem(productId, quantity);
+    const countryCode = typeof body.countryCode === 'string' ? body.countryCode.trim().toUpperCase() : '';
+    const shipping = await getShippingQuote(item.id, countryCode, item.quantity);
+    if (shipping.mode !== 'automatic' || shipping.currency !== item.currency) {
+      return NextResponse.json({ error: 'Automatic shipping is unavailable for this order' }, { status: 409 });
+    }
+    const itemTotal = Number(item.total);
+    const orderTotal = (itemTotal + shipping.shippingCost).toFixed(2);
 
     // Check if PayPal is configured
     const clientId = process.env.PAYPAL_CLIENT_ID;
@@ -71,8 +79,20 @@ export async function POST(request: NextRequest) {
             description: item.name,
             amount: {
               currency_code: item.currency,
-              value: item.total,
+              value: orderTotal,
+              breakdown: {
+                item_total: { currency_code: item.currency, value: item.total },
+                shipping: { currency_code: item.currency, value: shipping.shippingCost.toFixed(2) },
+              },
             },
+            items: [
+              {
+                name: item.name,
+                quantity: String(item.quantity),
+                unit_amount: { currency_code: item.currency, value: item.unitPrice.toFixed(2) },
+              },
+            ],
+            custom_id: JSON.stringify({ countryCode, shippingTemplateId: shipping.templateId }),
           },
         ],
       }),
