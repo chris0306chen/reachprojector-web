@@ -17,6 +17,7 @@ interface Order {
   payer_email: string;
   status: string;
   payment_status?: string;
+  payment_method?: string;
   shipping_method?: string;
   tracking_number?: string;
   country?: string;
@@ -340,6 +341,7 @@ export default function AdminOrdersPage() {
                       >
                         {order.payment_status === "paid" ? "已付款" : order.payment_status === "partial" ? "部分付款" : "未付款"}
                       </span>
+                      <p className="mt-1 text-xs text-slate-500">{getPaymentMethodLabel(order.payment_method)}</p>
                     </td>
                     <td className="px-4 py-3">
                       <input
@@ -662,6 +664,18 @@ function OrderDetailModal({ order, onClose }: { order: Order; onClose: () => voi
               </p>
             </div>
           </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm text-slate-500">支付方式</p>
+              <p className="text-sm text-slate-900">{getPaymentMethodLabel(order.payment_method)}</p>
+            </div>
+            <div>
+              <p className="text-sm text-slate-500">支付状态</p>
+              <p className="text-sm text-slate-900">
+                {order.payment_status === "paid" ? "已付款" : order.payment_status === "partial" ? "部分付款" : "未付款"}
+              </p>
+            </div>
+          </div>
           {order.notes && (
             <div>
               <p className="text-sm text-slate-500">备注</p>
@@ -698,4 +712,14 @@ function getStatusClass(status: string): string {
     cancelled: "bg-slate-100 text-slate-600",
   };
   return classes[status] || "bg-slate-100 text-slate-600";
+}
+
+function getPaymentMethodLabel(method?: string): string {
+  const labels: Record<string, string> = {
+    stripe: "Stripe 信用卡",
+    paypal: "PayPal",
+    bank_transfer: "银行转账",
+    offline: "线下收款",
+  };
+  return method ? labels[method] || method : "未记录";
 }

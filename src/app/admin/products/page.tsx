@@ -118,11 +118,11 @@ export default function AdminProductsPage() {
         body: JSON.stringify({ is_active: !isActive }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to update product status");
+      if (!res.ok) throw new Error(data.error || "更新产品状态失败");
       fetchProducts();
     } catch (err) {
       console.error("Failed to toggle status:", err);
-      setError(err instanceof Error ? err.message : "Failed to update product status");
+      setError(err instanceof Error ? err.message : "更新产品状态失败");
     }
   };
 
@@ -134,11 +134,11 @@ export default function AdminProductsPage() {
         body: JSON.stringify({ is_featured: !isFeatured }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to update featured status");
+      if (!res.ok) throw new Error(data.error || "更新推荐状态失败");
       fetchProducts();
     } catch (err) {
       console.error("Failed to toggle featured:", err);
-      setError(err instanceof Error ? err.message : "Failed to update featured status");
+      setError(err instanceof Error ? err.message : "更新推荐状态失败");
     }
   };
 
@@ -660,7 +660,7 @@ function ProductEditModal({
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">MOQ</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">最低起订量（MOQ）</label>
               <input
                 type="number"
                 value={form.moq}
@@ -694,19 +694,19 @@ function ProductEditModal({
           </div>
           <section className="rounded-xl border border-slate-200 p-4 space-y-4">
             <div>
-              <h3 className="font-semibold text-slate-900">Dimensions & Shipping</h3>
-              <p className="text-xs text-slate-500">Use cm and kg. Automatic shipping uses the higher of gross and volumetric weight.</p>
+              <h3 className="font-semibold text-slate-900">尺寸、重量与运费</h3>
+              <p className="text-xs text-slate-500">尺寸使用 cm，重量使用 kg；自动运费取毛重与体积重中较高者。</p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
-                ["Product length (cm)", "product_length_cm"],
-                ["Product width (cm)", "product_width_cm"],
-                ["Product height (cm)", "product_height_cm"],
-                ["Net weight (kg)", "net_weight_kg"],
-                ["Package length (cm)", "package_length_cm"],
-                ["Package width (cm)", "package_width_cm"],
-                ["Package height (cm)", "package_height_cm"],
-                ["Gross weight (kg)", "packed_weight_kg"],
+                ["产品长度（cm）", "product_length_cm"],
+                ["产品宽度（cm）", "product_width_cm"],
+                ["产品高度（cm）", "product_height_cm"],
+                ["产品净重（kg）", "net_weight_kg"],
+                ["包装长度（cm）", "package_length_cm"],
+                ["包装宽度（cm）", "package_width_cm"],
+                ["包装高度（cm）", "package_height_cm"],
+                ["包装毛重（kg）", "packed_weight_kg"],
               ].map(([label, field]) => (
                 <label key={field} className="text-sm text-slate-700">
                   <span className="mb-1 block">{label}</span>
@@ -726,18 +726,18 @@ function ProductEditModal({
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <label className="text-sm text-slate-700">
-                <span className="mb-1 block">Shipping class</span>
+                <span className="mb-1 block">物流类型</span>
                 <select
                   value={form.shipping_class}
                   onChange={(event) => setForm({ ...form, shipping_class: event.target.value as "parcel" | "freight" })}
                   className="w-full rounded-lg border border-slate-200 px-3 py-2"
                 >
-                  <option value="parcel">Parcel — automatic rate</option>
-                  <option value="freight">Freight — manual quote</option>
+                  <option value="parcel">包裹——自动计算运费</option>
+                  <option value="freight">大件货运——人工报价</option>
                 </select>
               </label>
               <label className="text-sm text-slate-700">
-                <span className="mb-1 block">Package count</span>
+                <span className="mb-1 block">包裹数量</span>
                 <input type="number" min="1" step="1" value={form.package_count}
                   onChange={(event) => setForm({ ...form, package_count: Math.max(1, Number(event.target.value) || 1) })}
                   className="w-full rounded-lg border border-slate-200 px-3 py-2" />
@@ -745,12 +745,12 @@ function ProductEditModal({
               <label className="flex items-center gap-2 pt-6 text-sm text-slate-700">
                 <input type="checkbox" checked={form.shipping_quote_required}
                   onChange={(event) => setForm({ ...form, shipping_quote_required: event.target.checked })} />
-                Require manual shipping quote
+                强制人工确认运费
               </label>
             </div>
             <div className="rounded-lg bg-slate-50 p-3 text-sm text-slate-700">
-              Estimated volumetric weight (÷5000): {estimatedVolumetricWeight ? `${estimatedVolumetricWeight.toFixed(2)} kg` : "Incomplete"}
-              {" · "}Estimated chargeable weight: {estimatedChargeableWeight ? `${estimatedChargeableWeight.toFixed(2)} kg` : "Incomplete"}
+              预估体积重（÷5000）：{estimatedVolumetricWeight ? `${estimatedVolumetricWeight.toFixed(2)} kg` : "资料不完整"}
+              {" · "}预估计费重量：{estimatedChargeableWeight ? `${estimatedChargeableWeight.toFixed(2)} kg` : "资料不完整"}
             </div>
           </section>
           {form.oem_available && (

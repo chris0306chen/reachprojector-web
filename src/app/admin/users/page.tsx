@@ -76,7 +76,7 @@ export default function AdminUsersPage() {
         body: JSON.stringify(form),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to save user");
+      if (!res.ok) throw new Error(data.error || "保存用户失败");
 
       setShowForm(false);
       setEditingId(null);
@@ -84,7 +84,7 @@ export default function AdminUsersPage() {
       fetchUsers();
     } catch (err) {
       console.error("Failed to save user:", err);
-      setError(err instanceof Error ? err.message : "Failed to save user");
+      setError(err instanceof Error ? err.message : "保存用户失败");
     } finally {
       setSaving(false);
     }
@@ -108,11 +108,11 @@ export default function AdminUsersPage() {
     try {
       const res = await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to delete user");
+      if (!res.ok) throw new Error(data.error || "删除用户失败");
       fetchUsers();
     } catch (err) {
       console.error("Failed to delete user:", err);
-      setError(err instanceof Error ? err.message : "Failed to delete user");
+      setError(err instanceof Error ? err.message : "删除用户失败");
     }
   };
 

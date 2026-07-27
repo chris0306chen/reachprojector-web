@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(data || []);
   } catch (error) {
     console.error("Failed to fetch orders:", error);
-    return NextResponse.json({ error: "Failed to fetch orders" }, { status: 500 });
+    return NextResponse.json({ error: "加载订单失败" }, { status: 500 });
   }
 }
 
@@ -37,7 +37,7 @@ export async function PUT(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
     if (!id) {
-      return NextResponse.json({ error: "Missing order id" }, { status: 400 });
+      return NextResponse.json({ error: "缺少订单编号" }, { status: 400 });
     }
 
     const body = await request.json();
@@ -50,7 +50,7 @@ export async function PUT(request: NextRequest) {
     if (body.notes !== undefined) updateData.notes = body.notes;
 
     if (Object.keys(updateData).length === 0) {
-      return NextResponse.json({ error: "No fields to update" }, { status: 400 });
+      return NextResponse.json({ error: "没有可更新的订单字段" }, { status: 400 });
     }
 
     const { data, error } = await supabase
@@ -65,7 +65,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(data);
   } catch (error) {
     console.error("Failed to update order:", error);
-    return NextResponse.json({ error: "Failed to update order" }, { status: 500 });
+    return NextResponse.json({ error: "更新订单失败" }, { status: 500 });
   }
 }
 
@@ -90,6 +90,7 @@ export async function POST(request: NextRequest) {
       payer_email: body.customer_email || body.payer_email || "",
       status: body.status || "pending_payment",
       payment_status: body.payment_status || "unpaid",
+      payment_method: body.payment_method || "offline",
       country: body.country || null,
       shipping_address: body.shipping_address || null,
       shipping_method: body.shipping_method || null,
@@ -111,6 +112,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
     console.error("Failed to create order:", error);
-    return NextResponse.json({ error: "Failed to create order" }, { status: 500 });
+    return NextResponse.json({ error: "创建订单失败" }, { status: 500 });
   }
 }

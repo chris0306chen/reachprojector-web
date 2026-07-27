@@ -316,9 +316,9 @@ function TemplateForm({
           </Field>
           <Field label="运输类别">
             <select value={form.shipping_class} onChange={(e) => setForm({ ...form, shipping_class: e.target.value as typeof form.shipping_class })} className="input">
-              <option value="parcel">parcel</option>
-              <option value="oversize">oversize</option>
-              <option value="freight">freight</option>
+              <option value="parcel">普通包裹</option>
+              <option value="oversize">超大件</option>
+              <option value="freight">大件货运</option>
             </select>
           </Field>
           <Field label="币种">

@@ -69,11 +69,11 @@ async function buildReport(products: ImportedProduct[]): Promise<ProductReport[]
     const sku = product.sku.toLowerCase();
     const slug = product.slug.toLowerCase();
     const categoryId = categoryMap.get(product.category.toLowerCase());
-    if (!categoryId) errors.push(`Unknown category: ${product.category}`);
-    if (existingSkus.has(sku)) errors.push(`SKU already exists: ${product.sku}`);
-    if (existingSlugs.has(slug)) errors.push(`Slug already exists: ${product.slug}`);
-    if (batchSkus.has(sku)) errors.push(`Duplicate SKU in workbook: ${product.sku}`);
-    if (batchSlugs.has(slug)) errors.push(`Duplicate slug in workbook: ${product.slug}`);
+    if (!categoryId) errors.push(`找不到产品分类：${product.category}`);
+    if (existingSkus.has(sku)) errors.push(`SKU 已存在：${product.sku}`);
+    if (existingSlugs.has(slug)) errors.push(`Slug 已存在：${product.slug}`);
+    if (batchSkus.has(sku)) errors.push(`表格内 SKU 重复：${product.sku}`);
+    if (batchSlugs.has(slug)) errors.push(`表格内 Slug 重复：${product.slug}`);
     batchSkus.add(sku);
     batchSlugs.add(slug);
     const packagingComplete = [
@@ -110,18 +110,18 @@ async function buildReport(products: ImportedProduct[]): Promise<ProductReport[]
       return quote ? [{ countryCode: row.country_code, quote }] : [];
     }) : [];
     if (!packagingComplete) {
-      warnings.push("Gross weight and package length, width and height are required for automatic shipping");
+      warnings.push("自动计算运费需要填写包装毛重及包装长、宽、高");
     } else if (!matchingQuotes.length) {
-      warnings.push("No active shipping template matches the calculated chargeable weight");
+      warnings.push("没有启用中的运费模板可以匹配当前计费重量");
     }
     const representativeQuote = matchingQuotes[0]?.quote;
     const matchingCountries = new Set(matchingQuotes.map((item) => item.countryCode).filter(Boolean)).size;
-    if (!product.warranty) warnings.push("Warranty needs confirmation");
-    if (!product.seoTitle) warnings.push("SEO title will use the product name");
-    if (!product.metaDescription) warnings.push("Meta description will use the short description");
-    if (!product.images.some((image) => image.section === "main")) warnings.push("No main image matched");
+    if (!product.warranty) warnings.push("保修期限需要确认");
+    if (!product.seoTitle) warnings.push("SEO 标题为空，将暂时使用产品名称");
+    if (!product.metaDescription) warnings.push("Meta 描述为空，将暂时使用产品简短描述");
+    if (!product.images.some((image) => image.section === "main")) warnings.push("没有匹配到产品主图");
     if (product.images.filter((image) => image.section === "real_photos").length > 2) {
-      errors.push("Only two real product photos are allowed");
+      errors.push("产品实拍图最多只能有两张");
     }
     return {
       sku: product.sku,
@@ -165,7 +165,7 @@ export async function POST(request: NextRequest) {
     const parsed = bulkImportPayloadSchema.safeParse(await request.json());
     if (!parsed.success) {
       return NextResponse.json(
-        { error: "Invalid import data", details: parsed.error.issues.slice(0, 20) },
+        { error: "导入数据格式不正确", details: parsed.error.issues.slice(0, 20) },
         { status: 400 }
       );
     }
@@ -181,7 +181,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ summary, report });
     }
     if (summary.errors > 0) {
-      return NextResponse.json({ error: "Preflight contains blocking errors", summary, report }, { status: 400 });
+      return NextResponse.json({ error: "预检存在必须修复的错误", summary, report }, { status: 400 });
     }
 
     const supabase = await getSupabaseClient();
@@ -269,7 +269,7 @@ export async function POST(request: NextRequest) {
         failure_count: failures.length,
         report: { failures },
       });
-      return NextResponse.json({ error: "Import failed and inserted products were rolled back", failures }, { status: 500 });
+      return NextResponse.json({ error: "导入失败，已回滚本次新增产品", failures }, { status: 500 });
     }
 
     await supabase.from("product_import_jobs").insert({
@@ -283,6 +283,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, imported: insertedIds.length, productIds: insertedIds });
   } catch (error) {
     console.error("Bulk product import failed:", error);
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Bulk import failed" }, { status: 500 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : "批量导入失败" }, { status: 500 });
   }
 }
