@@ -50,8 +50,8 @@ export async function POST(request: NextRequest) {
       .eq("shipping_class", "parcel")
       .eq("is_active", true)
       .in("trade_terms", ["DDP", "DAP"])
-      .or(`valid_from.is.null,valid_from.lte.${today}`)
-      .or(`valid_to.is.null,valid_to.gte.${today}`)
+      .lte("valid_from", today)
+      .gte("valid_to", today)
       .order("trade_terms", { ascending: true })
       .order("base_fee", { ascending: true });
 
