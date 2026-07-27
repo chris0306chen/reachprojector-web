@@ -29,13 +29,13 @@ export async function PUT(
       updateData.compare_at_price = body.sale_price || null;
     }
     if (Object.keys(updateData).length === 0) {
-      return NextResponse.json({ error: "No valid product fields supplied" }, { status: 400 });
+      return NextResponse.json({ error: "没有可保存的产品字段" }, { status: 400 });
     }
     if (updateData.is_active !== undefined && typeof updateData.is_active !== "boolean") {
-      return NextResponse.json({ error: "is_active must be a boolean" }, { status: 400 });
+      return NextResponse.json({ error: "产品启用状态格式不正确" }, { status: 400 });
     }
     if (updateData.price !== undefined && (!Number.isFinite(Number(updateData.price)) || Number(updateData.price) <= 0)) {
-      return NextResponse.json({ error: "price must be greater than zero" }, { status: 400 });
+      return NextResponse.json({ error: "产品价格必须大于零" }, { status: 400 });
     }
     if (updateData.detail_content !== undefined) {
       const detailError = validateProductDetail(updateData.detail_content);
@@ -48,27 +48,27 @@ export async function PUT(
     for (const field of positiveNumericFields) {
       if (updateData[field] !== undefined && updateData[field] !== null &&
           (!Number.isFinite(Number(updateData[field])) || Number(updateData[field]) <= 0)) {
-        return NextResponse.json({ error: `${field} must be greater than zero` }, { status: 400 });
+        return NextResponse.json({ error: `${field} 必须大于零` }, { status: 400 });
       }
     }
     if (updateData.shipping_class !== undefined && !["parcel", "freight"].includes(String(updateData.shipping_class))) {
-      return NextResponse.json({ error: "shipping_class must be parcel or freight" }, { status: 400 });
+      return NextResponse.json({ error: "物流类型必须为普通包裹或大件货运" }, { status: 400 });
     }
     if (updateData.package_count !== undefined &&
         (!Number.isInteger(Number(updateData.package_count)) || Number(updateData.package_count) < 1)) {
-      return NextResponse.json({ error: "package_count must be a positive integer" }, { status: 400 });
+      return NextResponse.json({ error: "包裹数量必须为正整数" }, { status: 400 });
     }
     if (updateData.shipping_quote_required === false) {
       const requiredPackaging = ["packed_weight_kg", "package_length_cm", "package_width_cm", "package_height_cm"];
       if (requiredPackaging.some((field) => !Number.isFinite(Number(updateData[field])) || Number(updateData[field]) <= 0)) {
         return NextResponse.json(
-          { error: "Gross weight and package length, width and height are required for automatic shipping" },
+          { error: "自动计算运费需要填写包装毛重及包装长、宽、高" },
           { status: 400 }
         );
       }
       if (updateData.shipping_class !== "parcel" || Number(updateData.package_count || 1) !== 1) {
         return NextResponse.json(
-          { error: "Automatic shipping is only available for one parcel package" },
+          { error: "自动运费仅适用于单个普通包裹" },
           { status: 400 }
         );
       }
@@ -86,7 +86,7 @@ export async function PUT(
     return NextResponse.json({ success: true, data });
   } catch (error) {
     console.error("Failed to update product:", error);
-    return NextResponse.json({ error: "Failed to update product" }, { status: 500 });
+    return NextResponse.json({ error: "更新产品失败" }, { status: 500 });
   }
 }
 
@@ -102,7 +102,7 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Failed to delete product:", error);
-    return NextResponse.json({ error: "Failed to delete product" }, { status: 500 });
+    return NextResponse.json({ error: "删除产品失败" }, { status: 500 });
   }
 }
 
@@ -126,6 +126,6 @@ export async function POST(
     return NextResponse.json({ success: true, data }, { status: 201 });
   } catch (error) {
     console.error("Failed to create product:", error);
-    return NextResponse.json({ error: "Failed to create product" }, { status: 500 });
+    return NextResponse.json({ error: "创建产品失败" }, { status: 500 });
   }
 }

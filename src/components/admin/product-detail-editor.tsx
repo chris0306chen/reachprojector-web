@@ -21,6 +21,13 @@ type ImageSection = "real_photos" | "detail_images" | "logistics_images";
 
 const inputClass =
   "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20";
+const specificationGroupLabels: Record<string, string> = {
+  Optical: "光学", Display: "显示", System: "系统", Connectivity: "接口与连接",
+  Power: "电源", Dimensions: "尺寸", Package: "包装", Other: "其他",
+};
+const logisticsTypeLabels: Record<string, string> = {
+  "Bulk Stock": "大货库存", Warehouse: "仓库", Packing: "包装", Shipment: "出库发货",
+};
 
 export function ProductDetailEditor({ value, onChange, onError }: ProductDetailEditorProps) {
   const detail = normalizeProductDetail(value || EMPTY_PRODUCT_DETAIL);
@@ -42,7 +49,7 @@ export function ProductDetailEditor({ value, onChange, onError }: ProductDetailE
     const response = await fetch("/api/admin/upload", { method: "POST", body: formData });
     const result = await response.json();
     if (!response.ok || typeof result.url !== "string") {
-      onError(result.error || "Image upload failed");
+      onError(result.error || "图片上传失败");
       return null;
     }
     return { url: result.url, alt: "" };
@@ -51,7 +58,7 @@ export function ProductDetailEditor({ value, onChange, onError }: ProductDetailE
   const addUploadedImage = async (section: ImageSection, file?: File) => {
     if (!file) return;
     if (section === "real_photos" && detail.real_photos.length >= 2) {
-      onError("Real product photos are limited to two images");
+      onError("产品实拍图最多只能上传两张");
       return;
     }
     const uploaded = await uploadImage(file);
@@ -80,7 +87,7 @@ export function ProductDetailEditor({ value, onChange, onError }: ProductDetailE
                 next[index] = { ...image, alt: event.target.value };
                 update(section, next as never);
               }}
-              placeholder="English alt text (required)"
+              placeholder="英文图片 Alt 文本（必填，供前台 SEO 使用）"
               className={inputClass}
             />
             {section === "logistics_images" && (
@@ -93,18 +100,18 @@ export function ProductDetailEditor({ value, onChange, onError }: ProductDetailE
                 }}
                 className={inputClass}
               >
-                {LOGISTICS_IMAGE_TYPES.map((type) => <option key={type}>{type}</option>)}
+                {LOGISTICS_IMAGE_TYPES.map((type) => <option key={type} value={type}>{logisticsTypeLabels[type]}</option>)}
               </select>
             )}
           </div>
           <div className="flex gap-1 sm:flex-col">
-            <button type="button" onClick={() => update(section, move(images, index, -1) as never)} disabled={index === 0} className="rounded p-2 hover:bg-slate-100 disabled:opacity-30" aria-label="Move image up">
+            <button type="button" onClick={() => update(section, move(images, index, -1) as never)} disabled={index === 0} className="rounded p-2 hover:bg-slate-100 disabled:opacity-30" aria-label="图片上移">
               <ArrowUp className="h-4 w-4" />
             </button>
-            <button type="button" onClick={() => update(section, move(images, index, 1) as never)} disabled={index === images.length - 1} className="rounded p-2 hover:bg-slate-100 disabled:opacity-30" aria-label="Move image down">
+            <button type="button" onClick={() => update(section, move(images, index, 1) as never)} disabled={index === images.length - 1} className="rounded p-2 hover:bg-slate-100 disabled:opacity-30" aria-label="图片下移">
               <ArrowDown className="h-4 w-4" />
             </button>
-            <button type="button" onClick={() => update(section, images.filter((_, itemIndex) => itemIndex !== index) as never)} className="rounded p-2 text-red-500 hover:bg-red-50" aria-label="Delete image">
+            <button type="button" onClick={() => update(section, images.filter((_, itemIndex) => itemIndex !== index) as never)} className="rounded p-2 text-red-500 hover:bg-red-50" aria-label="删除图片">
               <Trash2 className="h-4 w-4" />
             </button>
           </div>
@@ -112,7 +119,7 @@ export function ProductDetailEditor({ value, onChange, onError }: ProductDetailE
       ))}
       <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-600 hover:border-orange-400 hover:bg-orange-50/40">
         <ImagePlus className="h-4 w-4" />
-        Upload image
+        上传图片
         <input
           type="file"
           accept="image/jpeg,image/png,image/webp,image/avif"
@@ -129,19 +136,19 @@ export function ProductDetailEditor({ value, onChange, onError }: ProductDetailE
   return (
     <div className="space-y-8 border-t border-slate-200 pt-6">
       <div>
-        <h3 className="text-base font-semibold text-slate-900">Product detail template</h3>
-        <p className="mt-1 text-sm text-slate-500">Structured text and real uploaded images only. Saving does not publish the product.</p>
+        <h3 className="text-base font-semibold text-slate-900">产品详情页模板</h3>
+        <p className="mt-1 text-sm text-slate-500">仅填写真实参数并上传真实图片；保存不会自动发布产品。</p>
       </div>
 
       <section className="space-y-3">
         <div className="flex items-center justify-between">
-          <h4 className="font-medium text-slate-900">1. Product specifications</h4>
+          <h4 className="font-medium text-slate-900">1. 产品详细参数</h4>
           <button
             type="button"
             onClick={() => update("specifications", [...detail.specifications, { group: "Optical", name: "", value: "" }])}
             className="inline-flex items-center gap-1 rounded-lg bg-slate-900 px-3 py-2 text-xs font-medium text-white"
           >
-            <Plus className="h-3.5 w-3.5" /> Add parameter
+            <Plus className="h-3.5 w-3.5" /> 添加参数
           </button>
         </div>
         {detail.specifications.map((item, index) => (
@@ -155,7 +162,7 @@ export function ProductDetailEditor({ value, onChange, onError }: ProductDetailE
               }}
               className={inputClass}
             >
-              {SPECIFICATION_GROUPS.map((group) => <option key={group}>{group}</option>)}
+              {SPECIFICATION_GROUPS.map((group) => <option key={group} value={group}>{specificationGroupLabels[group]}</option>)}
             </select>
             <input
               value={item.name}
@@ -164,7 +171,7 @@ export function ProductDetailEditor({ value, onChange, onError }: ProductDetailE
                 next[index] = { ...item, name: event.target.value };
                 update("specifications", next);
               }}
-              placeholder="Parameter name"
+              placeholder="参数名称（前台显示英文）"
               className={inputClass}
             />
             <input
@@ -174,30 +181,30 @@ export function ProductDetailEditor({ value, onChange, onError }: ProductDetailE
                 next[index] = { ...item, value: event.target.value };
                 update("specifications", next);
               }}
-              placeholder="Value"
+              placeholder="参数值"
               className={inputClass}
             />
             <div className="flex">
-              <button type="button" onClick={() => update("specifications", move(detail.specifications, index, -1))} disabled={index === 0} className="p-2 disabled:opacity-30" aria-label="Move parameter up"><ArrowUp className="h-4 w-4" /></button>
-              <button type="button" onClick={() => update("specifications", move(detail.specifications, index, 1))} disabled={index === detail.specifications.length - 1} className="p-2 disabled:opacity-30" aria-label="Move parameter down"><ArrowDown className="h-4 w-4" /></button>
-              <button type="button" onClick={() => update("specifications", detail.specifications.filter((_, itemIndex) => itemIndex !== index))} className="p-2 text-red-500" aria-label="Delete parameter"><Trash2 className="h-4 w-4" /></button>
+              <button type="button" onClick={() => update("specifications", move(detail.specifications, index, -1))} disabled={index === 0} className="p-2 disabled:opacity-30" aria-label="参数上移"><ArrowUp className="h-4 w-4" /></button>
+              <button type="button" onClick={() => update("specifications", move(detail.specifications, index, 1))} disabled={index === detail.specifications.length - 1} className="p-2 disabled:opacity-30" aria-label="参数下移"><ArrowDown className="h-4 w-4" /></button>
+              <button type="button" onClick={() => update("specifications", detail.specifications.filter((_, itemIndex) => itemIndex !== index))} className="p-2 text-red-500" aria-label="删除参数"><Trash2 className="h-4 w-4" /></button>
             </div>
           </div>
         ))}
       </section>
 
       <section>
-        <h4 className="mb-3 font-medium text-slate-900">2. Real product photos (two images)</h4>
+        <h4 className="mb-3 font-medium text-slate-900">2. 产品实拍图（最多两张）</h4>
         {renderImageRows("real_photos", detail.real_photos)}
       </section>
 
       <section>
-        <h4 className="mb-3 font-medium text-slate-900">3. Product detail images</h4>
+        <h4 className="mb-3 font-medium text-slate-900">3. 产品详情长图</h4>
         {renderImageRows("detail_images", detail.detail_images)}
       </section>
 
       <section>
-        <h4 className="mb-3 font-medium text-slate-900">4. Bulk stock and shipment images</h4>
+        <h4 className="mb-3 font-medium text-slate-900">4. 大货、仓库、包装与出库图</h4>
         {renderImageRows("logistics_images", detail.logistics_images)}
       </section>
     </div>

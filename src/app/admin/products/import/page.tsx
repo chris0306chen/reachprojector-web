@@ -361,16 +361,16 @@ export default function ProductImportPage() {
                   <td className="p-3"><strong>{item.sku}</strong><br /><span className="text-slate-500">{item.name}</span></td>
                   <td className="p-3">{item.imageCount}</td>
                   <td className="p-3">
-                    {item.errors.map((entry) => <p key={entry} className="text-red-600">Error: {entry}</p>)}
-                    {item.warnings.map((entry) => <p key={entry} className="text-amber-700">Warning: {entry}</p>)}
-                    {!item.errors.length && !item.warnings.length && <span className="text-green-700">Ready</span>}
+                    {item.errors.map((entry) => <p key={entry} className="text-red-600">错误：{entry}</p>)}
+                    {item.warnings.map((entry) => <p key={entry} className="text-amber-700">提醒：{entry}</p>)}
+                    {!item.errors.length && !item.warnings.length && <span className="text-green-700">可以导入</span>}
                     <details className="mt-2">
                       <summary className="cursor-pointer text-slate-600">查看 SEO/GEO 预览</summary>
-                      <p className="mt-1"><strong>SEO:</strong> {item.generated.seoTitle}</p>
-                      <p><strong>Meta:</strong> {item.generated.metaDescription || "需要确认"}</p>
-                      <p><strong>Facts:</strong> {item.generated.factualSummary}</p>
+                      <p className="mt-1"><strong>SEO 标题：</strong> {item.generated.seoTitle}</p>
+                      <p><strong>Meta 描述：</strong> {item.generated.metaDescription || "需要确认"}</p>
+                      <p><strong>GEO 事实摘要：</strong> {item.generated.factualSummary}</p>
                       <p>
-                        <strong>Shipping:</strong>{" "}
+                        <strong>运费预检：</strong>{" "}
                         {item.generated.chargeableWeightKg
                           ? `体积重 ${item.generated.volumetricWeightKg} kg；计费重 ${item.generated.chargeableWeightKg} kg；匹配 ${item.generated.matchingShippingCountries} 个国家`
                           : "包装数据不完整或没有匹配运费"}
