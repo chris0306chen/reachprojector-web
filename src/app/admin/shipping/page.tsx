@@ -27,6 +27,14 @@ interface ShippingTemplate {
   notes?: string | null;
 }
 
+interface ImportStatus {
+  countryRules: number;
+  countryConflicts: number;
+  stagedRates: number;
+  productsWithPackaging: number;
+  automaticRates: number;
+}
+
 const emptyTemplate: Omit<ShippingTemplate, "id"> = {
   name: "",
   country_code: "",
@@ -61,6 +69,8 @@ export default function AdminShippingPage() {
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [importStatus, setImportStatus] = useState<ImportStatus | null>(null);
+  const [setupPending, setSetupPending] = useState(false);
 
   const fetchTemplates = useCallback(async () => {
     try {
@@ -88,6 +98,13 @@ export default function AdminShippingPage() {
 
   useEffect(() => {
     fetchTemplates();
+    fetch("/api/admin/shipping/import-status", { cache: "no-store" })
+      .then((response) => response.json())
+      .then((result) => {
+        setImportStatus(result.data || null);
+        setSetupPending(result.setupPending === true);
+      })
+      .catch(() => setImportStatus(null));
   }, [fetchTemplates]);
 
   const deactivate = async (id: string) => {
@@ -124,6 +141,30 @@ export default function AdminShippingPage() {
           <AlertCircle className="h-5 w-5" /> {error}
         </div>
       )}
+
+      <div className="rounded-xl border border-slate-200 bg-white p-5">
+        <h2 className="font-semibold text-slate-900">运费资料导入状态</h2>
+        {setupPending ? (
+          <p className="mt-2 text-sm text-amber-700">数据库导入脚本尚未执行，当前继续使用人工报价。</p>
+        ) : importStatus ? (
+          <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-5">
+            {[
+              ["国家规则", importStatus.countryRules],
+              ["冲突国家", importStatus.countryConflicts],
+              ["待审核费率", importStatus.stagedRates],
+              ["已有包装数据", importStatus.productsWithPackaging],
+              ["已启用自动费率", importStatus.automaticRates],
+            ].map(([label, value]) => (
+              <div key={String(label)} className="rounded-lg bg-slate-50 p-3">
+                <div className="text-xs text-slate-500">{label}</div>
+                <div className="mt-1 text-xl font-bold text-slate-900">{value}</div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-2 text-sm text-slate-500">暂时无法读取导入状态。</p>
+        )}
+      </div>
 
       {templates.length === 0 ? (
         <div className="rounded-xl border border-slate-200 bg-white p-12 text-center">
@@ -288,6 +329,22 @@ function TemplateForm({
               <input type="number" min="0" step={step} value={String(form[key] ?? "")} onChange={(e) => setNumber(key, e.target.value)} className="input" />
             </Field>
           ))}
+          <Field label="生效日期">
+            <input
+              type="date"
+              value={form.valid_from || ""}
+              onChange={(e) => setForm({ ...form, valid_from: e.target.value || null })}
+              className="input"
+            />
+          </Field>
+          <Field label="到期日期">
+            <input
+              type="date"
+              value={form.valid_to || ""}
+              onChange={(e) => setForm({ ...form, valid_to: e.target.value || null })}
+              className="input"
+            />
+          </Field>
           <Field label="启用">
             <select value={form.is_active ? "yes" : "no"} onChange={(e) => setForm({ ...form, is_active: e.target.value === "yes" })} className="input">
               <option value="no">否（建议资料确认前）</option>

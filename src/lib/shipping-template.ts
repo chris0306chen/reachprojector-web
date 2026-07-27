@@ -43,5 +43,20 @@ export function normalizeShippingTemplate(body: Record<string, unknown>) {
   if (Number(normalized.max_weight_kg) < Number(normalized.min_weight_kg)) {
     throw new Error("INVALID_WEIGHT_RANGE");
   }
+  if (normalized.is_active === true) {
+    const validFrom = String(normalized.valid_from || "");
+    const validTo = String(normalized.valid_to || "");
+    if (!validFrom || !validTo || validTo < validFrom) {
+      throw new Error("INVALID_VALIDITY");
+    }
+    if (
+      Number(normalized.max_weight_kg) <= Number(normalized.min_weight_kg) ||
+      Number(normalized.increment_weight_kg) <= 0 ||
+      Number(normalized.volumetric_divisor) <= 0 ||
+      (Number(normalized.base_fee) <= 0 && Number(normalized.increment_fee) <= 0)
+    ) {
+      throw new Error("INCOMPLETE_ACTIVE_RATE");
+    }
+  }
   return normalized;
 }
