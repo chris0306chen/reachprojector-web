@@ -13,6 +13,7 @@ interface PayPalCheckoutProps {
   price: number;
   quantity?: number;
   currency?: string;
+  countryCode?: string;
   onSuccess?: () => void;
 }
 
@@ -23,6 +24,7 @@ export function PayPalCheckout({
   price,
   quantity = 1,
   currency = 'USD',
+  countryCode = '',
   onSuccess,
 }: PayPalCheckoutProps) {
   const [status, setStatus] = useState<PaymentStatus>('idle');
@@ -44,6 +46,7 @@ export function PayPalCheckout({
         body: JSON.stringify({
           productId,
           quantity,
+          countryCode,
         }),
       });
 
@@ -71,6 +74,7 @@ export function PayPalCheckout({
           orderId: data.orderID,
           productId,
           quantity,
+          countryCode,
         }),
       });
 
@@ -148,6 +152,7 @@ export function PayPalCheckout({
 
       <PayPalScriptProvider options={paypalOptions}>
         <PayPalButtons
+          disabled={!countryCode}
           style={{
             layout: 'vertical',
             color: 'gold',
