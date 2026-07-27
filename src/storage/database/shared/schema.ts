@@ -1,6 +1,7 @@
 import { pgTable, serial, timestamp, varchar, text, numeric, boolean, jsonb, integer, index, uniqueIndex } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 import { z } from "zod"
+import type { ProductDetailContent } from "@/lib/product-detail"
 
 export const healthCheck = pgTable("health_check", {
 	id: serial().notNull(),
@@ -40,6 +41,7 @@ export const products = pgTable(
 		short_description: text("short_description"),
 		images: jsonb("images").$type<string[]>(),
 		specifications: jsonb("specifications").$type<Record<string, string>>(),
+		detail_content: jsonb("detail_content").$type<ProductDetailContent>(),
 		features: jsonb("features").$type<string[]>(),
 		stock_status: varchar("stock_status", { length: 20 }).default("in_stock").notNull(),
 		is_bestseller: boolean("is_bestseller").default(false).notNull(),

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
+import { validateProductDetail } from "@/lib/product-detail";
 
 export async function PUT(
   request: NextRequest,
@@ -14,6 +15,7 @@ export async function PUT(
       "description", "short_description", "images", "specifications", "features",
       "stock_status", "is_bestseller", "is_new_arrival", "is_featured", "is_active",
       "sort_order", "weight_kg", "oem_available", "oem_notes", "attachments",
+      "detail_content",
     ]);
     const updateData = Object.fromEntries(
       Object.entries(body).filter(([key]) => allowedFields.has(key))
@@ -31,6 +33,10 @@ export async function PUT(
     }
     if (updateData.price !== undefined && (!Number.isFinite(Number(updateData.price)) || Number(updateData.price) <= 0)) {
       return NextResponse.json({ error: "price must be greater than zero" }, { status: 400 });
+    }
+    if (updateData.detail_content !== undefined) {
+      const detailError = validateProductDetail(updateData.detail_content);
+      if (detailError) return NextResponse.json({ error: detailError }, { status: 400 });
     }
 
     const supabase = await getSupabaseClient();

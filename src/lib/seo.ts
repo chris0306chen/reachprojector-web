@@ -33,6 +33,7 @@ export interface ProductSEOData {
   rating?: number
   reviewCount?: number
   locale?: string
+  additionalProperties?: Array<{ name: string; value: string }>
 }
 
 export interface BreadcrumbItem {
@@ -117,6 +118,15 @@ export function generateProductSchema(product: ProductSEOData) {
     sku: product.sku,
     mpn: product.sku,
     category: product.category,
+    ...(product.additionalProperties?.length
+      ? {
+          additionalProperty: product.additionalProperties.map((property) => ({
+            '@type': 'PropertyValue',
+            name: property.name,
+            value: property.value,
+          })),
+        }
+      : {}),
     offers: {
       '@type': 'Offer',
       price: product.price,
