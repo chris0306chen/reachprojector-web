@@ -1,211 +1,382 @@
 "use client";
 
-import { useState } from "react";
-import { Download, Loader2, CheckCircle, AlertCircle, ArrowRight } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { AlertCircle, CheckCircle2, Download, FileArchive, FileSpreadsheet, Loader2, Upload } from "lucide-react";
+import {
+  buildImageAlt,
+  buildSeoImageName,
+  slugify,
+  type ImportedImage,
+  type ImportedProduct,
+} from "@/lib/product-bulk-import";
 
-interface ScrapedData {
-  title: string;
-  titleZh?: string;
-  images: string[];
-  description: string;
-  specifications: Record<string, string>;
-  price?: string;
-  brand?: string;
-}
+type ReportItem = {
+  sku: string;
+  name: string;
+  status: "error" | "warning" | "ready";
+  errors: string[];
+  warnings: string[];
+  imageCount: number;
+  generated: { seoTitle: string; metaDescription: string; factualSummary: string };
+};
+
+type ImageFile = ImportedImage & { bytes: Uint8Array; mime: string };
+
+const text = (value: unknown) => String(value ?? "").trim();
+const numberOrNull = (value: unknown) => {
+  const number = Number(value);
+  return value === "" || value === null || value === undefined || !Number.isFinite(number) ? null : number;
+};
+const stockStatus = (value: unknown): ImportedProduct["stockStatus"] => {
+  const normalized = text(value).toLowerCase().replace(/\s+/g, "_");
+  return ["in_stock", "out_of_stock", "pre_order"].includes(normalized)
+    ? normalized as ImportedProduct["stockStatus"]
+    : "in_stock";
+};
 
 export default function ProductImportPage() {
-  const [url, setUrl] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [scrapedData, setScrapedData] = useState<ScrapedData | null>(null);
-  const [error, setError] = useState("");
-  const [publishing, setPublishing] = useState(false);
-  const [publishForm, setPublishForm] = useState({
-    name: "", slug: "", brand: "", category_id: "", price: "",
-    description: "", images: [] as string[],
-  });
+  const [products, setProducts] = useState<ImportedProduct[]>([]);
+  const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
+  const [unmatchedImages, setUnmatchedImages] = useState<string[]>([]);
+  const [workbookName, setWorkbookName] = useState("");
+  const [zipName, setZipName] = useState("");
+  const [report, setReport] = useState<ReportItem[]>([]);
+  const [summary, setSummary] = useState<{ total: number; ready: number; warnings: number; errors: number; images: number } | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+  const [history, setHistory] = useState<Array<Record<string, string | number>>>([]);
 
-  const handleScrape = async () => {
-    if (!url) return;
-    setLoading(true);
-    setError("");
-    setScrapedData(null);
+  useEffect(() => {
+    fetch("/api/admin/products/bulk-import/history")
+      .then((response) => response.ok ? response.json() : { data: [] })
+      .then((result) => setHistory(result.data || []))
+      .catch(() => setHistory([]));
+  }, []);
 
+  const canImport = useMemo(
+    () => products.length > 0 && summary && summary.errors === 0 && !busy,
+    [products.length, summary, busy]
+  );
+
+  async function readWorkbook(file: File) {
+    setMessage("");
+    const XLSX = await import("xlsx");
+    const workbook = XLSX.read(await file.arrayBuffer(), { type: "array", cellFormula: true });
+    for (const sheetName of workbook.SheetNames) {
+      const sheet = workbook.Sheets[sheetName];
+      if (Object.values(sheet).some((cell) => cell && typeof cell === "object" && "f" in cell)) {
+        throw new Error("模板中不能包含公式，请粘贴为纯值后重试。");
+      }
+    }
+    const productSheet = workbook.Sheets.Products || workbook.Sheets[workbook.SheetNames[0]];
+    if (!productSheet) throw new Error("找不到 Products 工作表。");
+    const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(productSheet, { defval: "" });
+    if (!rows.length) throw new Error("Products 工作表没有产品数据。");
+    if (rows.length > 100) throw new Error("一次最多导入 100 个产品。");
+
+    const specificationRows = workbook.Sheets.Specifications
+      ? XLSX.utils.sheet_to_json<Record<string, unknown>>(workbook.Sheets.Specifications, { defval: "" })
+      : [];
+    const specsBySku = new Map<string, ImportedProduct["specifications"]>();
+    for (const row of specificationRows) {
+      const sku = text(row.SKU);
+      if (!sku) continue;
+      const group = text(row.Group) as ImportedProduct["specifications"][number]["group"];
+      const name = text(row.Name);
+      const value = text(row.Value);
+      if (group && name && value) {
+        specsBySku.set(sku, [...(specsBySku.get(sku) || []), { group, name, value }]);
+      }
+    }
+
+    const parsed = rows.map((row) => {
+      const name = text(row["Product Name"]);
+      const sku = text(row.SKU);
+      return {
+        sku,
+        brand: text(row.Brand),
+        model: text(row.Model),
+        name,
+        slug: text(row.Slug) || slugify(name),
+        category: text(row.Category),
+        retailPrice: numberOrNull(row["Retail Price"]) || 0,
+        compareAtPrice: numberOrNull(row["Compare-at Price"]),
+        b2bPrice: numberOrNull(row["B2B Price"]),
+        currency: text(row.Currency) || "USD",
+        moq: numberOrNull(row.MOQ),
+        stockStatus: stockStatus(row["Stock Status"]),
+        leadTime: text(row["Lead Time"]),
+        version: text(row["Product Version"]),
+        plugType: text(row["Plug Type"]),
+        systemLanguage: text(row["System Language"]),
+        warranty: text(row.Warranty),
+        countryOfOrigin: text(row["Country of Origin"]),
+        productDimensions: text(row["Product Dimensions"]),
+        packageDimensions: text(row["Package Dimensions"]),
+        netWeightKg: numberOrNull(row["Net Weight (kg)"]),
+        grossWeightKg: numberOrNull(row["Gross Weight (kg)"]),
+        shortDescription: text(row["Short Description"]),
+        fullDescription: text(row["Full Description"]),
+        seoTitle: text(row["SEO Title"]),
+        metaDescription: text(row["Meta Description"]),
+        status: "draft" as const,
+        specifications: specsBySku.get(sku) || [],
+        images: [],
+      } satisfies ImportedProduct;
+    });
+    setProducts(parsed);
+    setWorkbookName(file.name);
+    setReport([]);
+    setSummary(null);
+  }
+
+  async function readZip(file: File) {
+    if (!products.length) throw new Error("请先上传产品 Excel/CSV，再上传图片 ZIP。");
+    const { unzipSync } = await import("fflate");
+    const entries = unzipSync(new Uint8Array(await file.arrayBuffer()));
+    const productBySku = new Map(products.map((product) => [product.sku.toLowerCase(), product]));
+    const matched: ImageFile[] = [];
+    const unmatched: string[] = [];
+    const counters = new Map<string, number>();
+    let totalBytes = 0;
+    for (const [rawPath, bytes] of Object.entries(entries)) {
+      const path = rawPath.replace(/\\/g, "/");
+      if (!bytes.length || path.endsWith("/")) continue;
+      if (path.startsWith("/") || path.split("/").includes("..")) throw new Error(`ZIP 中存在不安全路径：${rawPath}`);
+      totalBytes += bytes.length;
+      if (totalBytes > 250 * 1024 * 1024) throw new Error("ZIP 解压后不能超过 250MB。");
+      const parts = path.split("/").filter(Boolean);
+      if (parts.length < 3) { unmatched.push(rawPath); continue; }
+      const product = productBySku.get(parts[0].toLowerCase());
+      if (!product) { unmatched.push(rawPath); continue; }
+      const folder = parts[1].toLowerCase();
+      const section = folder.includes("01-main") ? "main"
+        : folder.includes("02-gallery") ? "gallery"
+        : folder.includes("03-real") ? "real_photos"
+        : folder.includes("04-detail") ? "detail_images"
+        : folder.includes("05-logistics") ? "logistics"
+        : null;
+      if (!section) { unmatched.push(rawPath); continue; }
+      const extension = path.split(".").pop()?.toLowerCase() || "";
+      const mime = { jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", avif: "image/avif" }[extension];
+      if (!mime) { unmatched.push(rawPath); continue; }
+      if (bytes.length > 10 * 1024 * 1024) throw new Error(`图片超过 10MB：${rawPath}`);
+      const key = `${product.sku}:${section}`;
+      const index = counters.get(key) || 0;
+      counters.set(key, index + 1);
+      matched.push({
+        originalPath: rawPath,
+        section,
+        logisticsType: section === "logistics" ? "Shipment" : undefined,
+        seoName: buildSeoImageName(product, section, index, extension),
+        alt: buildImageAlt(product, section, index),
+        bytes,
+        mime,
+      });
+    }
+    if (matched.length > 500) throw new Error("一次最多处理 500 张图片。");
+    setImageFiles(matched);
+    setUnmatchedImages(unmatched);
+    setZipName(file.name);
+    setProducts((current) => current.map((product) => ({
+      ...product,
+      images: matched
+        .filter((image) => image.originalPath.split(/[\\/]/)[0].toLowerCase() === product.sku.toLowerCase())
+        .map((image) => ({
+          originalPath: image.originalPath,
+          section: image.section,
+          logisticsType: image.logisticsType,
+          seoName: image.seoName,
+          alt: image.alt,
+        })),
+    })));
+    setReport([]);
+    setSummary(null);
+  }
+
+  async function preflight() {
+    setBusy(true);
+    setMessage("");
     try {
-      const res = await fetch("/api/admin/products/import", {
+      const response = await fetch("/api/admin/products/bulk-import", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ action: "preflight", products }),
       });
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Failed to start import");
-        return;
-      }
-
-      // Poll for result
-      const taskId = data.taskId;
-      let attempts = 0;
-      const maxAttempts = 30;
-
-      while (attempts < maxAttempts) {
-        await new Promise((r) => setTimeout(r, 1000));
-        const statusRes = await fetch(`/api/admin/products/import/${taskId}`);
-        const statusData = await statusRes.json();
-
-        if (statusData.status === "completed") {
-          const d = statusData.data as ScrapedData;
-          setScrapedData(d);
-          setPublishForm({
-            name: d.title || "",
-            slug: (d.title || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
-            brand: d.brand || "",
-            category_id: "",
-            price: d.price?.replace(/[^0-9.]/g, "") || "",
-            description: d.description || "",
-            images: d.images || [],
-          });
-          break;
-        }
-        if (statusData.status === "failed") {
-          setError(statusData.error || "Scraping failed");
-          break;
-        }
-        attempts++;
-      }
-
-      if (attempts >= maxAttempts) {
-        setError("Import timed out. Please try again.");
-      }
-    } catch (err) {
-      setError("Network error. Please try again.");
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || JSON.stringify(result.details));
+      setReport(result.report);
+      setSummary(result.summary);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "预检失败");
     } finally {
-      setLoading(false);
+      setBusy(false);
     }
-  };
+  }
 
-  const handlePublish = async () => {
-    if (!publishForm.name || !publishForm.slug || !publishForm.brand || !publishForm.category_id || !publishForm.price) {
-      setError("Please fill in all required fields");
-      return;
+  async function uploadImages() {
+    const uploaded = new Map<string, string>();
+    for (const image of imageFiles) {
+      const form = new FormData();
+      form.append("kind", "product-image");
+      form.append("storageName", image.seoName);
+      form.append("file", new File([image.bytes as BlobPart], image.seoName, { type: image.mime }));
+      const response = await fetch("/api/admin/upload", { method: "POST", body: form });
+      const result = await response.json();
+      if (!response.ok) throw new Error(`${image.originalPath}: ${result.error || "上传失败"}`);
+      uploaded.set(image.originalPath, result.url);
     }
-    setPublishing(true);
+    return products.map((product) => ({
+      ...product,
+      images: product.images.map((image) => ({ ...image, url: uploaded.get(image.originalPath) })),
+    }));
+  }
+
+  async function importDrafts() {
+    if (!canImport) return;
+    setBusy(true);
+    setMessage("正在上传图片并创建草稿，请不要关闭页面……");
     try {
-      const res = await fetch("/api/admin/products/import/temp/publish", {
+      const productsWithUrls = await uploadImages();
+      const response = await fetch("/api/admin/products/bulk-import", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...publishForm,
-          price: parseFloat(publishForm.price),
-          is_new_arrival: true,
-        }),
+        body: JSON.stringify({ action: "import", products: productsWithUrls }),
       });
-      const data = await res.json();
-      if (res.ok) {
-        setScrapedData(null);
-        setUrl("");
-        setError("");
-        alert("Product published successfully! It's saved as a draft.");
-      } else {
-        setError(data.error || "Failed to publish");
-      }
-    } catch (err) {
-      setError("Failed to publish product");
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "导入失败");
+      setMessage(`导入完成：${result.imported} 个产品已保存为草稿。`);
+      setProducts([]);
+      setImageFiles([]);
+      setUnmatchedImages([]);
+      setReport([]);
+      setSummary(null);
+      setWorkbookName("");
+      setZipName("");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "导入失败");
     } finally {
-      setPublishing(false);
+      setBusy(false);
+    }
+  }
+
+  const fileHandler = (handler: (file: File) => Promise<void>) => async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setBusy(true);
+    try { await handler(file); } catch (error) {
+      setMessage(error instanceof Error ? error.message : "文件解析失败");
+    } finally {
+      setBusy(false);
+      event.target.value = "";
     }
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-slate-900 mb-6">Import Products</h1>
-
-      {/* URL Input */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 mb-6">
-        <h2 className="font-semibold text-slate-900 mb-3">Product URL</h2>
-        <p className="text-sm text-slate-500 mb-4">Enter a product URL from 1688, AliExpress, Amazon, eBay, or any e-commerce site.</p>
-        <div className="flex gap-2">
-          <input
-            type="url"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="https://www.example.com/product/..."
-            className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
-          />
-          <button
-            onClick={handleScrape}
-            disabled={loading || !url}
-            className="px-6 py-2 bg-slate-900 text-white rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 flex items-center gap-2"
-          >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-            {loading ? "Scraping..." : "Scrape"}
-          </button>
+    <div className="space-y-6">
+      <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">产品批量导入</h1>
+          <p className="mt-1 text-sm text-slate-500">Excel/CSV + 图片 ZIP，先预检，再一键导入为草稿。</p>
         </div>
-        {error && <p className="mt-3 text-sm text-red-600 flex items-center gap-1"><AlertCircle className="w-4 h-4" />{error}</p>}
+        <a href="/templates/reach-projector-product-import.xlsx" download className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white">
+          <Download className="h-4 w-4" />下载标准 Excel 模板
+        </a>
       </div>
 
-      {/* Scraped Data Preview */}
-      {scrapedData && (
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
-          <h2 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-green-500" />
-            Scraped Data - Edit & Publish
-          </h2>
+      <div className="grid gap-4 md:grid-cols-2">
+        <label className="cursor-pointer rounded-xl border-2 border-dashed border-slate-300 bg-white p-6 hover:border-orange-400">
+          <FileSpreadsheet className="mb-3 h-8 w-8 text-orange-500" />
+          <span className="block font-semibold">1. 上传 Excel 或 CSV</span>
+          <span className="mt-1 block text-sm text-slate-500">{workbookName || "最多 100 个产品；禁止公式"}</span>
+          <input className="hidden" type="file" accept=".xlsx,.csv" disabled={busy} onChange={fileHandler(readWorkbook)} />
+        </label>
+        <label className="cursor-pointer rounded-xl border-2 border-dashed border-slate-300 bg-white p-6 hover:border-orange-400">
+          <FileArchive className="mb-3 h-8 w-8 text-orange-500" />
+          <span className="block font-semibold">2. 上传图片 ZIP</span>
+          <span className="mt-1 block text-sm text-slate-500">{zipName || "按 SKU/01-main 等目录整理，最多 500 张"}</span>
+          <input className="hidden" type="file" accept=".zip" disabled={busy || !products.length} onChange={fileHandler(readZip)} />
+        </label>
+      </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Preview */}
-            <div>
-              {scrapedData.images.length > 0 && (
-                <div className="mb-4">
-                  <p className="text-sm font-medium text-slate-700 mb-2">Images ({scrapedData.images.length})</p>
-                  <div className="grid grid-cols-3 gap-2">
-                    {scrapedData.images.slice(0, 6).map((img, i) => (
-                      <img key={i} src={img} alt="" className="w-full h-24 object-cover rounded-lg border border-slate-200" />
-                    ))}
-                  </div>
-                </div>
-              )}
-              {scrapedData.description && (
-                <div>
-                  <p className="text-sm font-medium text-slate-700 mb-1">Description</p>
-                  <p className="text-sm text-slate-600 line-clamp-4">{scrapedData.description}</p>
-                </div>
-              )}
-            </div>
+      <div className="rounded-xl border border-slate-200 bg-white p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="font-semibold">3. 预检并导入</h2>
+            <p className="text-sm text-slate-500">所有产品强制保存为草稿，不覆盖已有 SKU 或 Slug。</p>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={preflight} disabled={busy || !products.length} className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium disabled:opacity-50">
+              {busy ? <Loader2 className="inline h-4 w-4 animate-spin" /> : <Upload className="mr-2 inline h-4 w-4" />}运行预检
+            </button>
+            <button onClick={importDrafts} disabled={!canImport} className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white disabled:opacity-50">
+              一键导入为草稿
+            </button>
+          </div>
+        </div>
+        {message && <p className="mt-4 rounded-lg bg-slate-50 p-3 text-sm">{message}</p>}
+      </div>
 
-            {/* Edit Form */}
-            <div className="space-y-3">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Product Name *</label>
-                <input type="text" value={publishForm.name} onChange={(e) => setPublishForm({ ...publishForm, name: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Slug *</label>
-                <input type="text" value={publishForm.slug} onChange={(e) => setPublishForm({ ...publishForm, slug: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm" />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Brand *</label>
-                  <input type="text" value={publishForm.brand} onChange={(e) => setPublishForm({ ...publishForm, brand: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Price (USD) *</label>
-                  <input type="number" value={publishForm.price} onChange={(e) => setPublishForm({ ...publishForm, price: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm" />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Category ID *</label>
-                <input type="text" value={publishForm.category_id} onChange={(e) => setPublishForm({ ...publishForm, category_id: e.target.value })} placeholder="Paste category UUID" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm" />
-              </div>
-              <button
-                onClick={handlePublish}
-                disabled={publishing}
-                className="w-full py-2 bg-orange-500 text-white rounded-lg text-sm hover:bg-orange-600 disabled:opacity-50 flex items-center justify-center gap-2"
-              >
-                {publishing ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
-                {publishing ? "Publishing..." : "Publish as Draft"}
-              </button>
+      {summary && (
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+          {[
+            ["产品", summary.total], ["可导入", summary.ready], ["警告", summary.warnings],
+            ["错误", summary.errors], ["图片", summary.images],
+          ].map(([label, value]) => (
+            <div key={label} className="rounded-xl border border-slate-200 bg-white p-4">
+              <p className="text-xs text-slate-500">{label}</p><p className="text-2xl font-bold">{value}</p>
             </div>
+          ))}
+        </div>
+      )}
+
+      {unmatchedImages.length > 0 && (
+        <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+          <strong>{unmatchedImages.length} 个 ZIP 文件未匹配，导入前请检查：</strong>
+          <ul className="mt-2 list-disc pl-5">
+            {unmatchedImages.slice(0, 20).map((path) => <li key={path}>{path}</li>)}
+          </ul>
+        </div>
+      )}
+
+      {report.length > 0 && (
+        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-slate-50"><tr><th className="p-3">状态</th><th className="p-3">SKU / 产品</th><th className="p-3">图片</th><th className="p-3">检查结果</th></tr></thead>
+            <tbody>
+              {report.map((item) => (
+                <tr key={item.sku} className="border-t border-slate-100 align-top">
+                  <td className="p-3">{item.status === "error" ? <AlertCircle className="h-5 w-5 text-red-500" /> : <CheckCircle2 className="h-5 w-5 text-green-500" />}</td>
+                  <td className="p-3"><strong>{item.sku}</strong><br /><span className="text-slate-500">{item.name}</span></td>
+                  <td className="p-3">{item.imageCount}</td>
+                  <td className="p-3">
+                    {item.errors.map((entry) => <p key={entry} className="text-red-600">Error: {entry}</p>)}
+                    {item.warnings.map((entry) => <p key={entry} className="text-amber-700">Warning: {entry}</p>)}
+                    {!item.errors.length && !item.warnings.length && <span className="text-green-700">Ready</span>}
+                    <details className="mt-2">
+                      <summary className="cursor-pointer text-slate-600">查看 SEO/GEO 预览</summary>
+                      <p className="mt-1"><strong>SEO:</strong> {item.generated.seoTitle}</p>
+                      <p><strong>Meta:</strong> {item.generated.metaDescription || "需要确认"}</p>
+                      <p><strong>Facts:</strong> {item.generated.factualSummary}</p>
+                    </details>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <details className="rounded-xl border border-slate-200 bg-white p-5">
+        <summary className="cursor-pointer font-semibold">图片 ZIP 目录说明</summary>
+        <pre className="mt-3 overflow-x-auto rounded-lg bg-slate-950 p-4 text-xs text-slate-100">{`SKU/\n├── 01-main/\n├── 02-gallery/\n├── 03-real-photos/\n├── 04-detail-images/\n└── 05-logistics/`}</pre>
+      </details>
+
+      {history.length > 0 && (
+        <div className="rounded-xl border border-slate-200 bg-white p-5">
+          <h2 className="mb-3 font-semibold">最近导入记录</h2>
+          <div className="space-y-2 text-sm">
+            {history.map((job) => <p key={String(job.id)}>{String(job.created_at)} · {String(job.status)} · {String(job.success_count)}/{String(job.product_count)} products</p>)}
           </div>
         </div>
       )}
