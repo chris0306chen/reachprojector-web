@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File;
+    const kind = formData.get("kind");
 
     if (!file) {
       return NextResponse.json(
@@ -27,6 +28,15 @@ export async function POST(request: NextRequest) {
     if (file.size > maxSize) {
       return NextResponse.json(
         { error: "File size exceeds 10MB limit" },
+        { status: 400 }
+      );
+    }
+    if (
+      kind === "product-image" &&
+      !["image/jpeg", "image/png", "image/webp", "image/avif"].includes(file.type)
+    ) {
+      return NextResponse.json(
+        { error: "Product images must be JPG, PNG, WebP or AVIF" },
         { status: 400 }
       );
     }

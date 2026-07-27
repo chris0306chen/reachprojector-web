@@ -5,6 +5,7 @@ import { getProductBySlug, getRelatedProducts, getCategories } from '@/lib/data-
 import { ProductDetailClient } from './product-detail-client';
 import PricingRFQWrapper from '@/components/b2b/PricingRFQWrapper';
 import { generateProductSchema, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo';
+import { normalizeProductDetail } from '@/lib/product-detail';
 
 export const dynamic = 'force-dynamic';
 
@@ -39,6 +40,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const relatedProducts = await getRelatedProducts(product.id, product.category_id);
   const categories = await getCategories();
   const category = categories.find((c) => c.id === product.category_id);
+  const structuredDetail = normalizeProductDetail(product.detail_content);
 
   return (
     <div className="bg-white min-h-screen">
@@ -88,6 +90,10 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             category: category?.name || 'Electronics',
             availability: product.stock_status === 'in_stock' ? 'in_stock' : 'out_of_stock',
             locale,
+            additionalProperties: structuredDetail.specifications.map((item) => ({
+              name: item.name,
+              value: item.value,
+            })),
           })),
         }}
       />

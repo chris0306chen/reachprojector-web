@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { Search, Plus, Edit2, Trash2, AlertCircle, CheckSquare, Square, ArrowUp, ArrowDown, Paperclip, Upload, X } from "lucide-react";
 import Link from "next/link";
+import { ProductDetailEditor } from "@/components/admin/product-detail-editor";
+import { normalizeProductDetail, type ProductDetailContent } from "@/lib/product-detail";
 
 interface Product {
   id: string;
@@ -26,6 +28,7 @@ interface Product {
   attachments?: Array<{ url: string; name: string; size: number }>;
   image_url?: string;
   created_at: string;
+  detail_content?: ProductDetailContent;
 }
 
 interface Category {
@@ -519,6 +522,9 @@ function ProductEditModal({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [detailContent, setDetailContent] = useState<ProductDetailContent>(
+    normalizeProductDetail(product.detail_content)
+  );
 
   const handleSubmit = async () => {
     if (!form.name) {
@@ -536,6 +542,7 @@ function ProductEditModal({
           sale_price: form.sale_price || null,
           weight_kg: form.weight_kg || null,
           attachments: attachments,
+          detail_content: detailContent,
         }),
       });
       if (res.ok) {
@@ -582,7 +589,7 @@ function ProductEditModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6 border-b border-slate-200 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-slate-900">编辑产品</h2>
           <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-lg">
@@ -703,6 +710,11 @@ function ProductEditModal({
               </label>
             </div>
           </div>
+          <ProductDetailEditor
+            value={detailContent}
+            onChange={setDetailContent}
+            onError={setError}
+          />
         </div>
         <div className="p-6 border-t border-slate-200 flex justify-end gap-3">
           <button

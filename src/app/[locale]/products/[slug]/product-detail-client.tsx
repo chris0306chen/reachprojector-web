@@ -6,6 +6,7 @@ import { ShoppingCart, MessageCircle, ArrowRight, Check, ChevronLeft, ChevronRig
 import { useTranslations, useMessages } from 'next-intl';
 import type { Product } from '@/storage/database/shared/schema';
 import { ProductCard } from '@/components/product-card';
+import { ProductDetailSections } from '@/components/product-detail-sections';
 
 interface ProductDetailClientProps {
   product: Product;
@@ -15,11 +16,9 @@ interface ProductDetailClientProps {
 export function ProductDetailClient({ product, relatedProducts }: ProductDetailClientProps) {
   const t = useTranslations('productDetail');
   const [currentImage, setCurrentImage] = useState(0);
-  const [activeTab, setActiveTab] = useState<'description' | 'specs'>('description');
   const [quantity, setQuantity] = useState(1);
   const images = product.images && product.images.length > 0 ? product.images : ['/images/placeholder-product.jpg'];
   const price = parseFloat(product.price);
-  const specs = product.specifications || {};
   const features = product.features || [];
 
   // Get translated product name and description with fallback
@@ -174,48 +173,19 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
         </div>
       </div>
 
-      {/* Tabs: Description / Specs */}
-      <div className="border-t border-slate-200 pt-8 mb-16">
-        <div className="flex gap-6 border-b border-slate-200 mb-6">
-          <button
-            onClick={() => setActiveTab('description')}
-            className={`pb-3 text-sm font-medium transition-colors ${
-              activeTab === 'description'
-                ? 'text-orange-500 border-b-2 border-orange-500'
-                : 'text-slate-500 hover:text-slate-900'
-            }`}
-          >
-            {t('description')}
-          </button>
-          <button
-            onClick={() => setActiveTab('specs')}
-            className={`pb-3 text-sm font-medium transition-colors ${
-              activeTab === 'specs'
-                ? 'text-orange-500 border-b-2 border-orange-500'
-                : 'text-slate-500 hover:text-slate-900'
-            }`}
-          >
-            {t('specifications')}
-          </button>
-        </div>
+      <ProductDetailSections
+        content={product.detail_content}
+        legacySpecifications={product.specifications}
+      />
 
-        {activeTab === 'description' && displayDescription && (
+      {displayDescription && (
+        <div className="border-t border-slate-200 pt-8 mb-16">
+          <h2 className="mb-6 text-xl font-bold text-slate-900">{t('description')}</h2>
           <div className="prose prose-slate max-w-none">
             <p className="text-slate-600 leading-relaxed">{displayDescription}</p>
           </div>
-        )}
-
-        {activeTab === 'specs' && Object.keys(specs).length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
-            {Object.entries(specs).map(([key, value]) => (
-              <div key={key} className="flex justify-between py-2 border-b border-slate-100">
-                <span className="text-sm text-slate-500">{key}</span>
-                <span className="text-sm font-medium text-slate-900">{value}</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Related Products */}
       {relatedProducts.length > 0 && (
