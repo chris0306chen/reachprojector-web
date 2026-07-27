@@ -6,6 +6,7 @@ import {
   toProductDetailContent,
   type ImportedProduct,
 } from "@/lib/product-bulk-import";
+import { calculatePackageQuote, type ShippingRate } from "@/lib/shipping-quote";
 
 interface ProductReport {
   sku: string;
@@ -21,6 +22,9 @@ interface ProductReport {
     metaDescription: string;
     factualSummary: string;
     faq: Array<{ question: string; answer: string }>;
+    volumetricWeightKg: number | null;
+    chargeableWeightKg: number | null;
+    matchingShippingCountries: number;
   };
 }
 
@@ -40,7 +44,10 @@ async function buildReport(products: ImportedProduct[]): Promise<ProductReport[]
     await Promise.all([
       supabase.from("categories").select("id, name, slug").eq("is_active", true),
       supabase.from("products").select("sku, slug"),
-      supabase.from("shipping_templates").select("min_weight_kg, max_weight_kg").eq("is_active", true),
+      supabase.from("shipping_templates")
+        .select("id,name,method,trade_terms,currency,country_code,min_weight_kg,max_weight_kg,base_weight_kg,base_fee,increment_weight_kg,increment_fee,minimum_fee,volumetric_divisor")
+        .eq("is_active", true)
+        .in("trade_terms", ["DDP", "DAP"]),
     ]);
   if (categoryError) throw categoryError;
   if (productError) throw productError;
@@ -69,15 +76,46 @@ async function buildReport(products: ImportedProduct[]): Promise<ProductReport[]
     if (batchSlugs.has(slug)) errors.push(`Duplicate slug in workbook: ${product.slug}`);
     batchSkus.add(sku);
     batchSlugs.add(slug);
-    if (!product.grossWeightKg) {
-      warnings.push("Gross weight is missing; shipping cannot be checked");
-    } else if (!(shippingRates || []).some((rate) =>
-      product.grossWeightKg! >= Number(rate.min_weight_kg) &&
-      product.grossWeightKg! <= Number(rate.max_weight_kg)
-    )) {
-      warnings.push(`No active shipping weight band matches ${product.grossWeightKg} kg`);
+    const packagingComplete = [
+      product.grossWeightKg,
+      product.packageLengthCm,
+      product.packageWidthCm,
+      product.packageHeightCm,
+    ].every((value) => typeof value === "number" && value > 0);
+    const matchingQuotes = packagingComplete ? (shippingRates || [])
+      .filter((row) => row.country_code !== "MX" || row.trade_terms === "DDP")
+      .flatMap((row) => {
+      const rate: ShippingRate = {
+        id: row.id,
+        name: row.name,
+        method: row.method,
+        tradeTerms: row.trade_terms,
+        currency: row.currency,
+        minWeightKg: Number(row.min_weight_kg),
+        maxWeightKg: Number(row.max_weight_kg),
+        baseWeightKg: Number(row.base_weight_kg),
+        baseFee: Number(row.base_fee),
+        incrementWeightKg: Number(row.increment_weight_kg),
+        incrementFee: Number(row.increment_fee),
+        minimumFee: Number(row.minimum_fee),
+        volumetricDivisor: Number(row.volumetric_divisor),
+      };
+      const quote = calculatePackageQuote({
+        packedWeightKg: product.grossWeightKg!,
+        lengthCm: product.packageLengthCm!,
+        widthCm: product.packageWidthCm!,
+        heightCm: product.packageHeightCm!,
+        quantity: 1,
+      }, rate);
+      return quote ? [{ countryCode: row.country_code, quote }] : [];
+    }) : [];
+    if (!packagingComplete) {
+      warnings.push("Gross weight and package length, width and height are required for automatic shipping");
+    } else if (!matchingQuotes.length) {
+      warnings.push("No active shipping template matches the calculated chargeable weight");
     }
-    if (!product.packageDimensions) warnings.push("Package dimensions are missing");
+    const representativeQuote = matchingQuotes[0]?.quote;
+    const matchingCountries = new Set(matchingQuotes.map((item) => item.countryCode).filter(Boolean)).size;
     if (!product.warranty) warnings.push("Warranty needs confirmation");
     if (!product.seoTitle) warnings.push("SEO title will use the product name");
     if (!product.metaDescription) warnings.push("Meta description will use the short description");
@@ -102,7 +140,7 @@ async function buildReport(products: ImportedProduct[]): Promise<ProductReport[]
           product.model ? `Model: ${product.model}.` : "",
           product.version ? `Version: ${product.version}.` : "",
           product.grossWeightKg ? `Packed weight: ${product.grossWeightKg} kg.` : "",
-          product.packageDimensions ? `Package size: ${product.packageDimensions}.` : "",
+          packagingComplete ? `Package size: ${product.packageLengthCm} x ${product.packageWidthCm} x ${product.packageHeightCm} cm.` : "",
           product.moq ? `Minimum order quantity: ${product.moq}.` : "",
           product.leadTime ? `Lead time: ${product.leadTime}.` : "",
         ].filter(Boolean).join(" "),
@@ -111,6 +149,9 @@ async function buildReport(products: ImportedProduct[]): Promise<ProductReport[]
           product.leadTime ? { question: `What is the lead time for ${product.name}?`, answer: product.leadTime } : null,
           product.plugType ? { question: `Which plug type is supplied with ${product.name}?`, answer: product.plugType } : null,
         ].filter((item): item is { question: string; answer: string } => Boolean(item)),
+        volumetricWeightKg: representativeQuote?.volumetricWeightPerPackageKg ?? null,
+        chargeableWeightKg: representativeQuote?.chargeableWeightPerPackageKg ?? null,
+        matchingShippingCountries: matchingCountries,
       },
     };
   });
@@ -155,6 +196,15 @@ export async function POST(request: NextRequest) {
       const legacySpecifications = Object.fromEntries(
         product.specifications.map((item) => [item.name, item.value])
       );
+      const shippingClass = /screen|cabinet|幕布|电视柜/i.test(`${product.name} ${product.category}`)
+        ? "freight"
+        : "parcel";
+      const packagingComplete = [
+        product.grossWeightKg,
+        product.packageLengthCm,
+        product.packageWidthCm,
+        product.packageHeightCm,
+      ].every((value) => typeof value === "number" && value > 0);
       const { data, error } = await supabase.from("products").insert({
         sku: product.sku,
         model: product.model || null,
@@ -173,6 +223,17 @@ export async function POST(request: NextRequest) {
         stock_status: product.stockStatus,
         seo_title: product.seoTitle || product.name.slice(0, 70),
         meta_description: (product.metaDescription || product.shortDescription).slice(0, 170) || null,
+        product_length_cm: product.productLengthCm || null,
+        product_width_cm: product.productWidthCm || null,
+        product_height_cm: product.productHeightCm || null,
+        net_weight_kg: product.netWeightKg || null,
+        packed_weight_kg: product.grossWeightKg || null,
+        package_length_cm: product.packageLengthCm || null,
+        package_width_cm: product.packageWidthCm || null,
+        package_height_cm: product.packageHeightCm || null,
+        shipping_class: shippingClass,
+        package_count: 1,
+        shipping_quote_required: shippingClass !== "parcel" || !packagingComplete,
         import_data: {
           b2b_price: product.b2bPrice,
           moq: product.moq,
@@ -182,10 +243,6 @@ export async function POST(request: NextRequest) {
           system_language: product.systemLanguage,
           warranty: product.warranty,
           country_of_origin: product.countryOfOrigin,
-          product_dimensions: product.productDimensions,
-          package_dimensions: product.packageDimensions,
-          net_weight_kg: product.netWeightKg,
-          gross_weight_kg: product.grossWeightKg,
           image_name_map: product.images.map((image) => ({
             original: image.originalPath,
             seo_name: image.seoName,

@@ -17,7 +17,14 @@ type ReportItem = {
   errors: string[];
   warnings: string[];
   imageCount: number;
-  generated: { seoTitle: string; metaDescription: string; factualSummary: string };
+  generated: {
+    seoTitle: string;
+    metaDescription: string;
+    factualSummary: string;
+    volumetricWeightKg: number | null;
+    chargeableWeightKg: number | null;
+    matchingShippingCountries: number;
+  };
 };
 
 type ImageFile = ImportedImage & { bytes: Uint8Array; mime: string };
@@ -111,8 +118,12 @@ export default function ProductImportPage() {
         systemLanguage: text(row["System Language"]),
         warranty: text(row.Warranty),
         countryOfOrigin: text(row["Country of Origin"]),
-        productDimensions: text(row["Product Dimensions"]),
-        packageDimensions: text(row["Package Dimensions"]),
+        productLengthCm: numberOrNull(row["Product Length (cm)"]),
+        productWidthCm: numberOrNull(row["Product Width (cm)"]),
+        productHeightCm: numberOrNull(row["Product Height (cm)"]),
+        packageLengthCm: numberOrNull(row["Package Length (cm)"]),
+        packageWidthCm: numberOrNull(row["Package Width (cm)"]),
+        packageHeightCm: numberOrNull(row["Package Height (cm)"]),
         netWeightKg: numberOrNull(row["Net Weight (kg)"]),
         grossWeightKg: numberOrNull(row["Gross Weight (kg)"]),
         shortDescription: text(row["Short Description"]),
@@ -358,6 +369,12 @@ export default function ProductImportPage() {
                       <p className="mt-1"><strong>SEO:</strong> {item.generated.seoTitle}</p>
                       <p><strong>Meta:</strong> {item.generated.metaDescription || "需要确认"}</p>
                       <p><strong>Facts:</strong> {item.generated.factualSummary}</p>
+                      <p>
+                        <strong>Shipping:</strong>{" "}
+                        {item.generated.chargeableWeightKg
+                          ? `体积重 ${item.generated.volumetricWeightKg} kg；计费重 ${item.generated.chargeableWeightKg} kg；匹配 ${item.generated.matchingShippingCountries} 个国家`
+                          : "包装数据不完整或没有匹配运费"}
+                      </p>
                     </details>
                   </td>
                 </tr>

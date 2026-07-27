@@ -59,7 +59,7 @@ export async function getShippingQuote(
   }
 
   const today = new Date().toISOString().slice(0, 10);
-  const { data: rows, error: rateError } = await supabase
+  let rateQuery = supabase
     .from("shipping_templates")
     .select("*")
     .eq("country_code", countryCode)
@@ -67,7 +67,9 @@ export async function getShippingQuote(
     .eq("is_active", true)
     .in("trade_terms", ["DDP", "DAP"])
     .lte("valid_from", today)
-    .gte("valid_to", today)
+    .gte("valid_to", today);
+  if (countryCode === "MX") rateQuery = rateQuery.eq("trade_terms", "DDP");
+  const { data: rows, error: rateError } = await rateQuery
     .order("trade_terms", { ascending: true })
     .order("base_fee", { ascending: true });
 
