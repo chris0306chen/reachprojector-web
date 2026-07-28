@@ -68,6 +68,52 @@ export async function POST(request: NextRequest) {
 
     const accessToken = await getAccessToken();
 
+    // Verify the approved order and shipping destination before money is captured.
+    const approvedOrderResponse = await fetch(
+      `${PAYPAL_BASE_URL}/v2/checkout/orders/${encodeURIComponent(orderId)}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        cache: 'no-store',
+      }
+    );
+    if (!approvedOrderResponse.ok) {
+      console.error('PayPal approved order lookup failed:', approvedOrderResponse.status);
+      throw new Error('PAYPAL_ORDER_LOOKUP_FAILED');
+    }
+    const approvedOrder = await approvedOrderResponse.json();
+    const approvedUnit = approvedOrder.purchase_units?.[0];
+    let approvedMetadata: Record<string, unknown> = {};
+    try {
+      approvedMetadata = JSON.parse(approvedUnit?.custom_id || '{}') as Record<string, unknown>;
+    } catch {
+      return NextResponse.json({ error: 'Invalid PayPal order metadata' }, { status: 409 });
+    }
+
+    const item = await getCheckoutItem(productId, quantity);
+    const shipping = await getShippingQuote(item.id, countryCode, item.quantity);
+    if (shipping.mode !== 'automatic' || shipping.currency !== item.currency) {
+      return NextResponse.json({ error: 'Automatic shipping is unavailable for this order' }, { status: 409 });
+    }
+    const expectedTotal = (Number(item.total) + shipping.shippingCost).toFixed(2);
+    const approvedCountry = approvedUnit?.shipping?.address?.country_code;
+    if (
+      approvedOrder.status !== 'APPROVED'
+      || approvedUnit?.reference_id !== item.id
+      || approvedMetadata.productId !== item.id
+      || Number(approvedMetadata.quantity) !== item.quantity
+      || approvedMetadata.countryCode !== countryCode
+      || approvedCountry !== countryCode
+      || approvedUnit?.amount?.currency_code !== item.currency
+      || approvedUnit?.amount?.value !== expectedTotal
+    ) {
+      return NextResponse.json(
+        { error: 'Approved PayPal order does not match the quoted product or shipping destination' },
+        { status: 409 }
+      );
+    }
+
     const captureResponse = await fetch(
       `${PAYPAL_BASE_URL}/v2/checkout/orders/${orderId}/capture`,
       {
@@ -86,12 +132,6 @@ export async function POST(request: NextRequest) {
 
     const captureData = await captureResponse.json();
 
-    const item = await getCheckoutItem(productId, quantity);
-    const shipping = await getShippingQuote(item.id, countryCode, item.quantity);
-    if (shipping.mode !== 'automatic' || shipping.currency !== item.currency) {
-      return NextResponse.json({ error: 'Automatic shipping is unavailable for this order' }, { status: 409 });
-    }
-    const expectedTotal = (Number(item.total) + shipping.shippingCost).toFixed(2);
     const purchaseUnit = captureData.purchase_units?.[0];
     const captured = purchaseUnit?.payments?.captures?.[0]?.amount;
     if (
@@ -173,6 +213,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'PayPal is temporarily unavailable' },
         { status: 503 }
+      );
+    }
+    if (message === 'PAYPAL_ORDER_LOOKUP_FAILED') {
+      return NextResponse.json(
+        { error: 'Unable to verify the approved PayPal order' },
+        { status: 502 }
       );
     }
     if (message === 'PRODUCT_NOT_FOUND') {

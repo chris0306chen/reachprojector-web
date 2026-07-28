@@ -36,6 +36,8 @@ export async function POST(request: NextRequest) {
     append(params, 'success_url', `${SITE_URL}/${locale}/order-success?session_id={CHECKOUT_SESSION_ID}&product=${encodeURIComponent(item.name)}`);
     append(params, 'cancel_url', `${SITE_URL}/${locale}/products`);
     append(params, 'customer_creation', 'always');
+    append(params, 'billing_address_collection', 'required');
+    append(params, 'shipping_address_collection[allowed_countries][0]', countryCode);
     append(params, 'client_reference_id', item.id);
     append(params, 'line_items[0][price_data][currency]', item.currency.toLowerCase());
     append(params, 'line_items[0][price_data][unit_amount]', unitAmount);

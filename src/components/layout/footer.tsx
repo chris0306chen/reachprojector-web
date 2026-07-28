@@ -27,9 +27,9 @@ export function Footer() {
     ],
     support: [
       { href: `/${locale}/contact`, label: t('technicalSupport') },
-      { href: `/${locale}/contact`, label: t('warrantyPolicy') },
-      { href: `/${locale}/contact`, label: t('shippingInfo') },
-      { href: `/${locale}/contact`, label: t('returnsRefunds') },
+      { href: `/${locale}/warranty`, label: t('warrantyPolicy') },
+      { href: `/${locale}/shipping-policy`, label: t('shippingInfo') },
+      { href: `/${locale}/returns-refunds`, label: t('returnsRefunds') },
     ],
   };
 
@@ -145,6 +145,12 @@ export function Footer() {
             &copy; 2026 HK REACH SOURCING LIMITED. {t('allRightsReserved')}
           </p>
           <div className="flex items-center gap-4">
+            <Link href={`/${locale}/privacy`} className="text-xs text-slate-500 hover:text-orange-400 transition-colors">
+              Privacy
+            </Link>
+            <Link href={`/${locale}/terms`} className="text-xs text-slate-500 hover:text-orange-400 transition-colors">
+              Terms
+            </Link>
             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-xs text-slate-500 hover:text-orange-400 transition-colors">
               Facebook
             </a>

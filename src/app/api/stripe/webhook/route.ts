@@ -82,6 +82,18 @@ export async function POST(request: NextRequest) {
         }
 
         const customerDetails = (object.customer_details || {}) as Record<string, unknown>;
+        const collectedInformation = (object.collected_information || {}) as Record<string, unknown>;
+        const shippingDetails = (
+          object.shipping_details
+          || collectedInformation.shipping_details
+          || {}
+        ) as Record<string, unknown>;
+        const shippingAddress = (shippingDetails.address || {}) as Record<string, unknown>;
+        const shippingCountry = stringValue(shippingAddress.country)?.toUpperCase();
+        if (shippingCountry !== countryCode) {
+          console.error('Stripe shipping country did not match quoted country:', event.id);
+          return NextResponse.json({ error: 'Shipping country mismatch' }, { status: 409 });
+        }
         const order = await createOrder({
           order_id: `ORD-STRIPE-${sessionId.slice(-18)}`,
           product_id: item.id,

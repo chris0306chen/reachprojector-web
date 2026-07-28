@@ -56,11 +56,7 @@ export async function POST(request: NextRequest) {
     const clientId = process.env.PAYPAL_CLIENT_ID;
     const secret = process.env.PAYPAL_SECRET;
     if (!clientId || !secret || clientId.startsWith('YOUR_') || secret.startsWith('YOUR_')) {
-      return NextResponse.json({
-        configured: false,
-        message: 'PayPal is not configured. Please set valid PAYPAL_CLIENT_ID and PAYPAL_SECRET in environment variables.',
-        demoOrderId: `DEMO-${Date.now()}`,
-      });
+      return NextResponse.json({ error: 'PayPal is not configured' }, { status: 503 });
     }
 
     const accessToken = await getAccessToken();
@@ -73,6 +69,9 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         intent: 'CAPTURE',
+        application_context: {
+          shipping_preference: 'GET_FROM_FILE',
+        },
         purchase_units: [
           {
             reference_id: item.id,
@@ -92,7 +91,12 @@ export async function POST(request: NextRequest) {
                 unit_amount: { currency_code: item.currency, value: item.unitPrice.toFixed(2) },
               },
             ],
-            custom_id: JSON.stringify({ countryCode, shippingTemplateId: shipping.templateId }),
+            custom_id: JSON.stringify({
+              productId: item.id,
+              quantity: item.quantity,
+              countryCode,
+              shippingTemplateId: shipping.templateId,
+            }),
           },
         ],
       }),
