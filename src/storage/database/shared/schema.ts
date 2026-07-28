@@ -1,4 +1,4 @@
-import { pgTable, serial, timestamp, varchar, text, numeric, boolean, jsonb, integer, index, uniqueIndex } from "drizzle-orm/pg-core"
+import { pgTable, primaryKey, serial, timestamp, varchar, text, numeric, boolean, jsonb, integer, index, uniqueIndex } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 import { z } from "zod"
 import type { ProductDetailContent } from "@/lib/product-detail"
@@ -16,6 +16,7 @@ export const categories = pgTable(
 		slug: varchar("slug", { length: 100 }).notNull().unique(),
 		description: text("description"),
 		image_url: text("image_url"),
+		parent_id: varchar("parent_id", { length: 36 }),
 		sort_order: integer("sort_order").default(0).notNull(),
 		is_active: boolean("is_active").default(true).notNull(),
 		created_at: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
@@ -24,6 +25,26 @@ export const categories = pgTable(
 	(table) => [
 		index("categories_slug_idx").on(table.slug),
 		index("categories_sort_order_idx").on(table.sort_order),
+	]
+);
+
+export const scenes = pgTable(
+	"scenes",
+	{
+		id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
+		name: varchar("name", { length: 120 }).notNull(),
+		slug: varchar("slug", { length: 120 }).notNull().unique(),
+		group_name: varchar("group_name", { length: 60 }).notNull(),
+		description: text("description"),
+		image_url: text("image_url"),
+		sort_order: integer("sort_order").default(0).notNull(),
+		is_active: boolean("is_active").default(true).notNull(),
+		created_at: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+		updated_at: timestamp("updated_at", { withTimezone: true }),
+	},
+	(table) => [
+		index("scenes_slug_idx").on(table.slug),
+		index("scenes_sort_order_idx").on(table.sort_order),
 	]
 );
 
@@ -78,6 +99,18 @@ export const products = pgTable(
 		index("products_is_bestseller_idx").on(table.is_bestseller),
 		index("products_is_new_arrival_idx").on(table.is_new_arrival),
 		index("products_created_at_idx").on(table.created_at),
+	]
+);
+
+export const productScenes = pgTable(
+	"product_scenes",
+	{
+		product_id: varchar("product_id", { length: 36 }).notNull().references(() => products.id, { onDelete: "cascade" }),
+		scene_id: varchar("scene_id", { length: 36 }).notNull().references(() => scenes.id, { onDelete: "cascade" }),
+	},
+	(table) => [
+		primaryKey({ columns: [table.product_id, table.scene_id] }),
+		index("product_scenes_scene_id_idx").on(table.scene_id),
 	]
 );
 
@@ -247,6 +280,7 @@ export const productTiers = pgTable(
 );
 
 export type Category = typeof categories.$inferSelect;
+export type Scene = typeof scenes.$inferSelect;
 export type Product = typeof products.$inferSelect;
 export type Order = typeof orders.$inferSelect;
 export type User = typeof users.$inferSelect;

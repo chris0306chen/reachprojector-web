@@ -5,15 +5,15 @@ export async function GET() {
   try {
     const supabase = await getSupabaseClient();
     const { data, error } = await supabase
-      .from("categories")
-      .select("id, name, slug, parent_id, sort_order")
+      .from("scenes")
+      .select("id, name, slug, group_name, sort_order")
+      .eq("is_active", true)
       .order("sort_order");
 
     if (error) throw error;
-
     return NextResponse.json(data || []);
   } catch (error) {
-    console.error("Failed to fetch categories:", error);
-    return NextResponse.json({ error: "Failed to fetch categories" }, { status: 500 });
+    console.error("Failed to fetch scenes:", error);
+    return NextResponse.json({ error: "加载应用场景失败" }, { status: 500 });
   }
 }

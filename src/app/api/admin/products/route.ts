@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
     if (error) throw error;
 
     const productIds = (data || []).map((product) => product.id);
+    const scenesByProduct = new Map<string, string[]>();
     const sourcingByProduct = new Map<string, {
       purchase_price: number;
       purchase_currency: string | null;
@@ -37,6 +38,18 @@ export async function GET(request: NextRequest) {
     }>();
 
     if (productIds.length > 0) {
+      const { data: sceneRows, error: scenesError } = await supabase
+        .from("product_scenes")
+        .select("product_id, scene_id")
+        .in("product_id", productIds);
+      if (!scenesError) {
+        for (const row of sceneRows || []) {
+          scenesByProduct.set(row.product_id, [...(scenesByProduct.get(row.product_id) || []), row.scene_id]);
+        }
+      } else if (scenesError.code !== "42P01") {
+        console.error("Failed to fetch product scenes:", scenesError);
+      }
+
       const { data: sourcingRows, error: sourcingError } = await supabase
         .from("product_sourcing")
         .select("product_id, purchase_price, purchase_currency, moq, supplier_url, notes")
@@ -61,6 +74,7 @@ export async function GET(request: NextRequest) {
       data: (data || []).map((product) => ({
         ...product,
         ...sourcingByProduct.get(product.id),
+        scene_ids: scenesByProduct.get(product.id) || [],
       })),
       pagination: { page, limit, total: count || 0, totalPages: Math.ceil((count || 0) / limit) },
     });

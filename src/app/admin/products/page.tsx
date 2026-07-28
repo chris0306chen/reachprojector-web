@@ -40,11 +40,19 @@ interface Product {
   image_url?: string;
   created_at: string;
   detail_content?: ProductDetailContent;
+  scene_ids?: string[];
 }
 
 interface Category {
   id: string;
   name: string;
+  parent_id?: string | null;
+}
+
+interface Scene {
+  id: string;
+  name: string;
+  group_name: string;
 }
 
 export default function AdminProductsPage() {
@@ -517,8 +525,12 @@ function ProductEditModal({
   onClose: () => void;
   onSuccess: () => void;
 }) {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [scenes, setScenes] = useState<Scene[]>([]);
+  const [sceneIds, setSceneIds] = useState<string[]>(product.scene_ids || []);
   const [form, setForm] = useState({
     name: product.name || "",
+    category_id: product.category_id || "",
     price: product.price || 0,
     sale_price: product.sale_price || null as number | null,
     moq: product.moq || 1,
@@ -554,6 +566,16 @@ function ProductEditModal({
     ? Math.max(estimatedVolumetricWeight, form.packed_weight_kg)
     : null;
 
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/admin/categories").then((response) => response.json()),
+      fetch("/api/admin/scenes").then((response) => response.json()),
+    ]).then(([categoryRows, sceneRows]) => {
+      if (Array.isArray(categoryRows)) setCategories(categoryRows);
+      if (Array.isArray(sceneRows)) setScenes(sceneRows);
+    }).catch(() => setError("加载分类与场景失败"));
+  }, []);
+
   const handleSubmit = async () => {
     if (!form.name) {
       setError("请填写产品名称");
@@ -571,6 +593,7 @@ function ProductEditModal({
           weight_kg: form.weight_kg || null,
           attachments: attachments,
           detail_content: detailContent,
+          scene_ids: sceneIds,
         }),
       });
       if (res.ok) {
@@ -799,6 +822,48 @@ function ProductEditModal({
               </label>
             </div>
           </div>
+          <section className="rounded-xl border border-slate-200 p-4 space-y-4">
+            <div>
+              <h3 className="font-semibold text-slate-900">产品分类与应用场景</h3>
+              <p className="text-xs text-slate-500">每个产品选择一个主分类，并可同时选择多个应用场景。</p>
+            </div>
+            <label className="block text-sm text-slate-700">
+              <span className="mb-1 block font-medium">主分类</span>
+              <select
+                value={form.category_id}
+                onChange={(event) => setForm({ ...form, category_id: event.target.value })}
+                className="w-full rounded-lg border border-slate-200 px-3 py-2"
+              >
+                <option value="">请选择分类</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.parent_id ? `　└ ${category.name}` : category.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div>
+              <span className="mb-2 block text-sm font-medium text-slate-700">适用场景（可多选）</span>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {scenes.map((scene) => (
+                  <label key={scene.id} className="flex items-start gap-2 rounded-lg border border-slate-200 p-3 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={sceneIds.includes(scene.id)}
+                      onChange={(event) => setSceneIds(event.target.checked
+                        ? [...sceneIds, scene.id]
+                        : sceneIds.filter((id) => id !== scene.id))}
+                      className="mt-0.5"
+                    />
+                    <span>
+                      <span className="block font-medium text-slate-800">{scene.name}</span>
+                      <span className="text-xs text-slate-400">{scene.group_name}</span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </section>
           <ProductDetailEditor
             value={detailContent}
             onChange={setDetailContent}

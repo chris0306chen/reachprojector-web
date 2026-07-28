@@ -1,5 +1,5 @@
 import { getSupabaseClient } from '@/storage/database/supabase-client';
-import type { Product, Category, Inquiry, InsertInquiry, Order } from '@/storage/database/shared/schema';
+import type { Product, Category, Scene, Inquiry, InsertInquiry, Order } from '@/storage/database/shared/schema';
 
 const client = getSupabaseClient();
 
@@ -9,7 +9,7 @@ export async function getCategories(): Promise<Category[]> {
   try {
     const { data, error } = await client
       .from('categories')
-      .select('id, name, slug, description, image_url, sort_order')
+      .select('id, name, slug, description, image_url, parent_id, sort_order')
       .eq('is_active', true)
       .order('sort_order', { ascending: true });
     if (error) {
@@ -19,6 +19,24 @@ export async function getCategories(): Promise<Category[]> {
     return data as Category[];
   } catch (error) {
     console.error('[DataService] getCategories error:', error);
+    return [];
+  }
+}
+
+export async function getScenes(): Promise<Scene[]> {
+  try {
+    const { data, error } = await client
+      .from('scenes')
+      .select('id, name, slug, group_name, description, image_url, sort_order')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
+    if (error) {
+      console.warn('[DataService] Failed to fetch scenes:', error.message);
+      return [];
+    }
+    return data as Scene[];
+  } catch (error) {
+    console.error('[DataService] getScenes error:', error);
     return [];
   }
 }
@@ -46,6 +64,8 @@ export async function getCategoryBySlug(slug: string): Promise<Category | null> 
 
 export interface ProductFilters {
   categorySlug?: string;
+  sceneSlug?: string;
+  categorySlugs?: string[];
   brand?: string;
   minPrice?: number;
   maxPrice?: number;
@@ -69,6 +89,8 @@ export interface ProductListResult {
 export async function getProducts(filters: ProductFilters = {}): Promise<ProductListResult> {
   const {
     categorySlug,
+    sceneSlug,
+    categorySlugs,
     brand,
     minPrice,
     maxPrice,
@@ -86,15 +108,47 @@ export async function getProducts(filters: ProductFilters = {}): Promise<Product
     .select('id, name, slug, brand, category_id, price, compare_at_price, images, short_description, stock_status, is_bestseller, is_new_arrival, is_featured, created_at', { count: 'exact' })
     .eq('is_active', true);
 
-  if (categorySlug) {
-    const { data: cat } = await client
+  const requestedCategorySlugs = categorySlugs?.length
+    ? categorySlugs
+    : categorySlug ? [categorySlug] : [];
+
+  if (requestedCategorySlugs.length) {
+    const { data: matchedCategories } = await client
       .from('categories')
       .select('id')
-      .eq('slug', categorySlug)
-      .maybeSingle();
-    if (cat) {
-      query = query.eq('category_id', cat.id);
+      .in('slug', requestedCategorySlugs);
+
+    const categoryIds = (matchedCategories || []).map((category) => category.id);
+    if (categorySlug && categoryIds.length === 1) {
+      const { data: children } = await client
+        .from('categories')
+        .select('id')
+        .eq('parent_id', categoryIds[0]);
+      categoryIds.push(...(children || []).map((category) => category.id));
     }
+    if (categoryIds.length) {
+      query = query.in('category_id', categoryIds);
+    } else {
+      return { products: [], total: 0, page, pageSize, totalPages: 0 };
+    }
+  }
+
+  if (sceneSlug) {
+    const { data: scene } = await client
+      .from('scenes')
+      .select('id')
+      .eq('slug', sceneSlug)
+      .eq('is_active', true)
+      .maybeSingle();
+    if (!scene) return { products: [], total: 0, page, pageSize, totalPages: 0 };
+
+    const { data: links } = await client
+      .from('product_scenes')
+      .select('product_id')
+      .eq('scene_id', scene.id);
+    const productIds = (links || []).map((link) => link.product_id);
+    if (!productIds.length) return { products: [], total: 0, page, pageSize, totalPages: 0 };
+    query = query.in('id', productIds);
   }
 
   if (brand) {

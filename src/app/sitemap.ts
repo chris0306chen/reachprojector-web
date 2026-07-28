@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { locales } from '@/i18n/config'
+import { productNavigation, sceneNavigation } from '@/lib/catalog-navigation'
 
 const SITE_URL = 'https://www.reachprojector.com'
 
@@ -25,11 +26,15 @@ function buildAlternates(path: string) {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticPaths = ['', '/products', '/about', '/contact', '/wholesale']
+  const staticPaths = ['', '/products', '/solutions', '/about', '/contact', '/wholesale']
   const staticPages: MetadataRoute.Sitemap = staticPaths.flatMap((path) => locales.map((locale) => ({ url: `${SITE_URL}/${locale}${path}`, lastModified: new Date(), changeFrequency: path === '' ? ('daily' as const) : ('monthly' as const), priority: path === '' ? 1 : path === '/products' ? 0.9 : 0.7, alternates: buildAlternates(path) })))
-  const categories = ['4k-laser-projectors', 'ust-laser-tv', 'projector-mounts', 'projection-screens']
+  const categories = productNavigation.flatMap((category) => [
+    category.slug,
+    ...category.children.map(([, slug]) => slug),
+  ])
   const categoryPages: MetadataRoute.Sitemap = categories.flatMap((cat) => locales.map((locale) => ({ url: `${SITE_URL}/${locale}/products?category=${cat}`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8, alternates: buildAlternates(`/products?category=${cat}`) })))
+  const scenePages: MetadataRoute.Sitemap = sceneNavigation.flatMap((group) => group.items.flatMap(([, slug]) => locales.map((locale) => ({ url: `${SITE_URL}/${locale}/solutions/${slug}`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.8, alternates: buildAlternates(`/solutions/${slug}`) }))))
   const products = await fetchProductSlugs()
   const productPages: MetadataRoute.Sitemap = products.flatMap((product) => locales.map((locale) => ({ url: `${SITE_URL}/${locale}/products/${product.slug}`, lastModified: new Date(product.updatedAt), changeFrequency: 'weekly' as const, priority: 0.6, alternates: buildAlternates(`/products/${product.slug}`) })))
-  return [...staticPages, ...categoryPages, ...productPages]
+  return [...staticPages, ...categoryPages, ...scenePages, ...productPages]
 }

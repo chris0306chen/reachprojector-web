@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { Menu, X, Search, ChevronDown, ShoppingCart, Store, Building2 } from 'lucide-react';
 import { LanguageSwitcher } from './language-switcher';
+import { productNavigation, sceneNavigation } from '@/lib/catalog-navigation';
 
 type BusinessMode = 'retail' | 'b2b';
 
@@ -53,47 +54,22 @@ export function Header() {
 
   const navLinks: NavLink[] = [
     {
-      label: t('solutions'),
-      sectionLabel: 'SOLUTIONS',
-      children: [
-        {
-          href: `/${locale}/products?category=projectors`,
-          label: t('oemOdmProjectors'),
-        },
-        {
-          href: `/${locale}/contact`,
-          label: t('educationCorporate'),
-        },
-        {
-          href: `/${locale}/contact`,
-          label: t('hospitalityLiving'),
-        },
-        {
-          href: `/${locale}/contact`,
-          label: t('eventsRentals'),
-        },
-        {
-          href: `/${locale}/contact`,
-          label: t('retailChannels'),
-        },
-      ],
+      label: t('products'),
+      sectionLabel: 'SHOP BY PRODUCT',
+      children: productNavigation.map((category) => ({
+        href: `/${locale}/products?category=${category.slug}`,
+        label: category.label,
+        description: `${category.children.length} product types`,
+      })),
     },
     {
       label: t('shopByScene'),
-      children: [
-        {
-          href: `/${locale}/products?scene=bedroom`,
-          label: t('bedroomCinema'),
-        },
-        {
-          href: `/${locale}/products?scene=camping`,
-          label: t('backyardCamping'),
-        },
-        {
-          href: `/${locale}/products?scene=portable`,
-          label: t('portableScreen'),
-        },
-      ],
+      sectionLabel: 'SOLUTIONS BY APPLICATION',
+      children: sceneNavigation.flatMap((group) => group.items.map(([label, slug]) => ({
+        href: `/${locale}/solutions/${slug}`,
+        label,
+        description: group.group,
+      }))),
     },
     {
       label: t('resources'),
@@ -113,8 +89,8 @@ export function Header() {
       ],
     },
     {
-      href: `/${locale}/products`,
-      label: t('allProducts'),
+      href: `/${locale}/wholesale`,
+      label: t('oemOdmProjectors'),
     },
     {
       href: `/${locale}/contact`,
@@ -177,7 +153,9 @@ export function Header() {
                   </button>
                   {openDropdown === link.label && (
                     <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2">
-                      <div className="bg-white rounded-xl shadow-lg border border-slate-200 py-3 min-w-[260px]">
+                      <div className={`bg-white rounded-xl shadow-lg border border-slate-200 py-3 ${
+                        link.children.length > 6 ? 'w-[640px]' : 'min-w-[320px]'
+                      }`}>
                         {/* Section label for Solutions dropdown */}
                         {link.sectionLabel && (
                           <div className="px-5 pb-2 mb-1 border-b border-slate-100">
@@ -186,15 +164,18 @@ export function Header() {
                             </span>
                           </div>
                         )}
+                        <div className={link.children.length > 6 ? 'grid grid-cols-2 gap-x-2 px-2' : ''}>
                         {link.children.map((child) => (
                           <Link
                             key={child.label}
                             href={child.href}
-                            className="block px-5 py-2.5 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                            className="block rounded-lg px-3 py-2.5 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
                           >
-                            {child.label}
+                            <span className="block font-medium">{child.label}</span>
+                            {child.description && <span className="mt-0.5 block text-xs text-slate-400">{child.description}</span>}
                           </Link>
                         ))}
+                        </div>
                       </div>
                     </div>
                   )}
@@ -351,7 +332,8 @@ export function Header() {
                             className="block py-2 pl-2 text-sm text-slate-500 hover:text-orange-500 border-l-2 border-slate-200 hover:border-orange-500 ml-1"
                             onClick={() => setIsMobileMenuOpen(false)}
                           >
-                            {child.label}
+                            <span className="block">{child.label}</span>
+                            {child.description && <span className="block text-xs text-slate-400">{child.description}</span>}
                           </Link>
                         ))}
                       </div>
