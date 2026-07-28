@@ -41,6 +41,7 @@ interface Product {
   created_at: string;
   detail_content?: ProductDetailContent;
   scene_ids?: string[];
+  import_data?: { warranty?: string };
 }
 
 interface Category {
@@ -78,7 +79,7 @@ export default function AdminProductsPage() {
       const res = await fetch("/api/admin/products");
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "加载产品失败");
+        setError(data.error || "??????");
         return;
       }
       const rows = (Array.isArray(data.data) ? data.data : []) as Array<Product & { compare_at_price?: number | string }>;
@@ -88,7 +89,7 @@ export default function AdminProductsPage() {
         sale_price: product.compare_at_price ? Number(product.compare_at_price) : undefined,
       })));
     } catch (err) {
-      setError("网络错误，请检查连接");
+      setError("??????????");
     } finally {
       setLoading(false);
     }
@@ -107,7 +108,7 @@ export default function AdminProductsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("确定要删除此产品吗？")) return;
+    if (!confirm("??????????")) return;
     try {
       const res = await fetch(`/api/admin/products/${id}`, { method: "DELETE" });
       if (res.ok) {
@@ -126,11 +127,11 @@ export default function AdminProductsPage() {
         body: JSON.stringify({ is_active: !isActive }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "更新产品状态失败");
+      if (!res.ok) throw new Error(data.error || "????????");
       fetchProducts();
     } catch (err) {
       console.error("Failed to toggle status:", err);
-      setError(err instanceof Error ? err.message : "更新产品状态失败");
+      setError(err instanceof Error ? err.message : "????????");
     }
   };
 
@@ -142,11 +143,11 @@ export default function AdminProductsPage() {
         body: JSON.stringify({ is_featured: !isFeatured }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "更新推荐状态失败");
+      if (!res.ok) throw new Error(data.error || "????????");
       fetchProducts();
     } catch (err) {
       console.error("Failed to toggle featured:", err);
-      setError(err instanceof Error ? err.message : "更新推荐状态失败");
+      setError(err instanceof Error ? err.message : "????????");
     }
   };
 
@@ -210,7 +211,7 @@ export default function AdminProductsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-slate-500">加载中...</div>
+        <div className="text-slate-500">???...</div>
       </div>
     );
   }
@@ -220,15 +221,15 @@ export default function AdminProductsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">产品管理</h1>
-          <p className="text-slate-500 mt-1">管理所有产品信息</p>
+          <h1 className="text-2xl font-bold text-slate-900">????</h1>
+          <p className="text-slate-500 mt-1">????????</p>
         </div>
         <Link
           href="/admin/products/import"
           className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 w-fit"
         >
           <Plus className="w-4 h-4" />
-          采集产品
+          ????
         </Link>
       </div>
 
@@ -246,7 +247,7 @@ export default function AdminProductsPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="搜索产品名称..."
+              placeholder="??????..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
@@ -257,7 +258,7 @@ export default function AdminProductsPage() {
             onChange={(e) => setCategoryFilter(e.target.value)}
             className="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
           >
-            <option value="all">全部分类</option>
+            <option value="all">????</option>
             {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.name}
@@ -269,9 +270,9 @@ export default function AdminProductsPage() {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
           >
-            <option value="all">全部状态</option>
-            <option value="active">上架</option>
-            <option value="inactive">下架</option>
+            <option value="all">????</option>
+            <option value="active">??</option>
+            <option value="inactive">??</option>
           </select>
         </div>
       </div>
@@ -280,7 +281,7 @@ export default function AdminProductsPage() {
       {selectedIds.size > 0 && (
         <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
           <span className="text-sm font-medium text-orange-800">
-            已选择 {selectedIds.size} 个产品
+            ??? {selectedIds.size} ???
           </span>
           <div className="flex items-center gap-2 flex-wrap">
             <select
@@ -288,16 +289,16 @@ export default function AdminProductsPage() {
               onChange={(e) => setBatchAction(e.target.value)}
               className="px-3 py-1.5 border border-orange-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20"
             >
-              <option value="">选择操作...</option>
-              <option value="activate">批量上架</option>
-              <option value="deactivate">批量下架</option>
+              <option value="">????...</option>
+              <option value="activate">????</option>
+              <option value="deactivate">????</option>
             </select>
             <button
               onClick={handleBatchAction}
               disabled={!batchAction}
               className="px-3 py-1.5 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 disabled:opacity-50"
             >
-              执行
+              ??
             </button>
             <button
               onClick={() => {
@@ -306,7 +307,7 @@ export default function AdminProductsPage() {
               }}
               className="px-3 py-1.5 text-orange-700 text-sm hover:underline"
             >
-              取消选择
+              ????
             </button>
           </div>
         </div>
@@ -319,8 +320,8 @@ export default function AdminProductsPage() {
             <Search className="w-12 h-12 text-slate-300 mx-auto mb-3" />
             <p className="text-slate-500">
               {search || categoryFilter !== "all" || statusFilter !== "all"
-                ? "没有找到匹配的产品"
-                : "暂无产品"}
+                ? "?????????"
+                : "????"}
             </p>
           </div>
         ) : (
@@ -338,31 +339,31 @@ export default function AdminProductsPage() {
                     </button>
                   </th>
                   <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
-                    产品
+                    ??
                   </th>
                   <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
-                    价格
+                    ??
                   </th>
                   <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
-                    采购价
+                    ???
                   </th>
                   <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
                     MOQ
                   </th>
                   <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
-                    重量
+                    ??
                   </th>
                   <th className="text-center text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
                     OEM
                   </th>
                   <th className="text-center text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
-                    推荐
+                    ??
                   </th>
                   <th className="text-center text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
-                    状态
+                    ??
                   </th>
                   <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
-                    操作
+                    ??
                   </th>
                 </tr>
               </thead>
@@ -388,7 +389,7 @@ export default function AdminProductsPage() {
                           />
                         ) : (
                           <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center">
-                            <span className="text-xs text-slate-400">无图</span>
+                            <span className="text-xs text-slate-400">??</span>
                           </div>
                         )}
                         <div>
@@ -419,12 +420,12 @@ export default function AdminProductsPage() {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="font-medium text-blue-600 hover:text-blue-700"
-                            title="查看供应商页面"
+                            title="???????"
                           >
-                            {product.purchase_currency || "币种待确认"} {product.purchase_price.toFixed(2)}
+                            {product.purchase_currency || "?????"} {product.purchase_price.toFixed(2)}
                           </a>
                         ) : (
-                          <span>{product.purchase_currency || "币种待确认"} {product.purchase_price.toFixed(2)}</span>
+                          <span>{product.purchase_currency || "?????"} {product.purchase_price.toFixed(2)}</span>
                         )
                       ) : "-"}
                     </td>
@@ -436,7 +437,7 @@ export default function AdminProductsPage() {
                     </td>
                     <td className="px-4 py-3 text-center">
                       {(product.oem_available || product.support_oem) ? (
-                        <span className="text-green-600 text-xs font-medium">支持</span>
+                        <span className="text-green-600 text-xs font-medium">??</span>
                       ) : (
                         <span className="text-slate-400 text-xs">-</span>
                       )}
@@ -450,7 +451,7 @@ export default function AdminProductsPage() {
                             : "bg-slate-100 text-slate-500"
                         }`}
                       >
-                        {product.is_featured ? "推荐" : "普通"}
+                        {product.is_featured ? "??" : "??"}
                       </button>
                     </td>
                     <td className="px-4 py-3 text-center">
@@ -465,12 +466,12 @@ export default function AdminProductsPage() {
                         {product.is_active ? (
                           <>
                             <ArrowUp className="w-3 h-3" />
-                            上架
+                            ??
                           </>
                         ) : (
                           <>
                             <ArrowDown className="w-3 h-3" />
-                            下架
+                            ??
                           </>
                         )}
                       </button>
@@ -480,14 +481,14 @@ export default function AdminProductsPage() {
                         <button
                           onClick={() => setEditingProduct(product)}
                           className="p-1.5 text-slate-500 hover:bg-slate-100 rounded-lg"
-                          title="编辑"
+                          title="??"
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDelete(product.id)}
                           className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg"
-                          title="删除"
+                          title="??"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -549,6 +550,7 @@ function ProductEditModal({
     shipping_quote_required: product.shipping_quote_required ?? true,
     oem_available: product.oem_available || product.support_oem || false,
     oem_notes: product.oem_notes || "",
+    warranty: product.import_data?.warranty || "",
   });
   const [attachments, setAttachments] = useState<Array<{ url: string; name: string; size: number }>>(
     product.attachments || []
@@ -573,12 +575,12 @@ function ProductEditModal({
     ]).then(([categoryRows, sceneRows]) => {
       if (Array.isArray(categoryRows)) setCategories(categoryRows);
       if (Array.isArray(sceneRows)) setScenes(sceneRows);
-    }).catch(() => setError("加载分类与场景失败"));
+    }).catch(() => setError("?????????"));
   }, []);
 
   const handleSubmit = async () => {
     if (!form.name) {
-      setError("请填写产品名称");
+      setError("???????");
       return;
     }
     setSubmitting(true);
@@ -594,16 +596,17 @@ function ProductEditModal({
           attachments: attachments,
           detail_content: detailContent,
           scene_ids: sceneIds,
+          warranty: form.warranty,
         }),
       });
       if (res.ok) {
         onSuccess();
       } else {
         const data = await res.json();
-        setError(data.error || "保存失败");
+        setError(data.error || "????");
       }
     } catch (err) {
-      setError("网络错误");
+      setError("????");
     } finally {
       setSubmitting(false);
     }
@@ -624,10 +627,10 @@ function ProductEditModal({
         const data = await res.json();
         setAttachments([...attachments, { url: data.url, name: data.name, size: data.size }]);
       } else {
-        setError("上传失败");
+        setError("????");
       }
     } catch (err) {
-      setError("上传失败");
+      setError("????");
     } finally {
       setUploading(false);
       e.target.value = "";
@@ -642,7 +645,7 @@ function ProductEditModal({
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6 border-b border-slate-200 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">编辑产品</h2>
+          <h2 className="text-lg font-semibold text-slate-900">????</h2>
           <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-lg">
             <X className="w-5 h-5 text-slate-500" />
           </button>
@@ -650,7 +653,7 @@ function ProductEditModal({
         <div className="p-6 space-y-4">
           {error && <div className="rounded-lg bg-red-50 p-3 text-red-600 text-sm">{error}</div>}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">产品名称</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">????</label>
             <input
               type="text"
               value={form.name}
@@ -660,7 +663,7 @@ function ProductEditModal({
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">价格 (USD)</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">?? (USD)</label>
               <input
                 type="number"
                 step="0.01"
@@ -670,20 +673,20 @@ function ProductEditModal({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">促销价</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">???</label>
               <input
                 type="number"
                 step="0.01"
                 value={form.sale_price || ""}
                 onChange={(e) => setForm({ ...form, sale_price: e.target.value ? parseFloat(e.target.value) : null })}
-                placeholder="无促销价"
+                placeholder="????"
                 className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
               />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">最低起订量（MOQ）</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">??????MOQ?</label>
               <input
                 type="number"
                 value={form.moq}
@@ -692,13 +695,13 @@ function ProductEditModal({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">重量 (kg)</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">?? (kg)</label>
               <input
                 type="number"
                 step="0.01"
                 value={form.weight_kg || ""}
                 onChange={(e) => setForm({ ...form, weight_kg: e.target.value ? parseFloat(e.target.value) : null })}
-                placeholder="产品重量"
+                placeholder="????"
                 className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
               />
             </div>
@@ -713,23 +716,35 @@ function ProductEditModal({
               />
               <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-orange-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
             </label>
-            <span className="text-sm font-medium text-slate-700">支持 OEM 定制</span>
+            <span className="text-sm font-medium text-slate-700">?? OEM ??</span>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">????</label>
+            <input
+              type="text"
+              value={form.warranty}
+              onChange={(e) => setForm({ ...form, warranty: e.target.value })}
+              placeholder="???12??????????????"
+              maxLength={160}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+            />
+            <p className="mt-1 text-xs text-slate-500">??????????????????????????????</p>
           </div>
           <section className="rounded-xl border border-slate-200 p-4 space-y-4">
             <div>
-              <h3 className="font-semibold text-slate-900">尺寸、重量与运费</h3>
-              <p className="text-xs text-slate-500">尺寸使用 cm，重量使用 kg；自动运费取毛重与体积重中较高者。</p>
+              <h3 className="font-semibold text-slate-900">????????</h3>
+              <p className="text-xs text-slate-500">???? cm????? kg?????????????????</p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
-                ["产品长度（cm）", "product_length_cm"],
-                ["产品宽度（cm）", "product_width_cm"],
-                ["产品高度（cm）", "product_height_cm"],
-                ["产品净重（kg）", "net_weight_kg"],
-                ["包装长度（cm）", "package_length_cm"],
-                ["包装宽度（cm）", "package_width_cm"],
-                ["包装高度（cm）", "package_height_cm"],
-                ["包装毛重（kg）", "packed_weight_kg"],
+                ["?????cm?", "product_length_cm"],
+                ["?????cm?", "product_width_cm"],
+                ["?????cm?", "product_height_cm"],
+                ["?????kg?", "net_weight_kg"],
+                ["?????cm?", "package_length_cm"],
+                ["?????cm?", "package_width_cm"],
+                ["?????cm?", "package_height_cm"],
+                ["?????kg?", "packed_weight_kg"],
               ].map(([label, field]) => (
                 <label key={field} className="text-sm text-slate-700">
                   <span className="mb-1 block">{label}</span>
@@ -749,18 +764,18 @@ function ProductEditModal({
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <label className="text-sm text-slate-700">
-                <span className="mb-1 block">物流类型</span>
+                <span className="mb-1 block">????</span>
                 <select
                   value={form.shipping_class}
                   onChange={(event) => setForm({ ...form, shipping_class: event.target.value as "parcel" | "freight" })}
                   className="w-full rounded-lg border border-slate-200 px-3 py-2"
                 >
-                  <option value="parcel">包裹——自动计算运费</option>
-                  <option value="freight">大件货运——人工报价</option>
+                  <option value="parcel">??????????</option>
+                  <option value="freight">??????????</option>
                 </select>
               </label>
               <label className="text-sm text-slate-700">
-                <span className="mb-1 block">包裹数量</span>
+                <span className="mb-1 block">????</span>
                 <input type="number" min="1" step="1" value={form.package_count}
                   onChange={(event) => setForm({ ...form, package_count: Math.max(1, Number(event.target.value) || 1) })}
                   className="w-full rounded-lg border border-slate-200 px-3 py-2" />
@@ -768,28 +783,28 @@ function ProductEditModal({
               <label className="flex items-center gap-2 pt-6 text-sm text-slate-700">
                 <input type="checkbox" checked={form.shipping_quote_required}
                   onChange={(event) => setForm({ ...form, shipping_quote_required: event.target.checked })} />
-                强制人工确认运费
+                ????????
               </label>
             </div>
             <div className="rounded-lg bg-slate-50 p-3 text-sm text-slate-700">
-              预估体积重（÷5000）：{estimatedVolumetricWeight ? `${estimatedVolumetricWeight.toFixed(2)} kg` : "资料不完整"}
-              {" · "}预估计费重量：{estimatedChargeableWeight ? `${estimatedChargeableWeight.toFixed(2)} kg` : "资料不完整"}
+              ???????5000??{estimatedVolumetricWeight ? `${estimatedVolumetricWeight.toFixed(2)} kg` : "?????"}
+              {" ? "}???????{estimatedChargeableWeight ? `${estimatedChargeableWeight.toFixed(2)} kg` : "?????"}
             </div>
           </section>
           {form.oem_available && (
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">OEM 说明</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">OEM ??</label>
               <textarea
                 value={form.oem_notes}
                 onChange={(e) => setForm({ ...form, oem_notes: e.target.value })}
                 rows={2}
-                placeholder="OEM 定制要求、最低起订量等"
+                placeholder="OEM ???????????"
                 className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
               />
             </div>
           )}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">附件</label>
+            <label className="block text-sm font-medium text-slate-700 mb-2">??</label>
             <div className="space-y-2">
               {attachments.map((att, idx) => (
                 <div key={idx} className="flex items-center justify-between bg-slate-50 rounded-lg px-3 py-2">
@@ -812,7 +827,7 @@ function ProductEditModal({
               ))}
               <label className="flex items-center gap-2 px-3 py-2 border border-dashed border-slate-300 rounded-lg cursor-pointer hover:bg-slate-50">
                 <Upload className="w-4 h-4 text-slate-400" />
-                <span className="text-sm text-slate-500">{uploading ? "上传中..." : "点击上传附件"}</span>
+                <span className="text-sm text-slate-500">{uploading ? "???..." : "??????"}</span>
                 <input
                   type="file"
                   onChange={handleUpload}
@@ -824,26 +839,26 @@ function ProductEditModal({
           </div>
           <section className="rounded-xl border border-slate-200 p-4 space-y-4">
             <div>
-              <h3 className="font-semibold text-slate-900">产品分类与应用场景</h3>
-              <p className="text-xs text-slate-500">每个产品选择一个主分类，并可同时选择多个应用场景。</p>
+              <h3 className="font-semibold text-slate-900">?????????</h3>
+              <p className="text-xs text-slate-500">?????????????????????????</p>
             </div>
             <label className="block text-sm text-slate-700">
-              <span className="mb-1 block font-medium">主分类</span>
+              <span className="mb-1 block font-medium">???</span>
               <select
                 value={form.category_id}
                 onChange={(event) => setForm({ ...form, category_id: event.target.value })}
                 className="w-full rounded-lg border border-slate-200 px-3 py-2"
               >
-                <option value="">请选择分类</option>
+                <option value="">?????</option>
                 {categories.map((category) => (
                   <option key={category.id} value={category.id}>
-                    {category.parent_id ? `　└ ${category.name}` : category.name}
+                    {category.parent_id ? `?? ${category.name}` : category.name}
                   </option>
                 ))}
               </select>
             </label>
             <div>
-              <span className="mb-2 block text-sm font-medium text-slate-700">适用场景（可多选）</span>
+              <span className="mb-2 block text-sm font-medium text-slate-700">?????????</span>
               <div className="grid gap-2 sm:grid-cols-2">
                 {scenes.map((scene) => (
                   <label key={scene.id} className="flex items-start gap-2 rounded-lg border border-slate-200 p-3 text-sm">
@@ -875,14 +890,14 @@ function ProductEditModal({
             onClick={onClose}
             className="px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50"
           >
-            取消
+            ??
           </button>
           <button
             onClick={handleSubmit}
             disabled={submitting}
             className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 disabled:opacity-50"
           >
-            {submitting ? "保存中..." : "保存"}
+            {submitting ? "???..." : "??"}
           </button>
         </div>
       </div>
