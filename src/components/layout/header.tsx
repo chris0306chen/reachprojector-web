@@ -14,6 +14,7 @@ interface NavChild {
   href: string;
   label: string;
   description?: string;
+  group?: string;
 }
 
 interface NavLink {
@@ -61,21 +62,31 @@ export function Header() {
       label: t('products'),
       sectionLabel: 'SHOP BY PRODUCT',
       children: [
-        {
-          href: `/${locale}/products?category=projectors`,
-          label: 'All Projectors',
-          description: 'Projectors',
-        },
         ...productNavigation[0].children.map(([label, slug]) => ({
           href: `/${locale}/products?category=${slug}`,
           label,
-          description: 'Projectors',
+          group: 'Projectors',
         })),
-        ...productNavigation.slice(1).map((category) => ({
-          href: `/${locale}/products?category=${category.slug}`,
-          label: category.label,
-          description: `${category.children.length} product types`,
-        })),
+        {
+          href: `/${locale}/products?category=projector-mounts-stands`,
+          label: 'Mounts & Stands',
+          group: 'Projector Accessories',
+        },
+        {
+          href: `/${locale}/products?category=accessories-parts`,
+          label: 'Accessories & Parts',
+          group: 'Projector Accessories',
+        },
+        {
+          href: `/${locale}/products?category=projection-screens`,
+          label: 'Projection Screens',
+          group: 'Projector Accessories',
+        },
+        {
+          href: `/${locale}/products?category=av-furniture`,
+          label: 'AV Furniture',
+          group: 'Projector Accessories',
+        },
       ],
     },
     {
@@ -189,18 +200,47 @@ export function Header() {
                             </span>
                           </div>
                         )}
-                        <div className={link.children.length > 6 ? 'grid grid-cols-2 gap-x-2 px-2' : ''}>
-                        {link.children.map((child) => (
-                          <Link
-                            key={child.label}
-                            href={child.href}
-                            className="block rounded-lg px-3 py-2.5 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
-                          >
-                            <span className="block font-medium">{child.label}</span>
-                            {child.description && <span className="mt-0.5 block text-xs text-slate-400">{child.description}</span>}
-                          </Link>
-                        ))}
-                        </div>
+                        {link.children.some((child) => child.group) ? (
+                          <div className="grid grid-cols-2 gap-6 px-4 py-2">
+                            {['Projectors', 'Projector Accessories'].map((group) => (
+                              <section key={group} aria-labelledby={`products-${group.toLowerCase().replace(' ', '-')}`}>
+                                <h3
+                                  id={`products-${group.toLowerCase().replace(' ', '-')}`}
+                                  className="mb-2 px-2 text-xs font-bold uppercase tracking-wider text-slate-400"
+                                >
+                                  {group}
+                                </h3>
+                                <ul className="space-y-0.5">
+                                  {link.children
+                                    .filter((child) => child.group === group)
+                                    .map((child) => (
+                                      <li key={child.label}>
+                                        <Link
+                                          href={child.href}
+                                          className="block rounded-lg px-2 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-orange-50 hover:text-orange-600"
+                                        >
+                                          {child.label}
+                                        </Link>
+                                      </li>
+                                    ))}
+                                </ul>
+                              </section>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className={link.children.length > 6 ? 'grid grid-cols-2 gap-x-2 px-2' : ''}>
+                            {link.children.map((child) => (
+                              <Link
+                                key={child.label}
+                                href={child.href}
+                                className="block rounded-lg px-3 py-2.5 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                              >
+                                <span className="block font-medium">{child.label}</span>
+                                {child.description && <span className="mt-0.5 block text-xs text-slate-400">{child.description}</span>}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
@@ -397,17 +437,33 @@ export function Header() {
                             </span>
                           </div>
                         )}
-                        {link.children.map((child) => (
-                          <Link
-                            key={child.label}
-                            href={child.href}
-                            className="block py-2 pl-2 text-sm text-slate-500 hover:text-orange-500 border-l-2 border-slate-200 hover:border-orange-500 ml-1"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                          >
-                            <span className="block">{child.label}</span>
-                            {child.description && <span className="block text-xs text-slate-400">{child.description}</span>}
-                          </Link>
-                        ))}
+                        {link.children.some((child) => child.group) ? (
+                          ['Projectors', 'Projector Accessories'].map((group) => (
+                            <div key={group} className="mb-3">
+                              <p className="px-2 py-1 text-xs font-bold uppercase tracking-wider text-slate-400">{group}</p>
+                              {link.children.filter((child) => child.group === group).map((child) => (
+                                <Link
+                                  key={child.label}
+                                  href={child.href}
+                                  className="ml-1 block border-l-2 border-slate-200 py-2 pl-2 text-sm text-slate-500 hover:border-orange-500 hover:text-orange-500"
+                                  onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                  {child.label}
+                                </Link>
+                              ))}
+                            </div>
+                          ))
+                        ) : link.children.map((child) => (
+                            <Link
+                              key={child.label}
+                              href={child.href}
+                              className="block py-2 pl-2 text-sm text-slate-500 hover:text-orange-500 border-l-2 border-slate-200 hover:border-orange-500 ml-1"
+                              onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                              <span className="block">{child.label}</span>
+                              {child.description && <span className="block text-xs text-slate-400">{child.description}</span>}
+                            </Link>
+                          ))}
                       </div>
                     )}
                   </>
