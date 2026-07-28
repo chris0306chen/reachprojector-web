@@ -28,6 +28,22 @@ type ReportItem = {
 };
 
 type ImageFile = ImportedImage & { bytes: Uint8Array; mime: string };
+type LinkPreview = {
+  sourceType: "brand_website" | "amazon" | "alibaba";
+  sourceUrl: string;
+  canonicalUrl: string;
+  retrievedAt: string;
+  title: string;
+  description: string;
+  brand: string;
+  model: string;
+  sku: string;
+  price: number | null;
+  currency: string;
+  images: string[];
+  specifications: Array<{ name: string; value: string }>;
+  warnings: string[];
+};
 
 const text = (value: unknown) => String(value ?? "").trim();
 const numberOrNull = (value: unknown) => {
@@ -52,6 +68,9 @@ export default function ProductImportPage() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [history, setHistory] = useState<Array<Record<string, string | number>>>([]);
+  const [linkUrl, setLinkUrl] = useState("");
+  const [linkDraft, setLinkDraft] = useState<ImportedProduct | null>(null);
+  const [linkWarnings, setLinkWarnings] = useState<string[]>([]);
 
   useEffect(() => {
     fetch("/api/admin/products/bulk-import/history")
@@ -64,6 +83,90 @@ export default function ProductImportPage() {
     () => products.length > 0 && summary && summary.errors === 0 && !busy,
     [products.length, summary, busy]
   );
+
+  async function collectLink() {
+    setBusy(true);
+    setMessage("");
+    setLinkDraft(null);
+    try {
+      const response = await fetch("/api/admin/products/link-import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: linkUrl }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Unable to collect this product link");
+      const preview = result.data as LinkPreview;
+      const identity = preview.model || preview.title;
+      const product: ImportedProduct = {
+        sku: preview.sku.replace(/[^A-Za-z0-9._-]/g, ""),
+        brand: preview.brand,
+        model: preview.model,
+        name: preview.title,
+        slug: slugify(`${preview.brand} ${identity}`),
+        category: "Projectors",
+        retailPrice: preview.price || 0,
+        compareAtPrice: null,
+        b2bPrice: null,
+        currency: preview.currency || "USD",
+        moq: null,
+        stockStatus: "in_stock",
+        inventoryQuantity: 0,
+        leadTime: "",
+        version: "",
+        plugType: "",
+        systemLanguage: "",
+        warranty: "",
+        countryOfOrigin: "",
+        productLengthCm: null,
+        productWidthCm: null,
+        productHeightCm: null,
+        packageLengthCm: null,
+        packageWidthCm: null,
+        packageHeightCm: null,
+        netWeightKg: null,
+        grossWeightKg: null,
+        shortDescription: preview.description.slice(0, 600),
+        fullDescription: preview.description,
+        seoTitle: preview.title.slice(0, 70),
+        metaDescription: preview.description.slice(0, 170),
+        status: "draft",
+        specifications: preview.specifications.map((item) => ({ group: "Other", ...item })),
+        images: preview.images.map((url, index) => {
+          const section = index === 0 ? "main" : "gallery";
+          return {
+            originalPath: url,
+            section,
+            seoName: buildSeoImageName({ brand: preview.brand || "product", model: identity, name: preview.title }, section, index, "webp"),
+            alt: buildImageAlt({ brand: preview.brand || "Product", model: identity, name: preview.title }, section, index),
+            url,
+          };
+        }),
+        source: {
+          type: preview.sourceType,
+          url: preview.sourceUrl,
+          canonicalUrl: preview.canonicalUrl,
+          retrievedAt: preview.retrievedAt,
+          warnings: preview.warnings,
+        },
+      };
+      setLinkDraft(product);
+      setLinkWarnings(preview.warnings);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Unable to collect this product link");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function addLinkDraft() {
+    if (!linkDraft) return;
+    setProducts([linkDraft]);
+    setImageFiles([]);
+    setReport([]);
+    setSummary(null);
+    setMessage("Link data added. Review the required fields, then run preflight.");
+  }
 
   async function readWorkbook(file: File) {
     setMessage("");
@@ -112,6 +215,7 @@ export default function ProductImportPage() {
         currency: text(row.Currency) || "USD",
         moq: numberOrNull(row.MOQ),
         stockStatus: stockStatus(row["Stock Status"]),
+        inventoryQuantity: numberOrNull(row["Inventory Quantity"]) || 0,
         leadTime: text(row["Lead Time"]),
         version: text(row["Product Version"]),
         plugType: text(row["Plug Type"]),
@@ -294,6 +398,54 @@ export default function ProductImportPage() {
           <Download className="h-4 w-4" />下载标准 Excel 模板
         </a>
       </div>
+
+      <section className="rounded-xl border border-slate-200 bg-white p-5">
+        <h2 className="font-semibold text-slate-900">从产品链接导入</h2>
+        <p className="mt-1 text-sm text-slate-500">支持品牌官网；Amazon 和 Alibaba.com 在平台允许访问的范围内提取，缺失资料会保留为待审核。</p>
+        <div className="mt-4 flex flex-col gap-2 md:flex-row">
+          <input
+            type="url"
+            value={linkUrl}
+            onChange={(event) => setLinkUrl(event.target.value)}
+            placeholder="https://brand.com/product/..."
+            className="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          />
+          <button
+            type="button"
+            onClick={collectLink}
+            disabled={busy || !linkUrl}
+            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+          >
+            {busy ? <Loader2 className="mr-2 inline h-4 w-4 animate-spin" /> : null}提取产品资料
+          </button>
+        </div>
+        {linkDraft && (
+          <div className="mt-4 space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-4">
+            <div>
+              <p className="font-medium">{linkDraft.name || "待补充产品名称"}</p>
+              <p className="text-xs text-slate-500">{linkDraft.source?.type} · {linkDraft.images.length} 张候选图片</p>
+            </div>
+            <div className="grid gap-3 md:grid-cols-4">
+              <label className="text-xs text-slate-600">SKU
+                <input value={linkDraft.sku} onChange={(event) => setLinkDraft({ ...linkDraft, sku: event.target.value })} className="mt-1 w-full rounded border border-slate-300 bg-white px-2 py-2 text-sm" />
+              </label>
+              <label className="text-xs text-slate-600">品牌
+                <input value={linkDraft.brand} onChange={(event) => setLinkDraft({ ...linkDraft, brand: event.target.value })} className="mt-1 w-full rounded border border-slate-300 bg-white px-2 py-2 text-sm" />
+              </label>
+              <label className="text-xs text-slate-600">分类
+                <input value={linkDraft.category} onChange={(event) => setLinkDraft({ ...linkDraft, category: event.target.value })} className="mt-1 w-full rounded border border-slate-300 bg-white px-2 py-2 text-sm" />
+              </label>
+              <label className="text-xs text-slate-600">零售价（{linkDraft.currency}）
+                <input type="number" min="0.01" step="0.01" value={linkDraft.retailPrice || ""} onChange={(event) => setLinkDraft({ ...linkDraft, retailPrice: Number(event.target.value) })} className="mt-1 w-full rounded border border-slate-300 bg-white px-2 py-2 text-sm" />
+              </label>
+            </div>
+            {linkWarnings.map((warning) => <p key={warning} className="text-xs text-amber-700">提醒：{warning}</p>)}
+            <button type="button" onClick={addLinkDraft} disabled={!linkDraft.sku || !linkDraft.brand || !linkDraft.retailPrice} className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white disabled:opacity-50">
+              加入现有预检与草稿流程
+            </button>
+          </div>
+        )}
+      </section>
 
       <div className="grid gap-4 md:grid-cols-2">
         <label className="cursor-pointer rounded-xl border-2 border-dashed border-slate-300 bg-white p-6 hover:border-orange-400">

@@ -26,6 +26,7 @@ export const importedProductSchema = z.object({
   currency: z.string().trim().length(3).transform((value) => value.toUpperCase()),
   moq: z.number().int().positive().nullable().optional(),
   stockStatus: z.enum(["in_stock", "out_of_stock", "pre_order"]).default("in_stock"),
+  inventoryQuantity: z.number().int().min(0).max(1000000).default(0),
   leadTime: z.string().trim().max(120).default(""),
   version: z.string().trim().max(120).default(""),
   plugType: z.string().trim().max(100).default(""),
@@ -44,6 +45,13 @@ export const importedProductSchema = z.object({
   fullDescription: z.string().trim().max(20000).default(""),
   seoTitle: z.string().trim().max(70).default(""),
   metaDescription: z.string().trim().max(170).default(""),
+  source: z.object({
+    type: z.enum(["brand_website", "amazon", "alibaba"]),
+    url: z.string().url().max(2048),
+    canonicalUrl: z.string().url().max(2048),
+    retrievedAt: z.string().datetime(),
+    warnings: z.array(z.string().max(500)).max(20).default([]),
+  }).optional(),
   status: z.literal("draft").default("draft"),
   specifications: z.array(z.object({
     group: z.enum(SPECIFICATION_GROUPS),

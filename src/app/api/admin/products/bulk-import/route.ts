@@ -221,6 +221,7 @@ export async function POST(request: NextRequest) {
         specifications: legacySpecifications,
         detail_content: toProductDetailContent(product),
         stock_status: product.stockStatus,
+        inventory_quantity: product.inventoryQuantity,
         seo_title: product.seoTitle || product.name.slice(0, 70),
         meta_description: (product.metaDescription || product.shortDescription).slice(0, 170) || null,
         product_length_cm: product.productLengthCm || null,
@@ -243,6 +244,7 @@ export async function POST(request: NextRequest) {
           system_language: product.systemLanguage,
           warranty: product.warranty,
           country_of_origin: product.countryOfOrigin,
+          source: product.source,
           image_name_map: product.images.map((image) => ({
             original: image.originalPath,
             seo_name: image.seoName,

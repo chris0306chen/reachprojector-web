@@ -82,6 +82,7 @@ export const products = pgTable(
 		shipping_quote_required: boolean("shipping_quote_required").default(true).notNull(),
 		features: jsonb("features").$type<string[]>(),
 		stock_status: varchar("stock_status", { length: 20 }).default("in_stock").notNull(),
+		inventory_quantity: integer("inventory_quantity").default(0).notNull(),
 		is_bestseller: boolean("is_bestseller").default(false).notNull(),
 		is_new_arrival: boolean("is_new_arrival").default(false).notNull(),
 		is_featured: boolean("is_featured").default(false).notNull(),
