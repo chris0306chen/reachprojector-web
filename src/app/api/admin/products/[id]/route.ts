@@ -70,6 +70,26 @@ export async function PUT(
     if (updateData.price !== undefined && (!Number.isFinite(Number(updateData.price)) || Number(updateData.price) <= 0)) {
       return NextResponse.json({ error: "?????????" }, { status: 400 });
     }
+    if (updateData.is_active === true) {
+      const supabase = await getSupabaseClient();
+      const { data: currentProduct, error: currentProductError } = await supabase
+        .from("products")
+        .select("price, images, name, sku")
+        .eq("id", id)
+        .single();
+      if (currentProductError) throw currentProductError;
+      const effectivePrice = updateData.price ?? currentProduct?.price;
+      const effectiveImages = updateData.images ?? currentProduct?.images;
+      const effectiveName = updateData.name ?? currentProduct?.name;
+      const images = Array.isArray(effectiveImages) ? effectiveImages : [];
+      if (!effectiveName || !currentProduct?.sku || !Number.isFinite(Number(effectivePrice))
+          || Number(effectivePrice) <= 0 || images.length === 0) {
+        return NextResponse.json(
+          { error: "发布前必须填写产品名称、SKU、有效价格并至少上传一张主图" },
+          { status: 400 }
+        );
+      }
+    }
     if (updateData.detail_content !== undefined) {
       const detailError = validateProductDetail(updateData.detail_content);
       if (detailError) return NextResponse.json({ error: detailError }, { status: 400 });
@@ -159,13 +179,13 @@ export async function POST(
 ) {
   // This is for creating a new product
   try {
-    const _ = await params;
+    await params;
     const body = await request.json();
 
     const supabase = await getSupabaseClient();
     const { data, error } = await supabase
       .from("products")
-      .insert(body)
+      .insert({ ...body, is_active: false })
       .select()
       .single();
 

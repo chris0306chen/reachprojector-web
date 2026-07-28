@@ -16,9 +16,8 @@ export interface ProductLinkPreview {
   brand: string;
   model: string;
   sku: string;
-  price: number | null;
-  currency: string;
-  images: string[];
+  mainImages: string[];
+  detailImages: string[];
   specifications: Array<{ name: string; value: string }>;
   warnings: string[];
 }
@@ -26,15 +25,20 @@ export interface ProductLinkPreview {
 function isPrivateAddress(address: string): boolean {
   const normalized = address.toLowerCase().replace(/^::ffff:/, "");
   if (isIP(normalized) === 4) {
-    const [a, b] = normalized.split(".").map(Number);
+    const [a, b, c] = normalized.split(".").map(Number);
     return a === 10 || a === 127 || a === 0 || (a === 169 && b === 254)
       || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168)
-      || (a === 100 && b >= 64 && b <= 127) || a >= 224;
+      || (a === 100 && b >= 64 && b <= 127)
+      || (a === 192 && b === 0 && (c === 0 || c === 2))
+      || (a === 198 && (b === 18 || b === 19 || b === 51))
+      || (a === 203 && b === 0 && c === 113)
+      || a >= 224;
   }
   return normalized === "::1" || normalized === "::" || normalized.startsWith("fc")
     || normalized.startsWith("fd") || normalized.startsWith("fe8")
     || normalized.startsWith("fe9") || normalized.startsWith("fea")
-    || normalized.startsWith("feb");
+    || normalized.startsWith("feb") || normalized.startsWith("ff")
+    || normalized.startsWith("2001:db8:");
 }
 
 async function assertPublicUrl(rawUrl: string): Promise<URL> {
@@ -80,8 +84,26 @@ async function fetchHtml(rawUrl: string): Promise<{ html: string; finalUrl: stri
     }
     const declaredLength = Number(response.headers.get("content-length") || 0);
     if (declaredLength > MAX_HTML_BYTES) throw new Error("Source page is too large");
-    const bytes = new Uint8Array(await response.arrayBuffer());
-    if (bytes.byteLength > MAX_HTML_BYTES) throw new Error("Source page is too large");
+    if (!response.body) throw new Error("Source returned an empty response");
+    const reader = response.body.getReader();
+    const chunks: Uint8Array[] = [];
+    let total = 0;
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > MAX_HTML_BYTES) {
+        await reader.cancel();
+        throw new Error("Source page is too large");
+      }
+      chunks.push(value);
+    }
+    const bytes = new Uint8Array(total);
+    let offset = 0;
+    for (const chunk of chunks) {
+      bytes.set(chunk, offset);
+      offset += chunk.byteLength;
+    }
     return { html: new TextDecoder().decode(bytes), finalUrl: current };
   }
   throw new Error("Unable to retrieve source");
@@ -150,6 +172,80 @@ function absoluteHttpUrl(value: string, base: string): string | null {
   }
 }
 
+function stripTags(value: string): string {
+  return decodeHtml(value.replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " "));
+}
+
+function imageKey(value: string): string {
+  try {
+    const url = new URL(value);
+    return `${url.hostname}${url.pathname}`.toLowerCase();
+  } catch {
+    return value.toLowerCase();
+  }
+}
+
+function extractDetailImages(html: string, base: string, identity: string, mainImages: string[]): string[] {
+  const stopWords = new Set(["projector", "laser", "ultra", "product", "vision"]);
+  const tokens = identity.toLowerCase().split(/[^a-z0-9]+/)
+    .filter((token) => token.length >= 3 && !stopWords.has(token));
+  const mainKeys = new Set(mainImages.map(imageKey));
+  const found = new Map<string, string>();
+  for (const match of html.matchAll(/<img\b[^>]*>/gi)) {
+    const tag = match[0];
+    const attr = (name: string) => tag.match(
+      new RegExp(`\\b${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s>]+))`, "i")
+    )?.slice(1).find(Boolean) || "";
+    const srcset = attr("srcset");
+    const source = attr("data-src") || attr("data-original") || attr("src")
+      || srcset.split(",")[0]?.trim().split(/\s+/)[0] || "";
+    const url = absoluteHttpUrl(decodeHtml(source), base);
+    const alt = decodeHtml(attr("alt"));
+    if (!url || /\.(?:svg|ico)(?:\?|$)/i.test(url) || /logo|icon|placeholder|spinner/i.test(`${url} ${alt}`)) continue;
+    const haystack = `${url} ${alt}`.toLowerCase();
+    if (tokens.length && !tokens.some((token) => haystack.includes(token))) continue;
+    const key = imageKey(url);
+    if (!mainKeys.has(key) && !found.has(key)) found.set(key, url);
+    if (found.size >= 20) break;
+  }
+  return [...found.values()];
+}
+
+function extractHtmlSpecifications(html: string): Array<{ name: string; value: string }> {
+  const result: Array<{ name: string; value: string }> = [];
+  const add = (name: string, value: string) => {
+    const cleanName = stripTags(name);
+    const cleanValue = stripTags(value);
+    if (!cleanName || !cleanValue || cleanName.length > 120 || cleanValue.length > 500) return;
+    if (!result.some((item) => item.name.toLowerCase() === cleanName.toLowerCase())) {
+      result.push({ name: cleanName, value: cleanValue });
+    }
+  };
+  for (const row of html.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)) {
+    const cells = [...row[1].matchAll(/<t[hd]\b[^>]*>([\s\S]*?)<\/t[hd]>/gi)].map((cell) => cell[1]);
+    if (cells.length === 2) add(cells[0], cells[1]);
+  }
+  for (const term of html.matchAll(/<dt\b[^>]*>([\s\S]*?)<\/dt>\s*<dd\b[^>]*>([\s\S]*?)<\/dd>/gi)) {
+    add(term[1], term[2]);
+  }
+  return result;
+}
+
+function extractDescriptionSpecifications(description: string): Array<{ name: string; value: string }> {
+  const patterns: Array<[string, RegExp, (match: RegExpMatchArray) => string]> = [
+    ["Brightness", /\b(\d{3,5})\s*ISO\s*lumens?\b/i, (match) => `${match[1]} ISO lumens`],
+    ["Native Contrast", /\b([\d,]+:\d+)\s*native contrast\b/i, (match) => match[1]],
+    ["Color Gamut", /\b(\d{2,3}%\s*Rec\.?\s*2020)\b/i, (match) => match[1]],
+    ["Input Lag", /\b(\d+(?:\.\d+)?)\s*ms\s*(?:latency|input lag)\b/i, (match) => `${match[1]} ms`],
+    ["Throw Ratio", /\b(\d(?:\.\d+)?:1)\s*throw ratio\b/i, (match) => match[1]],
+  ];
+  return patterns.flatMap(([name, pattern, format]) => {
+    const match = description.match(pattern);
+    return match ? [{ name, value: format(match) }] : [];
+  });
+}
+
 export async function collectProductLink(rawUrl: string): Promise<ProductLinkPreview> {
   const initial = await assertPublicUrl(rawUrl);
   const sourceType = classifySource(initial.hostname);
@@ -159,9 +255,6 @@ export async function collectProductLink(rawUrl: string): Promise<ProductLinkPre
   }
   const { html, finalUrl } = await fetchHtml(initial.toString());
   const product = extractProductJsonLd(html);
-  const offers = product?.offers && typeof product.offers === "object"
-    ? (Array.isArray(product.offers) ? product.offers[0] : product.offers) as Record<string, unknown>
-    : {};
   const brandValue = product?.brand;
   const brand = typeof brandValue === "string" ? brandValue
     : brandValue && typeof brandValue === "object" ? String((brandValue as Record<string, unknown>).name || "") : "";
@@ -172,21 +265,31 @@ export async function collectProductLink(rawUrl: string): Promise<ProductLinkPre
   const images = [...strings(product?.image), meta(html, "og:image")]
     .map((value) => absoluteHttpUrl(value, finalUrl))
     .filter((value): value is string => Boolean(value));
-  const priceNumber = Number(offers?.price);
   const canonicalMatch = html.match(/<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["'][^>]*>/i);
   const canonicalUrl = absoluteHttpUrl(canonicalMatch?.[1] || finalUrl, finalUrl) || finalUrl;
   if (!product) warnings.push("No Product JSON-LD was found; review all extracted fields.");
-  if (!images.length) warnings.push("No publishable product images were found.");
+  const mainImages = [...new Map(images.map((url) => [imageKey(url), url])).values()].slice(0, 10);
+  const detailImages = extractDetailImages(html, finalUrl, title, mainImages);
+  if (!mainImages.length) warnings.push("No product main images were found.");
+  if (!detailImages.length) warnings.push("No distinct product detail images were found.");
+  if (mainImages.length || detailImages.length) warnings.push("Review manufacturer media rights before publishing.");
   if (!title) warnings.push("Product title is missing.");
 
   const additional = product?.additionalProperty;
-  const specifications = Array.isArray(additional) ? additional.flatMap((item) => {
+  const structuredSpecifications = Array.isArray(additional) ? additional.flatMap((item) => {
     if (!item || typeof item !== "object") return [];
     const record = item as Record<string, unknown>;
     const name = String(record.name || "").trim();
     const value = String(record.value || "").trim();
     return name && value ? [{ name, value }] : [];
-  }).slice(0, 80) : [];
+  }) : [];
+  const specifications = [
+    ...structuredSpecifications,
+    ...extractHtmlSpecifications(html),
+    ...extractDescriptionSpecifications(description),
+  ].filter((item, index, items) => items.findIndex(
+    (candidate) => candidate.name.toLowerCase() === item.name.toLowerCase()
+  ) === index).slice(0, 80);
 
   return {
     sourceType,
@@ -198,9 +301,8 @@ export async function collectProductLink(rawUrl: string): Promise<ProductLinkPre
     brand: decodeHtml(brand),
     model: String(product?.model || product?.mpn || "").trim(),
     sku: String(product?.sku || "").trim(),
-    price: Number.isFinite(priceNumber) && priceNumber > 0 ? priceNumber : null,
-    currency: String(offers?.priceCurrency || "USD").toUpperCase().slice(0, 3),
-    images: [...new Set(images)].slice(0, 20),
+    mainImages,
+    detailImages,
     specifications,
     warnings,
   };

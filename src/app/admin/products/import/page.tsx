@@ -38,9 +38,8 @@ type LinkPreview = {
   brand: string;
   model: string;
   sku: string;
-  price: number | null;
-  currency: string;
-  images: string[];
+  mainImages: string[];
+  detailImages: string[];
   specifications: Array<{ name: string; value: string }>;
   warnings: string[];
 };
@@ -105,12 +104,12 @@ export default function ProductImportPage() {
         name: preview.title,
         slug: slugify(`${preview.brand} ${identity}`),
         category: "Projectors",
-        retailPrice: preview.price || 0,
+        retailPrice: 0,
         compareAtPrice: null,
         b2bPrice: null,
-        currency: preview.currency || "USD",
+        currency: "USD",
         moq: null,
-        stockStatus: "in_stock",
+        stockStatus: "out_of_stock",
         inventoryQuantity: 0,
         leadTime: "",
         version: "",
@@ -132,8 +131,8 @@ export default function ProductImportPage() {
         metaDescription: preview.description.slice(0, 170),
         status: "draft",
         specifications: preview.specifications.map((item) => ({ group: "Other", ...item })),
-        images: preview.images.map((url, index) => {
-          const section = index === 0 ? "main" : "gallery";
+        images: [...preview.mainImages.map((url, index) => {
+          const section: ImportedImage["section"] = index === 0 ? "main" : "gallery";
           return {
             originalPath: url,
             section,
@@ -141,7 +140,13 @@ export default function ProductImportPage() {
             alt: buildImageAlt({ brand: preview.brand || "Product", model: identity, name: preview.title }, section, index),
             url,
           };
-        }),
+        }), ...preview.detailImages.map((url, index) => ({
+          originalPath: url,
+          section: "detail_images" as const,
+          seoName: buildSeoImageName({ brand: preview.brand || "product", model: identity, name: preview.title }, "detail_images", index, "webp"),
+          alt: buildImageAlt({ brand: preview.brand || "Product", model: identity, name: preview.title }, "detail_images", index),
+          url,
+        }))],
         source: {
           type: preview.sourceType,
           url: preview.sourceUrl,
@@ -425,7 +430,7 @@ export default function ProductImportPage() {
               <p className="font-medium">{linkDraft.name || "待补充产品名称"}</p>
               <p className="text-xs text-slate-500">{linkDraft.source?.type} · {linkDraft.images.length} 张候选图片</p>
             </div>
-            <div className="grid gap-3 md:grid-cols-4">
+            <div className="grid gap-3 md:grid-cols-3">
               <label className="text-xs text-slate-600">SKU
                 <input value={linkDraft.sku} onChange={(event) => setLinkDraft({ ...linkDraft, sku: event.target.value })} className="mt-1 w-full rounded border border-slate-300 bg-white px-2 py-2 text-sm" />
               </label>
@@ -435,12 +440,9 @@ export default function ProductImportPage() {
               <label className="text-xs text-slate-600">分类
                 <input value={linkDraft.category} onChange={(event) => setLinkDraft({ ...linkDraft, category: event.target.value })} className="mt-1 w-full rounded border border-slate-300 bg-white px-2 py-2 text-sm" />
               </label>
-              <label className="text-xs text-slate-600">零售价（{linkDraft.currency}）
-                <input type="number" min="0.01" step="0.01" value={linkDraft.retailPrice || ""} onChange={(event) => setLinkDraft({ ...linkDraft, retailPrice: Number(event.target.value) })} className="mt-1 w-full rounded border border-slate-300 bg-white px-2 py-2 text-sm" />
-              </label>
             </div>
             {linkWarnings.map((warning) => <p key={warning} className="text-xs text-amber-700">提醒：{warning}</p>)}
-            <button type="button" onClick={addLinkDraft} disabled={!linkDraft.sku || !linkDraft.brand || !linkDraft.retailPrice} className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white disabled:opacity-50">
+            <button type="button" onClick={addLinkDraft} disabled={!linkDraft.sku || !linkDraft.brand} className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white disabled:opacity-50">
               加入现有预检与草稿流程
             </button>
           </div>
