@@ -57,7 +57,7 @@ BEGIN
     name, slug, description, sort_order, is_active
   ) VALUES (
     '4K Laser Projectors',
-    '4k-laser-projectors',
+    'high-end-home-theater-projectors',
     'Premium 4K laser projectors for home cinema, commercial AV and project installations.',
     10,
     true

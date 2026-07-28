@@ -21,7 +21,7 @@ export default async function HomePage() {
       icon: Monitor,
       titleKey: 'categories.projectors',
       descKey: 'categories.projectorsDesc',
-      href: '/products?category=4k-laser-projectors',
+      href: '/products?category=high-end-home-theater-projectors',
       image: '/images/categories/4k-laser-projector.jpg',
     },
     {
@@ -341,7 +341,7 @@ export default async function HomePage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <Link
-              href="/products?category=4k-laser-projectors"
+              href="/products?category=high-end-home-theater-projectors"
               className="group relative h-[300px] lg:h-[350px] rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
             >
               <div

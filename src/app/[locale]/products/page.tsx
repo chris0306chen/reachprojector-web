@@ -9,10 +9,10 @@ import { getTranslations } from 'next-intl/server';
 export const dynamic = 'force-dynamic';
 
 const CATEGORY_META: Record<string, { title: string; description: string; keywords: string[] }> = {
-  '4k-laser-projectors': {
-    title: '4K Laser Projectors Wholesale | XGIMI, Hisense, JMGO',
-    description: 'Shop wholesale 4K laser projectors. Triple laser and ultra-short throw options with bulk pricing and destination-specific shipping terms.',
-    keywords: ['4k laser projector', 'wholesale 4k projector', 'xgimi 4k projector', 'hisense 4k laser'],
+  'high-end-home-theater-projectors': {
+    title: 'High-End Home Theater Projectors | XGIMI, Hisense, JMGO',
+    description: 'Shop premium home theater projectors with 4K and RGB laser options, bulk pricing, and destination-specific shipping terms.',
+    keywords: ['high end home theater projector', '4k laser projector', 'wholesale home cinema projector', 'xgimi 4k projector'],
   },
   'ust-laser-tv': {
     title: 'UST Laser TV Wholesale | Ultra Short Throw | Hisense, Formovie',

@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { Menu, X, Search, ChevronDown, ShoppingCart, Store, Building2 } from 'lucide-react';
 import { LanguageSwitcher } from './language-switcher';
@@ -24,6 +25,7 @@ interface NavLink {
 
 export function Header() {
   const locale = useLocale();
+  const router = useRouter();
   const t = useTranslations('nav');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -31,6 +33,8 @@ export function Header() {
   const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(null);
   const [businessMode, setBusinessMode] = useState<BusinessMode>('retail');
   const [cartCount] = useState(0);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -56,11 +60,23 @@ export function Header() {
     {
       label: t('products'),
       sectionLabel: 'SHOP BY PRODUCT',
-      children: productNavigation.map((category) => ({
-        href: `/${locale}/products?category=${category.slug}`,
-        label: category.label,
-        description: `${category.children.length} product types`,
-      })),
+      children: [
+        {
+          href: `/${locale}/products?category=projectors`,
+          label: 'All Projectors',
+          description: 'Projectors',
+        },
+        ...productNavigation[0].children.map(([label, slug]) => ({
+          href: `/${locale}/products?category=${slug}`,
+          label,
+          description: 'Projectors',
+        })),
+        ...productNavigation.slice(1).map((category) => ({
+          href: `/${locale}/products?category=${category.slug}`,
+          label: category.label,
+          description: `${category.children.length} product types`,
+        })),
+      ],
     },
     {
       label: t('shopByScene'),
@@ -108,6 +124,15 @@ export function Header() {
 
   const toggleMobileDropdown = (label: string) => {
     setOpenMobileDropdown(openMobileDropdown === label ? null : label);
+  };
+
+  const submitSearch = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const query = searchQuery.trim();
+    if (!query) return;
+    router.push(`/${locale}/products?search=${encodeURIComponent(query)}`);
+    setIsSearchOpen(false);
+    setIsMobileMenuOpen(false);
   };
 
   return (
@@ -223,14 +248,42 @@ export function Header() {
               </button>
             </div>
 
-            {/* Search */}
-            <Link
-              href={`/${locale}/products`}
-              className="hidden sm:flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 transition-colors"
-              aria-label={t('search')}
-            >
-              <Search className="w-4 h-4" />
-            </Link>
+            {/* Product search */}
+            <div className="relative hidden sm:block">
+              <button
+                type="button"
+                onClick={() => setIsSearchOpen((open) => !open)}
+                className="flex items-center gap-2 p-2 text-sm text-slate-500 hover:text-slate-900 transition-colors"
+                aria-label={t('search')}
+                aria-expanded={isSearchOpen}
+              >
+                <Search className="w-4 h-4" />
+              </button>
+              {isSearchOpen && (
+                <form
+                  onSubmit={submitSearch}
+                  className="absolute right-0 top-full mt-3 flex w-[min(22rem,calc(100vw-2rem))] items-center gap-2 rounded-xl border border-slate-200 bg-white p-2 shadow-xl"
+                >
+                  <Search className="ml-2 h-4 w-4 shrink-0 text-slate-400" />
+                  <input
+                    autoFocus
+                    type="search"
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                    placeholder="Search products, brands or models"
+                    className="min-w-0 flex-1 border-0 bg-transparent px-1 py-2 text-sm text-slate-900 outline-none placeholder:text-slate-400"
+                    aria-label={t('search')}
+                  />
+                  <button
+                    type="submit"
+                    disabled={!searchQuery.trim()}
+                    className="rounded-lg bg-orange-500 px-3 py-2 text-xs font-semibold text-white hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    Search
+                  </button>
+                </form>
+              )}
+            </div>
 
             {/* Shopping Cart */}
             <Link
@@ -300,6 +353,25 @@ export function Header() {
                 {t('b2b')}
               </button>
             </div>
+
+            <form onSubmit={submitSearch} className="mb-4 flex items-center gap-2 rounded-lg border border-slate-200 p-2">
+              <Search className="ml-1 h-4 w-4 shrink-0 text-slate-400" />
+              <input
+                type="search"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="Search products, brands or models"
+                className="min-w-0 flex-1 border-0 bg-transparent px-1 py-2 text-sm outline-none"
+                aria-label={t('search')}
+              />
+              <button
+                type="submit"
+                disabled={!searchQuery.trim()}
+                className="rounded-md bg-orange-500 px-3 py-2 text-xs font-semibold text-white disabled:opacity-40"
+              >
+                Search
+              </button>
+            </form>
 
             {navLinks.map((link) => (
               <div key={link.label}>

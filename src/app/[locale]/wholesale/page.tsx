@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import RFQForm from '@/components/b2b/RFQForm';
 
 export const metadata: Metadata = {
@@ -74,22 +75,22 @@ export default function WholesalePage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-center text-3xl font-bold text-gray-900 sm:text-4xl">Explore Our Product Categories</h2>
           <div className="mt-12 grid gap-6 md:grid-cols-2">
-            <a href="/products?category=4k-laser-projectors" className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-900 to-blue-700 p-8 text-white shadow-lg transition hover:shadow-xl">
+            <Link href="/products?category=high-end-home-theater-projectors" className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-900 to-blue-700 p-8 text-white shadow-lg transition hover:shadow-xl">
               <div className="relative z-10">
                 <h3 className="text-2xl font-bold">4K Laser Projectors</h3>
                 <p className="mt-2 text-blue-200">Ultra-bright, long-lasting laser projectors for home theater, business, and education.</p>
                 <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-cyan-300 group-hover:gap-2 transition-all">Browse Projectors<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg></span>
               </div>
               <div className="absolute -right-6 -bottom-6 h-40 w-40 rounded-full bg-white/10" />
-            </a>
-            <a href="/products?category=projector-mounts" className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900 to-gray-700 p-8 text-white shadow-lg transition hover:shadow-xl">
+            </Link>
+            <Link href="/products?category=projector-mounts" className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900 to-gray-700 p-8 text-white shadow-lg transition hover:shadow-xl">
               <div className="relative z-10">
                 <h3 className="text-2xl font-bold">Printers &amp; Scanners</h3>
                 <p className="mt-2 text-gray-300">Reliable office printers and high-speed scanners for every business environment.</p>
                 <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-cyan-300 group-hover:gap-2 transition-all">Browse Printers<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg></span>
               </div>
               <div className="absolute -right-6 -bottom-6 h-40 w-40 rounded-full bg-white/10" />
-            </a>
+            </Link>
           </div>
         </div>
       </section>

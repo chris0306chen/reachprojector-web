@@ -161,7 +161,10 @@ export async function getProducts(filters: ProductFilters = {}): Promise<Product
     query = query.lte('price', maxPrice.toString());
   }
   if (search) {
-    query = query.or(`name.ilike.%${search}%,brand.ilike.%${search}%`);
+    const safeSearch = search.replace(/[,%()]/g, ' ').trim();
+    if (safeSearch) {
+      query = query.or(`name.ilike.%${safeSearch}%,brand.ilike.%${safeSearch}%,model.ilike.%${safeSearch}%`);
+    }
   }
   if (isBestseller) {
     query = query.eq('is_bestseller', true);

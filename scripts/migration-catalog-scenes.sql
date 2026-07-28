@@ -42,12 +42,12 @@ ON CONFLICT (slug) DO UPDATE SET
 
 WITH children(name, slug, parent_slug, sort_order) AS (
   VALUES
-    ('Home Theater Projectors', 'home-theater-projectors', 'projectors', 11),
-    ('UST / Laser TV', 'ust-laser-tv', 'projectors', 12),
-    ('Portable Projectors', 'portable-projectors', 'projectors', 13),
+    ('Laser TVs (Ultra Short Throw)', 'ust-laser-tv', 'projectors', 11),
+    ('Home Smart Projectors', 'home-smart-projectors', 'projectors', 12),
+    ('Portable / Mini Projectors', 'portable-mini-projectors', 'projectors', 13),
     ('Business & Education Projectors', 'business-education-projectors', 'projectors', 14),
-    ('Installation Projectors', 'installation-projectors', 'projectors', 15),
-    ('4K Laser Projectors', '4k-laser-projectors', 'projectors', 16),
+    ('Engineering Projectors', 'engineering-projectors', 'projectors', 15),
+    ('High-End Home Theater Projectors', 'high-end-home-theater-projectors', 'projectors', 16),
     ('ALR / CLR Screens', 'alr-clr-screens', 'projection-screens', 21),
     ('Motorized Screens', 'motorized-screens', 'projection-screens', 22),
     ('Fixed Frame Screens', 'fixed-frame-screens', 'projection-screens', 23),
@@ -112,9 +112,9 @@ SELECT product.id, scene.id
 FROM public.products product
 JOIN public.categories category ON category.id = product.category_id
 JOIN public.scenes scene ON
-  (scene.slug = 'home-cinema' AND category.slug IN ('projectors', '4k-laser-projectors', 'home-theater-projectors', 'projection-screens'))
+  (scene.slug = 'home-cinema' AND category.slug IN ('projectors', 'high-end-home-theater-projectors', 'home-smart-projectors', 'projection-screens'))
   OR (scene.slug = 'living-room-laser-tv' AND category.slug IN ('ust-laser-tv', 'alr-clr-screens', 'av-furniture'))
-  OR (scene.slug = 'outdoor-cinema' AND category.slug IN ('portable-projectors', 'portable-outdoor-screens'))
+  OR (scene.slug = 'outdoor-cinema' AND category.slug IN ('portable-mini-projectors', 'portable-outdoor-screens'))
   OR (scene.slug = 'meeting-rooms' AND category.slug IN ('business-education-projectors', 'motorized-screens', 'projector-mounts'))
 ON CONFLICT DO NOTHING;
 
