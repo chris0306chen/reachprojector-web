@@ -110,8 +110,43 @@ export function toProductDetailContent(product: ImportedProduct): ProductDetailC
     name: item.name,
     value: item.value,
   }));
+  const addSpecification = (
+    group: ProductSpecificationItem["group"],
+    name: string,
+    value: string | number | null | undefined
+  ) => {
+    if (value === null || value === undefined || String(value).trim() === "") return;
+    if (specifications.some((item) => item.name.toLowerCase() === name.toLowerCase())) return;
+    specifications.push({ group, name, value: String(value) });
+  };
+  const dimensions = (
+    length: number | null | undefined,
+    width: number | null | undefined,
+    height: number | null | undefined
+  ) => length && width && height ? `${length} × ${width} × ${height} cm` : "";
+
+  addSpecification("System", "Product Version", product.version);
+  addSpecification("System", "System Language", product.systemLanguage);
+  addSpecification("Power", "Plug Type", product.plugType);
+  addSpecification(
+    "Dimensions",
+    "Product Dimensions",
+    dimensions(product.productLengthCm, product.productWidthCm, product.productHeightCm)
+  );
+  addSpecification("Dimensions", "Net Weight", product.netWeightKg ? `${product.netWeightKg} kg` : "");
+  addSpecification(
+    "Package",
+    "Package Dimensions",
+    dimensions(product.packageLengthCm, product.packageWidthCm, product.packageHeightCm)
+  );
+  addSpecification("Package", "Gross Weight", product.grossWeightKg ? `${product.grossWeightKg} kg` : "");
+  addSpecification("Other", "Country of Origin", product.countryOfOrigin);
+  addSpecification("Other", "Lead Time", product.leadTime);
+  addSpecification("Other", "Minimum Order Quantity", product.moq);
+  addSpecification("Other", "Warranty", product.warranty);
+
   return {
-    specifications,
+    specifications: specifications.slice(0, 80),
     real_photos: product.images
       .filter((image) => image.section === "real_photos" && image.url)
       .slice(0, 2)
