@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
-import { validateProductDetail } from "@/lib/product-detail";
+import { normalizeProductDetail, validateProductDetail } from "@/lib/product-detail";
 
 export async function PUT(
   request: NextRequest,
@@ -35,7 +35,7 @@ export async function PUT(
       const supabase = await getSupabaseClient();
       const { data: currentProduct, error: currentProductError } = await supabase
         .from("products")
-        .select("import_data")
+        .select("import_data, detail_content")
         .eq("id", id)
         .single();
       if (currentProductError) throw currentProductError;
@@ -43,6 +43,18 @@ export async function PUT(
         ...((currentProduct?.import_data as Record<string, unknown> | null) || {}),
         warranty,
       };
+      const detail = normalizeProductDetail(updateData.detail_content ?? currentProduct?.detail_content);
+      const warrantyIndex = detail.specifications.findIndex(
+        (item) => item.name.toLowerCase() === "warranty"
+      );
+      if (warranty) {
+        const warrantySpecification = { group: "Other" as const, name: "Warranty", value: warranty };
+        if (warrantyIndex >= 0) detail.specifications[warrantyIndex] = warrantySpecification;
+        else detail.specifications.push(warrantySpecification);
+      } else if (warrantyIndex >= 0) {
+        detail.specifications.splice(warrantyIndex, 1);
+      }
+      updateData.detail_content = detail;
     }
 
     // The legacy admin form calls compare-at price "sale_price".
