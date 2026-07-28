@@ -9,6 +9,9 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
+    const sceneIds = Array.isArray(body.scene_ids)
+      ? [...new Set(body.scene_ids.filter((value: unknown): value is string => typeof value === "string"))]
+      : null;
 
     const allowedFields = new Set([
       "name", "slug", "brand", "category_id", "price", "compare_at_price",
@@ -83,6 +86,20 @@ export async function PUT(
       .single();
 
     if (error) throw error;
+    if (sceneIds) {
+      const { error: deleteSceneError } = await supabase
+        .from("product_scenes")
+        .delete()
+        .eq("product_id", id);
+      if (deleteSceneError) throw deleteSceneError;
+
+      if (sceneIds.length) {
+        const { error: insertSceneError } = await supabase
+          .from("product_scenes")
+          .insert(sceneIds.map((sceneId) => ({ product_id: id, scene_id: sceneId })));
+        if (insertSceneError) throw insertSceneError;
+      }
+    }
     return NextResponse.json({ success: true, data });
   } catch (error) {
     console.error("Failed to update product:", error);

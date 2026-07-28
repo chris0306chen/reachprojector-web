@@ -40,6 +40,7 @@ export async function generateMetadata({ searchParams }: ProductsPageProps): Pro
 }
 
 interface ProductsPageProps {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{
     category?: string;
     brand?: string;
@@ -51,8 +52,9 @@ interface ProductsPageProps {
   }>;
 }
 
-export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+export default async function ProductsPage({ params: routeParams, searchParams }: ProductsPageProps) {
   const t = await getTranslations('products');
+  const { locale } = await routeParams;
   const params = await searchParams;
   const page = parseInt(params.page || '1');
   const sortBy = (params.sort as 'newest' | 'price_asc' | 'price_desc' | 'name') || 'newest';
@@ -78,7 +80,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <nav className="flex items-center gap-2 text-sm">
-            <Link href="/" className="text-slate-500 hover:text-slate-900 transition-colors">{t('breadcrumb.home')}</Link>
+            <Link href={`/${locale}`} className="text-slate-500 hover:text-slate-900 transition-colors">{t('breadcrumb.home')}</Link>
             <span className="text-slate-300">/</span>
             <span className="text-slate-900 font-medium">{t('title')}</span>
             {params.category && (
@@ -104,7 +106,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 <ul className="space-y-1.5">
                   <li>
                     <Link
-                      href="/products"
+                      href={`/${locale}/products`}
                       className={`text-sm ${!params.category ? 'text-orange-500 font-medium' : 'text-slate-500 hover:text-slate-900'} transition-colors`}
                     >
                       {t('filters.allProducts')}
@@ -113,8 +115,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   {categories.map((cat) => (
                     <li key={cat.slug}>
                       <Link
-                        href={`/products?category=${cat.slug}`}
-                        className={`text-sm ${params.category === cat.slug ? 'text-orange-500 font-medium' : 'text-slate-500 hover:text-slate-900'} transition-colors`}
+                        href={`/${locale}/products?category=${cat.slug}`}
+                        className={`text-sm ${cat.parent_id ? 'pl-3' : 'font-semibold'} ${params.category === cat.slug ? 'text-orange-500 font-medium' : 'text-slate-500 hover:text-slate-900'} transition-colors`}
                       >
                         {cat.name}
                       </Link>
@@ -130,7 +132,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   {brands.map((brand) => (
                     <li key={brand}>
                       <Link
-                        href={`/products?brand=${encodeURIComponent(brand)}${params.category ? `&category=${params.category}` : ''}`}
+                        href={`/${locale}/products?brand=${encodeURIComponent(brand)}${params.category ? `&category=${params.category}` : ''}`}
                         className={`text-sm ${params.brand === brand ? 'text-orange-500 font-medium' : 'text-slate-500 hover:text-slate-900'} transition-colors`}
                       >
                         {brand}
@@ -153,7 +155,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   ].map((range) => (
                     <Link
                       key={range.label}
-                      href={`/products?minPrice=${range.min}${range.max ? `&maxPrice=${range.max}` : ''}${params.category ? `&category=${params.category}` : ''}`}
+                      href={`/${locale}/products?minPrice=${range.min}${range.max ? `&maxPrice=${range.max}` : ''}${params.category ? `&category=${params.category}` : ''}`}
                       className="block text-sm text-slate-500 hover:text-slate-900 transition-colors"
                     >
                       {range.label}
