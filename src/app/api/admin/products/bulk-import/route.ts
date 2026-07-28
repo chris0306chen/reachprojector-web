@@ -116,7 +116,7 @@ async function buildReport(products: ImportedProduct[]): Promise<ProductReport[]
     }
     const representativeQuote = matchingQuotes[0]?.quote;
     const matchingCountries = new Set(matchingQuotes.map((item) => item.countryCode).filter(Boolean)).size;
-    if (!product.warranty) warnings.push("保修期限需要确认");
+    if (product.retailPrice <= 0) warnings.push("零售价待填写；该草稿不能发布");
     if (!product.seoTitle) warnings.push("SEO 标题为空，将暂时使用产品名称");
     if (!product.metaDescription) warnings.push("Meta 描述为空，将暂时使用产品简短描述");
     if (!product.images.some((image) => image.section === "main")) warnings.push("没有匹配到产品主图");
@@ -138,17 +138,12 @@ async function buildReport(products: ImportedProduct[]): Promise<ProductReport[]
         factualSummary: [
           `${product.name} by ${product.brand}.`,
           product.model ? `Model: ${product.model}.` : "",
-          product.version ? `Version: ${product.version}.` : "",
-          product.grossWeightKg ? `Packed weight: ${product.grossWeightKg} kg.` : "",
-          packagingComplete ? `Package size: ${product.packageLengthCm} x ${product.packageWidthCm} x ${product.packageHeightCm} cm.` : "",
-          product.moq ? `Minimum order quantity: ${product.moq}.` : "",
-          product.leadTime ? `Lead time: ${product.leadTime}.` : "",
+          ...product.specifications.slice(0, 6).map((item) => `${item.name}: ${item.value}.`),
         ].filter(Boolean).join(" "),
-        faq: [
-          product.warranty ? { question: `What is the warranty for ${product.name}?`, answer: product.warranty } : null,
-          product.leadTime ? { question: `What is the lead time for ${product.name}?`, answer: product.leadTime } : null,
-          product.plugType ? { question: `Which plug type is supplied with ${product.name}?`, answer: product.plugType } : null,
-        ].filter((item): item is { question: string; answer: string } => Boolean(item)),
+        faq: product.specifications.length ? [{
+          question: `What are the key specifications of ${product.name}?`,
+          answer: product.specifications.slice(0, 5).map((item) => `${item.name}: ${item.value}`).join("; "),
+        }] : [],
         volumetricWeightKg: representativeQuote?.volumetricWeightPerPackageKg ?? null,
         chargeableWeightKg: representativeQuote?.chargeableWeightPerPackageKg ?? null,
         matchingShippingCountries: matchingCountries,

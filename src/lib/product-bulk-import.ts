@@ -20,7 +20,7 @@ export const importedProductSchema = z.object({
   name: z.string().trim().min(1).max(255),
   slug: z.string().trim().min(1).max(255).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
   category: z.string().trim().min(1).max(100),
-  retailPrice: z.number().positive().max(99999999),
+  retailPrice: z.number().min(0).max(99999999),
   compareAtPrice: z.number().positive().max(99999999).nullable().optional(),
   b2bPrice: z.number().positive().max(99999999).nullable().optional(),
   currency: z.string().trim().length(3).transform((value) => value.toUpperCase()),
