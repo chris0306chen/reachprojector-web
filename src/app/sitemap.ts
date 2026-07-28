@@ -26,7 +26,10 @@ function buildAlternates(path: string) {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticPaths = ['', '/products', '/solutions', '/about', '/contact', '/wholesale']
+  const staticPaths = [
+    '', '/products', '/solutions', '/about', '/contact', '/wholesale',
+    '/shipping-policy', '/returns-refunds', '/warranty', '/privacy', '/terms',
+  ]
   const staticPages: MetadataRoute.Sitemap = staticPaths.flatMap((path) => locales.map((locale) => ({ url: `${SITE_URL}/${locale}${path}`, lastModified: new Date(), changeFrequency: path === '' ? ('daily' as const) : ('monthly' as const), priority: path === '' ? 1 : path === '/products' ? 0.9 : 0.7, alternates: buildAlternates(path) })))
   const categories = productNavigation.flatMap((category) => [
     category.slug,
