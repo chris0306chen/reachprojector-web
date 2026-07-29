@@ -617,6 +617,9 @@ function ProductEditModal({
   const [detailContent, setDetailContent] = useState<ProductDetailContent>(
     normalizeProductDetail(product.detail_content)
   );
+  const [productImages, setProductImages] = useState<string[]>(
+    Array.isArray(product.images) ? product.images : []
+  );
   const estimatedVolumetricWeight = form.package_length_cm && form.package_width_cm && form.package_height_cm
     ? (form.package_length_cm * form.package_width_cm * form.package_height_cm) / 5000
     : null;
@@ -747,6 +750,7 @@ function ProductEditModal({
           price: form.price || 0,
           description: form.description,
           short_description: form.short_description,
+          images: productImages,
           features: form.features.map((item) => item.trim()).filter(Boolean).slice(0, 8),
           sale_price: form.sale_price || null,
           detail_content: detailContentForSave,
@@ -1129,6 +1133,9 @@ function ProductEditModal({
           </section>
           <ProductDetailEditor
             value={detailContent}
+            productName={form.name}
+            mainImages={productImages}
+            onMainImagesChange={setProductImages}
             onChange={setDetailContent}
             onError={setError}
           />

@@ -13,11 +13,15 @@ import {
 
 interface ProductDetailEditorProps {
   value: ProductDetailContent | null | undefined;
+  productName: string;
+  mainImages: string[];
+  onMainImagesChange: (images: string[]) => void;
   onChange: (value: ProductDetailContent) => void;
   onError: (message: string) => void;
 }
 
 type ImageSection = "real_photos" | "detail_images" | "logistics_images";
+type UploadSection = "main_images" | ImageSection;
 
 const inputClass =
   "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20";
@@ -29,7 +33,45 @@ const logisticsTypeLabels: Record<string, string> = {
   "Bulk Stock": "大货库存", Warehouse: "仓库", Packing: "包装", Shipment: "出库发货",
 };
 
-export function ProductDetailEditor({ value, onChange, onError }: ProductDetailEditorProps) {
+const seoSlug = (value: string) =>
+  value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 100)
+  || "reach-projector";
+
+const optimizeProductImage = async (
+  file: File,
+  section: UploadSection
+): Promise<Blob> => {
+  const bitmap = await createImageBitmap(file);
+  const maxWidth = section === "main_images" ? 2048 : section === "detail_images" ? 1600 : 1920;
+  const maxHeight = section === "detail_images" ? 12000 : section === "main_images" ? 2048 : 1920;
+  const scale = Math.min(1, maxWidth / bitmap.width, maxHeight / bitmap.height);
+  const width = Math.max(1, Math.round(bitmap.width * scale));
+  const height = Math.max(1, Math.round(bitmap.height * scale));
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext("2d");
+  if (!context) {
+    bitmap.close();
+    throw new Error("浏览器无法处理该图片");
+  }
+  context.drawImage(bitmap, 0, 0, width, height);
+  bitmap.close();
+  const blob = await new Promise<Blob | null>((resolve) =>
+    canvas.toBlob(resolve, "image/webp", 0.84)
+  );
+  if (!blob) throw new Error("图片转换为 WebP 失败");
+  return blob;
+};
+
+export function ProductDetailEditor({
+  value,
+  productName,
+  mainImages,
+  onMainImagesChange,
+  onChange,
+  onError,
+}: ProductDetailEditorProps) {
   // Preserve incomplete rows while editing; save-time validation handles cleanup.
   const detail = value || EMPTY_PRODUCT_DETAIL;
   const [specificationSource, setSpecificationSource] = useState("");
@@ -44,17 +86,44 @@ export function ProductDetailEditor({ value, onChange, onError }: ProductDetailE
     return next;
   };
 
-  const uploadImage = async (file: File): Promise<ProductDetailImage | null> => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("kind", "product-image");
-    const response = await fetch("/api/admin/upload", { method: "POST", body: formData });
-    const result = await response.json();
-    if (!response.ok || typeof result.url !== "string") {
-      onError(result.error || "图片上传失败");
+  const uploadImage = async (
+    file: File,
+    section: UploadSection,
+    index: number
+  ): Promise<ProductDetailImage | null> => {
+    try {
+      const sectionName = section === "main_images"
+        ? "main"
+        : section === "real_photos"
+        ? "product-photo"
+        : section === "detail_images"
+          ? "product-detail"
+          : "shipping";
+      const position = String(index + 1).padStart(2, "0");
+      const storageName = `${seoSlug(productName)}-${sectionName}-${position}.webp`;
+      const optimized = await optimizeProductImage(file, section);
+      const formData = new FormData();
+      formData.append("file", new File([optimized], storageName, { type: "image/webp" }));
+      formData.append("kind", "product-image");
+      formData.append("storageName", storageName);
+      const response = await fetch("/api/admin/upload", { method: "POST", body: formData });
+      const result = await response.json();
+      if (!response.ok || typeof result.url !== "string") {
+        onError(result.error || "图片上传失败");
+        return null;
+      }
+      const altSection = section === "main_images"
+        ? "product image"
+        : section === "real_photos"
+        ? "product photo"
+        : section === "detail_images"
+          ? "product details"
+          : "shipping photo";
+      return { url: result.url, alt: `${productName.trim()} ${altSection} ${index + 1}` };
+    } catch (error) {
+      onError(error instanceof Error ? error.message : "图片处理失败");
       return null;
     }
-    return { url: result.url, alt: "" };
   };
 
   const addUploadedImages = async (section: ImageSection, files?: FileList | null) => {
@@ -66,7 +135,9 @@ export function ProductDetailEditor({ value, onChange, onError }: ProductDetailE
       return;
     }
     const selected = Array.from(files).slice(0, available);
-    const uploaded = (await Promise.all(selected.map(uploadImage))).filter(
+    const uploaded = (await Promise.all(
+      selected.map((file, index) => uploadImage(file, section, detail[section].length + index))
+    )).filter(
       (image): image is ProductDetailImage => Boolean(image)
     );
     if (!uploaded.length) return;
@@ -78,6 +149,20 @@ export function ProductDetailEditor({ value, onChange, onError }: ProductDetailE
     } else {
       update(section, [...detail[section], ...uploaded]);
     }
+  };
+
+  const addMainImages = async (files?: FileList | null) => {
+    if (!files?.length) return;
+    const available = 8 - mainImages.length;
+    if (available <= 0) {
+      onError("产品主图最多上传八张");
+      return;
+    }
+    const selected = Array.from(files).slice(0, available);
+    const uploaded = (await Promise.all(
+      selected.map((file, index) => uploadImage(file, "main_images", mainImages.length + index))
+    )).filter((image): image is ProductDetailImage => Boolean(image));
+    if (uploaded.length) onMainImagesChange([...mainImages, ...uploaded.map((image) => image.url)]);
   };
 
   const importSpecifications = () => {
@@ -189,6 +274,46 @@ export function ProductDetailEditor({ value, onChange, onError }: ProductDetailE
 
   return (
     <div className="space-y-8 border-t border-slate-200 pt-6">
+      <section>
+        <h3 className="text-base font-semibold text-slate-900">
+          产品主图 <span className="text-red-500">*</span>
+        </h3>
+        <p className="mt-1 text-sm text-slate-500">
+          最多八张；上传时自动生成 SEO 文件名、转换 WebP，并限制在 2048px 内。
+        </p>
+        {mainImages.length > 0 && (
+          <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {mainImages.map((url, index) => (
+              <div key={`${url}-${index}`} className="relative rounded-xl border border-slate-200 p-2">
+                <img src={url} alt="" className="aspect-square w-full rounded-lg bg-slate-100 object-contain" />
+                <button
+                  type="button"
+                  onClick={() => onMainImagesChange(mainImages.filter((_, itemIndex) => itemIndex !== index))}
+                  className="absolute right-3 top-3 rounded-full bg-white p-1 text-red-500 shadow"
+                  aria-label="删除主图"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        <label className="mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-600 hover:border-orange-400 hover:bg-orange-50/40">
+          <ImagePlus className="h-4 w-4" />
+          批量上传主图
+          <input
+            type="file"
+            multiple
+            accept="image/jpeg,image/png,image/webp,image/avif"
+            className="hidden"
+            onChange={(event) => {
+              void addMainImages(event.target.files);
+              event.target.value = "";
+            }}
+          />
+        </label>
+      </section>
+
       <div>
         <h3 className="text-base font-semibold text-slate-900">产品详情页模板</h3>
         <p className="mt-1 text-sm text-slate-500">仅填写真实参数并上传真实图片；保存不会自动发布产品。</p>
