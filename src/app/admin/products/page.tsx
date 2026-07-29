@@ -596,28 +596,60 @@ function ProductEditModal({
     setSubmitting(true);
     setError(null);
     try {
-      const {
-        warranty,
-        seo_title: seoTitle,
-        meta_description: metaDescription,
-        ...baseForm
-      } = form;
+      const changed = (current: unknown, initial: unknown) =>
+        JSON.stringify(current ?? null) !== JSON.stringify(initial ?? null);
+      const optionalFields = {
+        ...(form.weight_kg && changed(form.weight_kg, product.weight_kg || product.weight)
+          ? { weight_kg: form.weight_kg } : {}),
+        ...(form.product_length_cm && changed(form.product_length_cm, product.product_length_cm)
+          ? { product_length_cm: form.product_length_cm } : {}),
+        ...(form.product_width_cm && changed(form.product_width_cm, product.product_width_cm)
+          ? { product_width_cm: form.product_width_cm } : {}),
+        ...(form.product_height_cm && changed(form.product_height_cm, product.product_height_cm)
+          ? { product_height_cm: form.product_height_cm } : {}),
+        ...(form.net_weight_kg && changed(form.net_weight_kg, product.net_weight_kg)
+          ? { net_weight_kg: form.net_weight_kg } : {}),
+        ...(form.packed_weight_kg && changed(form.packed_weight_kg, product.packed_weight_kg)
+          ? { packed_weight_kg: form.packed_weight_kg } : {}),
+        ...(form.package_length_cm && changed(form.package_length_cm, product.package_length_cm)
+          ? { package_length_cm: form.package_length_cm } : {}),
+        ...(form.package_width_cm && changed(form.package_width_cm, product.package_width_cm)
+          ? { package_width_cm: form.package_width_cm } : {}),
+        ...(form.package_height_cm && changed(form.package_height_cm, product.package_height_cm)
+          ? { package_height_cm: form.package_height_cm } : {}),
+        ...(product.shipping_class !== undefined && changed(form.shipping_class, product.shipping_class)
+          ? { shipping_class: form.shipping_class } : {}),
+        ...(product.package_count !== undefined && changed(form.package_count, product.package_count)
+          ? { package_count: form.package_count } : {}),
+        ...(product.shipping_quote_required !== undefined
+          && changed(form.shipping_quote_required, product.shipping_quote_required)
+          ? { shipping_quote_required: form.shipping_quote_required } : {}),
+        ...(form.oem_available && changed(form.oem_available, product.oem_available || product.support_oem)
+          ? { oem_available: true } : {}),
+        ...(form.oem_notes.trim() && changed(form.oem_notes, product.oem_notes)
+          ? { oem_notes: form.oem_notes.trim() } : {}),
+      };
       const res = await fetch(`/api/admin/products/${product.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...baseForm,
+          name: form.name,
+          category_id: form.category_id || null,
+          price: form.price,
+          description: form.description,
+          short_description: form.short_description,
           features: form.features.map((item) => item.trim()).filter(Boolean).slice(0, 8),
           sale_price: form.sale_price || null,
-          weight_kg: form.weight_kg || null,
           detail_content: detailContent,
           scene_ids: sceneIds,
+          ...optionalFields,
           ...(JSON.stringify(attachments) !== JSON.stringify(product.attachments || [])
             ? { attachments }
             : {}),
-          ...(seoTitle !== (product.seo_title || "") ? { seo_title: seoTitle } : {}),
-          ...(metaDescription !== (product.meta_description || "") ? { meta_description: metaDescription } : {}),
-          ...(warranty !== (product.import_data?.warranty || "") ? { warranty } : {}),
+          ...(form.seo_title !== (product.seo_title || "") ? { seo_title: form.seo_title } : {}),
+          ...(form.meta_description !== (product.meta_description || "")
+            ? { meta_description: form.meta_description } : {}),
+          ...(form.warranty !== (product.import_data?.warranty || "") ? { warranty: form.warranty } : {}),
         }),
       });
       if (res.ok) {
@@ -673,8 +705,13 @@ function ProductEditModal({
         </div>
         <div className="p-6 space-y-4">
           {error && <div className="rounded-lg bg-red-50 p-3 text-red-600 text-sm">{error}</div>}
+          <div className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
+            <span className="font-semibold">*</span> 为上架必填。上架前还需确认 SKU、有效价格并至少上传一张主图；其余字段均可后补。
+          </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">产品名称</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              产品名称 <span className="text-red-500">*</span>
+            </label>
             <input
               type="text"
               value={form.name}
@@ -746,7 +783,9 @@ function ProductEditModal({
           </section>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">价格 (USD)</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                价格 (USD) <span className="text-red-500">*</span>
+              </label>
               <input
                 type="number"
                 step="0.01"
@@ -925,7 +964,7 @@ function ProductEditModal({
               <p className="text-xs text-slate-500">每个产品选择一个主分类，并可同时选择多个应用场景。</p>
             </div>
             <label className="block text-sm text-slate-700">
-              <span className="mb-1 block font-medium">主分类</span>
+              <span className="mb-1 block font-medium">主分类 <span className="text-red-500">*</span></span>
               <select
                 value={form.category_id}
                 onChange={(event) => setForm({ ...form, category_id: event.target.value })}
