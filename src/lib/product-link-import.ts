@@ -1,5 +1,7 @@
-import { isIP } from "node:net";
+import { isIP, type LookupFunction } from "node:net";
 import { lookup } from "node:dns/promises";
+import { request as httpRequest } from "node:http";
+import { request as httpsRequest } from "node:https";
 
 const MAX_HTML_BYTES = 2 * 1024 * 1024;
 const MAX_REDIRECTS = 4;
@@ -41,7 +43,13 @@ function isPrivateAddress(address: string): boolean {
     || normalized.startsWith("2001:db8:");
 }
 
-async function assertPublicUrl(rawUrl: string): Promise<URL> {
+interface ResolvedTarget {
+  url: URL;
+  address: string;
+  family: 4 | 6;
+}
+
+async function assertPublicUrl(rawUrl: string): Promise<ResolvedTarget> {
   const url = new URL(rawUrl);
   if (!["http:", "https:"].includes(url.protocol)) throw new Error("Only HTTP and HTTPS URLs are allowed");
   if (url.username || url.password) throw new Error("URLs with embedded credentials are not allowed");
@@ -49,7 +57,11 @@ async function assertPublicUrl(rawUrl: string): Promise<URL> {
   if (!addresses.length || addresses.some(({ address }) => isPrivateAddress(address))) {
     throw new Error("Private or reserved network addresses are not allowed");
   }
-  return url;
+  return {
+    url,
+    address: addresses[0].address,
+    family: addresses[0].family === 6 ? 6 : 4,
+  };
 }
 
 function classifySource(hostname: string): ProductLinkSource {
@@ -59,52 +71,82 @@ function classifySource(hostname: string): ProductLinkSource {
   return "brand_website";
 }
 
-async function fetchHtml(rawUrl: string): Promise<{ html: string; finalUrl: string }> {
-  let current = (await assertPublicUrl(rawUrl)).toString();
-  for (let redirect = 0; redirect <= MAX_REDIRECTS; redirect += 1) {
-    const response = await fetch(current, {
-      redirect: "manual",
+function requestHtml(target: ResolvedTarget): Promise<{
+  status: number;
+  location: string;
+  contentType: string;
+  declaredLength: number;
+  bytes: Uint8Array;
+}> {
+  return new Promise((resolve, reject) => {
+    const pinnedLookup: LookupFunction = (_hostname, options, callback) => {
+      if (options.all) {
+        callback(null, [{ address: target.address, family: target.family }]);
+      } else {
+        callback(null, target.address, target.family);
+      }
+    };
+    const request = (target.url.protocol === "https:" ? httpsRequest : httpRequest)(target.url, {
       headers: {
         Accept: "text/html,application/xhtml+xml",
         "Accept-Language": "en-US,en;q=0.9",
         "User-Agent": "ReachProjectorCatalogBot/1.0 (+https://reachprojector.com)",
       },
-      signal: AbortSignal.timeout(15_000),
+      lookup: pinnedLookup,
+      timeout: 15_000,
+    }, (response) => {
+      const status = response.statusCode || 0;
+      const contentType = String(response.headers["content-type"] || "");
+      const declaredLength = Number(response.headers["content-length"] || 0);
+      const chunks: Uint8Array[] = [];
+      let total = 0;
+      response.on("data", (chunk: Buffer) => {
+        total += chunk.byteLength;
+        if (total > MAX_HTML_BYTES) {
+          response.destroy(new Error("Source page is too large"));
+          return;
+        }
+        chunks.push(chunk);
+      });
+      response.on("end", () => {
+        const bytes = new Uint8Array(total);
+        let offset = 0;
+        for (const chunk of chunks) {
+          bytes.set(chunk, offset);
+          offset += chunk.byteLength;
+        }
+        resolve({
+          status,
+          location: String(response.headers.location || ""),
+          contentType,
+          declaredLength,
+          bytes,
+        });
+      });
+      response.on("error", reject);
     });
+    request.on("timeout", () => request.destroy(new Error("Source request timed out")));
+    request.on("error", reject);
+    request.end();
+  });
+}
+
+async function fetchHtml(rawUrl: string): Promise<{ html: string; finalUrl: string }> {
+  let current = await assertPublicUrl(rawUrl);
+  for (let redirect = 0; redirect <= MAX_REDIRECTS; redirect += 1) {
+    const response = await requestHtml(current);
     if ([301, 302, 303, 307, 308].includes(response.status)) {
-      const location = response.headers.get("location");
+      const location = response.location;
       if (!location || redirect === MAX_REDIRECTS) throw new Error("Too many or invalid redirects");
-      current = (await assertPublicUrl(new URL(location, current).toString())).toString();
+      current = await assertPublicUrl(new URL(location, current.url).toString());
       continue;
     }
-    if (!response.ok) throw new Error(`Source returned HTTP ${response.status}`);
-    const contentType = response.headers.get("content-type") || "";
-    if (!contentType.includes("text/html") && !contentType.includes("application/xhtml+xml")) {
+    if (response.status < 200 || response.status >= 300) throw new Error(`Source returned HTTP ${response.status}`);
+    if (!response.contentType.includes("text/html") && !response.contentType.includes("application/xhtml+xml")) {
       throw new Error("Source did not return an HTML page");
     }
-    const declaredLength = Number(response.headers.get("content-length") || 0);
-    if (declaredLength > MAX_HTML_BYTES) throw new Error("Source page is too large");
-    if (!response.body) throw new Error("Source returned an empty response");
-    const reader = response.body.getReader();
-    const chunks: Uint8Array[] = [];
-    let total = 0;
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      total += value.byteLength;
-      if (total > MAX_HTML_BYTES) {
-        await reader.cancel();
-        throw new Error("Source page is too large");
-      }
-      chunks.push(value);
-    }
-    const bytes = new Uint8Array(total);
-    let offset = 0;
-    for (const chunk of chunks) {
-      bytes.set(chunk, offset);
-      offset += chunk.byteLength;
-    }
-    return { html: new TextDecoder().decode(bytes), finalUrl: current };
+    if (response.declaredLength > MAX_HTML_BYTES) throw new Error("Source page is too large");
+    return { html: new TextDecoder().decode(response.bytes), finalUrl: current.url.toString() };
   }
   throw new Error("Unable to retrieve source");
 }
@@ -248,12 +290,12 @@ function extractDescriptionSpecifications(description: string): Array<{ name: st
 
 export async function collectProductLink(rawUrl: string): Promise<ProductLinkPreview> {
   const initial = await assertPublicUrl(rawUrl);
-  const sourceType = classifySource(initial.hostname);
+  const sourceType = classifySource(initial.url.hostname);
   const warnings: string[] = [];
   if (sourceType !== "brand_website") {
     warnings.push("Marketplace pages may restrict automated access. Use an authorized platform API or supplier export when extraction is incomplete.");
   }
-  const { html, finalUrl } = await fetchHtml(initial.toString());
+  const { html, finalUrl } = await fetchHtml(initial.url.toString());
   const product = extractProductJsonLd(html);
   const brandValue = product?.brand;
   const brand = typeof brandValue === "string" ? brandValue
@@ -293,7 +335,7 @@ export async function collectProductLink(rawUrl: string): Promise<ProductLinkPre
 
   return {
     sourceType,
-    sourceUrl: initial.toString(),
+    sourceUrl: initial.url.toString(),
     canonicalUrl,
     retrievedAt: new Date().toISOString(),
     title: decodeHtml(title),
