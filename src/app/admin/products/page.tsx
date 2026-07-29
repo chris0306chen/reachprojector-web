@@ -728,7 +728,7 @@ function ProductEditModal({
         body: JSON.stringify({
           name: form.name,
           category_id: form.category_id || null,
-          price: form.price,
+          price: form.price || 0,
           description: form.description,
           short_description: form.short_description,
           features: form.features.map((item) => item.trim()).filter(Boolean).slice(0, 8),
@@ -745,10 +745,11 @@ function ProductEditModal({
           ...(form.warranty !== (product.import_data?.warranty || "") ? { warranty: form.warranty } : {}),
         }),
       });
+      const data = await res.json();
       if (res.ok) {
+        if (data.warning) window.alert(data.warning);
         onSuccess();
       } else {
-        const data = await res.json();
         setError(data.error || "保存失败");
       }
     } catch (err) {
