@@ -89,8 +89,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       url: urlData.publicUrl,
-      name: file.name,
+      name: safeName,
       size: file.size,
+      format: file.type,
     });
   } catch (error) {
     console.error("Upload error:", error);
