@@ -10,6 +10,11 @@ interface Product {
   id: string;
   name: string;
   slug: string;
+  description?: string;
+  short_description?: string;
+  features?: string[];
+  seo_title?: string;
+  meta_description?: string;
   category_id?: string;
   price: number;
   purchase_price?: number;
@@ -531,6 +536,11 @@ function ProductEditModal({
   const [sceneIds, setSceneIds] = useState<string[]>(product.scene_ids || []);
   const [form, setForm] = useState({
     name: product.name || "",
+    short_description: product.short_description || "",
+    description: product.description || "",
+    features: Array.isArray(product.features) ? product.features : [],
+    seo_title: product.seo_title || "",
+    meta_description: product.meta_description || "",
     category_id: product.category_id || "",
     price: product.price || 0,
     sale_price: product.sale_price || null as number | null,
@@ -591,6 +601,7 @@ function ProductEditModal({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          features: form.features.map((item) => item.trim()).filter(Boolean).slice(0, 8),
           sale_price: form.sale_price || null,
           weight_kg: form.weight_kg || null,
           attachments: attachments,
@@ -661,6 +672,68 @@ function ProductEditModal({
               className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
             />
           </div>
+          <section className="rounded-xl border border-slate-200 p-4 space-y-4">
+            <div>
+              <h3 className="font-semibold text-slate-900">页面内容与 SEO/GEO</h3>
+              <p className="text-xs text-slate-500">以下内容显示在英文客户前台；每条核心卖点单独一行。</p>
+            </div>
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-slate-700">简短说明（标题和价格下方）</span>
+              <textarea
+                value={form.short_description}
+                onChange={(e) => setForm({ ...form, short_description: e.target.value })}
+                rows={3}
+                maxLength={600}
+                placeholder="A concise factual product summary in English."
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-slate-700">核心卖点（标题下方的勾选列表）</span>
+              <textarea
+                value={form.features.join("\n")}
+                onChange={(e) => setForm({ ...form, features: e.target.value.split("\n").slice(0, 8) })}
+                rows={6}
+                placeholder={"3300 ISO lumens\n6000:1 native contrast\n110% Rec.2020 color gamut"}
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              />
+              <span className="mt-1 block text-xs text-slate-500">最多 8 条，只填写可验证的真实卖点。</span>
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-slate-700">完整文字说明（参数区下方）</span>
+              <textarea
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                rows={6}
+                maxLength={20000}
+                placeholder="Detailed factual product description in English."
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              />
+            </label>
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="block">
+                <span className="mb-1 block text-sm font-medium text-slate-700">SEO 标题</span>
+                <input
+                  value={form.seo_title}
+                  onChange={(e) => setForm({ ...form, seo_title: e.target.value })}
+                  maxLength={70}
+                  placeholder="English SEO title, up to 70 characters"
+                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                />
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-sm font-medium text-slate-700">Meta 描述</span>
+                <textarea
+                  value={form.meta_description}
+                  onChange={(e) => setForm({ ...form, meta_description: e.target.value })}
+                  rows={3}
+                  maxLength={170}
+                  placeholder="Factual English meta description, up to 170 characters"
+                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                />
+              </label>
+            </div>
+          </section>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">价格 (USD)</label>

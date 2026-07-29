@@ -5,7 +5,6 @@ import {
   EMPTY_PRODUCT_DETAIL,
   LOGISTICS_IMAGE_TYPES,
   SPECIFICATION_GROUPS,
-  normalizeProductDetail,
   type ProductDetailContent,
   type ProductDetailImage,
   type ProductLogisticsImage,
@@ -30,7 +29,8 @@ const logisticsTypeLabels: Record<string, string> = {
 };
 
 export function ProductDetailEditor({ value, onChange, onError }: ProductDetailEditorProps) {
-  const detail = normalizeProductDetail(value || EMPTY_PRODUCT_DETAIL);
+  // Preserve incomplete rows while editing; save-time validation handles cleanup.
+  const detail = value || EMPTY_PRODUCT_DETAIL;
   const update = <K extends keyof ProductDetailContent>(key: K, next: ProductDetailContent[K]) =>
     onChange({ ...detail, [key]: next });
 
