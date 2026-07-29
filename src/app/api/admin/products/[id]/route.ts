@@ -107,8 +107,40 @@ export async function PUT(
       }
     }
     if (updateData.detail_content !== undefined) {
-      const detailError = validateProductDetail(updateData.detail_content);
+      const normalizedDetail = normalizeProductDetail(updateData.detail_content);
+      const detailError = validateProductDetail(normalizedDetail);
       if (detailError) return NextResponse.json({ error: detailError }, { status: 400 });
+      updateData.detail_content = normalizedDetail;
+    }
+    if (updateData.images !== undefined || updateData.detail_content !== undefined) {
+      const supabase = await getSupabaseClient();
+      const { data: currentProduct, error: currentProductError } = await supabase
+        .from("products")
+        .select("images, import_data")
+        .eq("id", id)
+        .single();
+      if (currentProductError) throw currentProductError;
+      const currentImportData =
+        currentProduct?.import_data && typeof currentProduct.import_data === "object"
+          ? currentProduct.import_data as Record<string, unknown>
+          : {};
+      const currentBackup =
+        currentImportData.admin_media_backup && typeof currentImportData.admin_media_backup === "object"
+          ? currentImportData.admin_media_backup as Record<string, unknown>
+          : {};
+      updateData.import_data = {
+        ...currentImportData,
+        ...(
+          updateData.import_data && typeof updateData.import_data === "object"
+            ? updateData.import_data as Record<string, unknown>
+            : {}
+        ),
+        admin_media_backup: {
+          ...currentBackup,
+          images: updateData.images ?? currentProduct?.images ?? [],
+          detail_content: updateData.detail_content ?? currentBackup.detail_content ?? null,
+        },
+      };
     }
     const positiveNumericFields = [
       "product_length_cm", "product_width_cm", "product_height_cm", "net_weight_kg",

@@ -91,6 +91,16 @@ function getSeoGeoStatus(product: Pick<Product,
   return { label: "未完成", className: "bg-slate-100 text-slate-600", missing };
 }
 
+function getProductThumbnail(product: Product) {
+  if (product.images?.[0]) return product.images[0];
+  if (product.image_url) return product.image_url;
+  const detail = normalizeProductDetail(product.detail_content);
+  return detail.real_photos[0]?.url
+    || detail.detail_images[0]?.url
+    || detail.logistics_images[0]?.url
+    || "";
+}
+
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -419,9 +429,9 @@ export default function AdminProductsPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        {product.image_url ? (
+                        {getProductThumbnail(product) ? (
                           <img
-                            src={product.image_url}
+                            src={getProductThumbnail(product)}
                             alt={product.name}
                             className="w-10 h-10 rounded-lg object-cover bg-slate-100"
                           />
@@ -431,7 +441,13 @@ export default function AdminProductsPage() {
                           </div>
                         )}
                         <div>
-                          <div className="text-sm font-medium text-slate-900">{product.name}</div>
+                          <Link
+                            href={`/admin/products/${product.id}/preview`}
+                            className="text-sm font-medium text-slate-900 hover:text-orange-600 hover:underline"
+                            title="打开产品草稿预览"
+                          >
+                            {product.name}
+                          </Link>
                           <div className="text-xs text-slate-500">/{product.slug}</div>
                         </div>
                       </div>

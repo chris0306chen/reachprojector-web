@@ -73,6 +73,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       data: (data || []).map((product) => ({
         ...product,
+        images: Array.isArray(product.images)
+          ? product.images
+          : product.import_data?.admin_media_backup?.images || [],
+        detail_content: product.detail_content
+          || product.import_data?.admin_media_backup?.detail_content
+          || product.import_data?.detail_content,
         ...sourcingByProduct.get(product.id),
         scene_ids: scenesByProduct.get(product.id) || [],
       })),
