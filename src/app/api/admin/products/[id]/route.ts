@@ -16,6 +16,7 @@ export async function PUT(
     const allowedFields = new Set([
       "name", "slug", "brand", "category_id", "price", "compare_at_price",
       "description", "short_description", "images", "specifications", "features",
+      "seo_title", "meta_description",
       "stock_status", "is_bestseller", "is_new_arrival", "is_featured", "is_active",
       "sort_order", "weight_kg", "oem_available", "oem_notes", "attachments",
       "detail_content",
