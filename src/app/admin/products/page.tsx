@@ -610,9 +610,11 @@ function ProductEditModal({
           features: form.features.map((item) => item.trim()).filter(Boolean).slice(0, 8),
           sale_price: form.sale_price || null,
           weight_kg: form.weight_kg || null,
-          attachments: attachments,
           detail_content: detailContent,
           scene_ids: sceneIds,
+          ...(JSON.stringify(attachments) !== JSON.stringify(product.attachments || [])
+            ? { attachments }
+            : {}),
           ...(seoTitle !== (product.seo_title || "") ? { seo_title: seoTitle } : {}),
           ...(metaDescription !== (product.meta_description || "") ? { meta_description: metaDescription } : {}),
           ...(warranty !== (product.import_data?.warranty || "") ? { warranty } : {}),
