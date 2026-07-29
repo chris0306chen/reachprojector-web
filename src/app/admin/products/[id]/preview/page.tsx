@@ -7,6 +7,10 @@ import { ProductDetailSections } from "@/components/product-detail-sections";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
 
 export const dynamic = "force-dynamic";
+export const metadata = {
+  title: "产品草稿预览 | REACH 管理后台",
+  robots: { index: false, follow: false },
+};
 
 export default async function AdminProductPreviewPage({
   params,

@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
+import { getCurrentUser, hasPermission } from "@/lib/auth";
 import { normalizeProductDetail, validateProductDetail } from "@/lib/product-detail";
 
 const OPTIONAL_PRODUCT_COLUMNS = new Set([
-  "oem_available", "oem_notes", "attachments", "detail_content",
+  "model", "oem_available", "oem_notes", "attachments", "detail_content", "weight_kg",
   "product_length_cm", "product_width_cm", "product_height_cm", "net_weight_kg",
   "packed_weight_kg", "package_length_cm", "package_width_cm", "package_height_cm",
   "shipping_class", "package_count", "shipping_quote_required",
@@ -17,11 +18,19 @@ function getMissingProductColumn(error: { message?: string } | null) {
   return match?.[1] || null;
 }
 
+async function authorizeProductAdmin() {
+  const user = await getCurrentUser();
+  return user && hasPermission(user, "products") ? user : null;
+}
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    if (!await authorizeProductAdmin()) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const { id } = await params;
     const body = await request.json();
     const sceneIds = Array.isArray(body.scene_ids)
@@ -29,7 +38,7 @@ export async function PUT(
       : null;
 
     const allowedFields = new Set([
-      "name", "slug", "brand", "category_id", "price", "compare_at_price",
+      "name", "sku", "model", "slug", "brand", "category_id", "price", "currency", "compare_at_price",
       "description", "short_description", "images", "specifications", "features",
       "seo_title", "meta_description",
       "stock_status", "is_bestseller", "is_new_arrival", "is_featured", "is_active",
@@ -51,15 +60,23 @@ export async function PUT(
       const supabase = await getSupabaseClient();
       const { data: currentProduct, error: currentProductError } = await supabase
         .from("products")
-        .select("import_data, detail_content")
+        .select("import_data")
         .eq("id", id)
         .single();
       if (currentProductError) throw currentProductError;
+      const currentImportData =
+        currentProduct?.import_data && typeof currentProduct.import_data === "object"
+          ? currentProduct.import_data as Record<string, unknown>
+          : {};
+      const mediaBackup =
+        currentImportData.admin_media_backup && typeof currentImportData.admin_media_backup === "object"
+          ? currentImportData.admin_media_backup as Record<string, unknown>
+          : {};
       updateData.import_data = {
-        ...((currentProduct?.import_data as Record<string, unknown> | null) || {}),
+        ...currentImportData,
         warranty,
       };
-      const detail = normalizeProductDetail(updateData.detail_content ?? currentProduct?.detail_content);
+      const detail = normalizeProductDetail(updateData.detail_content ?? mediaBackup.detail_content);
       const warrantyIndex = detail.specifications.findIndex(
         (item) => item.name.toLowerCase() === "warranty"
       );
@@ -86,22 +103,39 @@ export async function PUT(
     if (updateData.price !== undefined && (!Number.isFinite(Number(updateData.price)) || Number(updateData.price) < 0)) {
       return NextResponse.json({ error: "产品价格不能小于 0" }, { status: 400 });
     }
-    if (updateData.is_active === true) {
-      const supabase = await getSupabaseClient();
-      const { data: currentProduct, error: currentProductError } = await supabase
-        .from("products")
-        .select("price, images, name, sku")
-        .eq("id", id)
-        .single();
-      if (currentProductError) throw currentProductError;
-      const effectivePrice = updateData.price ?? currentProduct?.price;
-      const effectiveImages = updateData.images ?? currentProduct?.images;
-      const effectiveName = updateData.name ?? currentProduct?.name;
+    const publicationSupabase = await getSupabaseClient();
+    const { data: publicationProduct, error: publicationProductError } = await publicationSupabase
+      .from("products")
+      .select("price, images, name, sku, brand, slug, category_id, is_active, import_data")
+      .eq("id", id)
+      .single();
+    if (publicationProductError) throw publicationProductError;
+    const effectiveActive = updateData.is_active ?? publicationProduct?.is_active;
+    if (effectiveActive === true) {
+      const publicationImportData =
+        publicationProduct?.import_data && typeof publicationProduct.import_data === "object"
+          ? publicationProduct.import_data as Record<string, unknown>
+          : {};
+      const publicationMediaBackup =
+        publicationImportData.admin_media_backup && typeof publicationImportData.admin_media_backup === "object"
+          ? publicationImportData.admin_media_backup as Record<string, unknown>
+          : {};
+      const effectivePrice = updateData.price ?? publicationProduct?.price;
+      const effectiveImages = updateData.images
+        ?? (Array.isArray(publicationProduct?.images) && publicationProduct.images.length
+          ? publicationProduct.images
+          : publicationMediaBackup.images);
+      const effectiveName = updateData.name ?? publicationProduct?.name;
+      const effectiveSku = updateData.sku ?? publicationProduct?.sku;
+      const effectiveBrand = updateData.brand ?? publicationProduct?.brand;
+      const effectiveSlug = updateData.slug ?? publicationProduct?.slug;
+      const effectiveCategory = updateData.category_id ?? publicationProduct?.category_id;
       const images = Array.isArray(effectiveImages) ? effectiveImages : [];
-      if (!effectiveName || !currentProduct?.sku || !Number.isFinite(Number(effectivePrice))
+      if (!effectiveName || !effectiveSku || !effectiveBrand || !effectiveSlug || !effectiveCategory
+          || !Number.isFinite(Number(effectivePrice))
           || Number(effectivePrice) <= 0 || images.length === 0) {
         return NextResponse.json(
-          { error: "发布前必须填写产品名称、SKU、有效价格并至少上传一张主图" },
+          { error: "发布前必须填写产品名称、SKU、品牌、Slug、分类、有效价格并至少上传一张主图" },
           { status: 400 }
         );
       }
@@ -243,6 +277,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    if (!await authorizeProductAdmin()) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const { id } = await params;
     const supabase = await getSupabaseClient();
     const { error } = await supabase.from("products").delete().eq("id", id);
@@ -255,25 +292,15 @@ export async function DELETE(
 }
 
 export async function POST(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  // This is for creating a new product
-  try {
-    await params;
-    const body = await request.json();
-
-    const supabase = await getSupabaseClient();
-    const { data, error } = await supabase
-      .from("products")
-      .insert({ ...body, is_active: false })
-      .select()
-      .single();
-
-    if (error) throw error;
-    return NextResponse.json({ success: true, data }, { status: 201 });
-  } catch (error) {
-    console.error("Failed to create product:", error);
-    return NextResponse.json({ error: "创建产品失败" }, { status: 500 });
+  await params;
+  if (!await authorizeProductAdmin()) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  return NextResponse.json(
+    { error: "请使用产品导入或批量导入功能创建草稿" },
+    { status: 405, headers: { Allow: "PUT, DELETE" } }
+  );
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
+import { getCurrentUser, hasPermission } from "@/lib/auth";
 
 /**
  * POST /api/admin/products/batch-update
@@ -12,6 +13,10 @@ import { getSupabaseClient } from "@/storage/database/supabase-client";
  */
 export async function POST(request: NextRequest) {
   try {
+    const user = await getCurrentUser();
+    if (!user || !hasPermission(user, "products")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const body = await request.json();
     const { action, ids, value } = body;
 
@@ -62,6 +67,29 @@ export async function POST(request: NextRequest) {
           { error: `Unknown action: ${action}. Supported: toggle_active, update_price, update_stock` },
           { status: 400 }
         );
+    }
+
+    if (action === "toggle_active" && value === true) {
+      const { data: products, error: productError } = await supabase
+        .from("products")
+        .select("id, name, sku, brand, slug, category_id, price, images, import_data")
+        .in("id", ids);
+      if (productError) throw productError;
+      const invalid = (products || []).filter((product) => {
+        const backup = product.import_data?.admin_media_backup;
+        const images = Array.isArray(product.images) && product.images.length
+          ? product.images
+          : Array.isArray(backup?.images) ? backup.images : [];
+        return !product.name || !product.sku || !product.brand || !product.slug || !product.category_id
+          || !Number.isFinite(Number(product.price)) || Number(product.price) <= 0
+          || images.length === 0;
+      });
+      if (invalid.length) {
+        return NextResponse.json({
+          error: "以下产品缺少上架必填资料：产品名称、SKU、品牌、Slug、分类、有效价格或主图",
+          products: invalid.map((product) => ({ id: product.id, name: product.name })),
+        }, { status: 400 });
+      }
     }
 
     const { data, error } = await supabase
