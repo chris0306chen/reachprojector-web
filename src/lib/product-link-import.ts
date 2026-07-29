@@ -18,8 +18,6 @@ export interface ProductLinkPreview {
   brand: string;
   model: string;
   sku: string;
-  mainImages: string[];
-  detailImages: string[];
   specifications: Array<{ name: string; value: string }>;
   warnings: string[];
 }
@@ -198,13 +196,6 @@ function extractProductJsonLd(html: string): Record<string, unknown> | null {
   return null;
 }
 
-function strings(value: unknown): string[] {
-  if (Array.isArray(value)) return value.flatMap(strings);
-  if (typeof value === "string" && value.trim()) return [value.trim()];
-  if (value && typeof value === "object" && "url" in value) return strings((value as { url: unknown }).url);
-  return [];
-}
-
 function absoluteHttpUrl(value: string, base: string): string | null {
   try {
     const url = new URL(value, base);
@@ -217,41 +208,6 @@ function absoluteHttpUrl(value: string, base: string): string | null {
 function stripTags(value: string): string {
   return decodeHtml(value.replace(/<script[\s\S]*?<\/script>/gi, " ")
     .replace(/<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " "));
-}
-
-function imageKey(value: string): string {
-  try {
-    const url = new URL(value);
-    return `${url.hostname}${url.pathname}`.toLowerCase();
-  } catch {
-    return value.toLowerCase();
-  }
-}
-
-function extractDetailImages(html: string, base: string, identity: string, mainImages: string[]): string[] {
-  const stopWords = new Set(["projector", "laser", "ultra", "product", "vision"]);
-  const tokens = identity.toLowerCase().split(/[^a-z0-9]+/)
-    .filter((token) => token.length >= 3 && !stopWords.has(token));
-  const mainKeys = new Set(mainImages.map(imageKey));
-  const found = new Map<string, string>();
-  for (const match of html.matchAll(/<img\b[^>]*>/gi)) {
-    const tag = match[0];
-    const attr = (name: string) => tag.match(
-      new RegExp(`\\b${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s>]+))`, "i")
-    )?.slice(1).find(Boolean) || "";
-    const srcset = attr("srcset");
-    const source = attr("data-src") || attr("data-original") || attr("src")
-      || srcset.split(",")[0]?.trim().split(/\s+/)[0] || "";
-    const url = absoluteHttpUrl(decodeHtml(source), base);
-    const alt = decodeHtml(attr("alt"));
-    if (!url || /\.(?:svg|ico)(?:\?|$)/i.test(url) || /logo|icon|placeholder|spinner/i.test(`${url} ${alt}`)) continue;
-    const haystack = `${url} ${alt}`.toLowerCase();
-    if (tokens.length && !tokens.some((token) => haystack.includes(token))) continue;
-    const key = imageKey(url);
-    if (!mainKeys.has(key) && !found.has(key)) found.set(key, url);
-    if (found.size >= 20) break;
-  }
-  return [...found.values()];
 }
 
 function extractHtmlSpecifications(html: string): Array<{ name: string; value: string }> {
@@ -304,17 +260,9 @@ export async function collectProductLink(rawUrl: string): Promise<ProductLinkPre
     || html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1] || "").trim();
   const description = decodeHtml(String(product?.description || meta(html, "og:description")
     || meta(html, "description") || ""));
-  const images = [...strings(product?.image), meta(html, "og:image")]
-    .map((value) => absoluteHttpUrl(value, finalUrl))
-    .filter((value): value is string => Boolean(value));
   const canonicalMatch = html.match(/<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["'][^>]*>/i);
   const canonicalUrl = absoluteHttpUrl(canonicalMatch?.[1] || finalUrl, finalUrl) || finalUrl;
   if (!product) warnings.push("No Product JSON-LD was found; review all extracted fields.");
-  const mainImages = [...new Map(images.map((url) => [imageKey(url), url])).values()].slice(0, 10);
-  const detailImages = extractDetailImages(html, finalUrl, title, mainImages);
-  if (!mainImages.length) warnings.push("No product main images were found.");
-  if (!detailImages.length) warnings.push("No distinct product detail images were found.");
-  if (mainImages.length || detailImages.length) warnings.push("Review manufacturer media rights before publishing.");
   if (!title) warnings.push("Product title is missing.");
 
   const additional = product?.additionalProperty;
@@ -343,8 +291,6 @@ export async function collectProductLink(rawUrl: string): Promise<ProductLinkPre
     brand: decodeHtml(brand),
     model: String(product?.model || product?.mpn || "").trim(),
     sku: String(product?.sku || "").trim(),
-    mainImages,
-    detailImages,
     specifications,
     warnings,
   };
