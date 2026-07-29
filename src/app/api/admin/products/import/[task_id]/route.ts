@@ -1,21 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getCurrentUser, hasPermission } from "@/lib/auth";
 
-// Access the task store from the import route
-// In production, use Redis or database for task storage
-const taskStore = new Map<string, {
-  taskId: string;
-  status: string;
-  url: string;
-  data?: Record<string, unknown>;
-  error?: string;
-}>();
-
-// Re-export the shared store reference
-// This is a simplified approach - in production use a proper store
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ task_id: string }> }
 ) {
+  const user = await getCurrentUser();
+  if (!user || !hasPermission(user, "products")) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const { task_id } = await params;
   
   // Try to get from shared store (same process)

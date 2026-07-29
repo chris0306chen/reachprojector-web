@@ -28,6 +28,20 @@ interface ProductReport {
   };
 }
 
+const OPTIONAL_IMPORT_COLUMNS = new Set([
+  "model", "compare_at_price", "description", "short_description", "specifications",
+  "detail_content", "seo_title", "meta_description", "product_length_cm",
+  "product_width_cm", "product_height_cm", "net_weight_kg", "packed_weight_kg",
+  "package_length_cm", "package_width_cm", "package_height_cm", "shipping_class",
+  "package_count", "shipping_quote_required", "import_data",
+]);
+
+function getMissingProductColumn(error: { message?: string } | null) {
+  return error?.message?.match(
+    /Could not find the '([^']+)' column of 'products' in the schema cache/i
+  )?.[1] || null;
+}
+
 async function authorize() {
   const user = await getCurrentUser();
   if (!user || !hasPermission(user, "products")) return null;
@@ -200,7 +214,8 @@ export async function POST(request: NextRequest) {
         product.packageWidthCm,
         product.packageHeightCm,
       ].every((value) => typeof value === "number" && value > 0);
-      const { data, error } = await supabase.from("products").insert({
+      const detailContent = toProductDetailContent(product);
+      const pendingInsert: Record<string, unknown> = {
         sku: product.sku,
         model: product.model || null,
         name: product.name,
@@ -214,7 +229,7 @@ export async function POST(request: NextRequest) {
         short_description: product.shortDescription || null,
         images: mainImages,
         specifications: legacySpecifications,
-        detail_content: toProductDetailContent(product),
+        detail_content: detailContent,
         stock_status: product.stockStatus,
         seo_title: product.seoTitle || product.name.slice(0, 70),
         meta_description: (product.metaDescription || product.shortDescription).slice(0, 170) || null,
@@ -245,14 +260,33 @@ export async function POST(request: NextRequest) {
             alt: image.alt,
           })),
           geo_content: itemReport.generated,
+          admin_media_backup: {
+            images: mainImages,
+            detail_content: detailContent,
+          },
         },
         is_active: false,
-      }).select("id").single();
-      if (error) {
-        failures.push({ sku: product.sku, error: error.message });
+      };
+      let insertedId: string | null = null;
+      let insertError = "";
+      while (Object.keys(pendingInsert).length > 0) {
+        const result = await supabase.from("products").insert(pendingInsert).select("id").single();
+        if (!result.error) {
+          insertedId = result.data.id;
+          break;
+        }
+        const missingColumn = getMissingProductColumn(result.error);
+        if (!missingColumn || !OPTIONAL_IMPORT_COLUMNS.has(missingColumn)) {
+          insertError = result.error.message;
+          break;
+        }
+        delete pendingInsert[missingColumn];
+      }
+      if (!insertedId) {
+        failures.push({ sku: product.sku, error: insertError || "没有可导入的兼容字段" });
         break;
       }
-      insertedIds.push(data.id);
+      insertedIds.push(insertedId);
     }
 
     if (failures.length) {

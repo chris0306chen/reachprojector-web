@@ -28,6 +28,7 @@ interface Product {
   stock: number;
   is_active: boolean;
   is_featured: boolean;
+  stock_status?: "in_stock" | "out_of_stock" | "preorder";
   weight?: number;
   weight_kg?: number;
   product_length_cm?: number;
@@ -91,6 +92,16 @@ function getSeoGeoStatus(product: Pick<Product,
   return { label: "未完成", className: "bg-slate-100 text-slate-600", missing };
 }
 
+function getProductThumbnail(product: Product) {
+  if (product.images?.[0]) return product.images[0];
+  if (product.image_url) return product.image_url;
+  const detail = normalizeProductDetail(product.detail_content);
+  return detail.real_photos[0]?.url
+    || detail.detail_images[0]?.url
+    || detail.logistics_images[0]?.url
+    || "";
+}
+
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -111,7 +122,7 @@ export default function AdminProductsPage() {
   const fetchProducts = async () => {
     try {
       setError(null);
-      const res = await fetch("/api/admin/products");
+      const res = await fetch("/api/admin/products?limit=100");
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "加载产品失败");
@@ -224,11 +235,17 @@ export default function AdminProductsPage() {
           ...batchOp,
         }),
       });
-      if (res.ok) {
-        setSelectedIds(new Set());
-        setBatchAction("");
-        fetchProducts();
+      const data = await res.json();
+      if (!res.ok) {
+        const names = Array.isArray(data.products)
+          ? data.products.map((product: { name?: string }) => product.name).filter(Boolean).join("、")
+          : "";
+        setError(`${data.error || "批量操作失败"}${names ? `：${names}` : ""}`);
+        return;
       }
+      setSelectedIds(new Set());
+      setBatchAction("");
+      fetchProducts();
     } catch (err) {
       console.error("Batch action failed:", err);
     }
@@ -419,9 +436,9 @@ export default function AdminProductsPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        {product.image_url ? (
+                        {getProductThumbnail(product) ? (
                           <img
-                            src={product.image_url}
+                            src={getProductThumbnail(product)}
                             alt={product.name}
                             className="w-10 h-10 rounded-lg object-cover bg-slate-100"
                           />
@@ -431,7 +448,13 @@ export default function AdminProductsPage() {
                           </div>
                         )}
                         <div>
-                          <div className="text-sm font-medium text-slate-900">{product.name}</div>
+                          <Link
+                            href={`/admin/products/${product.id}/preview`}
+                            className="text-sm font-medium text-slate-900 hover:text-orange-600 hover:underline"
+                            title="打开产品草稿预览"
+                          >
+                            {product.name}
+                          </Link>
                           <div className="text-xs text-slate-500">/{product.slug}</div>
                         </div>
                       </div>
@@ -582,6 +605,10 @@ function ProductEditModal({
   const [sceneIds, setSceneIds] = useState<string[]>(product.scene_ids || []);
   const [form, setForm] = useState({
     name: product.name || "",
+    sku: product.sku || "",
+    model: product.model || "",
+    brand: product.brand || "",
+    slug: product.slug || "",
     short_description: product.short_description || "",
     description: product.description || "",
     features: Array.isArray(product.features) ? product.features : [],
@@ -589,6 +616,7 @@ function ProductEditModal({
     meta_description: product.meta_description || "",
     category_id: product.category_id || "",
     price: product.price || 0,
+    stock_status: product.stock_status || "in_stock" as "in_stock" | "out_of_stock" | "preorder",
     sale_price: product.sale_price || null as number | null,
     moq: product.moq || 1,
     stock: product.stock || 0,
@@ -746,8 +774,13 @@ function ProductEditModal({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: form.name,
+          sku: form.sku.trim(),
+          model: form.model.trim() || null,
+          brand: form.brand.trim(),
+          slug: form.slug.trim(),
           category_id: form.category_id || null,
           price: form.price || 0,
+          stock_status: form.stock_status,
           description: form.description,
           short_description: form.short_description,
           images: productImages,
@@ -820,7 +853,54 @@ function ProductEditModal({
         <div className="p-6 space-y-4">
           {error && <div className="rounded-lg bg-red-50 p-3 text-red-600 text-sm">{error}</div>}
           <div className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
-            <span className="font-semibold">*</span> 为上架必填。上架前还需确认 SKU、有效价格并至少上传一张主图；其余字段均可后补。
+            <span className="font-semibold">*</span> 为上架必填。保存修改不会自动上架；正式上架还需要有效价格和至少一张主图。
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-slate-700">
+                SKU <span className="text-red-500">*</span>
+              </span>
+              <input
+                value={form.sku}
+                onChange={(event) => setForm({ ...form, sku: event.target.value })}
+                maxLength={100}
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-slate-700">型号</span>
+              <input
+                value={form.model}
+                onChange={(event) => setForm({ ...form, model: event.target.value })}
+                maxLength={120}
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-slate-700">
+                品牌 <span className="text-red-500">*</span>
+              </span>
+              <input
+                value={form.brand}
+                onChange={(event) => setForm({ ...form, brand: event.target.value })}
+                maxLength={100}
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-slate-700">
+                URL Slug <span className="text-red-500">*</span>
+              </span>
+              <input
+                value={form.slug}
+                onChange={(event) => setForm({
+                  ...form,
+                  slug: event.target.value.toLowerCase().replace(/[^a-z0-9-]+/g, "-"),
+                })}
+                maxLength={255}
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              />
+            </label>
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
@@ -975,6 +1055,21 @@ function ProductEditModal({
             <div>
               <h3 className="font-semibold text-slate-900">尺寸、重量与运费</h3>
               <p className="text-xs text-slate-500">尺寸使用 cm，重量使用 kg；自动运费取毛重与体积重中较高者。</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">库存状态</label>
+              <select
+                value={form.stock_status}
+                onChange={(event) => setForm({
+                  ...form,
+                  stock_status: event.target.value as "in_stock" | "out_of_stock" | "preorder",
+                })}
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              >
+                <option value="in_stock">现货</option>
+                <option value="preorder">预售</option>
+                <option value="out_of_stock">缺货</option>
+              </select>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
@@ -1134,6 +1229,7 @@ function ProductEditModal({
           <ProductDetailEditor
             value={detailContent}
             productName={form.name}
+            productSlug={form.slug}
             mainImages={productImages}
             onMainImagesChange={setProductImages}
             onChange={setDetailContent}
@@ -1152,7 +1248,7 @@ function ProductEditModal({
             disabled={submitting}
             className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 disabled:opacity-50"
           >
-            {submitting ? "保存中..." : "保存"}
+            {submitting ? "保存中..." : "保存修改（保持当前状态）"}
           </button>
         </div>
       </div>
