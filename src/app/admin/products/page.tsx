@@ -686,6 +686,22 @@ function ProductEditModal({
       setError("请填写产品名称");
       return;
     }
+    const productName = form.name.trim();
+    const detailContentForSave: ProductDetailContent = {
+      ...detailContent,
+      real_photos: detailContent.real_photos.map((image, index) => ({
+        ...image,
+        alt: image.alt.trim() || `${productName} product photo ${index + 1}`,
+      })),
+      detail_images: detailContent.detail_images.map((image, index) => ({
+        ...image,
+        alt: image.alt.trim() || `${productName} product details ${index + 1}`,
+      })),
+      logistics_images: detailContent.logistics_images.map((image, index) => ({
+        ...image,
+        alt: image.alt.trim() || `${productName} ${image.type.toLowerCase()} ${index + 1}`,
+      })),
+    };
     setSubmitting(true);
     setError(null);
     try {
@@ -733,7 +749,7 @@ function ProductEditModal({
           short_description: form.short_description,
           features: form.features.map((item) => item.trim()).filter(Boolean).slice(0, 8),
           sale_price: form.sale_price || null,
-          detail_content: detailContent,
+          detail_content: detailContentForSave,
           scene_ids: sceneIds,
           ...optionalFields,
           ...(JSON.stringify(attachments) !== JSON.stringify(product.attachments || [])
