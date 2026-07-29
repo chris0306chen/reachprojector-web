@@ -5,6 +5,10 @@ ALTER TABLE public.products ADD COLUMN IF NOT EXISTS currency VARCHAR(3) NOT NUL
 ALTER TABLE public.products ADD COLUMN IF NOT EXISTS seo_title VARCHAR(70);
 ALTER TABLE public.products ADD COLUMN IF NOT EXISTS meta_description VARCHAR(170);
 ALTER TABLE public.products ADD COLUMN IF NOT EXISTS import_data JSONB NOT NULL DEFAULT '{}'::jsonb;
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS inventory_quantity INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE public.products DROP CONSTRAINT IF EXISTS products_inventory_quantity_nonnegative;
+ALTER TABLE public.products ADD CONSTRAINT products_inventory_quantity_nonnegative
+  CHECK (inventory_quantity >= 0);
 
 CREATE UNIQUE INDEX IF NOT EXISTS products_sku_unique
   ON public.products (lower(sku))
