@@ -2,6 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
 import { normalizeProductDetail, validateProductDetail } from "@/lib/product-detail";
 
+const OPTIONAL_PRODUCT_COLUMNS = new Set([
+  "oem_available", "oem_notes", "attachments", "detail_content",
+  "product_length_cm", "product_width_cm", "product_height_cm", "net_weight_kg",
+  "packed_weight_kg", "package_length_cm", "package_width_cm", "package_height_cm",
+  "shipping_class", "package_count", "shipping_quote_required",
+  "seo_title", "meta_description", "short_description", "features",
+]);
+
+function getMissingProductColumn(error: { message?: string } | null) {
+  const match = error?.message?.match(
+    /Could not find the '([^']+)' column of 'products' in the schema cache/i
+  );
+  return match?.[1] || null;
+}
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -68,8 +83,8 @@ export async function PUT(
     if (updateData.is_active !== undefined && typeof updateData.is_active !== "boolean") {
       return NextResponse.json({ error: "上架状态必须为布尔值" }, { status: 400 });
     }
-    if (updateData.price !== undefined && (!Number.isFinite(Number(updateData.price)) || Number(updateData.price) <= 0)) {
-      return NextResponse.json({ error: "产品价格必须大于 0" }, { status: 400 });
+    if (updateData.price !== undefined && (!Number.isFinite(Number(updateData.price)) || Number(updateData.price) < 0)) {
+      return NextResponse.json({ error: "产品价格不能小于 0" }, { status: 400 });
     }
     if (updateData.is_active === true) {
       const supabase = await getSupabaseClient();
@@ -129,14 +144,35 @@ export async function PUT(
     }
 
     const supabase = await getSupabaseClient();
-    const { data, error } = await supabase
-      .from("products")
-      .update({ ...updateData, updated_at: new Date().toISOString() })
-      .eq("id", id)
-      .select()
-      .single();
+    const pendingUpdate = { ...updateData, updated_at: new Date().toISOString() };
+    const skippedColumns: string[] = [];
+    let data: unknown = null;
 
-    if (error) throw error;
+    while (Object.keys(pendingUpdate).length > 1) {
+      const result = await supabase
+        .from("products")
+        .update(pendingUpdate)
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (!result.error) {
+        data = result.data;
+        break;
+      }
+
+      const missingColumn = getMissingProductColumn(result.error);
+      if (!missingColumn || !OPTIONAL_PRODUCT_COLUMNS.has(missingColumn)) {
+        throw result.error;
+      }
+
+      delete pendingUpdate[missingColumn as keyof typeof pendingUpdate];
+      skippedColumns.push(missingColumn);
+    }
+
+    if (!data) {
+      throw new Error("没有可保存的兼容字段");
+    }
     if (sceneIds) {
       const { error: deleteSceneError } = await supabase
         .from("product_scenes")
@@ -151,7 +187,13 @@ export async function PUT(
         if (insertSceneError) throw insertSceneError;
       }
     }
-    return NextResponse.json({ success: true, data });
+    return NextResponse.json({
+      success: true,
+      data,
+      warning: skippedColumns.length
+        ? `已保存；以下可选字段尚未配置数据库列，已跳过：${skippedColumns.join(", ")}`
+        : undefined,
+    });
   } catch (error) {
     console.error("Failed to update product:", error);
     const detail = error && typeof error === "object" && "message" in error
