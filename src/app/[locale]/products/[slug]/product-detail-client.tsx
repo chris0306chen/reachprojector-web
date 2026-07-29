@@ -176,16 +176,8 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
       <ProductDetailSections
         content={product.detail_content}
         legacySpecifications={product.specifications}
+        description={displayDescription}
       />
-
-      {displayDescription && (
-        <div className="border-t border-slate-200 pt-8 mb-16">
-          <h2 className="mb-6 text-xl font-bold text-slate-900">{t('description')}</h2>
-          <div className="prose prose-slate max-w-none">
-            <p className="text-slate-600 leading-relaxed">{displayDescription}</p>
-          </div>
-        </div>
-      )}
 
       {/* Related Products */}
       {relatedProducts.length > 0 && (

@@ -7,6 +7,7 @@ import {
 interface ProductDetailSectionsProps {
   content: ProductDetailContent | null | undefined;
   legacySpecifications?: Record<string, string> | null;
+  description?: string | null;
 }
 
 const sectionClass = "border-t border-slate-200 py-12 sm:py-16";
@@ -15,6 +16,7 @@ const headingClass = "mb-8 text-2xl font-bold text-[#0B1A40]";
 export function ProductDetailSections({
   content,
   legacySpecifications,
+  description,
 }: ProductDetailSectionsProps) {
   const detail = normalizeProductDetail(content);
   const specifications: ProductSpecificationItem[] =
@@ -36,6 +38,7 @@ export function ProductDetailSections({
 
   if (
     specifications.length === 0 &&
+    !description &&
     detail.real_photos.length === 0 &&
     detail.detail_images.length === 0 &&
     detail.logistics_images.length === 0
@@ -64,6 +67,15 @@ export function ProductDetailSections({
                 </dl>
               </div>
             ))}
+          </div>
+        </section>
+      )}
+
+      {description && (
+        <section className={sectionClass} aria-labelledby="product-description">
+          <h2 id="product-description" className={headingClass}>Product Description</h2>
+          <div className="prose prose-slate max-w-none">
+            <p className="whitespace-pre-line text-slate-600 leading-relaxed">{description}</p>
           </div>
         </section>
       )}

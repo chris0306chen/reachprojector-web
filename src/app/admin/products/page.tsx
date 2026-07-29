@@ -700,7 +700,7 @@ function ProductEditModal({
               <span className="mt-1 block text-xs text-slate-500">最多 8 条，只填写可验证的真实卖点。</span>
             </label>
             <label className="block">
-              <span className="mb-1 block text-sm font-medium text-slate-700">完整文字说明（参数区下方）</span>
+              <span className="mb-1 block text-sm font-medium text-slate-700">完整文字说明（参数表下方、图片区上方）</span>
               <textarea
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
