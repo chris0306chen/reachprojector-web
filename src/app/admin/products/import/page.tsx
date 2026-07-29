@@ -38,8 +38,6 @@ type LinkPreview = {
   brand: string;
   model: string;
   sku: string;
-  mainImages: string[];
-  detailImages: string[];
   specifications: Array<{ name: string; value: string }>;
   warnings: string[];
 };
@@ -131,22 +129,7 @@ export default function ProductImportPage() {
         metaDescription: preview.description.slice(0, 170),
         status: "draft",
         specifications: preview.specifications.map((item) => ({ group: "Other", ...item })),
-        images: [...preview.mainImages.map((url, index) => {
-          const section: ImportedImage["section"] = index === 0 ? "main" : "gallery";
-          return {
-            originalPath: url,
-            section,
-            seoName: buildSeoImageName({ brand: preview.brand || "product", model: identity, name: preview.title }, section, index, "webp"),
-            alt: buildImageAlt({ brand: preview.brand || "Product", model: identity, name: preview.title }, section, index),
-            url,
-          };
-        }), ...preview.detailImages.map((url, index) => ({
-          originalPath: url,
-          section: "detail_images" as const,
-          seoName: buildSeoImageName({ brand: preview.brand || "product", model: identity, name: preview.title }, "detail_images", index, "webp"),
-          alt: buildImageAlt({ brand: preview.brand || "Product", model: identity, name: preview.title }, "detail_images", index),
-          url,
-        }))],
+        images: [],
         source: {
           type: preview.sourceType,
           url: preview.sourceUrl,
@@ -432,7 +415,7 @@ export default function ProductImportPage() {
           <div className="mt-4 space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-4">
             <div>
               <p className="font-medium">{linkDraft.name || "待补充产品名称"}</p>
-              <p className="text-xs text-slate-500">{linkDraft.source?.type} · {linkDraft.images.length} 张候选图片</p>
+              <p className="text-xs text-slate-500">{linkDraft.source?.type} · {linkDraft.specifications.length} 项已验证参数 · 图片由后台人工上传</p>
             </div>
             <div className="grid gap-3 md:grid-cols-3">
               <label className="text-xs text-slate-600">SKU

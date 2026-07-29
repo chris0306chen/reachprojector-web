@@ -30,7 +30,7 @@ export async function PUT(
     if (Object.prototype.hasOwnProperty.call(body, "warranty")) {
       const warranty = typeof body.warranty === "string" ? body.warranty.trim() : "";
       if (warranty.length > 160) {
-        return NextResponse.json({ error: "????????160???" }, { status: 400 });
+        return NextResponse.json({ error: "保修说明不能超过 160 个字符" }, { status: 400 });
       }
       const supabase = await getSupabaseClient();
       const { data: currentProduct, error: currentProductError } = await supabase
@@ -62,13 +62,13 @@ export async function PUT(
       updateData.compare_at_price = body.sale_price || null;
     }
     if (Object.keys(updateData).length === 0) {
-      return NextResponse.json({ error: "??????????" }, { status: 400 });
+      return NextResponse.json({ error: "没有可更新的产品字段" }, { status: 400 });
     }
     if (updateData.is_active !== undefined && typeof updateData.is_active !== "boolean") {
-      return NextResponse.json({ error: "???????????" }, { status: 400 });
+      return NextResponse.json({ error: "上架状态必须为布尔值" }, { status: 400 });
     }
     if (updateData.price !== undefined && (!Number.isFinite(Number(updateData.price)) || Number(updateData.price) <= 0)) {
-      return NextResponse.json({ error: "?????????" }, { status: 400 });
+      return NextResponse.json({ error: "产品价格必须大于 0" }, { status: 400 });
     }
     if (updateData.is_active === true) {
       const supabase = await getSupabaseClient();
@@ -101,27 +101,27 @@ export async function PUT(
     for (const field of positiveNumericFields) {
       if (updateData[field] !== undefined && updateData[field] !== null &&
           (!Number.isFinite(Number(updateData[field])) || Number(updateData[field]) <= 0)) {
-        return NextResponse.json({ error: `${field} ?????` }, { status: 400 });
+        return NextResponse.json({ error: `${field} 必须大于 0` }, { status: 400 });
       }
     }
     if (updateData.shipping_class !== undefined && !["parcel", "freight"].includes(String(updateData.shipping_class))) {
-      return NextResponse.json({ error: "????????????????" }, { status: 400 });
+      return NextResponse.json({ error: "运输类型只能选择包裹或货运" }, { status: 400 });
     }
     if (updateData.package_count !== undefined &&
         (!Number.isInteger(Number(updateData.package_count)) || Number(updateData.package_count) < 1)) {
-      return NextResponse.json({ error: "??????????" }, { status: 400 });
+      return NextResponse.json({ error: "包装件数必须为正整数" }, { status: 400 });
     }
     if (updateData.shipping_quote_required === false) {
       const requiredPackaging = ["packed_weight_kg", "package_length_cm", "package_width_cm", "package_height_cm"];
       if (requiredPackaging.some((field) => !Number.isFinite(Number(updateData[field])) || Number(updateData[field]) <= 0)) {
         return NextResponse.json(
-          { error: "??????????????????????" },
+          { error: "关闭人工运费确认前，必须填写包装重量和包装尺寸" },
           { status: 400 }
         );
       }
       if (updateData.shipping_class !== "parcel" || Number(updateData.package_count || 1) !== 1) {
         return NextResponse.json(
-          { error: "??????????????" },
+          { error: "只有单件包裹运输可以关闭人工运费确认" },
           { status: 400 }
         );
       }
@@ -153,7 +153,7 @@ export async function PUT(
     return NextResponse.json({ success: true, data });
   } catch (error) {
     console.error("Failed to update product:", error);
-    return NextResponse.json({ error: "??????" }, { status: 500 });
+    return NextResponse.json({ error: "更新产品失败" }, { status: 500 });
   }
 }
 
@@ -169,7 +169,7 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Failed to delete product:", error);
-    return NextResponse.json({ error: "??????" }, { status: 500 });
+    return NextResponse.json({ error: "删除产品失败" }, { status: 500 });
   }
 }
 
@@ -193,6 +193,6 @@ export async function POST(
     return NextResponse.json({ success: true, data }, { status: 201 });
   } catch (error) {
     console.error("Failed to create product:", error);
-    return NextResponse.json({ error: "??????" }, { status: 500 });
+    return NextResponse.json({ error: "创建产品失败" }, { status: 500 });
   }
 }
