@@ -154,7 +154,13 @@ export async function PUT(
     return NextResponse.json({ success: true, data });
   } catch (error) {
     console.error("Failed to update product:", error);
-    return NextResponse.json({ error: "更新产品失败" }, { status: 500 });
+    const detail = error && typeof error === "object" && "message" in error
+      ? String(error.message)
+      : "";
+    return NextResponse.json(
+      { error: detail ? `更新产品失败：${detail}` : "更新产品失败" },
+      { status: 500 }
+    );
   }
 }
 
