@@ -364,7 +364,11 @@ export default function ProductImportPage() {
         body: JSON.stringify({ action: "import", products: productsWithUrls }),
       });
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "导入失败");
+      if (!response.ok) {
+        const failure = Array.isArray(result.failures) ? result.failures[0] : null;
+        const detail = failure?.error ? `：${failure.error}` : "";
+        throw new Error(`${result.error || "导入失败"}${detail}`);
+      }
       setMessage(`导入完成：${result.imported} 个产品已保存为草稿。`);
       setProducts([]);
       setImageFiles([]);
