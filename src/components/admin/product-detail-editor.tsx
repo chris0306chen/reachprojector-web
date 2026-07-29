@@ -14,6 +14,7 @@ import {
 interface ProductDetailEditorProps {
   value: ProductDetailContent | null | undefined;
   productName: string;
+  productSlug: string;
   mainImages: string[];
   onMainImagesChange: (images: string[]) => void;
   onChange: (value: ProductDetailContent) => void;
@@ -67,6 +68,7 @@ const optimizeProductImage = async (
 export function ProductDetailEditor({
   value,
   productName,
+  productSlug,
   mainImages,
   onMainImagesChange,
   onChange,
@@ -100,7 +102,7 @@ export function ProductDetailEditor({
           ? "product-detail"
           : "shipping";
       const position = String(index + 1).padStart(2, "0");
-      const storageName = `${seoSlug(productName)}-${sectionName}-${position}.webp`;
+      const storageName = `${seoSlug(productSlug || productName)}-${sectionName}-${position}.webp`;
       const optimized = await optimizeProductImage(file, section);
       const formData = new FormData();
       formData.append("file", new File([optimized], storageName, { type: "image/webp" }));

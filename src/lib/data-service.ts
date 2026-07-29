@@ -222,7 +222,20 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
       console.warn('[DataService] Failed to fetch product:', error.message);
       return null;
     }
-    return data as Product | null;
+    if (!data) return null;
+    const importData = data.import_data && typeof data.import_data === "object"
+      ? data.import_data as Record<string, unknown>
+      : {};
+    const mediaBackup = importData.admin_media_backup && typeof importData.admin_media_backup === "object"
+      ? importData.admin_media_backup as Record<string, unknown>
+      : {};
+    return {
+      ...data,
+      images: Array.isArray(data.images) && data.images.length
+        ? data.images
+        : Array.isArray(mediaBackup.images) ? mediaBackup.images : [],
+      detail_content: data.detail_content || mediaBackup.detail_content || importData.detail_content,
+    } as Product;
   } catch (error) {
     console.error('[DataService] getProductBySlug error:', error);
     return null;
