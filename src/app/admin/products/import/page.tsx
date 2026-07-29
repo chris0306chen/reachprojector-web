@@ -392,8 +392,10 @@ export default function ProductImportPage() {
       </div>
 
       <section className="rounded-xl border border-slate-200 bg-white p-5">
-        <h2 className="font-semibold text-slate-900">从产品链接导入</h2>
-        <p className="mt-1 text-sm text-slate-500">支持品牌官网；Amazon 和 Alibaba.com 在平台允许访问的范围内提取，缺失资料会保留为待审核。</p>
+        <h2 className="font-semibold text-slate-900">从产品链接提取（可选）</h2>
+        <p className="mt-1 text-sm text-slate-500">
+          部分品牌官网、Amazon 和 Alibaba 会阻止自动访问。提取失败时请直接使用产品管理中的“新增产品草稿”，不影响正常上架流程。
+        </p>
         <div className="mt-4 flex flex-col gap-2 md:flex-row">
           <input
             type="url"

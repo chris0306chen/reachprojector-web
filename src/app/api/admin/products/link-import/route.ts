@@ -18,7 +18,10 @@ export async function POST(request: NextRequest) {
   try {
     return NextResponse.json({ data: await collectProductLink(parsed.data.url) });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unable to collect this product page";
+    const rawMessage = error instanceof Error ? error.message : "";
+    const message = /ECONNRESET|timed out|HTTP 403|HTTP 429/i.test(rawMessage)
+      ? "目标网站阻止了自动采集。请返回产品管理，使用“新增产品草稿”手动录入。"
+      : rawMessage || "无法采集该产品页面，请使用“新增产品草稿”手动录入。";
     return NextResponse.json({ error: message }, { status: 422 });
   }
 }

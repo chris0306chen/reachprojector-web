@@ -151,3 +151,88 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });
   }
 }
+
+const slugify = (value: string) =>
+  value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 220);
+
+export async function POST(request: NextRequest) {
+  try {
+    const user = await getCurrentUser();
+    if (!user || !hasPermission(user, "products")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const body = await request.json();
+    const name = typeof body.name === "string" ? body.name.trim() : "";
+    const brand = typeof body.brand === "string" ? body.brand.trim() : "";
+    const categoryId = typeof body.category_id === "string" ? body.category_id.trim() : "";
+    const requestedSku = typeof body.sku === "string"
+      ? body.sku.trim().replace(/[^A-Za-z0-9._-]/g, "").slice(0, 100)
+      : "";
+    if (!name || !brand || !categoryId) {
+      return NextResponse.json({ error: "请填写产品名称、品牌和分类" }, { status: 400 });
+    }
+
+    const supabase = await getSupabaseClient();
+    const { data: category, error: categoryError } = await supabase
+      .from("categories")
+      .select("id")
+      .eq("id", categoryId)
+      .eq("is_active", true)
+      .maybeSingle();
+    if (categoryError) throw categoryError;
+    if (!category) return NextResponse.json({ error: "所选产品分类不存在或已停用" }, { status: 400 });
+
+    const baseSlug = slugify(name) || `product-${Date.now()}`;
+    let slug = baseSlug;
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      const { data: existing, error: slugError } = await supabase
+        .from("products")
+        .select("id")
+        .eq("slug", slug)
+        .maybeSingle();
+      if (slugError) throw slugError;
+      if (!existing) break;
+      slug = `${baseSlug}-${attempt + 2}`;
+    }
+
+    const sku = requestedSku || `DRAFT-${Date.now().toString(36).toUpperCase()}`;
+    const { data: duplicateSku, error: skuError } = await supabase
+      .from("products")
+      .select("id")
+      .eq("sku", sku)
+      .limit(1)
+      .maybeSingle();
+    if (skuError) throw skuError;
+    if (duplicateSku) return NextResponse.json({ error: `SKU 已存在：${sku}` }, { status: 409 });
+
+    const { data, error } = await supabase
+      .from("products")
+      .insert({
+        name,
+        sku,
+        slug,
+        brand,
+        category_id: categoryId,
+        price: 0,
+        currency: "USD",
+        images: [],
+        stock_status: "out_of_stock",
+        is_bestseller: false,
+        is_new_arrival: false,
+        is_featured: false,
+        is_active: false,
+        sort_order: 0,
+      })
+      .select("*")
+      .single();
+    if (error) throw error;
+    return NextResponse.json({ success: true, data }, { status: 201 });
+  } catch (error) {
+    console.error("Failed to create product draft:", error);
+    const detail = error instanceof Error ? error.message : "";
+    return NextResponse.json(
+      { error: detail ? `创建产品草稿失败：${detail}` : "创建产品草稿失败" },
+      { status: 500 }
+    );
+  }
+}
