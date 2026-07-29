@@ -1,6 +1,7 @@
 "use client";
 
-import { ArrowDown, ArrowUp, ImagePlus, Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { ArrowDown, ArrowUp, ImagePlus, Trash2 } from "lucide-react";
 import {
   EMPTY_PRODUCT_DETAIL,
   LOGISTICS_IMAGE_TYPES,
@@ -31,6 +32,7 @@ const logisticsTypeLabels: Record<string, string> = {
 export function ProductDetailEditor({ value, onChange, onError }: ProductDetailEditorProps) {
   // Preserve incomplete rows while editing; save-time validation handles cleanup.
   const detail = value || EMPTY_PRODUCT_DETAIL;
+  const [specificationSource, setSpecificationSource] = useState("");
   const update = <K extends keyof ProductDetailContent>(key: K, next: ProductDetailContent[K]) =>
     onChange({ ...detail, [key]: next });
 
@@ -55,19 +57,70 @@ export function ProductDetailEditor({ value, onChange, onError }: ProductDetailE
     return { url: result.url, alt: "" };
   };
 
-  const addUploadedImage = async (section: ImageSection, file?: File) => {
-    if (!file) return;
-    if (section === "real_photos" && detail.real_photos.length >= 2) {
+  const addUploadedImages = async (section: ImageSection, files?: FileList | null) => {
+    if (!files?.length) return;
+    const limit = section === "real_photos" ? 2 : section === "detail_images" ? 20 : 12;
+    const available = limit - detail[section].length;
+    if (available <= 0) {
       onError("产品实拍图最多只能上传两张");
       return;
     }
-    const uploaded = await uploadImage(file);
-    if (!uploaded) return;
+    const selected = Array.from(files).slice(0, available);
+    const uploaded = (await Promise.all(selected.map(uploadImage))).filter(
+      (image): image is ProductDetailImage => Boolean(image)
+    );
+    if (!uploaded.length) return;
     if (section === "logistics_images") {
-      update(section, [...detail.logistics_images, { ...uploaded, type: "Shipment" }]);
+      update(section, [
+        ...detail.logistics_images,
+        ...uploaded.map((image) => ({ ...image, type: "Shipment" as const })),
+      ]);
     } else {
-      update(section, [...detail[section], uploaded]);
+      update(section, [...detail[section], ...uploaded]);
     }
+  };
+
+  const importSpecifications = () => {
+    const rows: string[][] = [];
+    if (/<(?:table|tr|td|th)\b/i.test(specificationSource)) {
+      const document = new DOMParser().parseFromString(specificationSource, "text/html");
+      document.querySelectorAll("tr").forEach((row) => {
+        const cells = Array.from(row.querySelectorAll("th,td"))
+          .map((cell) => cell.textContent?.trim() || "")
+          .filter(Boolean);
+        if (cells.length >= 2) rows.push(cells);
+      });
+    } else {
+      specificationSource.split(/\r?\n/).forEach((line) => {
+        const cells = line.split(/\t|\s*\|\s*|\s*[:：=]\s*/).map((item) => item.trim()).filter(Boolean);
+        if (cells.length >= 2) rows.push(cells);
+      });
+    }
+    const groupAliases: Record<string, ProductDetailContent["specifications"][number]["group"]> = {
+      optical: "Optical", "光学": "Optical", display: "Display", "显示": "Display",
+      system: "System", "系统": "System", connectivity: "Connectivity", "接口": "Connectivity",
+      power: "Power", "电源": "Power", dimensions: "Dimensions", "尺寸": "Dimensions",
+      package: "Package", "包装": "Package", other: "Other", "其他": "Other",
+    };
+    const parsed = rows.flatMap((cells) => {
+      const possibleGroup = groupAliases[cells[0].toLowerCase()];
+      const name = possibleGroup ? cells[1] : cells[0];
+      const specificationValue = (possibleGroup ? cells.slice(2) : cells.slice(1)).join(" / ");
+      if (!name || !specificationValue || /^(parameter|specification|参数)$/i.test(name)) return [];
+      return [{ group: possibleGroup || "Other" as const, name, value: specificationValue }];
+    });
+    if (!parsed.length) {
+      onError("没有识别到参数。请粘贴 HTML 表格，或使用“参数名：参数值”每行一条。");
+      return;
+    }
+    const combined = [...detail.specifications];
+    for (const item of parsed) {
+      const existing = combined.findIndex((row) => row.name.toLowerCase() === item.name.toLowerCase());
+      if (existing >= 0) combined[existing] = item;
+      else combined.push(item);
+    }
+    update("specifications", combined.slice(0, 80));
+    setSpecificationSource("");
   };
 
   const renderImageRows = (
@@ -119,13 +172,14 @@ export function ProductDetailEditor({ value, onChange, onError }: ProductDetailE
       ))}
       <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-600 hover:border-orange-400 hover:bg-orange-50/40">
         <ImagePlus className="h-4 w-4" />
-        上传图片
+        批量上传图片
         <input
           type="file"
+          multiple
           accept="image/jpeg,image/png,image/webp,image/avif"
           className="hidden"
           onChange={(event) => {
-            void addUploadedImage(section, event.target.files?.[0]);
+            void addUploadedImages(section, event.target.files);
             event.target.value = "";
           }}
         />
@@ -141,14 +195,25 @@ export function ProductDetailEditor({ value, onChange, onError }: ProductDetailE
       </div>
 
       <section className="space-y-3">
-        <div className="flex items-center justify-between">
+        <div>
           <h4 className="font-medium text-slate-900">1. 产品详细参数</h4>
+        </div>
+        <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+          <label className="mb-2 block text-sm font-medium text-slate-700">粘贴参数表文字或 HTML 代码</label>
+          <textarea
+            value={specificationSource}
+            onChange={(event) => setSpecificationSource(event.target.value)}
+            rows={7}
+            placeholder={"支持 HTML <table>...</table>，或每行：Brightness: 3300 ISO lumens"}
+            className={inputClass}
+          />
           <button
             type="button"
-            onClick={() => update("specifications", [...detail.specifications, { group: "Optical", name: "", value: "" }])}
-            className="inline-flex items-center gap-1 rounded-lg bg-slate-900 px-3 py-2 text-xs font-medium text-white"
+            onClick={importSpecifications}
+            disabled={!specificationSource.trim()}
+            className="mt-2 rounded-lg bg-slate-900 px-4 py-2 text-xs font-medium text-white disabled:opacity-40"
           >
-            <Plus className="h-3.5 w-3.5" /> 添加参数
+            解析并生成参数表
           </button>
         </div>
         {detail.specifications.map((item, index) => (
