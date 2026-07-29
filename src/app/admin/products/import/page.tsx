@@ -1,12 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { AlertCircle, CheckCircle2, Download, FileArchive, FileSpreadsheet, Loader2, Upload } from "lucide-react";
+import { AlertCircle, CheckCircle2, Download, FileSpreadsheet, Loader2, Upload } from "lucide-react";
 import {
-  buildImageAlt,
-  buildSeoImageName,
   slugify,
-  type ImportedImage,
   type ImportedProduct,
 } from "@/lib/product-bulk-import";
 
@@ -27,7 +24,6 @@ type ReportItem = {
   };
 };
 
-type ImageFile = ImportedImage & { bytes: Uint8Array; mime: string };
 type LinkPreview = {
   sourceType: "brand_website" | "amazon" | "alibaba";
   sourceUrl: string;
@@ -56,10 +52,7 @@ const stockStatus = (value: unknown): ImportedProduct["stockStatus"] => {
 
 export default function ProductImportPage() {
   const [products, setProducts] = useState<ImportedProduct[]>([]);
-  const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
-  const [unmatchedImages, setUnmatchedImages] = useState<string[]>([]);
   const [workbookName, setWorkbookName] = useState("");
-  const [zipName, setZipName] = useState("");
   const [report, setReport] = useState<ReportItem[]>([]);
   const [summary, setSummary] = useState<{ total: number; ready: number; warnings: number; errors: number; images: number } | null>(null);
   const [busy, setBusy] = useState(false);
@@ -150,7 +143,6 @@ export default function ProductImportPage() {
   function addLinkDraft() {
     if (!linkDraft) return;
     setProducts([linkDraft]);
-    setImageFiles([]);
     setReport([]);
     setSummary(null);
     setMessage("Link data added. Review the required fields, then run preflight.");
@@ -233,70 +225,6 @@ export default function ProductImportPage() {
     setSummary(null);
   }
 
-  async function readZip(file: File) {
-    if (!products.length) throw new Error("请先上传产品 Excel/CSV，再上传图片 ZIP。");
-    const { unzipSync } = await import("fflate");
-    const entries = unzipSync(new Uint8Array(await file.arrayBuffer()));
-    const productBySku = new Map(products.map((product) => [product.sku.toLowerCase(), product]));
-    const matched: ImageFile[] = [];
-    const unmatched: string[] = [];
-    const counters = new Map<string, number>();
-    let totalBytes = 0;
-    for (const [rawPath, bytes] of Object.entries(entries)) {
-      const path = rawPath.replace(/\\/g, "/");
-      if (!bytes.length || path.endsWith("/")) continue;
-      if (path.startsWith("/") || path.split("/").includes("..")) throw new Error(`ZIP 中存在不安全路径：${rawPath}`);
-      totalBytes += bytes.length;
-      if (totalBytes > 250 * 1024 * 1024) throw new Error("ZIP 解压后不能超过 250MB。");
-      const parts = path.split("/").filter(Boolean);
-      if (parts.length < 3) { unmatched.push(rawPath); continue; }
-      const product = productBySku.get(parts[0].toLowerCase());
-      if (!product) { unmatched.push(rawPath); continue; }
-      const folder = parts[1].toLowerCase();
-      const section = folder.includes("01-main") ? "main"
-        : folder.includes("02-gallery") ? "gallery"
-        : folder.includes("03-real") ? "real_photos"
-        : folder.includes("04-detail") ? "detail_images"
-        : folder.includes("05-logistics") ? "logistics"
-        : null;
-      if (!section) { unmatched.push(rawPath); continue; }
-      const extension = path.split(".").pop()?.toLowerCase() || "";
-      const mime = { jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", avif: "image/avif" }[extension];
-      if (!mime) { unmatched.push(rawPath); continue; }
-      if (bytes.length > 10 * 1024 * 1024) throw new Error(`图片超过 10MB：${rawPath}`);
-      const key = `${product.sku}:${section}`;
-      const index = counters.get(key) || 0;
-      counters.set(key, index + 1);
-      matched.push({
-        originalPath: rawPath,
-        section,
-        logisticsType: section === "logistics" ? "Shipment" : undefined,
-        seoName: buildSeoImageName(product, section, index, extension),
-        alt: buildImageAlt(product, section, index),
-        bytes,
-        mime,
-      });
-    }
-    if (matched.length > 500) throw new Error("一次最多处理 500 张图片。");
-    setImageFiles(matched);
-    setUnmatchedImages(unmatched);
-    setZipName(file.name);
-    setProducts((current) => current.map((product) => ({
-      ...product,
-      images: matched
-        .filter((image) => image.originalPath.split(/[\\/]/)[0].toLowerCase() === product.sku.toLowerCase())
-        .map((image) => ({
-          originalPath: image.originalPath,
-          section: image.section,
-          logisticsType: image.logisticsType,
-          seoName: image.seoName,
-          alt: image.alt,
-        })),
-    })));
-    setReport([]);
-    setSummary(null);
-  }
-
   async function preflight() {
     setBusy(true);
     setMessage("");
@@ -317,34 +245,15 @@ export default function ProductImportPage() {
     }
   }
 
-  async function uploadImages() {
-    const uploaded = new Map<string, string>();
-    for (const image of imageFiles) {
-      const form = new FormData();
-      form.append("kind", "product-image");
-      form.append("storageName", image.seoName);
-      form.append("file", new File([image.bytes as BlobPart], image.seoName, { type: image.mime }));
-      const response = await fetch("/api/admin/upload", { method: "POST", body: form });
-      const result = await response.json();
-      if (!response.ok) throw new Error(`${image.originalPath}: ${result.error || "上传失败"}`);
-      uploaded.set(image.originalPath, result.url);
-    }
-    return products.map((product) => ({
-      ...product,
-      images: product.images.map((image) => ({ ...image, url: uploaded.get(image.originalPath) })),
-    }));
-  }
-
   async function importDrafts() {
     if (!canImport) return;
     setBusy(true);
-    setMessage("正在上传图片并创建草稿，请不要关闭页面……");
+    setMessage("正在创建产品草稿，请不要关闭页面……");
     try {
-      const productsWithUrls = await uploadImages();
       const response = await fetch("/api/admin/products/bulk-import", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "import", products: productsWithUrls }),
+        body: JSON.stringify({ action: "import", products }),
       });
       const result = await response.json();
       if (!response.ok) {
@@ -354,12 +263,9 @@ export default function ProductImportPage() {
       }
       setMessage(`导入完成：${result.imported} 个产品已保存为草稿。`);
       setProducts([]);
-      setImageFiles([]);
-      setUnmatchedImages([]);
       setReport([]);
       setSummary(null);
       setWorkbookName("");
-      setZipName("");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "导入失败");
     } finally {
@@ -384,7 +290,7 @@ export default function ProductImportPage() {
       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">产品批量导入</h1>
-          <p className="mt-1 text-sm text-slate-500">Excel/CSV + 图片 ZIP，先预检，再一键导入为草稿。</p>
+          <p className="mt-1 text-sm text-slate-500">上传 Excel/CSV，先预检，再一次导入最多 100 个下架草稿；图片后续在产品编辑器中上传。</p>
         </div>
         <a href="/templates/reach-projector-product-import.xlsx" download className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white">
           <Download className="h-4 w-4" />下载标准 Excel 模板
@@ -438,26 +344,20 @@ export default function ProductImportPage() {
         )}
       </section>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <label className="cursor-pointer rounded-xl border-2 border-dashed border-slate-300 bg-white p-6 hover:border-orange-400">
+      <div>
+        <label className="block cursor-pointer rounded-xl border-2 border-dashed border-slate-300 bg-white p-6 hover:border-orange-400">
           <FileSpreadsheet className="mb-3 h-8 w-8 text-orange-500" />
-          <span className="block font-semibold">1. 上传 Excel 或 CSV</span>
-          <span className="mt-1 block text-sm text-slate-500">{workbookName || "最多 100 个产品；禁止公式"}</span>
+          <span className="block font-semibold">1. 上传产品 Excel 或 CSV</span>
+          <span className="mt-1 block text-sm text-slate-500">{workbookName || "最多 100 个产品；只导入文字资料，不需要图片 ZIP"}</span>
           <input className="hidden" type="file" accept=".xlsx,.csv" disabled={busy} onChange={fileHandler(readWorkbook)} />
-        </label>
-        <label className="cursor-pointer rounded-xl border-2 border-dashed border-slate-300 bg-white p-6 hover:border-orange-400">
-          <FileArchive className="mb-3 h-8 w-8 text-orange-500" />
-          <span className="block font-semibold">2. 上传图片 ZIP</span>
-          <span className="mt-1 block text-sm text-slate-500">{zipName || "按 SKU/01-main 等目录整理，最多 500 张"}</span>
-          <input className="hidden" type="file" accept=".zip" disabled={busy || !products.length} onChange={fileHandler(readZip)} />
         </label>
       </div>
 
       <div className="rounded-xl border border-slate-200 bg-white p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="font-semibold">3. 预检并导入</h2>
-            <p className="text-sm text-slate-500">所有产品强制保存为草稿，不覆盖已有 SKU 或 Slug。</p>
+            <h2 className="font-semibold">2. 预检并导入</h2>
+            <p className="text-sm text-slate-500">所有产品强制保存为下架草稿，不覆盖已有 SKU 或 Slug；图片和价格可以导入后补充。</p>
           </div>
           <div className="flex gap-2">
             <button onClick={preflight} disabled={busy || !products.length} className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium disabled:opacity-50">
@@ -481,15 +381,6 @@ export default function ProductImportPage() {
               <p className="text-xs text-slate-500">{label}</p><p className="text-2xl font-bold">{value}</p>
             </div>
           ))}
-        </div>
-      )}
-
-      {unmatchedImages.length > 0 && (
-        <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
-          <strong>{unmatchedImages.length} 个 ZIP 文件未匹配，导入前请检查：</strong>
-          <ul className="mt-2 list-disc pl-5">
-            {unmatchedImages.slice(0, 20).map((path) => <li key={path}>{path}</li>)}
-          </ul>
         </div>
       )}
 
@@ -526,11 +417,6 @@ export default function ProductImportPage() {
           </table>
         </div>
       )}
-
-      <details className="rounded-xl border border-slate-200 bg-white p-5">
-        <summary className="cursor-pointer font-semibold">图片 ZIP 目录说明</summary>
-        <pre className="mt-3 overflow-x-auto rounded-lg bg-slate-950 p-4 text-xs text-slate-100">{`SKU/\n├── 01-main/\n├── 02-gallery/\n├── 03-real-photos/\n├── 04-detail-images/\n└── 05-logistics/`}</pre>
-      </details>
 
       {history.length > 0 && (
         <div className="rounded-xl border border-slate-200 bg-white p-5">

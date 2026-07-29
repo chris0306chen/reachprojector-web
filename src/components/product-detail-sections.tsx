@@ -57,9 +57,12 @@ export function ProductDetailSections({
                 <h3 className="bg-[#0B1A40] px-5 py-3 text-sm font-semibold uppercase tracking-wider text-white">
                   {group}
                 </h3>
-                <dl>
+                <dl className="grid md:grid-cols-2">
                   {items.map((item, index) => (
-                    <div key={`${item.name}-${index}`} className="grid grid-cols-1 gap-1 border-b border-slate-100 px-5 py-4 last:border-b-0 sm:grid-cols-[minmax(180px,35%)_1fr] sm:gap-6">
+                    <div
+                      key={`${item.name}-${index}`}
+                      className="grid grid-cols-[minmax(110px,35%)_1fr] gap-4 border-b border-slate-100 px-5 py-4 last:border-b-0 md:[&:nth-child(odd)]:border-r"
+                    >
                       <dt className="text-sm font-medium text-slate-600">{item.name}</dt>
                       <dd className="break-words text-sm text-slate-900">{item.value}</dd>
                     </div>
