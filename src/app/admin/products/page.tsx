@@ -8,6 +8,9 @@ import { normalizeProductDetail, type ProductDetailContent } from "@/lib/product
 
 interface Product {
   id: string;
+  sku?: string;
+  brand?: string;
+  model?: string;
   name: string;
   slug: string;
   description?: string;
@@ -43,6 +46,8 @@ interface Product {
   oem_notes?: string;
   attachments?: Array<{ url: string; name: string; size: number }>;
   image_url?: string;
+  images?: string[];
+  specifications?: Record<string, string>;
   created_at: string;
   detail_content?: ProductDetailContent;
   scene_ids?: string[];
@@ -59,6 +64,31 @@ interface Scene {
   id: string;
   name: string;
   group_name: string;
+}
+
+function getSeoGeoStatus(product: Pick<Product,
+  "seo_title" | "meta_description" | "short_description" | "features" | "detail_content" | "specifications"
+>) {
+  const detail = normalizeProductDetail(product.detail_content);
+  const specificationCount = detail.specifications.length || Object.keys(product.specifications || {}).length;
+  const checks = {
+    seoTitle: Boolean(product.seo_title && product.seo_title.length >= 20 && product.seo_title.length <= 70),
+    meta: Boolean(product.meta_description && product.meta_description.length >= 80 && product.meta_description.length <= 170),
+    summary: Boolean(product.short_description && product.short_description.length >= 40),
+    features: Boolean(product.features && product.features.filter(Boolean).length >= 3),
+    specifications: specificationCount >= 3,
+  };
+  const completed = Object.values(checks).filter(Boolean).length;
+  const missing = [
+    !checks.seoTitle ? "SEO 标题" : "",
+    !checks.meta ? "Meta 描述" : "",
+    !checks.summary ? "简短说明" : "",
+    !checks.features ? "核心卖点" : "",
+    !checks.specifications ? "结构化参数" : "",
+  ].filter(Boolean);
+  if (completed === 5) return { label: "可发布", className: "bg-green-50 text-green-700", missing };
+  if (completed >= 2) return { label: "待优化", className: "bg-amber-50 text-amber-700", missing };
+  return { label: "未完成", className: "bg-slate-100 text-slate-600", missing };
 }
 
 export default function AdminProductsPage() {
@@ -365,6 +395,9 @@ export default function AdminProductsPage() {
                     推荐
                   </th>
                   <th className="text-center text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
+                    SEO/GEO
+                  </th>
+                  <th className="text-center text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
                     状态
                   </th>
                   <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
@@ -458,6 +491,19 @@ export default function AdminProductsPage() {
                       >
                         {product.is_featured ? "推荐" : "普通"}
                       </button>
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      {(() => {
+                        const status = getSeoGeoStatus(product);
+                        return (
+                          <span
+                            title={status.missing.length ? `待补：${status.missing.join("、")}` : "SEO/GEO 基础内容完整"}
+                            className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${status.className}`}
+                          >
+                            {status.label}
+                          </span>
+                        );
+                      })()}
                     </td>
                     <td className="px-4 py-3 text-center">
                       <button
@@ -577,6 +623,53 @@ function ProductEditModal({
   const estimatedChargeableWeight = estimatedVolumetricWeight && form.packed_weight_kg
     ? Math.max(estimatedVolumetricWeight, form.packed_weight_kg)
     : null;
+  const seoGeoStatus = getSeoGeoStatus({
+    seo_title: form.seo_title,
+    meta_description: form.meta_description,
+    short_description: form.short_description,
+    features: form.features,
+    detail_content: detailContent,
+    specifications: product.specifications,
+  });
+
+  const generateSeoGeoSuggestions = () => {
+    const specifications = detailContent.specifications.length
+      ? detailContent.specifications
+      : Object.entries(product.specifications || {}).map(([name, value]) => ({
+          group: "Other" as const,
+          name,
+          value: String(value),
+        }));
+    if (!form.name.trim()) {
+      setError("请先填写产品名称，再生成 SEO/GEO 建议");
+      return;
+    }
+    const facts = specifications.slice(0, 6);
+    const factText = facts.slice(0, 3).map((item) => `${item.name}: ${item.value}`).join("; ");
+    const brandSuffix = product.brand && !form.name.toLowerCase().includes(product.brand.toLowerCase())
+      ? ` by ${product.brand}`
+      : "";
+    const seoBase = `${form.name}${brandSuffix}`;
+    const seoTitle = (seoBase.length <= 52 ? `${seoBase} | REACH Projector` : seoBase).slice(0, 70);
+    const summary = facts.length
+      ? `${form.name}${brandSuffix}. Verified specifications include ${factText}.`
+      : `${form.name}${brandSuffix}. Review the verified specifications and product details for project planning and product selection.`;
+    const metaSuffix = " View specifications for product and project evaluation.";
+    const metaDescription = `${summary}${metaSuffix}`.slice(0, 170);
+    const description = facts.length
+      ? `${form.name}${brandSuffix} is presented with verified product specifications for buyer review.\n\n${facts
+          .map((item) => `${item.name}: ${item.value}.`).join(" ")}\n\nConfirm regional configuration, installation requirements and commercial terms before ordering.`
+      : summary;
+    setForm({
+      ...form,
+      seo_title: seoTitle,
+      meta_description: metaDescription,
+      short_description: summary.slice(0, 600),
+      features: facts.map((item) => `${item.name}: ${item.value}`).slice(0, 8),
+      description,
+    });
+    setError(null);
+  };
 
   useEffect(() => {
     Promise.all([
@@ -720,9 +813,26 @@ function ProductEditModal({
             />
           </div>
           <section className="rounded-xl border border-slate-200 p-4 space-y-4">
-            <div>
-              <h3 className="font-semibold text-slate-900">页面内容与 SEO/GEO</h3>
-              <p className="text-xs text-slate-500">以下内容显示在英文客户前台；每条核心卖点单独一行。</p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold text-slate-900">页面内容与 SEO/GEO</h3>
+                  <span className={`rounded-full px-2 py-1 text-xs font-medium ${seoGeoStatus.className}`}>
+                    {seoGeoStatus.label}
+                  </span>
+                </div>
+                <p className="mt-1 text-xs text-slate-500">以下内容显示在英文客户前台；每条核心卖点单独一行。</p>
+                {seoGeoStatus.missing.length > 0 && (
+                  <p className="mt-1 text-xs text-amber-700">待优化：{seoGeoStatus.missing.join("、")}</p>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={generateSeoGeoSuggestions}
+                className="shrink-0 rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600"
+              >
+                一键生成优化建议
+              </button>
             </div>
             <label className="block">
               <span className="mb-1 block text-sm font-medium text-slate-700">简短说明（标题和价格下方）</span>
