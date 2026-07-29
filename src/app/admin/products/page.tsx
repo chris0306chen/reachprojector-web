@@ -113,6 +113,7 @@ export default function AdminProductsPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [batchAction, setBatchAction] = useState<string>("");
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [showCreateProduct, setShowCreateProduct] = useState(false);
 
   useEffect(() => {
     fetchProducts();
@@ -276,13 +277,22 @@ export default function AdminProductsPage() {
           <h1 className="text-2xl font-bold text-slate-900">产品管理</h1>
           <p className="text-slate-500 mt-1">管理所有产品信息</p>
         </div>
-        <Link
-          href="/admin/products/import"
-          className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 w-fit"
-        >
-          <Plus className="w-4 h-4" />
-          采集产品
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setShowCreateProduct(true)}
+            className="flex items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600"
+          >
+            <Plus className="w-4 h-4" />
+            新增产品草稿
+          </button>
+          <Link
+            href="/admin/products/import"
+            className="flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          >
+            链接采集 / 批量导入（可选）
+          </Link>
+        </div>
       </div>
 
       {error && (
@@ -587,6 +597,127 @@ export default function AdminProductsPage() {
           }}
         />
       )}
+      {showCreateProduct && (
+        <CreateProductModal
+          categories={categories}
+          onClose={() => setShowCreateProduct(false)}
+          onCreated={(product) => {
+            setShowCreateProduct(false);
+            setEditingProduct({ ...product, scene_ids: [] });
+            void fetchProducts();
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+function CreateProductModal({
+  categories,
+  onClose,
+  onCreated,
+}: {
+  categories: Category[];
+  onClose: () => void;
+  onCreated: (product: Product) => void;
+}) {
+  const [form, setForm] = useState({ name: "", brand: "", sku: "", category_id: "" });
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const createDraft = async () => {
+    if (!form.name.trim() || !form.brand.trim() || !form.category_id) {
+      setError("请填写产品名称、品牌和分类");
+      return;
+    }
+    setSubmitting(true);
+    setError("");
+    try {
+      const response = await fetch("/api/admin/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "创建产品草稿失败");
+      onCreated(result.data as Product);
+    } catch (createError) {
+      setError(createError instanceof Error ? createError.message : "创建产品草稿失败");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="w-full max-w-lg rounded-xl bg-white shadow-xl">
+        <div className="flex items-center justify-between border-b border-slate-200 p-5">
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900">新增产品草稿</h2>
+            <p className="mt-1 text-xs text-slate-500">创建后保持下架，并自动进入完整编辑器。</p>
+          </div>
+          <button type="button" onClick={onClose} className="rounded-lg p-2 hover:bg-slate-100" aria-label="关闭">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        <div className="space-y-4 p-5">
+          {error && <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">{error}</div>}
+          <label className="block">
+            <span className="mb-1 block text-sm font-medium text-slate-700">产品名称 *</span>
+            <input
+              value={form.name}
+              onChange={(event) => setForm({ ...form, name: event.target.value })}
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              autoFocus
+            />
+          </label>
+          <label className="block">
+            <span className="mb-1 block text-sm font-medium text-slate-700">品牌 *</span>
+            <input
+              value={form.brand}
+              onChange={(event) => setForm({ ...form, brand: event.target.value })}
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+            />
+          </label>
+          <label className="block">
+            <span className="mb-1 block text-sm font-medium text-slate-700">SKU（可选）</span>
+            <input
+              value={form.sku}
+              onChange={(event) => setForm({ ...form, sku: event.target.value })}
+              placeholder="不填写将自动生成草稿 SKU"
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+            />
+          </label>
+          <label className="block">
+            <span className="mb-1 block text-sm font-medium text-slate-700">产品分类 *</span>
+            <select
+              value={form.category_id}
+              onChange={(event) => setForm({ ...form, category_id: event.target.value })}
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+            >
+              <option value="">请选择分类</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.parent_id ? `　└ ${category.name}` : category.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+        <div className="flex justify-end gap-3 border-t border-slate-200 p-5">
+          <button type="button" onClick={onClose} className="rounded-lg border border-slate-200 px-4 py-2 text-sm">
+            取消
+          </button>
+          <button
+            type="button"
+            onClick={createDraft}
+            disabled={submitting}
+            className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+          >
+            {submitting ? "创建中..." : "创建草稿并继续编辑"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
