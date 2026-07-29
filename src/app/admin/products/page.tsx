@@ -596,18 +596,26 @@ function ProductEditModal({
     setSubmitting(true);
     setError(null);
     try {
+      const {
+        warranty,
+        seo_title: seoTitle,
+        meta_description: metaDescription,
+        ...baseForm
+      } = form;
       const res = await fetch(`/api/admin/products/${product.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...form,
+          ...baseForm,
           features: form.features.map((item) => item.trim()).filter(Boolean).slice(0, 8),
           sale_price: form.sale_price || null,
           weight_kg: form.weight_kg || null,
           attachments: attachments,
           detail_content: detailContent,
           scene_ids: sceneIds,
-          warranty: form.warranty,
+          ...(seoTitle !== (product.seo_title || "") ? { seo_title: seoTitle } : {}),
+          ...(metaDescription !== (product.meta_description || "") ? { meta_description: metaDescription } : {}),
+          ...(warranty !== (product.import_data?.warranty || "") ? { warranty } : {}),
         }),
       });
       if (res.ok) {
