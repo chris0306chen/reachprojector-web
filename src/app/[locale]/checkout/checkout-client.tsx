@@ -163,6 +163,17 @@ function CheckoutContent() {
                 </div>
               </div>
             </div>
+            <div className="mt-4 rounded-lg bg-slate-50 px-4 py-3 text-xs leading-5 text-slate-600">
+              <p>
+                PayPal payments are collected by Quanzhou Reach Technology Co., Ltd.
+              </p>
+              {stripeEnabled && (
+                <p>
+                  Card payments through Stripe are collected by HK REACH SOURCING LIMITED.
+                </p>
+              )}
+              <p>The applicable seller is also identified on the order confirmation and invoice.</p>
+            </div>
           </div>
 
           {/* Payment Form */}
@@ -175,7 +186,8 @@ function CheckoutContent() {
             {!item && !catalogError && (
               <div className="flex items-center justify-center gap-2 py-8 text-sm text-slate-500">
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Loading verified product price鈥?              </div>
+                Loading verified product price…
+              </div>
             )}
             {item && shipping && stripeEnabled && (
               <>

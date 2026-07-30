@@ -4,7 +4,7 @@ import { useState, useEffect, type FormEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
-import { Menu, X, Search, ChevronDown, ShoppingCart, Store, Building2 } from 'lucide-react';
+import { Menu, X, Search, ChevronDown, Store, Building2 } from 'lucide-react';
 import { LanguageSwitcher } from './language-switcher';
 import { productNavigation, sceneNavigation } from '@/lib/catalog-navigation';
 
@@ -33,7 +33,6 @@ export function Header() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(null);
   const [businessMode, setBusinessMode] = useState<BusinessMode>('retail');
-  const [cartCount] = useState(0);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -325,20 +324,6 @@ export function Header() {
               )}
             </div>
 
-            {/* Shopping Cart */}
-            <Link
-              href={`/${locale}/cart`}
-              className="relative flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 transition-colors"
-              aria-label={t('cart')}
-            >
-              <ShoppingCart className="w-5 h-5" />
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-orange-500 rounded-full">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-
             {/* CTA Button */}
             <Link
               href={businessMode === 'b2b' ? `/${locale}/contact` : `/${locale}/products`}
@@ -479,18 +464,10 @@ export function Header() {
               </div>
             ))}
 
-            <div className="pt-3 border-t border-slate-200 flex gap-2">
-              <Link
-                href={`/${locale}/cart`}
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <ShoppingCart className="w-4 h-4" />
-                {t('cart')} {cartCount > 0 && `(${cartCount})`}
-              </Link>
+            <div className="pt-3 border-t border-slate-200">
               <Link
                 href={businessMode === 'b2b' ? `/${locale}/contact` : `/${locale}/products`}
-                className="flex-1 text-center py-2.5 text-sm font-medium text-white bg-orange-500 rounded-lg"
+                className="block w-full text-center py-2.5 text-sm font-medium text-white bg-orange-500 rounded-lg"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {businessMode === 'b2b' ? t('getQuote') : t('shopNow')}

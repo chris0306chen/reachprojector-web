@@ -28,6 +28,9 @@ export async function sendOrderConfirmation(input: OrderConfirmationInput): Prom
   const customerEmail = validEmail(input.customerEmail) ? input.customerEmail : null;
   const recipient = customerEmail || businessEmail;
   const method = input.paymentMethod === 'stripe' ? 'Card (Stripe)' : 'PayPal';
+  const seller = input.paymentMethod === 'stripe'
+    ? 'HK REACH SOURCING LIMITED'
+    : 'Quanzhou Reach Technology Co., Ltd.';
 
   await sendEmail({
     to: recipient,
@@ -43,7 +46,8 @@ export async function sendOrderConfirmation(input: OrderConfirmationInput): Prom
           <tr><td style="padding:8px;border-bottom:1px solid #e2e8f0">Product</td><td style="padding:8px;border-bottom:1px solid #e2e8f0">${escapeHtml(input.productName)}</td></tr>
           <tr><td style="padding:8px;border-bottom:1px solid #e2e8f0">Quantity</td><td style="padding:8px;border-bottom:1px solid #e2e8f0">${input.quantity}</td></tr>
           <tr><td style="padding:8px;border-bottom:1px solid #e2e8f0">Paid</td><td style="padding:8px;border-bottom:1px solid #e2e8f0">${escapeHtml(input.currency)} ${escapeHtml(input.amount)}</td></tr>
-          <tr><td style="padding:8px">Payment method</td><td style="padding:8px">${method}</td></tr>
+          <tr><td style="padding:8px;border-bottom:1px solid #e2e8f0">Payment method</td><td style="padding:8px;border-bottom:1px solid #e2e8f0">${method}</td></tr>
+          <tr><td style="padding:8px">Seller</td><td style="padding:8px">${seller}</td></tr>
         </table>
         <p>Questions? Reply to this email or contact ${businessEmail}.</p>
       </div>
