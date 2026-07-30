@@ -773,6 +773,7 @@ function ProductEditModal({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadingProductImages, setUploadingProductImages] = useState(false);
   const [detailContent, setDetailContent] = useState<ProductDetailContent>(
     normalizeProductDetail(product.detail_content)
   );
@@ -1365,6 +1366,7 @@ function ProductEditModal({
             onMainImagesChange={setProductImages}
             onChange={setDetailContent}
             onError={setError}
+            onUploadingChange={setUploadingProductImages}
           />
         </div>
         <div className="p-6 border-t border-slate-200 flex justify-end gap-3">
@@ -1376,10 +1378,14 @@ function ProductEditModal({
           </button>
           <button
             onClick={handleSubmit}
-            disabled={submitting}
+            disabled={submitting || uploadingProductImages}
             className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 disabled:opacity-50"
           >
-            {submitting ? "保存中..." : "保存修改（保持当前状态）"}
+            {uploadingProductImages
+              ? "图片上传中，请稍候…"
+              : submitting
+                ? "保存中..."
+                : "保存修改（保持当前状态）"}
           </button>
         </div>
       </div>
