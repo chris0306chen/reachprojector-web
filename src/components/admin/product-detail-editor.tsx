@@ -19,10 +19,18 @@ interface ProductDetailEditorProps {
   onMainImagesChange: (images: string[]) => void;
   onChange: (value: ProductDetailContent) => void;
   onError: (message: string) => void;
+  onUploadingChange?: (uploading: boolean) => void;
 }
 
 type ImageSection = "real_photos" | "detail_images" | "logistics_images";
 type UploadSection = "main_images" | ImageSection;
+type UploadStatus = {
+  section: UploadSection;
+  completed: number;
+  total: number;
+  message: string;
+  tone: "uploading" | "success" | "error";
+} | null;
 
 const inputClass =
   "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20";
@@ -73,10 +81,12 @@ export function ProductDetailEditor({
   onMainImagesChange,
   onChange,
   onError,
+  onUploadingChange,
 }: ProductDetailEditorProps) {
   // Preserve incomplete rows while editing; save-time validation handles cleanup.
   const detail = value || EMPTY_PRODUCT_DETAIL;
   const [specificationSource, setSpecificationSource] = useState("");
+  const [uploadStatus, setUploadStatus] = useState<UploadStatus>(null);
   const update = <K extends keyof ProductDetailContent>(key: K, next: ProductDetailContent[K]) =>
     onChange({ ...detail, [key]: next });
 
@@ -92,7 +102,7 @@ export function ProductDetailEditor({
     file: File,
     section: UploadSection,
     index: number
-  ): Promise<ProductDetailImage | null> => {
+  ): Promise<ProductDetailImage> => {
     try {
       const sectionName = section === "main_images"
         ? "main"
@@ -109,10 +119,11 @@ export function ProductDetailEditor({
       formData.append("kind", "product-image");
       formData.append("storageName", storageName);
       const response = await fetch("/api/admin/upload", { method: "POST", body: formData });
-      const result = await response.json();
+      const result = await response.json().catch(() => ({}));
       if (!response.ok || typeof result.url !== "string") {
-        onError(result.error || "图片上传失败");
-        return null;
+        throw new Error(
+          [result.error, result.details].filter(Boolean).join("：") || `图片上传失败（${response.status}）`
+        );
       }
       const altSection = section === "main_images"
         ? "product image"
@@ -123,25 +134,78 @@ export function ProductDetailEditor({
           : "shipping photo";
       return { url: result.url, alt: `${productName.trim()} ${altSection} ${index + 1}` };
     } catch (error) {
-      onError(error instanceof Error ? error.message : "图片处理失败");
-      return null;
+      throw error instanceof Error ? error : new Error("图片处理失败");
     }
   };
 
-  const addUploadedImages = async (section: ImageSection, files?: FileList | null) => {
-    if (!files?.length) return;
+  const uploadFiles = async (
+    section: UploadSection,
+    files: File[],
+    existingCount: number
+  ) => {
+    if (!files.length) return [];
+    onUploadingChange?.(true);
+    setUploadStatus({
+      section,
+      completed: 0,
+      total: files.length,
+      message: `正在处理并上传 0/${files.length} 张图片…`,
+      tone: "uploading",
+    });
+    const uploaded: ProductDetailImage[] = [];
+    const errors: string[] = [];
+    try {
+      for (const [index, file] of files.entries()) {
+        try {
+          uploaded.push(await uploadImage(file, section, existingCount + index));
+        } catch (error) {
+          errors.push(`${file.name}：${error instanceof Error ? error.message : "上传失败"}`);
+        }
+        setUploadStatus({
+          section,
+          completed: index + 1,
+          total: files.length,
+          message: `正在处理并上传 ${index + 1}/${files.length} 张图片…`,
+          tone: "uploading",
+        });
+      }
+      if (errors.length) {
+        const message = `已上传 ${uploaded.length} 张，失败 ${errors.length} 张。${errors[0]}`;
+        setUploadStatus({
+          section,
+          completed: files.length,
+          total: files.length,
+          message,
+          tone: "error",
+        });
+        onError(message);
+      } else {
+        setUploadStatus({
+          section,
+          completed: files.length,
+          total: files.length,
+          message: `已上传 ${uploaded.length} 张图片。请点击页面底部“保存修改”。`,
+          tone: "success",
+        });
+      }
+      return uploaded;
+    } finally {
+      onUploadingChange?.(false);
+    }
+  };
+
+  const addUploadedImages = async (section: ImageSection, files: File[]) => {
+    if (!files.length) return;
     const limit = section === "real_photos" ? 2 : section === "detail_images" ? 20 : 12;
     const available = limit - detail[section].length;
     if (available <= 0) {
-      onError("产品实拍图最多只能上传两张");
+      const message = section === "real_photos" ? "产品实拍图最多只能上传两张" : "该图片区已达到上传上限";
+      setUploadStatus({ section, completed: 0, total: files.length, message, tone: "error" });
+      onError(message);
       return;
     }
-    const selected = Array.from(files).slice(0, available);
-    const uploaded = (await Promise.all(
-      selected.map((file, index) => uploadImage(file, section, detail[section].length + index))
-    )).filter(
-      (image): image is ProductDetailImage => Boolean(image)
-    );
+    const selected = files.slice(0, available);
+    const uploaded = await uploadFiles(section, selected, detail[section].length);
     if (!uploaded.length) return;
     if (section === "logistics_images") {
       update(section, [
@@ -153,19 +217,34 @@ export function ProductDetailEditor({
     }
   };
 
-  const addMainImages = async (files?: FileList | null) => {
-    if (!files?.length) return;
+  const addMainImages = async (files: File[]) => {
+    if (!files.length) return;
     const available = 8 - mainImages.length;
     if (available <= 0) {
-      onError("产品主图最多上传八张");
+      const message = "产品主图最多上传八张";
+      setUploadStatus({ section: "main_images", completed: 0, total: files.length, message, tone: "error" });
+      onError(message);
       return;
     }
-    const selected = Array.from(files).slice(0, available);
-    const uploaded = (await Promise.all(
-      selected.map((file, index) => uploadImage(file, "main_images", mainImages.length + index))
-    )).filter((image): image is ProductDetailImage => Boolean(image));
+    const selected = files.slice(0, available);
+    const uploaded = await uploadFiles("main_images", selected, mainImages.length);
     if (uploaded.length) onMainImagesChange([...mainImages, ...uploaded.map((image) => image.url)]);
   };
+
+  const uploadStatusFor = (section: UploadSection) => uploadStatus?.section === section ? (
+    <div
+      role="status"
+      className={`mt-3 rounded-lg px-3 py-2 text-sm ${
+        uploadStatus.tone === "success"
+          ? "bg-emerald-50 text-emerald-700"
+          : uploadStatus.tone === "error"
+            ? "bg-red-50 text-red-700"
+            : "bg-blue-50 text-blue-700"
+      }`}
+    >
+      {uploadStatus.message}
+    </div>
+  ) : null;
 
   const importSpecifications = () => {
     const rows: string[][] = [];
@@ -266,11 +345,13 @@ export function ProductDetailEditor({
           accept="image/jpeg,image/png,image/webp,image/avif"
           className="hidden"
           onChange={(event) => {
-            void addUploadedImages(section, event.target.files);
+            const files = Array.from(event.target.files || []);
             event.target.value = "";
+            void addUploadedImages(section, files);
           }}
         />
       </label>
+      {uploadStatusFor(section)}
     </div>
   );
 
@@ -309,11 +390,13 @@ export function ProductDetailEditor({
             accept="image/jpeg,image/png,image/webp,image/avif"
             className="hidden"
             onChange={(event) => {
-              void addMainImages(event.target.files);
+              const files = Array.from(event.target.files || []);
               event.target.value = "";
+              void addMainImages(files);
             }}
           />
         </label>
+        {uploadStatusFor("main_images")}
       </section>
 
       <div>
