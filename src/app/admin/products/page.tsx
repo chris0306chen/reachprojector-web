@@ -5,6 +5,7 @@ import { Search, Plus, Edit2, Trash2, AlertCircle, CheckSquare, Square, ArrowUp,
 import Link from "next/link";
 import { ProductDetailEditor } from "@/components/admin/product-detail-editor";
 import { normalizeProductDetail, type ProductDetailContent } from "@/lib/product-detail";
+import { buildSeoGeoSuggestions, type SeoGeoSuggestions } from "@/lib/seo-geo-suggestions";
 
 interface Product {
   id: string;
@@ -780,6 +781,7 @@ function ProductEditModal({
   const [productImages, setProductImages] = useState<string[]>(
     Array.isArray(product.images) ? product.images : []
   );
+  const [seoGeoSuggestions, setSeoGeoSuggestions] = useState<SeoGeoSuggestions | null>(null);
   const estimatedVolumetricWeight = form.package_length_cm && form.package_width_cm && form.package_height_cm
     ? (form.package_length_cm * form.package_width_cm * form.package_height_cm) / 5000
     : null;
@@ -807,31 +809,40 @@ function ProductEditModal({
       setError("请先填写产品名称，再生成 SEO/GEO 建议");
       return;
     }
-    const facts = specifications.slice(0, 6);
-    const factText = facts.slice(0, 3).map((item) => `${item.name}: ${item.value}`).join("; ");
-    const brandSuffix = product.brand && !form.name.toLowerCase().includes(product.brand.toLowerCase())
-      ? ` by ${product.brand}`
-      : "";
-    const seoBase = `${form.name}${brandSuffix}`;
-    const seoTitle = (seoBase.length <= 52 ? `${seoBase} | REACH Projector` : seoBase).slice(0, 70);
-    const summary = facts.length
-      ? `${form.name}${brandSuffix}. Verified specifications include ${factText}.`
-      : `${form.name}${brandSuffix}. Review the verified specifications and product details for project planning and product selection.`;
-    const metaSuffix = " View specifications for product and project evaluation.";
-    const metaDescription = `${summary}${metaSuffix}`.slice(0, 170);
-    const description = facts.length
-      ? `${form.name}${brandSuffix} is presented with verified product specifications for buyer review.\n\n${facts
-          .map((item) => `${item.name}: ${item.value}.`).join(" ")}\n\nConfirm regional configuration, installation requirements and commercial terms before ordering.`
-      : summary;
-    setForm({
-      ...form,
-      seo_title: seoTitle,
-      meta_description: metaDescription,
-      short_description: summary.slice(0, 600),
-      features: facts.map((item) => `${item.name}: ${item.value}`).slice(0, 8),
-      description,
-    });
+    setSeoGeoSuggestions(buildSeoGeoSuggestions({
+      name: form.name,
+      brand: form.brand,
+      model: form.model,
+      category: categories.find((category) => category.id === form.category_id)?.name,
+      specifications,
+    }));
     setError(null);
+  };
+
+  const applySeoGeoSuggestion = (field: keyof Omit<SeoGeoSuggestions, "warnings">) => {
+    if (!seoGeoSuggestions) return;
+    const mapping = {
+      slug: "slug",
+      seoTitle: "seo_title",
+      metaDescription: "meta_description",
+      shortDescription: "short_description",
+      features: "features",
+      description: "description",
+    } as const;
+    setForm((current) => ({ ...current, [mapping[field]]: seoGeoSuggestions[field] }));
+  };
+
+  const applyAllSeoGeoSuggestions = () => {
+    if (!seoGeoSuggestions) return;
+    setForm((current) => ({
+      ...current,
+      slug: current.slug || seoGeoSuggestions.slug,
+      seo_title: seoGeoSuggestions.seoTitle,
+      meta_description: seoGeoSuggestions.metaDescription,
+      short_description: seoGeoSuggestions.shortDescription,
+      features: seoGeoSuggestions.features,
+      description: seoGeoSuggestions.description,
+    }));
   };
 
   useEffect(() => {
@@ -1067,6 +1078,51 @@ function ProductEditModal({
                 一键生成优化建议
               </button>
             </div>
+            {seoGeoSuggestions && (
+              <div className="space-y-3 rounded-xl border border-orange-200 bg-orange-50/50 p-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h4 className="font-medium text-slate-900">SEO/GEO 建议预览</h4>
+                    <p className="text-xs text-slate-600">建议尚未写入表单，也不会自动保存或发布。</p>
+                    <p className="text-xs text-amber-700">为保护已有链接，“应用全部”不会修改现有URL；Slug建议需单独确认。</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button type="button" onClick={() => setSeoGeoSuggestions(null)} className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs">
+                      关闭建议
+                    </button>
+                    <button type="button" onClick={applyAllSeoGeoSuggestions} className="rounded-lg bg-orange-500 px-3 py-2 text-xs font-medium text-white hover:bg-orange-600">
+                      应用全部建议
+                    </button>
+                  </div>
+                </div>
+                {seoGeoSuggestions.warnings.length > 0 && (
+                  <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
+                    {seoGeoSuggestions.warnings.map((warning) => <p key={warning}>• {warning}</p>)}
+                  </div>
+                )}
+                {([
+                  ["URL Slug", "slug", seoGeoSuggestions.slug],
+                  ["SEO标题", "seoTitle", seoGeoSuggestions.seoTitle],
+                  ["Meta描述", "metaDescription", seoGeoSuggestions.metaDescription],
+                  ["简短说明 / GEO摘要", "shortDescription", seoGeoSuggestions.shortDescription],
+                  ["核心卖点", "features", seoGeoSuggestions.features.join("\n")],
+                  ["完整文字说明", "description", seoGeoSuggestions.description],
+                ] as const).map(([label, field, value]) => (
+                  <div key={field} className="rounded-lg border border-slate-200 bg-white p-3">
+                    <div className="mb-2 flex items-center justify-between gap-3">
+                      <span className="text-xs font-medium text-slate-700">{label}</span>
+                      <button type="button" onClick={() => applySeoGeoSuggestion(field)} className="text-xs font-medium text-orange-600 hover:text-orange-700">
+                        应用此项
+                      </button>
+                    </div>
+                    <p className="whitespace-pre-line text-sm leading-6 text-slate-800">{value || "暂无建议"}</p>
+                    {(field === "seoTitle" || field === "metaDescription") && (
+                      <p className="mt-1 text-xs text-slate-400">{value.length} 个字符</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
             <label className="block">
               <span className="mb-1 block text-sm font-medium text-slate-700">简短说明（标题和价格下方）</span>
               <textarea
