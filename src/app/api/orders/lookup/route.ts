@@ -12,7 +12,10 @@ function safeOrder(order: Record<string, unknown>) {
 
 export async function GET(request: NextRequest) {
   const sessionId = request.nextUrl.searchParams.get('session_id')?.trim();
-  if (!sessionId || !/^cs_[A-Za-z0-9_]+$/.test(sessionId) || sessionId.length > 255) {
+  const paypalOrderId = request.nextUrl.searchParams.get('paypal_order_id')?.trim();
+  const validSession = Boolean(sessionId && /^cs_[A-Za-z0-9_]+$/.test(sessionId) && sessionId.length <= 255);
+  const validPayPalOrder = Boolean(paypalOrderId && /^[A-Z0-9]{10,30}$/.test(paypalOrderId));
+  if (!validSession && !validPayPalOrder) {
     return NextResponse.json({ error: 'Invalid session' }, { status: 400 });
   }
 
@@ -20,7 +23,7 @@ export async function GET(request: NextRequest) {
   const { data, error } = await supabase
     .from('orders')
     .select(SAFE_FIELDS)
-    .eq('stripe_session_id', sessionId)
+    .eq(validSession ? 'stripe_session_id' : 'paypal_order_id', validSession ? sessionId : paypalOrderId)
     .maybeSingle();
 
   if (error) return NextResponse.json({ error: 'Unable to retrieve order' }, { status: 500 });

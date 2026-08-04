@@ -96,10 +96,10 @@ function CheckoutContent() {
   const totalAmount = item?.total || '0.00';
   const grandTotal = (Number(totalAmount) + (shipping?.shippingCost || 0)).toFixed(2);
 
-  const handleSuccess = (order: { order_id: string; payer_email?: string | null }) => {
+  const handleSuccess = (order: { order_id: string; paypal_order_id?: string | null }) => {
     setTimeout(() => {
       const params = new URLSearchParams({ product: productName, order_id: order.order_id });
-      if (order.payer_email) params.set('email', order.payer_email);
+      if (order.paypal_order_id) params.set('paypal_order_id', order.paypal_order_id);
       router.push(`/order-success?${params.toString()}`);
     }, 2000);
   };
