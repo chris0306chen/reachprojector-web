@@ -2,12 +2,14 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { getCheckoutItem } from '@/lib/checkout';
 import {
-  createOrder,
+  createPaidOrder,
   getOrderByStripeSessionId,
+  refundStripeOrderAndRestoreInventory,
   updateOrderStatusByStripePaymentIntent,
 } from '@/lib/data-service';
 import { sendOrderConfirmation } from '@/lib/order-email';
 import { getShippingQuote } from '@/lib/shipping';
+import { formatShippingAddress } from '@/lib/order-address';
 
 export const runtime = 'nodejs';
 
@@ -94,7 +96,22 @@ export async function POST(request: NextRequest) {
           console.error('Stripe shipping country did not match quoted country:', event.id);
           return NextResponse.json({ error: 'Shipping country mismatch' }, { status: 409 });
         }
-        const order = await createOrder({
+        const customerPhone = stringValue(shippingDetails.phone) || stringValue(customerDetails.phone);
+        const shippingAddressText = formatShippingAddress({
+          name: stringValue(shippingDetails.name) || stringValue(customerDetails.name),
+          phone: customerPhone,
+          line1: stringValue(shippingAddress.line1),
+          line2: stringValue(shippingAddress.line2),
+          city: stringValue(shippingAddress.city),
+          state: stringValue(shippingAddress.state),
+          postalCode: stringValue(shippingAddress.postal_code),
+          country: shippingCountry,
+        });
+        if (!shippingAddressText) {
+          console.error('Stripe paid session did not include a delivery address:', event.id);
+          return NextResponse.json({ error: 'Delivery address missing' }, { status: 409 });
+        }
+        const order = await createPaidOrder({
           order_id: `ORD-STRIPE-${sessionId.slice(-18)}`,
           product_id: item.id,
           product_name: item.name,
@@ -110,9 +127,11 @@ export async function POST(request: NextRequest) {
           payment_method: 'stripe',
           payment_status: 'paid',
           country: countryCode,
+          customer_phone: customerPhone,
+          shipping_address: shippingAddressText,
           shipping_method: `${shipping.method} (${shipping.tradeTerms})`,
           shipping_cost: shipping.shippingCost.toFixed(2),
-          status: 'paid',
+          status: 'preparing',
         });
         sendOrderConfirmation({
           orderId: order.order_id,
@@ -122,13 +141,21 @@ export async function POST(request: NextRequest) {
           currency: item.currency,
           customerEmail: stringValue(customerDetails.email),
           paymentMethod: 'stripe',
+          shippingMethod: `${shipping.method} (${shipping.tradeTerms})`,
+          shippingAddress: shippingAddressText,
         }).catch((emailError) => console.error('Stripe confirmation email failed:', emailError));
       }
     }
 
     if (event.type === 'charge.refunded') {
       const paymentIntentId = stringValue(object.payment_intent);
-      if (paymentIntentId) await updateOrderStatusByStripePaymentIntent(paymentIntentId, 'refunded');
+      const amount = Number(object.amount);
+      const amountRefunded = Number(object.amount_refunded);
+      if (paymentIntentId && Number.isFinite(amount) && amountRefunded >= amount) {
+        await refundStripeOrderAndRestoreInventory(paymentIntentId);
+      } else if (paymentIntentId) {
+        await updateOrderStatusByStripePaymentIntent(paymentIntentId, 'partially_refunded');
+      }
     }
 
     return NextResponse.json({ received: true });

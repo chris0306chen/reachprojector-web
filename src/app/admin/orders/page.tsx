@@ -21,6 +21,8 @@ interface Order {
   shipping_method?: string;
   tracking_number?: string;
   country?: string;
+  customer_phone?: string;
+  shipping_address?: string;
   pi_number?: string;
   deposit_amount?: number;
   final_payment_amount?: number;
@@ -645,6 +647,11 @@ function OrderDetailModal({ order, onClose }: { order: Order; onClose: () => voi
           <div>
             <p className="text-sm text-slate-500">产品</p>
             <p className="text-sm text-slate-900">{order.product_name}</p>
+          </div>
+          <div>
+            <p className="text-sm text-slate-500">收货信息</p>
+            <p className="whitespace-pre-line text-sm text-slate-900">{order.shipping_address || "-"}</p>
+            {order.customer_phone && <p className="text-sm text-slate-600">{order.customer_phone}</p>}
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div>

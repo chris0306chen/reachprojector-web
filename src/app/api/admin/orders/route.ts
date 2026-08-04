@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
+import { sendShippingNotification } from "@/lib/order-email";
 
 export async function GET(request: NextRequest) {
   try {
@@ -45,7 +46,11 @@ export async function PUT(request: NextRequest) {
 
     const updateData: Record<string, unknown> = {};
     // Status changes use /api/admin/orders/[id]/status so transition rules cannot be bypassed.
-    if (body.tracking_number !== undefined) updateData.tracking_number = body.tracking_number;
+    const trackingNumber = typeof body.tracking_number === "string" ? body.tracking_number.trim() : "";
+    if (body.tracking_number !== undefined) {
+      updateData.tracking_number = trackingNumber || null;
+      if (trackingNumber) updateData.status = "shipped";
+    }
     if (body.shipping_method !== undefined) updateData.shipping_method = body.shipping_method;
     if (body.notes !== undefined) updateData.notes = body.notes;
 
@@ -61,6 +66,16 @@ export async function PUT(request: NextRequest) {
       .single();
 
     if (error) throw error;
+
+    if (trackingNumber) {
+      sendShippingNotification({
+        orderId: data.order_id,
+        productName: data.product_name,
+        customerEmail: data.payer_email || data.customer_email,
+        shippingMethod: data.shipping_method || "International shipping",
+        trackingNumber,
+      }).catch((emailError) => console.error("Shipping notification failed:", emailError));
+    }
 
     return NextResponse.json(data);
   } catch (error) {

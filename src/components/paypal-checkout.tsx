@@ -14,7 +14,7 @@ interface PayPalCheckoutProps {
   quantity?: number;
   currency?: string;
   countryCode?: string;
-  onSuccess?: () => void;
+  onSuccess?: (order: { order_id: string; payer_email?: string | null }) => void;
 }
 
 type PaymentStatus = 'idle' | 'processing' | 'success' | 'error';
@@ -85,7 +85,7 @@ export function PayPalCheckout({
       }
 
       setStatus('success');
-      onSuccess?.();
+      onSuccess?.(result.order);
     } catch (err) {
       setErrorMessage(err instanceof Error ? err.message : 'Payment failed');
       setStatus('error');

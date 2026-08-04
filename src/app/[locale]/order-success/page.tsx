@@ -10,11 +10,37 @@ function OrderSuccessContent() {
   const t = useTranslations('orderSuccess');
   const searchParams = useSearchParams();
   const productName = searchParams.get('product') || 'your product';
+  const orderId = searchParams.get('order_id');
+  const email = searchParams.get('email');
+  const sessionId = searchParams.get('session_id');
   const [mounted, setMounted] = useState(false);
+  const [order, setOrder] = useState<Record<string, string | number | null> | null>(null);
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    let active = true;
+    async function loadOrder() {
+      if (!sessionId && !(orderId && email)) return;
+      for (let attempt = 0; attempt < (sessionId ? 5 : 1); attempt += 1) {
+        const response = sessionId
+          ? await fetch(`/api/orders/lookup?session_id=${encodeURIComponent(sessionId)}`, { cache: 'no-store' })
+          : await fetch('/api/orders/lookup', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ orderId, email }),
+            });
+        if (response.ok) {
+          const result = await response.json();
+          if (active) setOrder(result.order);
+          return;
+        }
+        if (response.status !== 202) return;
+        await new Promise((resolve) => setTimeout(resolve, 1200));
+      }
+    }
+    loadOrder();
+    return () => { active = false; };
+  }, [email, orderId, sessionId]);
 
   if (!mounted) return null;
 
@@ -34,6 +60,16 @@ function OrderSuccessContent() {
         </div>
 
         <div className="bg-slate-50 rounded-xl p-6 mb-8">
+          {order && (
+            <dl className="mb-6 grid grid-cols-2 gap-3 border-b border-slate-200 pb-6 text-left text-sm">
+              <dt className="text-slate-500">Order number</dt><dd>{order.order_id}</dd>
+              <dt className="text-slate-500">Product</dt><dd>{order.product_name} × {order.quantity}</dd>
+              <dt className="text-slate-500">Paid</dt><dd>{order.currency} {order.amount}</dd>
+              <dt className="text-slate-500">Shipping</dt><dd>{order.shipping_method || 'Processing'}</dd>
+              <dt className="text-slate-500">Status</dt><dd className="capitalize">{order.status}</dd>
+              <dt className="text-slate-500">Delivery address</dt><dd className="whitespace-pre-line">{order.shipping_address || 'Confirmed by payment provider'}</dd>
+            </dl>
+          )}
           <div className="flex items-center gap-3 mb-4">
             <Package className="w-5 h-5 text-orange-500" />
             <h2 className="font-semibold text-slate-900">{t('whatNext')}</h2>
@@ -55,6 +91,12 @@ function OrderSuccessContent() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Link
+            href="/order-lookup"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-slate-300 hover:border-slate-400 text-slate-700 font-medium rounded-lg transition-colors"
+          >
+            Track order
+          </Link>
           <Link
             href="/products"
             className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"

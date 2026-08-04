@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
+import { sendShippingNotification } from "@/lib/order-email";
 
 export async function PUT(
   request: NextRequest,
@@ -24,14 +25,14 @@ export async function PUT(
     const supabase = await getSupabaseClient();
     const { data: currentOrder, error: readError } = await supabase
       .from("orders")
-      .select("status")
+      .select("status, order_id, product_name, payer_email")
       .eq("id", id)
       .single();
 
     if (readError || !currentOrder) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
-    if (currentOrder.status !== "paid") {
+    if (!["paid", "preparing"].includes(currentOrder.status)) {
       return NextResponse.json({ error: "Only paid orders can be shipped" }, { status: 409 });
     }
 
@@ -48,6 +49,14 @@ export async function PUT(
       .single();
 
     if (error) throw error;
+
+    sendShippingNotification({
+      orderId: currentOrder.order_id,
+      productName: currentOrder.product_name,
+      customerEmail: currentOrder.payer_email,
+      shippingMethod: shipping_method.trim(),
+      trackingNumber: tracking_number.trim(),
+    }).catch((emailError) => console.error("Shipping notification failed:", emailError));
 
     return NextResponse.json({ success: true, data });
   } catch (error) {

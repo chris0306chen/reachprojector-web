@@ -26,6 +26,7 @@ export function Footer() {
       { href: `/${locale}/contact`, label: t('wholesaleInquiry') },
     ],
     support: [
+      { href: `/${locale}/order-lookup`, label: 'Track Order' },
       { href: `/${locale}/contact`, label: t('technicalSupport') },
       { href: `/${locale}/warranty`, label: t('warrantyPolicy') },
       { href: `/${locale}/shipping-policy`, label: t('shippingInfo') },

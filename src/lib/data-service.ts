@@ -313,6 +313,8 @@ export interface CreateOrderInput {
   country?: string | null;
   shipping_method?: string | null;
   shipping_cost?: string | null;
+  customer_phone?: string | null;
+  shipping_address?: string | null;
   status: string;
 }
 
@@ -323,6 +325,14 @@ export async function createOrder(order: CreateOrderInput): Promise<Order> {
     .select()
     .single();
   if (error) throw new Error(`Failed to create order: ${error.message}`);
+  return data as Order;
+}
+
+export async function createPaidOrder(order: CreateOrderInput): Promise<Order> {
+  const { data, error } = await client.rpc('create_paid_order_and_decrement_inventory', {
+    p_order: order,
+  });
+  if (error) throw new Error(`Failed to create paid order: ${error.message}`);
   return data as Order;
 }
 
@@ -360,6 +370,14 @@ export async function updateOrderStatusByStripePaymentIntent(
   return data as Order | null;
 }
 
+export async function refundStripeOrderAndRestoreInventory(paymentIntentId: string): Promise<Order | null> {
+  const { data, error } = await client.rpc('refund_order_and_restore_inventory', {
+    p_stripe_payment_intent_id: paymentIntentId,
+  });
+  if (error) throw new Error(`Failed to restore refunded inventory: ${error.message}`);
+  return data as Order | null;
+}
+
 export async function updateOrderStatus(id: string, status: string): Promise<Order> {
   const { data, error } = await client
     .from('orders')
@@ -379,5 +397,13 @@ export async function updateOrderStatusByPayPalId(paypalOrderId: string, status:
     .select()
     .maybeSingle();
   if (error) throw new Error(`Failed to update PayPal order: ${error.message}`);
+  return data as Order | null;
+}
+
+export async function refundPayPalOrderAndRestoreInventory(paypalOrderId: string): Promise<Order | null> {
+  const { data, error } = await client.rpc('refund_paypal_order_and_restore_inventory', {
+    p_paypal_order_id: paypalOrderId,
+  });
+  if (error) throw new Error(`Failed to restore refunded PayPal inventory: ${error.message}`);
   return data as Order | null;
 }
