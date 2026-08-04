@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { updateOrderStatusByPayPalId } from '@/lib/data-service';
+import { refundPayPalOrderAndRestoreInventory, updateOrderStatusByPayPalId } from '@/lib/data-service';
 
 const PAYPAL_BASE_URL = process.env.PAYPAL_BASE_URL || 'https://api-m.paypal.com';
 
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
 
     const paypalOrderId = event.resource?.supplementary_data?.related_ids?.order_id;
     const statusByEvent: Record<string, string> = {
-      'PAYMENT.CAPTURE.COMPLETED': 'paid',
+      'PAYMENT.CAPTURE.COMPLETED': 'preparing',
       'PAYMENT.CAPTURE.REFUNDED': 'refunded',
       'PAYMENT.CAPTURE.REVERSED': 'refunded',
       'PAYMENT.CAPTURE.DENIED': 'payment_failed',
@@ -73,7 +73,27 @@ export async function POST(request: NextRequest) {
     const nextStatus = statusByEvent[event.event_type];
 
     if (paypalOrderId && nextStatus) {
-      await updateOrderStatusByPayPalId(paypalOrderId, nextStatus);
+      if (nextStatus === 'refunded') {
+        const captureId = event.resource?.supplementary_data?.related_ids?.capture_id;
+        let isFullRefund = event.event_type === 'PAYMENT.CAPTURE.REVERSED';
+        if (captureId && !isFullRefund) {
+          const captureResponse = await fetch(
+            `${PAYPAL_BASE_URL}/v2/payments/captures/${encodeURIComponent(captureId)}`,
+            { headers: { Authorization: `Bearer ${accessToken}` }, cache: 'no-store' }
+          );
+          if (captureResponse.ok) {
+            const capture = await captureResponse.json();
+            isFullRefund = capture.status === 'REFUNDED';
+          }
+        }
+        if (isFullRefund) {
+          await refundPayPalOrderAndRestoreInventory(paypalOrderId);
+        } else {
+          await updateOrderStatusByPayPalId(paypalOrderId, 'partially_refunded');
+        }
+      } else {
+        await updateOrderStatusByPayPalId(paypalOrderId, nextStatus);
+      }
     }
 
     return NextResponse.json({ received: true });

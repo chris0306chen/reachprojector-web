@@ -96,9 +96,11 @@ function CheckoutContent() {
   const totalAmount = item?.total || '0.00';
   const grandTotal = (Number(totalAmount) + (shipping?.shippingCost || 0)).toFixed(2);
 
-  const handleSuccess = () => {
+  const handleSuccess = (order: { order_id: string; payer_email?: string | null }) => {
     setTimeout(() => {
-      router.push('/order-success?product=' + encodeURIComponent(productName));
+      const params = new URLSearchParams({ product: productName, order_id: order.order_id });
+      if (order.payer_email) params.set('email', order.payer_email);
+      router.push(`/order-success?${params.toString()}`);
     }, 2000);
   };
 

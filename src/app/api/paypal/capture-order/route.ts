@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createOrder, getOrderByPayPalId } from '@/lib/data-service';
+import { createPaidOrder, getOrderByPayPalId } from '@/lib/data-service';
 import { getCheckoutItem } from '@/lib/checkout';
 import { sendOrderConfirmation } from '@/lib/order-email';
 import { getShippingQuote } from '@/lib/shipping';
+import { formatShippingAddress } from '@/lib/order-address';
 
 const PAYPAL_BASE_URL = process.env.PAYPAL_BASE_URL || 'https://api-m.paypal.com';
 
@@ -149,12 +150,29 @@ export async function POST(request: NextRequest) {
     const payerName = payer.name
       ? `${payer.name.given_name || ''} ${payer.name.surname || ''}`.trim()
       : null;
+    const delivery = purchaseUnit?.shipping || {};
+    const deliveryAddress = delivery.address || {};
+    const customerPhone = payer.phone?.phone_number?.national_number || null;
+    const shippingAddress = formatShippingAddress({
+      name: delivery.name?.full_name || payerName,
+      phone: customerPhone,
+      line1: deliveryAddress.address_line_1,
+      line2: deliveryAddress.address_line_2,
+      city: deliveryAddress.admin_area_2,
+      state: deliveryAddress.admin_area_1,
+      postalCode: deliveryAddress.postal_code,
+      country: deliveryAddress.country_code,
+    });
+
+    if (!shippingAddress) {
+      return NextResponse.json({ error: 'PayPal did not return a delivery address' }, { status: 409 });
+    }
 
     // Save order to database
     let orderRecord;
     let orderWasCreated = false;
     try {
-      orderRecord = await createOrder({
+      orderRecord = await createPaidOrder({
         order_id: `ORD-${Date.now()}`,
         product_id: item.id,
         product_name: item.name,
@@ -167,9 +185,11 @@ export async function POST(request: NextRequest) {
         airwallex_intent_id: null,
         payment_method: 'paypal',
         country: countryCode,
+        customer_phone: customerPhone,
+        shipping_address: shippingAddress,
         shipping_method: `${shipping.method} (${shipping.tradeTerms})`,
         shipping_cost: shipping.shippingCost.toFixed(2),
-        status: 'paid',
+        status: 'preparing',
       });
       orderWasCreated = true;
     } catch (writeError) {
@@ -188,6 +208,8 @@ export async function POST(request: NextRequest) {
         currency: item.currency,
         customerEmail: payerEmail,
         paymentMethod: 'paypal',
+        shippingMethod: `${shipping.method} (${shipping.tradeTerms})`,
+        shippingAddress,
       }).catch((emailError) => console.error('PayPal confirmation email failed:', emailError));
     }
 
