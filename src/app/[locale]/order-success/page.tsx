@@ -10,8 +10,7 @@ function OrderSuccessContent() {
   const t = useTranslations('orderSuccess');
   const searchParams = useSearchParams();
   const productName = searchParams.get('product') || 'your product';
-  const orderId = searchParams.get('order_id');
-  const email = searchParams.get('email');
+  const paypalOrderId = searchParams.get('paypal_order_id');
   const sessionId = searchParams.get('session_id');
   const [mounted, setMounted] = useState(false);
   const [order, setOrder] = useState<Record<string, string | number | null> | null>(null);
@@ -20,15 +19,12 @@ function OrderSuccessContent() {
     setMounted(true);
     let active = true;
     async function loadOrder() {
-      if (!sessionId && !(orderId && email)) return;
+      if (!sessionId && !paypalOrderId) return;
       for (let attempt = 0; attempt < (sessionId ? 5 : 1); attempt += 1) {
-        const response = sessionId
-          ? await fetch(`/api/orders/lookup?session_id=${encodeURIComponent(sessionId)}`, { cache: 'no-store' })
-          : await fetch('/api/orders/lookup', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ orderId, email }),
-            });
+        const reference = sessionId
+          ? `session_id=${encodeURIComponent(sessionId)}`
+          : `paypal_order_id=${encodeURIComponent(paypalOrderId || '')}`;
+        const response = await fetch(`/api/orders/lookup?${reference}`, { cache: 'no-store' });
         if (response.ok) {
           const result = await response.json();
           if (active) setOrder(result.order);
@@ -40,7 +36,7 @@ function OrderSuccessContent() {
     }
     loadOrder();
     return () => { active = false; };
-  }, [email, orderId, sessionId]);
+  }, [paypalOrderId, sessionId]);
 
   if (!mounted) return null;
 

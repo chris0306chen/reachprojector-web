@@ -14,7 +14,7 @@ interface PayPalCheckoutProps {
   quantity?: number;
   currency?: string;
   countryCode?: string;
-  onSuccess?: (order: { order_id: string; payer_email?: string | null }) => void;
+  onSuccess?: (order: { order_id: string; paypal_order_id?: string | null }) => void;
 }
 
 type PaymentStatus = 'idle' | 'processing' | 'success' | 'error';
