@@ -105,7 +105,7 @@ export async function getProducts(filters: ProductFilters = {}): Promise<Product
 
   let query = client
     .from('products')
-    .select('id, name, slug, brand, category_id, price, compare_at_price, images, short_description, stock_status, is_bestseller, is_new_arrival, is_featured, created_at', { count: 'exact' })
+    .select('id, name, slug, brand, category_id, price, compare_at_price, images, short_description, stock_status, inventory_quantity, is_bestseller, is_new_arrival, is_featured, created_at', { count: 'exact' })
     .eq('is_active', true);
 
   const requestedCategorySlugs = categorySlugs?.length
@@ -246,7 +246,7 @@ export async function getRelatedProducts(productId: string, categoryId: string, 
   try {
     const { data, error } = await client
       .from('products')
-      .select('id, name, slug, brand, price, images, short_description, stock_status')
+      .select('id, name, slug, brand, price, images, short_description, stock_status, inventory_quantity')
       .eq('category_id', categoryId)
       .eq('is_active', true)
       .neq('id', productId)

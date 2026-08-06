@@ -19,6 +19,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
   const [quantity, setQuantity] = useState(1);
   const images = product.images && product.images.length > 0 ? product.images : ['/images/placeholder-product.jpg'];
   const price = parseFloat(product.price);
+  const isAvailable = product.stock_status === 'in_stock' && product.inventory_quantity > 0;
   const features = product.features || [];
 
   // Get translated product name and description with fallback
@@ -87,7 +88,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
 
           {/* Stock Status */}
           <div className="flex items-center gap-2 mb-6">
-            {product.stock_status === 'in_stock' ? (
+            {isAvailable ? (
               <>
                 <Check className="w-4 h-4 text-green-500" />
                 <span className="text-sm font-medium text-green-600">{t('inStock')}</span>
@@ -122,7 +123,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
           )}
 
           {/* Quantity Selector */}
-          <div className="mb-6">
+          {isAvailable && <div className="mb-6">
             <label className="text-sm font-medium text-slate-700 mb-2 block">{t('quantity')}</label>
             <div className="flex items-center gap-3">
               <button
@@ -133,7 +134,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
               </button>
               <span className="w-12 text-center font-medium text-slate-900">{quantity}</span>
               <button
-                onClick={() => setQuantity(Math.min(20, quantity + 1))}
+                onClick={() => setQuantity(Math.min(20, product.inventory_quantity, quantity + 1))}
                 className="w-9 h-9 flex items-center justify-center border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
               >
                 <Plus className="w-4 h-4" />
@@ -142,17 +143,17 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
                 {t('total')}: <span className="font-semibold text-slate-900">${(price * quantity).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
               </span>
             </div>
-          </div>
+          </div>}
 
           {/* CTA Buttons */}
           <div className="flex flex-wrap gap-3 mb-6">
-            <Link
+            {isAvailable && <Link
               href={`/checkout?productId=${product.id}&quantity=${quantity}`}
               className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-all hover:scale-[1.02] shadow-md"
             >
               <ShoppingCart className="w-4 h-4" />
               {t('checkoutNow')}
-            </Link>
+            </Link>}
             <a
               href={`https://wa.me/8613655920080?text=${whatsappMessage}`}
               target="_blank"

@@ -42,6 +42,7 @@ export async function PUT(
       "description", "short_description", "images", "specifications", "features",
       "seo_title", "meta_description",
       "stock_status", "is_bestseller", "is_new_arrival", "is_featured", "is_active",
+      "inventory_quantity",
       "sort_order", "weight_kg", "oem_available", "oem_notes", "attachments",
       "detail_content",
       "product_length_cm", "product_width_cm", "product_height_cm", "net_weight_kg",
@@ -103,10 +104,14 @@ export async function PUT(
     if (updateData.price !== undefined && (!Number.isFinite(Number(updateData.price)) || Number(updateData.price) < 0)) {
       return NextResponse.json({ error: "产品价格不能小于 0" }, { status: 400 });
     }
+    if (updateData.inventory_quantity !== undefined &&
+        (!Number.isInteger(Number(updateData.inventory_quantity)) || Number(updateData.inventory_quantity) < 0)) {
+      return NextResponse.json({ error: "库存数量必须是大于或等于 0 的整数" }, { status: 400 });
+    }
     const publicationSupabase = await getSupabaseClient();
     const { data: publicationProduct, error: publicationProductError } = await publicationSupabase
       .from("products")
-      .select("price, images, name, sku, brand, slug, category_id, is_active, import_data")
+      .select("price, images, name, sku, brand, slug, category_id, is_active, stock_status, inventory_quantity, import_data")
       .eq("id", id)
       .single();
     if (publicationProductError) throw publicationProductError;
@@ -130,12 +135,20 @@ export async function PUT(
       const effectiveBrand = updateData.brand ?? publicationProduct?.brand;
       const effectiveSlug = updateData.slug ?? publicationProduct?.slug;
       const effectiveCategory = updateData.category_id ?? publicationProduct?.category_id;
+      const effectiveStockStatus = updateData.stock_status ?? publicationProduct?.stock_status;
+      const effectiveInventory = updateData.inventory_quantity ?? publicationProduct?.inventory_quantity;
       const images = Array.isArray(effectiveImages) ? effectiveImages : [];
       if (!effectiveName || !effectiveSku || !effectiveBrand || !effectiveSlug || !effectiveCategory
           || !Number.isFinite(Number(effectivePrice))
           || Number(effectivePrice) <= 0 || images.length === 0) {
         return NextResponse.json(
           { error: "发布前必须填写产品名称、SKU、品牌、Slug、分类、有效价格并至少上传一张主图" },
+          { status: 400 }
+        );
+      }
+      if (effectiveStockStatus === "in_stock" && Number(effectiveInventory) <= 0) {
+        return NextResponse.json(
+          { error: "现货商品上架前必须填写大于 0 的可售库存数量" },
           { status: 400 }
         );
       }
