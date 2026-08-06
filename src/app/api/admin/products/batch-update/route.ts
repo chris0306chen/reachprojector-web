@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     if (action === "toggle_active" && value === true) {
       const { data: products, error: productError } = await supabase
         .from("products")
-        .select("id, name, sku, brand, slug, category_id, price, images, import_data")
+        .select("id, name, sku, brand, slug, category_id, price, images, stock_status, inventory_quantity, import_data")
         .in("id", ids);
       if (productError) throw productError;
       const invalid = (products || []).filter((product) => {
@@ -82,6 +82,7 @@ export async function POST(request: NextRequest) {
           : Array.isArray(backup?.images) ? backup.images : [];
         return !product.name || !product.sku || !product.brand || !product.slug || !product.category_id
           || !Number.isFinite(Number(product.price)) || Number(product.price) <= 0
+          || (product.stock_status === "in_stock" && Number(product.inventory_quantity) <= 0)
           || images.length === 0;
       });
       if (invalid.length) {

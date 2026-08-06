@@ -12,6 +12,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const messages = useMessages();
   const imageUrl = product.images?.[0] || '/images/placeholder-product.jpg';
   const price = parseFloat(product.price);
+  const isAvailable = product.stock_status === 'in_stock' && product.inventory_quantity > 0;
 
   // Get translated product name and description with fallback
   const productItems = (messages as Record<string, unknown>)?.products as Record<string, unknown> | undefined;
@@ -83,7 +84,7 @@ export function ProductCard({ product }: ProductCardProps) {
               </span>
             )}
           </div>
-          {product.stock_status === 'in_stock' ? (
+          {isAvailable ? (
             <span className="text-xs text-green-600 font-medium">{t('stock.inStock')}</span>
           ) : (
             <span className="text-xs text-red-500 font-medium">{t('stock.outOfStock')}</span>

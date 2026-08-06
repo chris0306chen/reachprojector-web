@@ -92,7 +92,9 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             currency: product.currency || 'USD',
             sku: product.sku || product.slug,
             category: category?.name || 'Electronics',
-            availability: product.stock_status === 'in_stock' ? 'in_stock' : 'out_of_stock',
+            availability: product.stock_status === 'in_stock' && product.inventory_quantity > 0
+              ? 'in_stock'
+              : 'out_of_stock',
             locale,
             additionalProperties: structuredDetail.specifications.map((item) => ({
               name: item.name,

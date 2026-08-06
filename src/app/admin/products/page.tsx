@@ -27,6 +27,7 @@ interface Product {
   sale_price?: number;
   moq?: number;
   stock: number;
+  inventory_quantity?: number;
   is_active: boolean;
   is_featured: boolean;
   stock_status?: "in_stock" | "out_of_stock" | "preorder";
@@ -752,6 +753,7 @@ function ProductEditModal({
     sale_price: product.sale_price || null as number | null,
     moq: product.moq || 1,
     stock: product.stock || 0,
+    inventory_quantity: product.inventory_quantity ?? product.stock ?? 0,
     weight_kg: product.weight_kg || product.weight || null as number | null,
     product_length_cm: product.product_length_cm || null as number | null,
     product_width_cm: product.product_width_cm || null as number | null,
@@ -924,6 +926,7 @@ function ProductEditModal({
           category_id: form.category_id || null,
           price: form.price || 0,
           stock_status: form.stock_status,
+          inventory_quantity: Math.max(0, Math.floor(Number(form.inventory_quantity) || 0)),
           description: form.description,
           short_description: form.short_description,
           images: productImages,
@@ -1244,8 +1247,9 @@ function ProductEditModal({
               <h3 className="font-semibold text-slate-900">尺寸、重量与运费</h3>
               <p className="text-xs text-slate-500">尺寸使用 cm，重量使用 kg；自动运费取毛重与体积重中较高者。</p>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">库存状态</label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <label className="block text-sm font-medium text-slate-700">
+                <span className="mb-1 block">库存状态</span>
               <select
                 value={form.stock_status}
                 onChange={(event) => setForm({
@@ -1258,6 +1262,22 @@ function ProductEditModal({
                 <option value="preorder">预售</option>
                 <option value="out_of_stock">缺货</option>
               </select>
+              </label>
+              <label className="block text-sm font-medium text-slate-700">
+                <span className="mb-1 block">可售库存数量</span>
+                <input
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={form.inventory_quantity}
+                  onChange={(event) => setForm({
+                    ...form,
+                    inventory_quantity: Math.max(0, Math.floor(Number(event.target.value) || 0)),
+                  })}
+                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                />
+                <span className="mt-1 block text-xs font-normal text-slate-500">现货商品必须大于 0 才能结账</span>
+              </label>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
