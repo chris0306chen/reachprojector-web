@@ -155,6 +155,20 @@ const localizedSceneDetails: Record<string, Record<string, LocalizedSceneDetails
       considerations: ['投射距离与镜头选择', '吊装与安全要求', '冗余设计与维护空间'],
     },
   },
+  es: {
+    'home-cinema': { description: 'Cree un cine en casa completo con el proyector, la pantalla, el soporte y los accesorios adecuados para la sala.', considerations: ['Luz ambiental y material de la pantalla', 'Distancia de visión y tamaño de imagen', 'Relación de tiro y posición de montaje'] },
+    'living-room-laser-tv': { description: 'Sistemas de proyección de tiro ultracorto para salas luminosas e instalaciones limpias integradas en el mobiliario.', considerations: ['Compatibilidad entre proyector UST y pantalla CLR', 'Profundidad y ventilación del mueble', 'Rendimiento de brillo durante el día'] },
+    'bedroom-small-space': { description: 'Opciones de proyección compactas y silenciosas para dormitorios, apartamentos y espacios pequeños flexibles.', considerations: ['Distancia de visión corta', 'Funcionamiento silencioso', 'Montaje portátil o compacto'] },
+    'gaming-room': { description: 'Sistemas de juego en gran formato seleccionados por latencia de entrada, frecuencia de actualización y compatibilidad con consolas.', considerations: ['Latencia de entrada y frecuencia de actualización', 'Compatibilidad HDMI y con consolas', 'Control de la luz ambiental'] },
+    'outdoor-cinema': { description: 'Combinaciones portátiles de proyector y pantalla para jardines, camping y eventos temporales al aire libre.', considerations: ['Alimentación portátil y conectividad', 'Almacenamiento protegido del clima', 'Montaje rápido de la pantalla'] },
+    'meeting-rooms': { description: 'Sistemas fiables de presentación y colaboración para salas pequeñas, juntas y conferencias.', considerations: ['Capacidad de la sala y tamaño de pantalla', 'Flujo de presentación inalámbrica', 'Instalación y recorrido del cableado'] },
+    'education-training': { description: 'Paquetes de proyección de bajo mantenimiento para aulas, centros de formación y despliegues en varias salas.', considerations: ['Brillo con iluminación del aula', 'Mantenimiento centralizado', 'Precios por volumen y unidades de repuesto'] },
+    'hotels-hospitality': { description: 'Soluciones para habitaciones, salones, reuniones y entretenimiento con precios de proyecto y apoyo de instalación.', considerations: ['Experiencia del huésped y controles sencillos', 'Integración con el mobiliario', 'Coherencia en despliegues de varias sedes'] },
+    'bars-restaurants': { description: 'Sistemas de gran pantalla de alto impacto para deportes, salas privadas y espacios de entretenimiento de marca.', considerations: ['Brillo con alta luz ambiental', 'Distribución de varias pantallas', 'Largas horas de funcionamiento diario'] },
+    'retail-showrooms': { description: 'Sistemas flexibles de presentación visual para lanzamientos, exposiciones y contenido inmersivo.', considerations: ['Formato del contenido y superficie de proyección', 'Horario de funcionamiento', 'Instalación oculta y presentación de marca'] },
+    'events-rental': { description: 'Paquetes transportables y reparables para conferencias, exposiciones y flotas de alquiler.', considerations: ['Montaje y desmontaje rápidos', 'Cajas de transporte y repuestos', 'Brillo del recinto y distancia de tiro'] },
+    'large-venues': { description: 'Soluciones de instalación de alto brillo para auditorios, lugares de culto, salas y grandes espacios públicos.', considerations: ['Distancia de proyección y selección de lente', 'Rigging y seguridad', 'Redundancia y acceso para mantenimiento'] },
+  },
 };
 
 const categoryLabels: Record<string, Record<string, string>> = {
@@ -177,6 +191,26 @@ const categoryLabels: Record<string, Record<string, string>> = {
     'projector-mounts-stands': '投影支架与落地架',
     'accessories-parts': '配件与零部件',
     'fixed-frame-screens': '画框幕布',
+  },
+  es: {
+    'home-smart-projectors': 'Proyectores inteligentes para el hogar',
+    'high-end-home-theater-projectors': 'Proyectores de cine en casa de alta gama',
+    'projection-screens': 'Pantallas de proyección',
+    'ust-laser-tv': 'Televisores láser de tiro ultracorto',
+    'alr-clr-screens': 'Pantallas ALR / CLR',
+    'av-furniture': 'Mobiliario audiovisual',
+    'portable-mini-projectors': 'Proyectores portátiles y mini',
+    'desktop-stands': 'Soportes de sobremesa',
+    'portable-outdoor-screens': 'Pantallas portátiles y exteriores',
+    'cases-bags': 'Maletas y bolsas',
+    'business-education-projectors': 'Proyectores para empresas y educación',
+    'motorized-screens': 'Pantallas motorizadas',
+    'ceiling-mounts': 'Soportes de techo',
+    'solution-bundles': 'Paquetes de soluciones',
+    'engineering-projectors': 'Proyectores de instalación profesional',
+    'projector-mounts-stands': 'Soportes para proyectores',
+    'accessories-parts': 'Accesorios y repuestos',
+    'fixed-frame-screens': 'Pantallas de marco fijo',
   },
 };
 
