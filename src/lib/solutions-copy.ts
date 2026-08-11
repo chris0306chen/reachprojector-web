@@ -90,7 +90,7 @@ const sceneTitles: Record<string, Record<string, string>> = {
   ru: {
     'home-cinema': 'Домашний кинотеатр', 'living-room-laser-tv': 'Лазерный телевизор для гостиной', 'bedroom-small-space': 'Спальня и небольшие помещения', 'gaming-room': 'Игровая комната',
     'outdoor-cinema': 'Уличный кинотеатр', 'meeting-rooms': 'Офисы и переговорные', 'education-training': 'Классы и обучение', 'hotels-hospitality': 'Гостиницы',
-    'bars-restaurants': 'Бары и рестораны', 'retail-showrooms': 'Магазины и шоурумы', 'events-rental': 'Мероприятия и аренда', 'large-venues': 'Аудитории и большие площадки',
+    'bars-restaurants': 'Бары и рестораны', 'retail-showrooms': 'Магазины и шоурумы', 'events-rental': 'Мероприятия и аренда', 'large-venues': 'Актовые залы и крупные площадки',
   },
   ar: {
     'home-cinema': 'السينما المنزلية', 'living-room-laser-tv': 'تلفزيون ليزر لغرفة المعيشة', 'bedroom-small-space': 'غرف النوم والمساحات الصغيرة', 'gaming-room': 'غرفة الألعاب',
@@ -169,6 +169,20 @@ const localizedSceneDetails: Record<string, Record<string, LocalizedSceneDetails
     'events-rental': { description: 'Paquetes transportables y reparables para conferencias, exposiciones y flotas de alquiler.', considerations: ['Montaje y desmontaje rápidos', 'Cajas de transporte y repuestos', 'Brillo del recinto y distancia de tiro'] },
     'large-venues': { description: 'Soluciones de instalación de alto brillo para auditorios, lugares de culto, salas y grandes espacios públicos.', considerations: ['Distancia de proyección y selección de lente', 'Rigging y seguridad', 'Redundancia y acceso para mantenimiento'] },
   },
+  ru: {
+    'home-cinema': { description: 'Создайте полноценный домашний кинотеатр с подходящими проектором, экраном, креплением и аксессуарами для помещения.', considerations: ['Освещение помещения и материал экрана', 'Расстояние просмотра и размер изображения', 'Проекционное отношение и место установки'] },
+    'living-room-laser-tv': { description: 'Ультракороткофокусные системы для светлых гостиных и аккуратной установки с интеграцией в мебель.', considerations: ['Совместимость UST-проектора и CLR-экрана', 'Глубина тумбы и вентиляция', 'Яркость изображения в дневное время'] },
+    'bedroom-small-space': { description: 'Компактные и тихие варианты проекции для спален, квартир и гибких небольших пространств.', considerations: ['Небольшое расстояние просмотра', 'Низкий уровень шума', 'Переносная или компактная установка'] },
+    'gaming-room': { description: 'Системы для игр на большом экране с учетом задержки ввода, частоты обновления и совместимости с консолями.', considerations: ['Задержка ввода и частота обновления', 'Совместимость с HDMI и игровыми консолями', 'Контроль внешнего освещения'] },
+    'outdoor-cinema': { description: 'Переносные комплекты проектора и экрана для сада, кемпинга и временных мероприятий на открытом воздухе.', considerations: ['Переносное питание и подключение', 'Защищенное от погоды хранение', 'Быстрая установка экрана'] },
+    'meeting-rooms': { description: 'Надежные системы презентаций и совместной работы для малых переговорных, залов заседаний и конференц-залов.', considerations: ['Вместимость помещения и размер экрана', 'Беспроводной сценарий презентации', 'Монтаж и прокладка кабелей'] },
+    'education-training': { description: 'Проекционные комплекты с низкими требованиями к обслуживанию для классов, учебных центров и развертывания в нескольких помещениях.', considerations: ['Яркость при освещении класса', 'Централизованное обслуживание', 'Оптовая цена и запасные устройства'] },
+    'hotels-hospitality': { description: 'Решения для номеров, зон отдыха, встреч и развлечений с проектным ценообразованием и поддержкой установки.', considerations: ['Удобство гостей и простое управление', 'Интеграция с мебелью', 'Единообразие развертывания на нескольких объектах'] },
+    'bars-restaurants': { description: 'Эффектные системы большого экрана для спортивных трансляций, отдельных залов и фирменных развлекательных пространств.', considerations: ['Яркость при сильном внешнем освещении', 'Схемы с несколькими экранами', 'Продолжительная ежедневная работа'] },
+    'retail-showrooms': { description: 'Гибкие системы визуального мерчандайзинга для презентаций товаров, экспозиций и иммерсивного контента.', considerations: ['Формат контента и поверхность проекции', 'График работы', 'Скрытый монтаж и представление бренда'] },
+    'events-rental': { description: 'Транспортируемые и обслуживаемые комплекты для конференций, выставок и прокатного парка.', considerations: ['Быстрый монтаж и демонтаж', 'Транспортные кейсы и запасные части', 'Освещенность площадки и расстояние проекции'] },
+    'large-venues': { description: 'Высокояркие стационарные решения для актовых и зрительных залов, культовых сооружений и больших общественных пространств.', considerations: ['Расстояние проекции и выбор объектива', 'Несущие конструкции и безопасность', 'Резервирование и доступ для обслуживания'] },
+  },
 };
 
 const categoryLabels: Record<string, Record<string, string>> = {
@@ -211,6 +225,26 @@ const categoryLabels: Record<string, Record<string, string>> = {
     'projector-mounts-stands': 'Soportes para proyectores',
     'accessories-parts': 'Accesorios y repuestos',
     'fixed-frame-screens': 'Pantallas de marco fijo',
+  },
+  ru: {
+    'home-smart-projectors': 'Умные проекторы для дома',
+    'high-end-home-theater-projectors': 'Проекторы высокого класса для домашнего кинотеатра',
+    'projection-screens': 'Проекционные экраны',
+    'ust-laser-tv': 'Ультракороткофокусные лазерные телевизоры',
+    'alr-clr-screens': 'Экраны ALR / CLR',
+    'av-furniture': 'Мебель для аудио- и видеотехники',
+    'portable-mini-projectors': 'Портативные и мини-проекторы',
+    'desktop-stands': 'Настольные подставки',
+    'portable-outdoor-screens': 'Переносные и уличные экраны',
+    'cases-bags': 'Кейсы и сумки',
+    'business-education-projectors': 'Проекторы для бизнеса и образования',
+    'motorized-screens': 'Моторизованные экраны',
+    'ceiling-mounts': 'Потолочные крепления',
+    'solution-bundles': 'Комплекты решений',
+    'engineering-projectors': 'Инсталляционные проекторы',
+    'projector-mounts-stands': 'Крепления и стойки для проекторов',
+    'accessories-parts': 'Аксессуары и запчасти',
+    'fixed-frame-screens': 'Экраны с фиксированной рамой',
   },
 };
 
