@@ -136,6 +136,60 @@ const terms: Record<string, PolicyDocument> = {
   },
 };
 
+const warranty: Record<string, PolicyDocument> = {
+  en: {
+    title: 'Product Warranty Policy', description: 'Warranty coverage, claims, exclusions and remedies for projectors, screens, mounts, furniture and accessories.', summary: 'Warranty duration and service method vary by brand, product, destination, and whether the order is retail, wholesale, OEM, or project-based.',
+    sections: [
+      { title: 'Applicable warranty', paragraphs: ['The controlling warranty period is the period shown on the product page, order confirmation, proforma invoice, or signed quotation. If these documents differ, the most specific written order term applies.'] },
+      { title: 'What the warranty covers', paragraphs: ['During the applicable period, we will assess verified defects in materials or workmanship under normal intended use. Depending on the product, location, parts availability, and manufacturer policy, the remedy may be troubleshooting, replacement parts, repair, replacement, or another commercially reasonable solution.'] },
+      { title: 'Exclusions', items: ['Accident, misuse, impact, liquid, fire, unsuitable voltage, poor ventilation, abnormal environment, or failure to follow instructions.', 'Unauthorized repair, modification, disassembly, firmware changes, or use with incompatible accessories.', 'Normal wear, cosmetic change, consumables, batteries, lamps, filters, and expected brightness degradation unless specifically covered.', 'Damage during customer-arranged transport or installation, and faults caused by third-party systems or site conditions.'] },
+      { title: 'Making a claim', paragraphs: ['Provide the order number, model, serial number, delivery country, description of the fault, troubleshooting already completed, and clear photographs or video. Do not return or dismantle the product until instructed.'] },
+      { title: 'B2B, OEM and project orders', paragraphs: ['Service levels, spare parts, on-site work, advance replacement, and installation support are included only when stated in the applicable quotation or contract. Project customers should agree critical spares and service responsibilities before ordering.'] },
+    ],
+  },
+  zh: {
+    title: '产品保修政策', description: '投影仪、幕布、支架、家具及配件的保修范围、索赔、排除项与补救方式。', summary: '保修期限和服务方式因品牌、产品、目的地以及订单属于零售、批发、OEM 或项目订单而异。',
+    sections: [
+      { title: '适用的保修', paragraphs: ['保修期限以产品页面、订单确认、形式发票或已签署报价单中所列期限为准。如这些文件不一致，以针对该订单最具体的书面条款为准。'] },
+      { title: '保修覆盖范围', paragraphs: ['在适用期限内，我们会评估正常预期使用下经核实的材料或工艺缺陷。根据产品、地点、配件供应情况和制造商政策，补救方式可能包括故障排查、更换零件、维修、更换产品或其他商业上合理的方案。'] },
+      { title: '排除项目', items: ['意外、误用、撞击、液体、火灾、电压不合适、通风不足、异常环境或未遵循说明造成的问题。', '未经授权的维修、改装、拆解、固件更改或使用不兼容配件。', '正常磨损、外观变化、耗材、电池、灯泡、滤网及预期亮度衰减，除非明确涵盖。', '客户自行安排运输或安装期间的损坏，以及第三方系统或现场条件造成的故障。'] },
+      { title: '提出保修申请', paragraphs: ['请提供订单号、型号、序列号、交付国家、故障说明、已完成的排查步骤以及清晰照片或视频。在收到指示前，请勿退回或拆解产品。'] },
+      { title: 'B2B、OEM 与项目订单', paragraphs: ['服务等级、备用零件、现场工作、先行更换和安装支持，只有在适用报价单或合同明确写明时才包含。项目客户应在订购前约定关键备件与服务责任。'] },
+    ],
+  },
+  es: {
+    title: 'Política de garantía del producto', description: 'Cobertura, reclamaciones, exclusiones y soluciones para proyectores, pantallas, soportes, mobiliario y accesorios.', summary: 'La duración y el método de servicio varían según marca, producto, destino y si el pedido es minorista, mayorista, OEM o de proyecto.',
+    sections: [
+      { title: 'Garantía aplicable', paragraphs: ['El período aplicable es el indicado en la página del producto, confirmación del pedido, factura proforma o cotización firmada. Si difieren, prevalece la condición escrita más específica del pedido.'] },
+      { title: 'Qué cubre la garantía', paragraphs: ['Durante el período aplicable evaluaremos defectos verificados de materiales o fabricación bajo uso normal previsto. Según el producto, ubicación, disponibilidad de piezas y política del fabricante, la solución puede ser diagnóstico, piezas, reparación, sustitución u otra solución comercialmente razonable.'] },
+      { title: 'Exclusiones', items: ['Accidente, uso indebido, golpe, líquido, fuego, voltaje inadecuado, mala ventilación, entorno anormal o incumplimiento de instrucciones.', 'Reparación, modificación, desmontaje o cambio de firmware no autorizado, o accesorios incompatibles.', 'Desgaste normal, cambios estéticos, consumibles, baterías, lámparas, filtros y pérdida de brillo prevista, salvo cobertura expresa.', 'Daños durante transporte o instalación organizados por el cliente, y fallos causados por sistemas de terceros o condiciones del lugar.'] },
+      { title: 'Presentar una reclamación', paragraphs: ['Facilite número de pedido, modelo, serie, país de entrega, descripción del fallo, pruebas realizadas y fotos o vídeo claros. No devuelva ni desmonte el producto hasta recibir instrucciones.'] },
+      { title: 'Pedidos B2B, OEM y de proyectos', paragraphs: ['Los niveles de servicio, repuestos, trabajo en sitio, sustitución anticipada y apoyo de instalación se incluyen solo si figuran en la cotización o contrato aplicable. Los clientes de proyecto deben acordar repuestos críticos y responsabilidades de servicio antes del pedido.'] },
+    ],
+  },
+  ru: {
+    title: 'Политика гарантии на товары', description: 'Гарантийное покрытие, обращения, исключения и способы урегулирования для проекторов, экранов, креплений, мебели и аксессуаров.', summary: 'Срок и способ обслуживания зависят от бренда, товара, страны и типа заказа: розница, опт, OEM или проект.',
+    sections: [
+      { title: 'Применимая гарантия', paragraphs: ['Действует срок, указанный на странице товара, в подтверждении заказа, счете-проформе или подписанном коммерческом предложении. При расхождениях применяется наиболее конкретное письменное условие заказа.'] },
+      { title: 'Что покрывает гарантия', paragraphs: ['В течение применимого срока мы оценим подтвержденные дефекты материалов или изготовления при нормальном предусмотренном использовании. В зависимости от товара, страны, наличия деталей и политики производителя решением могут быть диагностика, детали, ремонт, замена или другое коммерчески разумное решение.'] },
+      { title: 'Исключения', items: ['Авария, неправильное использование, удар, жидкость, огонь, неподходящее напряжение, плохая вентиляция, необычная среда или несоблюдение инструкций.', 'Несанкционированные ремонт, изменение, разборка, смена прошивки или несовместимые аксессуары.', 'Обычный износ, внешние изменения, расходники, батареи, лампы, фильтры и ожидаемое снижение яркости, если иное прямо не покрыто.', 'Повреждения при организованной клиентом перевозке или установке, а также неисправности из-за сторонних систем или условий объекта.'] },
+      { title: 'Гарантийное обращение', paragraphs: ['Предоставьте номер заказа, модель, серийный номер, страну доставки, описание неисправности, выполненную диагностику и четкие фото или видео. Не возвращайте и не разбирайте товар до получения инструкций.'] },
+      { title: 'B2B, OEM и проектные заказы', paragraphs: ['Уровни сервиса, запасные части, выездные работы, предварительная замена и поддержка установки включены только при прямом указании в коммерческом предложении или договоре. Проектным клиентам следует согласовать критические запчасти и обязанности по обслуживанию до заказа.'] },
+    ],
+  },
+  ar: {
+    title: 'سياسة ضمان المنتجات', description: 'تغطية الضمان والمطالبات والاستثناءات والحلول لأجهزة العرض والشاشات والحوامل والأثاث والملحقات.', summary: 'تختلف مدة الضمان وطريقة الخدمة بحسب العلامة والمنتج والوجهة وما إذا كان الطلب تجزئة أو جملة أو OEM أو مشروعاً.',
+    sections: [
+      { title: 'الضمان الساري', paragraphs: ['مدة الضمان المعتمدة هي المذكورة في صفحة المنتج أو تأكيد الطلب أو الفاتورة الأولية أو عرض السعر الموقّع. وإذا اختلفت المستندات، يسري الشرط الكتابي الأكثر تحديداً للطلب.'] },
+      { title: 'ما يغطيه الضمان', paragraphs: ['خلال المدة السارية سنقيّم عيوب المواد أو التصنيع المثبتة عند الاستخدام العادي المقصود. وبحسب المنتج والموقع وتوفر القطع وسياسة المصنع، قد يكون الحل استكشاف الخلل أو قطع بديلة أو إصلاحاً أو استبدالاً أو حلاً آخر معقولاً تجارياً.'] },
+      { title: 'الاستثناءات', items: ['الحوادث أو سوء الاستخدام أو الصدمات أو السوائل أو الحريق أو الجهد غير المناسب أو التهوية السيئة أو البيئة غير الطبيعية أو عدم اتباع التعليمات.', 'الإصلاح أو التعديل أو التفكيك أو تغيير البرامج الثابتة دون تصريح، أو استخدام ملحقات غير متوافقة.', 'البلى الطبيعي والتغير التجميلي والمواد الاستهلاكية والبطاريات والمصابيح والمرشحات والانخفاض المتوقع في السطوع ما لم تُغطَّ صراحة.', 'الضرر أثناء نقل أو تركيب يرتبه العميل، والأعطال الناتجة عن أنظمة خارجية أو ظروف الموقع.'] },
+      { title: 'تقديم مطالبة', paragraphs: ['قدم رقم الطلب والطراز والرقم التسلسلي ودولة التسليم ووصف العطل وخطوات الفحص المنجزة وصوراً أو فيديو واضحاً. لا تعد المنتج أو تفككه قبل تلقي التعليمات.'] },
+      { title: 'طلبات B2B وOEM والمشاريع', paragraphs: ['لا تشمل مستويات الخدمة أو قطع الغيار أو العمل في الموقع أو الاستبدال المسبق أو دعم التركيب إلا إذا ذكرت في عرض السعر أو العقد المعني. وينبغي لعملاء المشاريع الاتفاق على قطع الغيار الحرجة ومسؤوليات الخدمة قبل الطلب.'] },
+    ],
+  },
+};
+
 export function getPolicyChrome(locale: string) { return chrome[locale] || chrome.en; }
 export function getPrivacyPolicy(locale: string) { return privacy[locale] || privacy.en; }
 export function getTermsPolicy(locale: string) { return terms[locale] || terms.en; }
+export function getWarrantyPolicy(locale: string) { return warranty[locale] || warranty.en; }
