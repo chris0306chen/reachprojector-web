@@ -67,7 +67,7 @@ export default async function SolutionsPage({
                     {getLocalizedSceneDetails(locale, slug, sceneDetails[slug]).description}
                   </p>
                   <span className="mt-auto inline-flex items-center gap-2 pt-7 text-sm font-semibold text-orange-700">
-                    {copy.explore} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    {copy.explore} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
                   </span>
                 </Link>
               ))}

@@ -69,7 +69,7 @@ export default async function ScenePage({
             href={`/${locale}/contact?scene=${slug}`}
             className="mt-9 inline-flex min-h-12 items-center gap-2 rounded-xl bg-orange-600 px-6 py-3 font-semibold text-white transition hover:bg-orange-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
           >
-            {copy.quote} <ArrowRight className="h-4 w-4" />
+            {copy.quote} <ArrowRight className="h-4 w-4 rtl:rotate-180" />
           </Link>
         </div>
       </section>
@@ -108,7 +108,7 @@ export default async function ScenePage({
                   <span className="text-xs font-bold tracking-[0.16em] text-slate-500">{String(index + 1).padStart(2, '0')}</span>
                 </div>
                 <h3 className="mt-8 font-semibold text-white">{component.label}</h3>
-                <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-orange-300">{copy.compatibleProducts} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></span>
+                <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-orange-300">{copy.compatibleProducts} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" /></span>
               </Link>
             ))}
           </div>
@@ -123,7 +123,7 @@ export default async function ScenePage({
               <h2 className="mt-2 text-3xl font-bold text-slate-900">{copy.buildSolution}</h2>
             </div>
             <Link href={`/${locale}/products`} className="inline-flex items-center gap-2 text-sm font-semibold text-orange-600">
-              {copy.browseAll} <ArrowRight className="h-4 w-4" />
+              {copy.browseAll} <ArrowRight className="h-4 w-4 rtl:rotate-180" />
             </Link>
           </div>
           {result.products.length ? (
