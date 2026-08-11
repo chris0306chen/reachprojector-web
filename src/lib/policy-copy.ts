@@ -242,8 +242,62 @@ const shipping: Record<string, PolicyDocument> = {
   },
 };
 
+const returnsRefunds: Record<string, PolicyDocument> = {
+  en: {
+    title: 'Returns & Refunds Policy', description: 'Return authorization, damaged or incorrect goods, refund timing and non-returnable project orders.', summary: 'Return eligibility depends on the product condition, order type, customization status, and the written terms accepted at checkout or in the quotation.',
+    sections: [
+      { title: 'Requesting a return', paragraphs: ['Contact us within 7 calendar days after recorded delivery if a product has a verified quality problem. Because international return shipping is costly and operationally complex, we do not accept change-of-mind or other no-fault returns. Do not ship goods back until we issue written return instructions and a return authorization.'] },
+      { title: 'Return condition', items: ['Products must be unused, complete, and in resalable condition with original packaging, accessories, manuals, serial labels, and promotional items.', 'The customer is responsible for secure return packaging and return freight unless we confirm that the goods were incorrect, materially defective on arrival, or damaged before delivery.', 'Any approved deduction for missing items, damage, use, or loss of resale value will be disclosed during inspection.'] },
+      { title: 'Non-returnable orders', items: ['OEM, ODM, private-label, customized, made-to-order, cut-to-size, configured, or specially sourced products.', 'Opened consumables, software or license products, and clearance goods identified as final sale.', 'B2B project orders unless the applicable quotation or contract expressly provides a return right.'] },
+      { title: 'Required evidence', paragraphs: ['A continuous unpacking video is required for any claim involving damage, shortage, an incorrect product, or a quality problem on arrival. The video must clearly show the unopened shipping carton and labels, the complete opening process, all contents, the product serial number, and the reported issue. Also include the order number, photographs, and a clear written description. Claims without sufficient evidence may be declined.'] },
+      { title: 'Refund processing', paragraphs: ['Approved refunds are issued to the original payment method after returned goods are received and inspected. Bank, card, PayPal, and Stripe processing times are controlled by the payment provider. Original shipping, customs, and payment costs are non-refundable unless required by law or caused by our confirmed error.'] },
+    ],
+  },
+  zh: {
+    title: '退货与退款政策', description: '退货授权、损坏或错误商品、退款时间及不可退项目订单的政策。', summary: '退货资格取决于产品状态、订单类型、定制情况以及结账时或报价单中接受的书面条款。',
+    sections: [
+      { title: '申请退货', paragraphs: ['如果产品存在经核实的质量问题，请在记录的交付日期后 7 个日历日内联系我们。由于国际退运成本高且操作复杂，我们不接受改变主意或其他非过错原因的退货。在我们发出书面退货说明和退货授权前，请勿寄回商品。'] },
+      { title: '退货状态', items: ['产品必须未使用、完整且可再次销售，并保留原包装、配件、说明书、序列号标签及促销赠品。', '客户负责安全的退货包装和退运费用，除非我们确认商品错误、到货时存在重大缺陷或在交付前已损坏。', '因缺少物品、损坏、使用或转售价值损失而批准的任何扣减，会在检查过程中说明。'] },
+      { title: '不可退货订单', items: ['OEM、ODM、贴牌、定制、按单生产、按尺寸裁切、配置或特别采购的产品。', '已开封的耗材、软件或许可证产品，以及明确标为最终销售的清仓商品。', 'B2B 项目订单，除非适用的报价单或合同明确规定退货权。'] },
+      { title: '所需证据', paragraphs: ['涉及到货损坏、短缺、商品错误或质量问题的索赔，必须提供连续开箱视频。视频必须清楚显示未开封的运输箱及标签、完整开箱过程、全部内容物、产品序列号和所报告的问题。同时请提供订单号、照片和清晰的书面说明。证据不足的索赔可能被拒绝。'] },
+      { title: '退款处理', paragraphs: ['批准的退款会在退货收到并检查后退回原付款方式。银行、银行卡、PayPal 和 Stripe 的处理时间由相应支付服务商控制。原始运费、海关费用和支付成本不予退还，法律要求或由我们确认的错误导致的情况除外。'] },
+    ],
+  },
+  es: {
+    title: 'Política de devoluciones y reembolsos', description: 'Autorización de devolución, productos dañados o incorrectos, plazos de reembolso y pedidos de proyecto no retornables.', summary: 'La elegibilidad depende del estado del producto, tipo de pedido, personalización y condiciones escritas aceptadas durante la compra o en la cotización.',
+    sections: [
+      { title: 'Solicitar una devolución', paragraphs: ['Contáctenos dentro de los 7 días naturales posteriores a la entrega registrada si el producto presenta un problema de calidad verificado. Debido al coste y complejidad de las devoluciones internacionales, no aceptamos devoluciones por cambio de opinión ni otras devoluciones sin culpa. No envíe mercancía hasta recibir instrucciones escritas y autorización de devolución.'] },
+      { title: 'Estado de la devolución', items: ['Los productos deben estar sin usar, completos y aptos para reventa, con embalaje original, accesorios, manuales, etiquetas de serie y artículos promocionales.', 'El cliente responde del embalaje seguro y del transporte de devolución, salvo que confirmemos que la mercancía era incorrecta, tenía un defecto material al llegar o se dañó antes de la entrega.', 'Toda deducción aprobada por faltantes, daños, uso o pérdida de valor de reventa se comunicará durante la inspección.'] },
+      { title: 'Pedidos no retornables', items: ['Productos OEM, ODM, de marca privada, personalizados, fabricados bajo pedido, cortados a medida, configurados o adquiridos especialmente.', 'Consumibles abiertos, productos de software o licencia y liquidaciones identificadas como venta final.', 'Pedidos de proyectos B2B salvo que la cotización o contrato aplicable conceda expresamente un derecho de devolución.'] },
+      { title: 'Pruebas requeridas', paragraphs: ['Se exige un vídeo continuo de desembalaje para reclamaciones por daño, faltante, producto incorrecto o problema de calidad al llegar. Debe mostrar claramente la caja sin abrir y sus etiquetas, todo el proceso, todo el contenido, el número de serie y el problema. Incluya además número de pedido, fotos y descripción escrita clara. Las reclamaciones sin pruebas suficientes pueden rechazarse.'] },
+      { title: 'Proceso de reembolso', paragraphs: ['Los reembolsos aprobados se emiten al método de pago original tras recibir e inspeccionar la devolución. Los plazos de banco, tarjeta, PayPal y Stripe dependen del proveedor de pago. El envío original, aduanas y costes de pago no se reembolsan salvo obligación legal o error confirmado nuestro.'] },
+    ],
+  },
+  ru: {
+    title: 'Политика возврата и возмещения', description: 'Разрешение на возврат, поврежденные или неверные товары, сроки возмещения и невозвратные проектные заказы.', summary: 'Возможность возврата зависит от состояния товара, типа заказа, персонализации и письменных условий, принятых при оформлении заказа или в коммерческом предложении.',
+    sections: [
+      { title: 'Запрос возврата', paragraphs: ['Свяжитесь с нами в течение 7 календарных дней после зафиксированной доставки, если у товара подтвержденная проблема качества. Из-за стоимости и сложности международного возврата мы не принимаем возвраты из-за изменения решения или иные возвраты без вины продавца. Не отправляйте товар до получения письменных инструкций и разрешения на возврат.'] },
+      { title: 'Состояние возврата', items: ['Товар должен быть неиспользованным, полным и пригодным для перепродажи, с оригинальной упаковкой, аксессуарами, инструкциями, серийными наклейками и рекламными предметами.', 'Клиент отвечает за безопасную упаковку и обратную перевозку, если мы не подтвердим, что товар был неверным, имел существенный дефект при получении или был поврежден до доставки.', 'Любой одобренный вычет за недостающие предметы, повреждение, использование или потерю стоимости перепродажи будет раскрыт при проверке.'] },
+      { title: 'Невозвратные заказы', items: ['OEM, ODM, товары под частной маркой, индивидуальные, изготовленные под заказ, нарезанные по размеру, настроенные или специально закупленные товары.', 'Открытые расходники, программное обеспечение или лицензии, а также распродажные товары, обозначенные как окончательная продажа.', 'Проектные B2B-заказы, если коммерческое предложение или договор прямо не предоставляет право возврата.'] },
+      { title: 'Необходимые доказательства', paragraphs: ['Для претензий о повреждении, недостаче, неверном товаре или проблеме качества при получении требуется непрерывное видео распаковки. Оно должно ясно показывать неоткрытую транспортную коробку и этикетки, весь процесс открытия, всё содержимое, серийный номер и проблему. Также приложите номер заказа, фотографии и ясное письменное описание. Претензия без достаточных доказательств может быть отклонена.'] },
+      { title: 'Обработка возмещения', paragraphs: ['Одобренные суммы возвращаются исходным способом оплаты после получения и проверки товара. Сроки банка, карты, PayPal и Stripe контролирует платежный провайдер. Исходная доставка, таможенные и платежные расходы не возвращаются, кроме случаев, требуемых законом или вызванных нашей подтвержденной ошибкой.'] },
+    ],
+  },
+  ar: {
+    title: 'سياسة الإرجاع واسترداد الأموال', description: 'تصريح الإرجاع والبضائع التالفة أو الخاطئة ومواعيد الاسترداد وطلبات المشاريع غير القابلة للإرجاع.', summary: 'تعتمد أهلية الإرجاع على حالة المنتج ونوع الطلب والتخصيص والشروط المكتوبة المقبولة عند إتمام الطلب أو في عرض السعر.',
+    sections: [
+      { title: 'طلب الإرجاع', paragraphs: ['تواصل معنا خلال 7 أيام تقويمية بعد التسليم المسجل إذا كان المنتج يعاني مشكلة جودة مثبتة. ونظراً لتكلفة وتعقيد الإرجاع الدولي، لا نقبل الإرجاع بسبب تغيير الرأي أو أي إرجاع آخر دون خطأ. لا ترسل البضائع قبل إصدار تعليمات كتابية وتصريح بالإرجاع.'] },
+      { title: 'حالة الإرجاع', items: ['يجب أن تكون المنتجات غير مستخدمة وكاملة وصالحة لإعادة البيع مع التغليف الأصلي والملحقات والأدلة وملصقات الرقم التسلسلي والعناصر الترويجية.', 'يتحمل العميل مسؤولية التغليف الآمن وشحن الإرجاع ما لم نؤكد أن البضاعة كانت خاطئة أو معيبة مادياً عند الوصول أو تضررت قبل التسليم.', 'سيتم الإفصاح أثناء الفحص عن أي خصم معتمد بسبب نقص أو تلف أو استخدام أو فقدان قيمة إعادة البيع.'] },
+      { title: 'طلبات غير قابلة للإرجاع', items: ['منتجات OEM أو ODM أو العلامة الخاصة أو المخصصة أو المصنوعة حسب الطلب أو المقطوعة حسب القياس أو المعدة أو الموردة خصيصاً.', 'المواد الاستهلاكية المفتوحة ومنتجات البرامج أو التراخيص وبضائع التصفية المحددة كبيع نهائي.', 'طلبات مشاريع B2B ما لم يمنح عرض السعر أو العقد المعني حق الإرجاع صراحة.'] },
+      { title: 'الأدلة المطلوبة', paragraphs: ['يلزم فيديو متواصل لفتح العبوة لأي مطالبة تتعلق بتلف أو نقص أو منتج خاطئ أو مشكلة جودة عند الوصول. يجب أن يُظهر بوضوح صندوق الشحن غير المفتوح والملصقات وكامل عملية الفتح والمحتويات والرقم التسلسلي والمشكلة. أرفق أيضاً رقم الطلب والصور ووصفاً كتابياً واضحاً. وقد ترفض المطالبات دون أدلة كافية.'] },
+      { title: 'معالجة الاسترداد', paragraphs: ['تصدر المبالغ المعتمدة إلى طريقة الدفع الأصلية بعد استلام البضائع وفحصها. ويتحكم مزود الدفع في أوقات معالجة البنك والبطاقة وPayPal وStripe. ولا ترد تكاليف الشحن الأصلي والجمارك والدفع إلا إذا طلب القانون ذلك أو نتجت عن خطأ مؤكد من جانبنا.'] },
+    ],
+  },
+};
+
 export function getPolicyChrome(locale: string) { return chrome[locale] || chrome.en; }
 export function getPrivacyPolicy(locale: string) { return privacy[locale] || privacy.en; }
 export function getTermsPolicy(locale: string) { return terms[locale] || terms.en; }
 export function getWarrantyPolicy(locale: string) { return warranty[locale] || warranty.en; }
 export function getShippingPolicy(locale: string) { return shipping[locale] || shipping.en; }
+export function getReturnsRefundsPolicy(locale: string) { return returnsRefunds[locale] || returnsRefunds.en; }
