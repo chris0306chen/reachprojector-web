@@ -4,8 +4,6 @@ import Link from 'next/link';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 
-const brands = ['XGIMI', 'Hisense', 'JMGO', 'Formovie', 'AWOL Vision', 'Elite Screens', 'Screen Innovations'];
-
 export function Footer() {
   const t = useTranslations('Footer');
   const tNav = useTranslations('nav');
@@ -13,11 +11,8 @@ export function Footer() {
 
   const footerLinks = {
     products: [
-      { href: `/${locale}/products?category=4k-laser-projectors`, label: t('home.categories.projectors') },
-      { href: `/${locale}/products?category=ust-laser-tv`, label: t('home.categories.ustLaser') },
-      { href: `/${locale}/products?category=projector-mounts`, label: t('home.categories.mounts') },
-      { href: `/${locale}/products?category=projection-screens`, label: t('home.categories.screens') },
       { href: `/${locale}/products`, label: t('allProducts') },
+      { href: `/${locale}/wholesale`, label: t('wholesaleInquiry') },
     ],
     company: [
       { href: `/${locale}/about`, label: tNav('about') },
@@ -35,8 +30,7 @@ export function Footer() {
 
   return (
     <footer className="bg-slate-900 text-slate-300">
-      {/* Main Footer */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
           {/* Brand Column */}
           <div className="lg:col-span-2">
@@ -125,17 +119,6 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Brands */}
-        <div className="mt-12 pt-8 border-t border-slate-800">
-          <p className="text-xs text-slate-500 uppercase tracking-wider mb-4">{t('authorizedDealer')}</p>
-          <div className="flex flex-wrap gap-6">
-            {brands.map((brand) => (
-              <span key={brand} className="text-sm font-medium text-slate-500 hover:text-slate-300 transition-colors cursor-default">
-                {brand}
-              </span>
-            ))}
-          </div>
-        </div>
       </div>
 
       {/* Bottom Bar */}
@@ -144,17 +127,6 @@ export function Footer() {
           <p className="text-xs text-slate-500">
             &copy; 2026 HK REACH SOURCING LIMITED. {t('allRightsReserved')}
           </p>
-          <div className="flex items-center gap-4">
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-xs text-slate-500 hover:text-orange-400 transition-colors">
-              Facebook
-            </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-xs text-slate-500 hover:text-orange-400 transition-colors">
-              Instagram
-            </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-xs text-slate-500 hover:text-orange-400 transition-colors">
-              LinkedIn
-            </a>
-          </div>
         </div>
       </div>
     </footer>

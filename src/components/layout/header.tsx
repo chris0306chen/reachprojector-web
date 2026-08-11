@@ -3,10 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { Menu, X, Search, ChevronDown, ShoppingCart, Store, Building2 } from 'lucide-react';
+import { Menu, X, Search, ChevronDown } from 'lucide-react';
 import { LanguageSwitcher } from './language-switcher';
-
-type BusinessMode = 'retail' | 'b2b';
 
 interface NavChild {
   href: string;
@@ -28,8 +26,6 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(null);
-  const [businessMode, setBusinessMode] = useState<BusinessMode>('retail');
-  const [cartCount] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -216,30 +212,13 @@ export function Header() {
             {/* Language Switcher */}
             <LanguageSwitcher />
 
-            {/* Retail/B2B Toggle - Desktop */}
-            <div className="hidden md:flex items-center bg-slate-100 rounded-lg p-1">
-              <button
-                onClick={() => setBusinessMode('retail')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
-                  businessMode === 'retail'
-                    ? 'bg-white text-slate-900 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-700'
-                }`}
-              >
-                <Store className="w-3.5 h-3.5" />
+            <div className="hidden items-center gap-1 rounded-lg bg-slate-100 p-1 md:flex">
+              <Link href={`/${locale}/products`} className="rounded-md px-3 py-2 text-xs font-semibold text-slate-600 transition hover:bg-white hover:text-slate-950">
                 {t('retail')}
-              </button>
-              <button
-                onClick={() => setBusinessMode('b2b')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
-                  businessMode === 'b2b'
-                    ? 'bg-white text-slate-900 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-700'
-                }`}
-              >
-                <Building2 className="w-3.5 h-3.5" />
+              </Link>
+              <Link href={`/${locale}/wholesale`} className="rounded-md px-3 py-2 text-xs font-semibold text-slate-600 transition hover:bg-white hover:text-slate-950">
                 {t('b2b')}
-              </button>
+              </Link>
             </div>
 
             {/* Search */}
@@ -251,26 +230,12 @@ export function Header() {
               <Search className="w-4 h-4" />
             </Link>
 
-            {/* Shopping Cart */}
-            <Link
-              href={`/${locale}/cart`}
-              className="relative flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 transition-colors"
-              aria-label={t('cart')}
-            >
-              <ShoppingCart className="w-5 h-5" />
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-orange-500 rounded-full">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-
             {/* CTA Button */}
             <Link
-              href={businessMode === 'b2b' ? `/${locale}/contact` : `/${locale}/products`}
-              className="hidden sm:inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition-colors"
+              href={`/${locale}/wholesale`}
+              className="hidden min-h-10 items-center rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-orange-700 sm:inline-flex"
             >
-              {businessMode === 'b2b' ? t('getQuote') : t('shopNow')}
+              {t('getQuote')}
             </Link>
 
             {/* Mobile Menu Toggle */}
@@ -278,6 +243,7 @@ export function Header() {
               className="lg:hidden p-2 text-slate-700"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label="Toggle menu"
+              aria-expanded={isMobileMenuOpen}
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -294,30 +260,13 @@ export function Header() {
               <LanguageSwitcher />
             </div>
 
-            {/* Mobile Retail/B2B Toggle */}
-            <div className="flex items-center bg-slate-100 rounded-lg p-1 mb-4">
-              <button
-                onClick={() => setBusinessMode('retail')}
-                className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium rounded-md transition-all ${
-                  businessMode === 'retail'
-                    ? 'bg-white text-slate-900 shadow-sm'
-                    : 'text-slate-500'
-                }`}
-              >
-                <Store className="w-4 h-4" />
+            <div className="mb-4 grid grid-cols-2 gap-1 rounded-lg bg-slate-100 p-1">
+              <Link href={`/${locale}/products`} onClick={() => setIsMobileMenuOpen(false)} className="min-h-11 rounded-md px-3 py-3 text-center text-sm font-semibold text-slate-700 hover:bg-white">
                 {t('retail')}
-              </button>
-              <button
-                onClick={() => setBusinessMode('b2b')}
-                className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium rounded-md transition-all ${
-                  businessMode === 'b2b'
-                    ? 'bg-white text-slate-900 shadow-sm'
-                    : 'text-slate-500'
-                }`}
-              >
-                <Building2 className="w-4 h-4" />
+              </Link>
+              <Link href={`/${locale}/wholesale`} onClick={() => setIsMobileMenuOpen(false)} className="min-h-11 rounded-md px-3 py-3 text-center text-sm font-semibold text-slate-700 hover:bg-white">
                 {t('b2b')}
-              </button>
+              </Link>
             </div>
 
             {navLinks.map((link) => (
@@ -369,21 +318,13 @@ export function Header() {
               </div>
             ))}
 
-            <div className="pt-3 border-t border-slate-200 flex gap-2">
+            <div className="flex gap-2 border-t border-slate-200 pt-3">
               <Link
-                href={`/${locale}/cart`}
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg"
+                href={`/${locale}/wholesale`}
+                className="min-h-11 flex-1 rounded-lg bg-orange-600 py-3 text-center text-sm font-semibold text-white"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <ShoppingCart className="w-4 h-4" />
-                {t('cart')} {cartCount > 0 && `(${cartCount})`}
-              </Link>
-              <Link
-                href={businessMode === 'b2b' ? `/${locale}/contact` : `/${locale}/products`}
-                className="flex-1 text-center py-2.5 text-sm font-medium text-white bg-orange-500 rounded-lg"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {businessMode === 'b2b' ? t('getQuote') : t('shopNow')}
+                {t('getQuote')}
               </Link>
             </div>
           </nav>

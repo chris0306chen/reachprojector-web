@@ -1,25 +1,30 @@
-import type { Metadata } from 'next';
 import { Shield, Truck, DollarSign, Globe, Award, Users } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
 
-export default async function AboutPage() {
+interface AboutPageProps {
+  params: Promise<{ locale: string }>;
+}
+
+export default async function AboutPage({ params }: AboutPageProps) {
+  const { locale } = await params;
   const t = await getTranslations('about');
 
   return (
     <>
       {/* Hero */}
-      <section className="bg-slate-900 py-16 lg:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden bg-slate-950 py-20 lg:py-28">
+        <div className="absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_center,rgba(234,88,12,.18),transparent_68%)]" />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            <p className="text-orange-400 text-sm font-semibold uppercase tracking-wider mb-4">
+            <p className="mb-5 text-xs font-bold uppercase tracking-[0.2em] text-orange-400">
               {t('subtitle')}
             </p>
-            <h1 className="text-3xl lg:text-5xl font-bold text-white tracking-tight mb-6">
+            <h1 className="mb-6 text-4xl font-semibold tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl">
               {t('title')}
             </h1>
-            <p className="text-lg text-slate-300 leading-relaxed">
+            <p className="max-w-2xl text-lg leading-8 text-slate-300">
               {t('description')}
             </p>
           </div>
@@ -27,14 +32,15 @@ export default async function AboutPage() {
       </section>
 
       {/* Story */}
-      <section className="py-16 lg:py-20 bg-white">
+      <section className="bg-white py-20 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-6">
+          <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-[.75fr_1.25fr] lg:gap-20">
+            <div className="lg:sticky lg:top-28">
+              <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-orange-600">REACH PROJECTOR</p>
+              <h2 className="mb-6 text-3xl font-semibold tracking-tight text-slate-950 lg:text-4xl">
                 {t('story.title')}
               </h2>
-              <div className="space-y-4 text-slate-600 leading-relaxed">
+              <div className="space-y-5 text-base leading-8 text-slate-600">
                 <p>
                   {t('story.paragraph1')}
                 </p>
@@ -43,28 +49,21 @@ export default async function AboutPage() {
                 </p>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              {[
-                { value: '500+', label: t('stats.products') },
-                { value: '50+', label: t('stats.countriesServed') },
-                { value: '12+', label: t('stats.brandPartners') },
-                { value: '99%', label: t('stats.customerSatisfaction') },
-              ].map((stat) => (
-                <div key={stat.label} className="bg-slate-50 rounded-xl p-6 text-center border border-slate-100">
-                  <p className="text-3xl font-bold text-orange-500 mb-1">{stat.value}</p>
-                  <p className="text-sm text-slate-500">{stat.label}</p>
-                </div>
-              ))}
+            <div className="rounded-3xl border border-slate-200 bg-[#f7f7f5] p-7 sm:p-10">
+              <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-white p-8 shadow-sm">
+                <img src="/images/logo.png" alt="REACH PROJECTOR" className="h-full w-full object-contain" />
+              </div>
+              <p className="mt-6 text-sm leading-7 text-slate-600">{t('description')}</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Advantages */}
-      <section className="py-16 lg:py-20 bg-slate-50">
+      <section className="bg-[#f7f7f5] py-20 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-3">
+            <h2 className="mb-3 text-3xl font-semibold tracking-tight text-slate-950 lg:text-4xl">
               {t('whyChoose.title')}
             </h2>
             <p className="text-slate-500 max-w-2xl mx-auto">
@@ -104,9 +103,9 @@ export default async function AboutPage() {
                 desc: t('whyChoose.dedicatedSupportDesc'),
               },
             ].map((item) => (
-              <div key={item.title} className="bg-white rounded-xl p-6 border border-slate-200 hover:shadow-md transition-shadow">
-                <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
-                  <item.icon className="w-5 h-5 text-orange-500" />
+              <div key={item.title} className="rounded-2xl border border-slate-200 bg-white p-7">
+                <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-orange-100">
+                  <item.icon className="h-5 w-5 text-orange-700" />
                 </div>
                 <h3 className="text-base font-semibold text-slate-900 mb-2">{item.title}</h3>
                 <p className="text-sm text-slate-500 leading-relaxed">{item.desc}</p>
@@ -117,7 +116,7 @@ export default async function AboutPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 lg:py-20 bg-slate-900">
+      <section className="bg-slate-950 py-20 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl lg:text-3xl font-bold text-white mb-4">
             {t('cta.title')}
@@ -126,8 +125,8 @@ export default async function AboutPage() {
             {t('cta.description')}
           </p>
           <a
-            href="/contact"
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
+            href={`/${locale}/contact`}
+            className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-orange-600 px-8 py-3.5 font-semibold text-white transition-colors hover:bg-orange-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
           >
             {t('cta.contactUs')}
           </a>
