@@ -5,6 +5,7 @@ import { ArrowRight, CheckCircle2, Layers3, MessageSquareText } from 'lucide-rea
 import { ProductCard } from '@/components/product-card';
 import { sceneDetails, sceneNavigation } from '@/lib/catalog-navigation';
 import { getProducts } from '@/lib/data-service';
+import { getLocalizedSceneTitle, getSolutionsCopy } from '@/lib/solutions-copy';
 
 export function generateStaticParams() {
   return sceneNavigation.flatMap((group) => group.items.map(([, slug]) => ({ slug })));
@@ -13,13 +14,13 @@ export function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const scene = sceneDetails[slug];
   if (!scene) return {};
   return {
-    title: `${scene.title} | Projector Packages | REACH PROJECTOR`,
+    title: `${getLocalizedSceneTitle(locale, slug, scene.title)} | Projector Packages | REACH PROJECTOR`,
     description: scene.description,
   };
 }
@@ -32,6 +33,8 @@ export default async function ScenePage({
   const { locale, slug } = await params;
   const scene = sceneDetails[slug];
   if (!scene) notFound();
+  const copy = getSolutionsCopy(locale);
+  const localizedTitle = getLocalizedSceneTitle(locale, slug, scene.title);
 
   const componentLabels = scene.categorySlugs.map((category) => ({
     slug: category,
@@ -51,22 +54,22 @@ export default async function ScenePage({
       <section className="relative overflow-hidden bg-slate-950 px-4 pb-20 pt-32 text-white">
         <div className="absolute inset-y-0 right-0 w-2/3 bg-[radial-gradient(circle_at_center,rgba(234,88,12,.18),transparent_65%)]" />
         <div className="relative mx-auto max-w-7xl">
-          <Link href={`/${locale}/solutions`} className="text-sm text-slate-400 hover:text-white">Solutions / {scene.eyebrow}</Link>
-          <h1 className="mt-5 max-w-4xl text-4xl font-semibold tracking-[-0.04em] md:text-6xl">{scene.title}</h1>
+          <Link href={`/${locale}/solutions`} className="text-sm text-slate-400 hover:text-white">{copy.eyebrow} / {scene.eyebrow === 'Residential' ? copy.residential : copy.business}</Link>
+          <h1 className="mt-5 max-w-4xl text-4xl font-semibold tracking-[-0.04em] md:text-6xl">{localizedTitle}</h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">{scene.description}</p>
           <Link
             href={`/${locale}/contact?scene=${slug}`}
             className="mt-9 inline-flex min-h-12 items-center gap-2 rounded-xl bg-orange-600 px-6 py-3 font-semibold text-white transition hover:bg-orange-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
           >
-            Request a project quote <ArrowRight className="h-4 w-4" />
+            {copy.quote} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </section>
 
       <section className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[.8fr_1.2fr] lg:px-8 lg:py-24">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-wider text-orange-600">Planning checklist</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">What we confirm before recommending a system</h2>
+          <p className="text-sm font-semibold uppercase tracking-wider text-orange-600">{copy.planningEyebrow}</p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">{copy.planningTitle}</h2>
         </div>
         <div className="grid gap-4">
           {scene.considerations.map((item) => (
@@ -81,9 +84,9 @@ export default async function ScenePage({
       <section className="bg-slate-950 text-white">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
           <div className="max-w-3xl">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-orange-400">Complete system layers</p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Equipment selected to work together</h2>
-            <p className="mt-4 leading-7 text-slate-300">These product groups form the starting point for this scene. Final compatibility depends on the room measurements and installation plan.</p>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-orange-400">{copy.layersEyebrow}</p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">{copy.layersTitle}</h2>
+            <p className="mt-4 leading-7 text-slate-300">{copy.layersDescription}</p>
           </div>
           <div className="mt-10 grid gap-4 md:grid-cols-3">
             {componentLabels.map((component, index) => (
@@ -97,7 +100,7 @@ export default async function ScenePage({
                   <span className="text-xs font-bold tracking-[0.16em] text-slate-500">{String(index + 1).padStart(2, '0')}</span>
                 </div>
                 <h3 className="mt-8 font-semibold text-white">{component.label}</h3>
-                <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-orange-300">View compatible products <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></span>
+                <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-orange-300">{copy.compatibleProducts} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></span>
               </Link>
             ))}
           </div>
@@ -108,11 +111,11 @@ export default async function ScenePage({
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
           <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-wider text-orange-600">Recommended products</p>
-              <h2 className="mt-2 text-3xl font-bold text-slate-900">Build your solution</h2>
+              <p className="text-sm font-semibold uppercase tracking-wider text-orange-600">{copy.recommended}</p>
+              <h2 className="mt-2 text-3xl font-bold text-slate-900">{copy.buildSolution}</h2>
             </div>
             <Link href={`/${locale}/products`} className="inline-flex items-center gap-2 text-sm font-semibold text-orange-600">
-              Browse all products <ArrowRight className="h-4 w-4" />
+              {copy.browseAll} <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
           {result.products.length ? (
@@ -122,8 +125,8 @@ export default async function ScenePage({
           ) : (
             <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
               <MessageSquareText className="mx-auto h-8 w-8 text-orange-500" />
-              <h3 className="mt-3 font-semibold text-slate-900">This solution is configured to order.</h3>
-              <p className="mt-1 text-sm text-slate-500">Tell us your room size, destination, and quantity for a matched package.</p>
+              <h3 className="mt-3 font-semibold text-slate-900">{copy.configuredToOrder}</h3>
+              <p className="mt-1 text-sm text-slate-500">{copy.configuredDescription}</p>
             </div>
           )}
         </div>
