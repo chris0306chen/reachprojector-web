@@ -5,7 +5,12 @@ import { ArrowRight, CheckCircle2, Layers3, MessageSquareText } from 'lucide-rea
 import { ProductCard } from '@/components/product-card';
 import { sceneDetails, sceneNavigation } from '@/lib/catalog-navigation';
 import { getProducts } from '@/lib/data-service';
-import { getLocalizedSceneTitle, getSolutionsCopy } from '@/lib/solutions-copy';
+import {
+  getLocalizedCategoryLabel,
+  getLocalizedSceneDetails,
+  getLocalizedSceneTitle,
+  getSolutionsCopy,
+} from '@/lib/solutions-copy';
 
 export function generateStaticParams() {
   return sceneNavigation.flatMap((group) => group.items.map(([, slug]) => ({ slug })));
@@ -19,9 +24,10 @@ export async function generateMetadata({
   const { locale, slug } = await params;
   const scene = sceneDetails[slug];
   if (!scene) return {};
+  const localizedScene = getLocalizedSceneDetails(locale, slug, scene);
   return {
-    title: `${getLocalizedSceneTitle(locale, slug, scene.title)} | Projector Packages | REACH PROJECTOR`,
-    description: scene.description,
+    title: `${getLocalizedSceneTitle(locale, slug, scene.title)} | REACH PROJECTOR`,
+    description: localizedScene.description,
   };
 }
 
@@ -35,13 +41,15 @@ export default async function ScenePage({
   if (!scene) notFound();
   const copy = getSolutionsCopy(locale);
   const localizedTitle = getLocalizedSceneTitle(locale, slug, scene.title);
+  const localizedScene = getLocalizedSceneDetails(locale, slug, scene);
 
   const componentLabels = scene.categorySlugs.map((category) => ({
     slug: category,
-    label: category
-      .split('-')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' '),
+    label: getLocalizedCategoryLabel(
+      locale,
+      category,
+      category.split('-').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+    ),
   }));
 
   let result = await getProducts({ sceneSlug: slug, pageSize: 8 });
@@ -56,7 +64,7 @@ export default async function ScenePage({
         <div className="relative mx-auto max-w-7xl">
           <Link href={`/${locale}/solutions`} className="text-sm text-slate-400 hover:text-white">{copy.eyebrow} / {scene.eyebrow === 'Residential' ? copy.residential : copy.business}</Link>
           <h1 className="mt-5 max-w-4xl text-4xl font-semibold tracking-[-0.04em] md:text-6xl">{localizedTitle}</h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">{scene.description}</p>
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">{localizedScene.description}</p>
           <Link
             href={`/${locale}/contact?scene=${slug}`}
             className="mt-9 inline-flex min-h-12 items-center gap-2 rounded-xl bg-orange-600 px-6 py-3 font-semibold text-white transition hover:bg-orange-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
@@ -72,7 +80,7 @@ export default async function ScenePage({
           <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">{copy.planningTitle}</h2>
         </div>
         <div className="grid gap-4">
-          {scene.considerations.map((item) => (
+          {localizedScene.considerations.map((item) => (
             <div key={item} className="flex min-h-16 gap-3 rounded-2xl border border-slate-200 bg-[#f7f7f5] p-5">
               <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-orange-600" />
               <span className="font-medium leading-6 text-slate-800">{item}</span>

@@ -99,10 +99,103 @@ const sceneTitles: Record<string, Record<string, string>> = {
   },
 };
 
+type LocalizedSceneDetails = {
+  description: string;
+  considerations: string[];
+};
+
+const localizedSceneDetails: Record<string, Record<string, LocalizedSceneDetails>> = {
+  zh: {
+    'home-cinema': {
+      description: '根据房间条件组合合适的投影仪、幕布、安装方式和配套设备，搭建完整的家庭影院。',
+      considerations: ['环境光与幕布材质', '观看距离与画面尺寸', '投射比与安装位置'],
+    },
+    'living-room-laser-tv': {
+      description: '面向明亮客厅的超短焦投影系统，并兼顾幕布匹配与家具一体化安装。',
+      considerations: ['超短焦投影仪与抗光幕兼容性', '电视柜深度与散热空间', '白天环境下的画面亮度'],
+    },
+    'bedroom-small-space': {
+      description: '适合卧室、公寓和灵活小空间的紧凑、安静投影组合。',
+      considerations: ['较短的观看距离', '低噪声运行', '便携或紧凑的安装方式'],
+    },
+    'gaming-room': {
+      description: '围绕低输入延迟、刷新率和主机兼容性选择的大画面游戏系统。',
+      considerations: ['输入延迟与刷新率', 'HDMI 与游戏主机兼容性', '环境光控制'],
+    },
+    'outdoor-cinema': {
+      description: '适合庭院、露营和临时户外活动的便携投影仪与幕布组合。',
+      considerations: ['便携供电与连接方式', '防潮防尘收纳', '幕布快速搭建'],
+    },
+    'meeting-rooms': {
+      description: '适合小型讨论室、董事会议室和会议空间的稳定演示与协作系统。',
+      considerations: ['会议人数与画面尺寸', '无线演示流程', '安装方式与线缆布置'],
+    },
+    'education-training': {
+      description: '面向教室、培训中心和多教室部署的低维护投影组合。',
+      considerations: ['教室照明下的亮度', '集中维护方式', '批量配置与备用设备'],
+    },
+    'hotels-hospitality': {
+      description: '覆盖客房、休息区、会议和娱乐空间，并支持项目选型与安装规划。',
+      considerations: ['住客体验与简易控制', '家具一体化', '多场所部署一致性'],
+    },
+    'bars-restaurants': {
+      description: '适合赛事观看、包间和品牌娱乐空间的大画面投影系统。',
+      considerations: ['高环境光下的亮度', '多画面布局', '长时间日常运行'],
+    },
+    'retail-showrooms': {
+      description: '用于产品发布、陈列展示和沉浸式内容的灵活视觉系统。',
+      considerations: ['内容格式与投影表面', '每日运行时间', '隐藏式安装与品牌呈现'],
+    },
+    'events-rental': {
+      description: '适合会议、展览和租赁业务的便于运输、搭建与维护的投影组合。',
+      considerations: ['快速搭建与拆卸', '运输箱与备用配件', '场地亮度与投射距离'],
+    },
+    'large-venues': {
+      description: '面向礼堂、宗教场所、大厅和大型公共空间的高亮度固定安装方案。',
+      considerations: ['投射距离与镜头选择', '吊装与安全要求', '冗余设计与维护空间'],
+    },
+  },
+};
+
+const categoryLabels: Record<string, Record<string, string>> = {
+  zh: {
+    'home-smart-projectors': '家用智能投影仪',
+    'high-end-home-theater-projectors': '高端家庭影院投影仪',
+    'projection-screens': '投影幕布',
+    'ust-laser-tv': '超短焦激光电视',
+    'alr-clr-screens': '抗光幕与菲涅尔幕',
+    'av-furniture': '影音家具',
+    'portable-mini-projectors': '便携与迷你投影仪',
+    'desktop-stands': '桌面支架',
+    'portable-outdoor-screens': '便携与户外幕布',
+    'cases-bags': '收纳箱与便携包',
+    'business-education-projectors': '商务与教育投影仪',
+    'motorized-screens': '电动幕布',
+    'ceiling-mounts': '吊装支架',
+    'solution-bundles': '场景套装',
+    'engineering-projectors': '工程投影仪',
+    'projector-mounts-stands': '投影支架与落地架',
+    'accessories-parts': '配件与零部件',
+    'fixed-frame-screens': '画框幕布',
+  },
+};
+
 export function getSolutionsCopy(locale: string) {
   return copies[locale] || copies.en;
 }
 
 export function getLocalizedSceneTitle(locale: string, slug: string, fallback: string) {
   return sceneTitles[locale]?.[slug] || fallback;
+}
+
+export function getLocalizedSceneDetails(
+  locale: string,
+  slug: string,
+  fallback: LocalizedSceneDetails,
+) {
+  return localizedSceneDetails[locale]?.[slug] || fallback;
+}
+
+export function getLocalizedCategoryLabel(locale: string, slug: string, fallback: string) {
+  return categoryLabels[locale]?.[slug] || fallback;
 }

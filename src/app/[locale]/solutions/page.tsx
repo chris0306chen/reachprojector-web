@@ -2,12 +2,20 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Building2, Home, Layers3 } from 'lucide-react';
 import { sceneDetails, sceneNavigation } from '@/lib/catalog-navigation';
-import { getLocalizedSceneTitle, getSolutionsCopy } from '@/lib/solutions-copy';
+import { getLocalizedSceneDetails, getLocalizedSceneTitle, getSolutionsCopy } from '@/lib/solutions-copy';
 
-export const metadata: Metadata = {
-  title: 'Projection Solutions by Application | REACH PROJECTOR',
-  description: 'Explore projector, screen, mount and AV furniture solutions for homes, meeting rooms, education, hospitality, events and large venues.',
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const copy = getSolutionsCopy(locale);
+  return {
+    title: `${copy.eyebrow} | REACH PROJECTOR`,
+    description: copy.description,
+  };
+}
 
 export default async function SolutionsPage({
   params,
@@ -55,7 +63,9 @@ export default async function SolutionsPage({
                 >
                   <span className="text-xs font-bold tracking-[0.18em] text-slate-400">{String(index + 1).padStart(2, '0')}</span>
                   <h3 className="mt-8 text-xl font-semibold tracking-tight text-slate-950 group-hover:text-orange-700">{getLocalizedSceneTitle(locale, slug, label)}</h3>
-                  <p className="mt-3 text-sm leading-6 text-slate-600">{sceneDetails[slug].description}</p>
+                  <p className="mt-3 text-sm leading-6 text-slate-600">
+                    {getLocalizedSceneDetails(locale, slug, sceneDetails[slug]).description}
+                  </p>
                   <span className="mt-auto inline-flex items-center gap-2 pt-7 text-sm font-semibold text-orange-700">
                     {copy.explore} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </span>
