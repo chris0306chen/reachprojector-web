@@ -102,3 +102,24 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: #64748b;
 }
+
+.reach-home ::selection {
+  background: #f97316;
+  color: #0f172a;
+}
+
+.reach-home a,
+.reach-home button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reach-home *,
+  .reach-home *::before,
+  .reach-home *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
