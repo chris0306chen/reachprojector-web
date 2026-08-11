@@ -8,16 +8,34 @@ interface ProductDetailSectionsProps {
   content: ProductDetailContent | null | undefined;
   legacySpecifications?: Record<string, string> | null;
   description?: string | null;
+  locale?: string;
 }
 
 const sectionClass = "border-t border-slate-200 py-12 sm:py-16";
 const headingClass = "mb-8 text-2xl font-bold text-[#0B1A40]";
 
+const sectionCopy: Record<string, { specifications: string; description: string; photos: string; details: string; logistics: string; other: string }> = {
+  en: { specifications: "Product Specifications", description: "Product Description", photos: "Real Product Photos", details: "Product Details", logistics: "Bulk Orders & Shipment", other: "Other" },
+  zh: { specifications: "产品规格", description: "产品介绍", photos: "产品实拍", details: "产品详情", logistics: "批量订单与发运", other: "其他" },
+  es: { specifications: "Especificaciones del producto", description: "Descripción del producto", photos: "Fotos reales del producto", details: "Detalles del producto", logistics: "Pedidos al por mayor y envío", other: "Otros" },
+  ru: { specifications: "Характеристики товара", description: "Описание товара", photos: "Фотографии товара", details: "Подробности о товаре", logistics: "Оптовые заказы и доставка", other: "Прочее" },
+  ar: { specifications: "مواصفات المنتج", description: "وصف المنتج", photos: "صور حقيقية للمنتج", details: "تفاصيل المنتج", logistics: "الطلبات بالجملة والشحن", other: "أخرى" },
+};
+
+const groupCopy: Record<string, Record<string, string>> = {
+  zh: { Display: "显示", Optical: "光学", System: "系统", Connectivity: "连接", Power: "电源", Dimensions: "尺寸", Package: "包装", Other: "其他" },
+  es: { Display: "Imagen", Optical: "Óptica", System: "Sistema", Connectivity: "Conectividad", Power: "Alimentación", Dimensions: "Dimensiones", Package: "Embalaje", Other: "Otros" },
+  ru: { Display: "Изображение", Optical: "Оптика", System: "Система", Connectivity: "Подключение", Power: "Питание", Dimensions: "Размеры", Package: "Упаковка", Other: "Прочее" },
+  ar: { Display: "العرض", Optical: "البصريات", System: "النظام", Connectivity: "الاتصال", Power: "الطاقة", Dimensions: "الأبعاد", Package: "التغليف", Other: "أخرى" },
+};
+
 export function ProductDetailSections({
   content,
   legacySpecifications,
   description,
+  locale = "en",
 }: ProductDetailSectionsProps) {
+  const labels = sectionCopy[locale] || sectionCopy.en;
   const detail = normalizeProductDetail(content);
   const specifications: ProductSpecificationItem[] =
     detail.specifications.length > 0
@@ -50,18 +68,18 @@ export function ProductDetailSections({
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       {specifications.length > 0 && (
         <section className={sectionClass} aria-labelledby="product-specifications">
-          <h2 id="product-specifications" className={headingClass}>Product Specifications</h2>
+          <h2 id="product-specifications" className={headingClass}>{labels.specifications}</h2>
           <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
             {Object.entries(groupedSpecifications).map(([group, items]) => (
               <div key={group} className="border-b border-slate-200 last:border-b-0">
                 <h3 className="bg-[#0B1A40] px-5 py-3 text-sm font-semibold uppercase tracking-wider text-white">
-                  {group}
+                  {groupCopy[locale]?.[group] || group}
                 </h3>
                 <dl className="grid md:grid-cols-2">
                   {items.map((item, index) => (
                     <div
                       key={`${item.name}-${index}`}
-                      className="grid grid-cols-[minmax(110px,35%)_1fr] gap-4 border-b border-slate-100 px-5 py-4 last:border-b-0 md:[&:nth-child(odd)]:border-r"
+                      className="grid grid-cols-[minmax(110px,35%)_1fr] gap-4 border-b border-slate-100 px-5 py-4 last:border-b-0 md:[&:nth-child(odd)]:border-e"
                     >
                       <dt className="text-sm font-medium text-slate-600">{item.name}</dt>
                       <dd className="break-words text-sm text-slate-900">{item.value}</dd>
@@ -76,7 +94,7 @@ export function ProductDetailSections({
 
       {description && (
         <section className={sectionClass} aria-labelledby="product-description">
-          <h2 id="product-description" className={headingClass}>Product Description</h2>
+          <h2 id="product-description" className={headingClass}>{labels.description}</h2>
           <div className="prose prose-slate max-w-none">
             <p className="whitespace-pre-line text-slate-600 leading-relaxed">{description}</p>
           </div>
@@ -85,7 +103,7 @@ export function ProductDetailSections({
 
       {detail.real_photos.length > 0 && (
         <section className={sectionClass} aria-labelledby="real-product-photos">
-          <h2 id="real-product-photos" className={headingClass}>Real Product Photos</h2>
+          <h2 id="real-product-photos" className={headingClass}>{labels.photos}</h2>
           <div className="grid gap-5 md:grid-cols-2">
             {detail.real_photos.map((image) => (
               <figure key={image.url} className="overflow-hidden rounded-2xl bg-slate-100">
@@ -98,7 +116,7 @@ export function ProductDetailSections({
 
       {detail.detail_images.length > 0 && (
         <section className={sectionClass} aria-labelledby="product-details">
-          <h2 id="product-details" className={headingClass}>Product Details</h2>
+          <h2 id="product-details" className={headingClass}>{labels.details}</h2>
           <div className="space-y-5">
             {detail.detail_images.map((image) => (
               <img key={image.url} src={image.url} alt={image.alt} loading="lazy" className="h-auto w-full rounded-2xl" />
@@ -109,7 +127,7 @@ export function ProductDetailSections({
 
       {detail.logistics_images.length > 0 && (
         <section className={sectionClass} aria-labelledby="bulk-orders-shipment">
-          <h2 id="bulk-orders-shipment" className={headingClass}>Bulk Orders &amp; Shipment</h2>
+          <h2 id="bulk-orders-shipment" className={headingClass}>{labels.logistics}</h2>
           <div className="grid gap-5 md:grid-cols-2">
             {detail.logistics_images.map((image) => (
               <figure key={`${image.type}-${image.url}`} className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
