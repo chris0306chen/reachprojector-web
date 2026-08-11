@@ -189,7 +189,61 @@ const warranty: Record<string, PolicyDocument> = {
   },
 };
 
+const shipping: Record<string, PolicyDocument> = {
+  en: {
+    title: 'Shipping, Duties & Delivery Policy', description: 'International shipping, DDP and DAP terms, delivery estimates, chargeable weight, customs and project freight information.', summary: 'How shipping prices, trade terms, delivery estimates, customs responsibilities, and freight orders are handled.',
+    sections: [
+      { title: 'Shipping quotes', paragraphs: ['Available shipping methods and prices are calculated using the delivery country, product quantity, packed weight, package dimensions, shipping class, and the active rate available when the order is placed. Volumetric weight may be used when it is higher than actual packed weight.'] },
+      { title: 'DDP and non-DDP destinations', items: ['When checkout or a written quotation states DDP, the quoted shipping service includes import-duty and tax handling to the agreed destination, subject to the stated exclusions.', 'When DDP is not expressly shown, duties, taxes, customs charges, brokerage, storage, remote-area charges, and local compliance costs may be payable by the recipient.', 'Mexico checkout displays DDP services only. Availability for every other country depends on the active shipping route and product type.'] },
+      { title: 'Oversized and project freight', paragraphs: ['Projection screens, cabinets, furniture, multi-carton goods, and other freight-class products may require a manual quotation. The order is not accepted until route, price, trade term, delivery address, and estimated schedule are confirmed in writing.'] },
+      { title: 'Delivery estimates', paragraphs: ['Processing and transit times are estimates, not guarantees. Customs inspection, remote locations, carrier disruption, weather, peak seasons, and buyer documentation may affect delivery. Tracking is provided when supported by the carrier.'] },
+      { title: 'Address and delivery responsibility', items: ['The customer must provide a complete and accurate delivery address, contact name, phone number, and any customs information requested.', 'Address changes after payment may require a new shipping quote and security review.', 'Visible carton damage should be recorded with the carrier and reported to us promptly with photographs.'] },
+    ],
+  },
+  zh: {
+    title: '运输、关税与交付政策', description: '国际运输、DDP 与 DAP 条款、交付时间估算、计费重量、海关及项目货运信息。', summary: '说明运费、贸易条款、交付时间估算、海关责任及货运订单的处理方式。',
+    sections: [
+      { title: '运费报价', paragraphs: ['可用运输方式和价格根据交付国家、产品数量、包装后重量、包装尺寸、运输类别以及下单时有效的费率计算。当体积重量高于实际包装重量时，可能采用体积重量计费。'] },
+      { title: 'DDP 与非 DDP 目的地', items: ['当结账页面或书面报价单明确写明 DDP 时，所报运输服务包含到约定目的地的进口关税及税务处理，但受所列排除项限制。', '未明确显示 DDP 时，关税、税费、海关费用、报关代理费、仓储费、偏远地区附加费及当地合规成本可能由收件人承担。', '墨西哥结账页面仅显示 DDP 服务。其他国家是否可用取决于当时有效的运输路线和产品类型。'] },
+      { title: '超大件与项目货运', paragraphs: ['投影幕布、机柜、家具、多箱货物及其他货运类别产品可能需要人工报价。在路线、价格、贸易条款、交付地址和预计时间以书面形式确认前，订单不会被接受。'] },
+      { title: '交付时间估算', paragraphs: ['处理和运输时间仅为估算，并非保证。海关检查、偏远地区、承运商中断、天气、旺季及买方文件可能影响交付。承运商支持时会提供物流追踪。'] },
+      { title: '地址与交付责任', items: ['客户必须提供完整准确的交付地址、联系人、电话号码及所要求的海关信息。', '付款后更改地址可能需要重新报价运费并进行安全审核。', '包装箱有明显损坏时，应与承运商做好记录，并及时向我们报告和提供照片。'] },
+    ],
+  },
+  es: {
+    title: 'Política de envío, aranceles y entrega', description: 'Envíos internacionales, condiciones DDP y DAP, plazos estimados, peso facturable, aduanas y carga de proyectos.', summary: 'Cómo se gestionan los precios de envío, términos comerciales, estimaciones, responsabilidades aduaneras y pedidos de carga.',
+    sections: [
+      { title: 'Cotizaciones de envío', paragraphs: ['Los métodos y precios disponibles se calculan según país de entrega, cantidad, peso embalado, dimensiones, clase de envío y tarifa vigente al realizar el pedido. Puede usarse el peso volumétrico si supera el peso embalado real.'] },
+      { title: 'Destinos DDP y no DDP', items: ['Cuando el proceso de compra o una cotización escrita indique DDP, el servicio cotizado incluye la gestión de aranceles e impuestos de importación hasta el destino acordado, sujeto a las exclusiones indicadas.', 'Si DDP no aparece expresamente, el destinatario puede tener que pagar aranceles, impuestos, cargos aduaneros, corretaje, almacenamiento, recargos de zona remota y costes de cumplimiento local.', 'El proceso de compra para México muestra solo servicios DDP. La disponibilidad en otros países depende de la ruta activa y del tipo de producto.'] },
+      { title: 'Carga sobredimensionada y de proyectos', paragraphs: ['Pantallas, armarios, muebles, mercancía de varios bultos y otros productos de carga pueden requerir cotización manual. El pedido no se acepta hasta confirmar por escrito ruta, precio, término comercial, dirección y calendario estimado.'] },
+      { title: 'Estimaciones de entrega', paragraphs: ['Los tiempos de preparación y tránsito son estimaciones, no garantías. Inspección aduanera, zonas remotas, interrupciones del transportista, clima, temporada alta y documentos del comprador pueden afectar la entrega. Se facilita seguimiento cuando el transportista lo admite.'] },
+      { title: 'Dirección y responsabilidad de entrega', items: ['El cliente debe facilitar dirección completa y exacta, contacto, teléfono y la información aduanera solicitada.', 'Cambiar la dirección tras el pago puede requerir nueva cotización y revisión de seguridad.', 'Los daños visibles del embalaje deben registrarse con el transportista y comunicarse pronto con fotografías.'] },
+    ],
+  },
+  ru: {
+    title: 'Политика доставки, пошлин и вручения', description: 'Международная доставка, условия DDP и DAP, расчетные сроки, оплачиваемый вес, таможня и проектные грузы.', summary: 'Порядок расчета доставки, торговых условий, сроков, таможенной ответственности и грузовых заказов.',
+    sections: [
+      { title: 'Расчет доставки', paragraphs: ['Доступные способы и цены рассчитываются по стране доставки, количеству, весу упакованного отправления, размерам упаковки, классу отправления и действующему тарифу на момент заказа. Если объемный вес выше фактического упакованного веса, может применяться объемный вес.'] },
+      { title: 'Направления DDP и без DDP', items: ['Если при оформлении заказа или в письменном коммерческом предложении указано DDP, рассчитанная доставка включает оформление импортных пошлин и налогов до согласованного места с учетом указанных исключений.', 'Если DDP прямо не указано, пошлины, налоги, таможенные сборы, услуги брокера, хранение, сборы за удаленную зону и расходы на соблюдение местных требований могут оплачиваться получателем.', 'Для Мексики при оформлении показываются только услуги DDP. Доступность для других стран зависит от действующего маршрута и типа товара.'] },
+      { title: 'Крупногабаритные и проектные грузы', paragraphs: ['Экраны, шкафы, мебель, многоместные и другие грузовые товары могут требовать ручного расчета. Заказ не принимается, пока маршрут, цена, торговое условие, адрес и расчетный график не подтверждены письменно.'] },
+      { title: 'Расчетные сроки доставки', paragraphs: ['Сроки обработки и перевозки являются оценкой, а не гарантией. Таможенный досмотр, удаленность, сбои перевозчика, погода, высокий сезон и документы покупателя могут повлиять на доставку. Отслеживание предоставляется, если его поддерживает перевозчик.'] },
+      { title: 'Адрес и ответственность за доставку', items: ['Клиент обязан предоставить полный точный адрес, контактное лицо, телефон и запрошенные таможенные сведения.', 'Смена адреса после оплаты может потребовать нового расчета доставки и проверки безопасности.', 'Видимое повреждение коробки следует зафиксировать с перевозчиком и быстро сообщить нам с фотографиями.'] },
+    ],
+  },
+  ar: {
+    title: 'سياسة الشحن والرسوم والتسليم', description: 'الشحن الدولي وشروط DDP وDAP ومواعيد التسليم التقديرية والوزن القابل للفوترة والجمارك وشحن المشاريع.', summary: 'كيفية معالجة أسعار الشحن والشروط التجارية وتقديرات التسليم ومسؤوليات الجمارك وطلبات الشحن.',
+    sections: [
+      { title: 'عروض الشحن', paragraphs: ['تُحسب الطرق والأسعار المتاحة حسب دولة التسليم والكمية والوزن بعد التغليف وأبعاد الطرد وفئة الشحن والتعرفة السارية عند الطلب. وقد يستخدم الوزن الحجمي إذا تجاوز الوزن الفعلي بعد التغليف.'] },
+      { title: 'وجهات DDP وغير DDP', items: ['عندما ينص إتمام الطلب أو عرض سعر مكتوب على DDP، تشمل خدمة الشحن المعروضة معالجة رسوم وضرائب الاستيراد إلى الوجهة المتفق عليها، مع مراعاة الاستثناءات المذكورة.', 'عندما لا يظهر DDP صراحة، قد يدفع المستلم الرسوم الجمركية والضرائب ورسوم الجمارك والوساطة والتخزين ورسوم المناطق النائية وتكاليف الامتثال المحلي.', 'يعرض إتمام الطلب للمكسيك خدمات DDP فقط. ويعتمد التوفر للدول الأخرى على مسار الشحن النشط ونوع المنتج.'] },
+      { title: 'الشحنات الكبيرة وشحن المشاريع', paragraphs: ['قد تتطلب الشاشات والخزائن والأثاث والبضائع متعددة الطرود وغيرها من منتجات الشحن عرضاً يدوياً. ولا يُقبل الطلب حتى تأكيد المسار والسعر والشرط التجاري وعنوان التسليم والجدول التقديري كتابةً.'] },
+      { title: 'تقديرات التسليم', paragraphs: ['أوقات المعالجة والنقل تقديرية وليست ضماناً. وقد يؤثر التفتيش الجمركي والمناطق النائية وتعطل الناقل والطقس ومواسم الذروة ووثائق المشتري على التسليم. ويتوفر التتبع عندما يدعمه الناقل.'] },
+      { title: 'العنوان ومسؤولية التسليم', items: ['يجب على العميل تقديم عنوان كامل ودقيق واسم جهة الاتصال والهاتف وأي معلومات جمركية مطلوبة.', 'قد يتطلب تغيير العنوان بعد الدفع عرض شحن جديداً ومراجعة أمنية.', 'يجب توثيق التلف الظاهر في الصندوق مع الناقل وإبلاغنا سريعاً مع الصور.'] },
+    ],
+  },
+};
+
 export function getPolicyChrome(locale: string) { return chrome[locale] || chrome.en; }
 export function getPrivacyPolicy(locale: string) { return privacy[locale] || privacy.en; }
 export function getTermsPolicy(locale: string) { return terms[locale] || terms.en; }
 export function getWarrantyPolicy(locale: string) { return warranty[locale] || warranty.en; }
+export function getShippingPolicy(locale: string) { return shipping[locale] || shipping.en; }
