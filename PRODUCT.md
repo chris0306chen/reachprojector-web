@@ -8,8 +8,8 @@ web
 
 ## Users
 
-- Retail customers comparing projectors, laser TVs, screens, mounts, and related electronics for home or small-business use.
-- Business buyers evaluating bulk supply, global delivery, engineering support, and OEM/ODM cooperation.
+- Customers planning a complete projection scene for a specific room, audience, lighting condition, and use case.
+- Business buyers planning hospitality, education, meeting, event, rental, or multi-room projection projects.
 - Internal administrators maintaining products, inquiries, orders, shipping templates, and staff access.
 
 ## Product Purpose
@@ -18,7 +18,7 @@ Reach Projector is a multilingual B2B and B2C commerce site for discovering prod
 
 ## Positioning
 
-The site combines an international electronics catalog with projector-focused selection, B2B sourcing, DDP delivery messaging, and engineering or OEM inquiry paths in one storefront.
+The site is scene-first: customers begin with the space and intended experience, then assemble a compatible projector, screen, mount or stand, furniture, and accessories. B2B sourcing and OEM/ODM remain secondary cooperation paths rather than the main storefront identity.
 
 ## Operating Context
 

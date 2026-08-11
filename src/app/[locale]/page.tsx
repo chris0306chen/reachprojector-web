@@ -59,24 +59,28 @@ export default async function HomePage() {
       titleKey: 'solutions.hospitality.title',
       descKey: 'solutions.hospitality.desc',
       oemKey: 'solutions.hospitality.oem',
+      href: '/solutions/home-cinema',
       image: '/images/scenarios/hospitality.jpg',
     },
     {
       titleKey: 'solutions.retail.title',
       descKey: 'solutions.retail.desc',
       oemKey: 'solutions.retail.oem',
+      href: '/solutions/living-room-laser-tv',
       image: '/images/scenarios/retail-oem.jpg',
     },
     {
       titleKey: 'solutions.events.title',
       descKey: 'solutions.events.desc',
       oemKey: 'solutions.events.oem',
+      href: '/solutions/outdoor-cinema',
       image: '/images/scenarios/events.jpg',
     },
     {
       titleKey: 'solutions.education.title',
       descKey: 'solutions.education.desc',
       oemKey: 'solutions.education.oem',
+      href: '/solutions/education-training',
       image: '/images/scenarios/education.jpg',
     },
   ];
@@ -107,7 +111,7 @@ export default async function HomePage() {
           <div className="absolute inset-0 lg:left-[46%]">
             <Image
               src="/images/hero/hero-bg.jpg"
-              alt="Projector prepared for a business presentation in a conference room"
+              alt="Complete projection setup designed for a real viewing space"
               fill
               priority
               sizes="(min-width: 1024px) 54vw, 100vw"
@@ -134,10 +138,10 @@ export default async function HomePage() {
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
                 <Link
-                  href="/contact"
+                  href="/solutions"
                   className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-white/45 bg-slate-950/70 px-6 py-3 font-semibold text-white transition hover:border-white hover:bg-slate-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white active:translate-y-px"
                 >
-                  {t('hero.getOemQuote')}
+                  {t('hero.exploreKits')}
                 </Link>
               </div>
             </div>
@@ -154,12 +158,12 @@ export default async function HomePage() {
                 <ArrowRight className="h-5 w-5 text-orange-400 transition-transform group-hover:translate-x-1" aria-hidden="true" />
               </Link>
               <Link
-                href="/contact"
+                href="/solutions"
                 className="group flex items-center justify-between bg-slate-950/85 px-5 py-4 transition hover:bg-slate-900 focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-orange-400"
               >
                 <span>
-                  <span className="block text-sm font-semibold">{t('b2b.cta')}</span>
-                  <span className="mt-1 block text-xs text-slate-300">{t('b2b.description')}</span>
+                  <span className="block text-sm font-semibold">{t('hero.exploreKits')}</span>
+                  <span className="mt-1 block text-xs text-slate-300">{t('solutions.description')}</span>
                 </span>
                 <ArrowRight className="h-5 w-5 text-orange-400 transition-transform group-hover:translate-x-1" aria-hidden="true" />
               </Link>
@@ -253,10 +257,10 @@ export default async function HomePage() {
                   {t('solutions.description')}
                 </p>
                 <Link
-                  href="/contact"
+                  href="/solutions"
                   className="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-orange-500 px-6 py-3 font-semibold text-white transition hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-400 active:translate-y-px"
                 >
-                  {t('b2b.cta')}
+                  {t('hero.exploreKits')}
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               </div>
@@ -265,7 +269,7 @@ export default async function HomePage() {
                 {solutions.map((solution, index) => (
                   <Link
                     key={solution.titleKey}
-                    href="/products"
+                    href={solution.href}
                     className={`group relative isolate overflow-hidden rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-400 ${
                       index === 0 ? 'min-h-[25rem] sm:row-span-2' : 'min-h-[12rem]'
                     }`}
@@ -300,7 +304,7 @@ export default async function HomePage() {
                 {t('contentStudio.desc')}
               </p>
               <Link
-                href="/contact"
+                href="/solutions"
                 className="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-slate-950 px-6 py-3 font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-500 active:translate-y-px"
               >
                 {t('contentStudio.cta')}
@@ -363,10 +367,10 @@ export default async function HomePage() {
               <p className="mt-4 max-w-[65ch] text-base leading-7 text-orange-950/85">{t('b2b.description')}</p>
             </div>
             <Link
-              href="/contact"
+              href="/solutions"
               className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-lg bg-slate-950 px-7 py-3 font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-slate-950 active:translate-y-px"
             >
-              {t('b2b.cta')}
+              {t('hero.exploreKits')}
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>

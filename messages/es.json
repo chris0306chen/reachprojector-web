@@ -36,6 +36,7 @@
       "description": "Su fuente confiable de proyectores láser 4K, impresoras profesionales y componentes de computadora de alto rendimiento. Precios competitivos, envío global y soporte experto.",
       "browseProducts": "Explorar productos",
       "wholesaleInquiry": "Consulta mayorista",
+      "exploreKits": "Explorar soluciones por escena",
       "stats": {
         "products": "Productos",
         "countries": "Países",
@@ -64,6 +65,43 @@
     "newArrivals": {
       "title": "Nuevos productos",
       "description": "Últimos productos añadidos a nuestro catálogo"
+    },
+    "solutions": {
+      "title": "Empiece por el espacio y construya el sistema",
+      "description": "Explore configuraciones completas organizadas por habitación, público, iluminación, instalación y uso, no por una sola pieza de hardware.",
+      "hospitality": {
+        "title": "Cine en casa",
+        "desc": "Proyector, pantalla, posición de montaje y accesorios coordinados para salas de cine residenciales.",
+        "oem": "Proyector + pantalla + plan de instalación"
+      },
+      "retail": {
+        "title": "TV láser para sala de estar",
+        "desc": "Proyector UST, pantalla CLR compatible y colocación adaptada al mobiliario para espacios luminosos.",
+        "oem": "UST + pantalla CLR + mobiliario"
+      },
+      "events": {
+        "title": "Cine exterior y portátil",
+        "desc": "Combinaciones portátiles pensadas para montaje rápido, transporte y espacios temporales.",
+        "oem": "Proyector portátil + pantalla + transporte"
+      },
+      "education": {
+        "title": "Educación y salas de reuniones",
+        "desc": "Planificación de proyector, pantalla, soporte y conexiones para aulas y reuniones.",
+        "oem": "Pantalla + montaje + conexiones"
+      }
+    },
+    "whyPartner": {
+      "title": "Por qué planificar con nosotros",
+      "cards": [
+        { "title": "Selección según el espacio", "desc": "Relacionamos distancia, luz ambiental, tamaño de imagen y uso con el equipo adecuado." },
+        { "title": "Combinaciones completas", "desc": "Coordinamos proyector, pantalla, soporte, mobiliario y accesorios como un solo sistema." },
+        { "title": "Soporte para proyectos", "desc": "Ayudamos a organizar requisitos para hogares, hoteles, aulas, reuniones, eventos y compras empresariales." }
+      ]
+    },
+    "contentStudio": {
+      "title": "Vea cómo encajan las piezas",
+      "desc": "Compare escenas reales y comprenda cómo la pantalla, la colocación, la luz ambiental y los accesorios cambian el resultado final.",
+      "cta": "Explorar soluciones por escena"
     },
     "applications": {
       "title": "Aplicaciones del mundo real"
