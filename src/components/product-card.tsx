@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { ShoppingCart, Eye } from 'lucide-react';
 import { useTranslations, useMessages } from 'next-intl';
 import type { Product } from '@/storage/database/shared/schema';
 
@@ -23,14 +22,14 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <Link
       href={`/products/${product.slug}`}
-      className="group bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+      className="group block overflow-hidden rounded-xl bg-white shadow-[0_1px_0_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_48px_rgba(15,23,42,0.12)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-500"
     >
       {/* Image */}
-      <div className="relative aspect-[4/3] bg-slate-100 overflow-hidden">
+      <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
         <img
           src={imageUrl}
           alt={displayName}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-[1.03]"
           loading="lazy"
         />
         {/* Badges */}
@@ -46,33 +45,22 @@ export function ProductCard({ product }: ProductCardProps) {
             </span>
           )}
         </div>
-        {/* Quick Actions */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-          <div className="flex gap-2">
-            <span className="p-2 bg-white rounded-full shadow-md hover:bg-orange-500 hover:text-white transition-colors">
-              <Eye className="w-4 h-4" />
-            </span>
-            <span className="p-2 bg-white rounded-full shadow-md hover:bg-orange-500 hover:text-white transition-colors">
-              <ShoppingCart className="w-4 h-4" />
-            </span>
-          </div>
-        </div>
       </div>
 
       {/* Content */}
-      <div className="p-4">
-        <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">
+      <div className="p-5">
+        <p className="mb-2 text-xs font-semibold text-slate-500">
           {product.brand}
         </p>
-        <h3 className="text-sm font-semibold text-slate-900 line-clamp-2 mb-2 group-hover:text-orange-500 transition-colors">
+        <h3 className="mb-2 line-clamp-2 min-h-10 text-sm font-semibold leading-5 text-slate-950 transition-colors group-hover:text-orange-600">
           {displayName}
         </h3>
         {displayShortDesc && (
-          <p className="text-xs text-slate-500 line-clamp-2 mb-3">
+          <p className="mb-4 line-clamp-2 min-h-10 text-xs leading-5 text-slate-500">
             {displayShortDesc}
           </p>
         )}
-        <div className="flex items-center justify-between">
+        <div className="flex items-end justify-between gap-3 border-t border-slate-100 pt-4">
           <div className="flex items-baseline gap-2">
             <span className="text-lg font-bold text-slate-900">
               ${price.toLocaleString('en-US', { minimumFractionDigits: 2 })}
