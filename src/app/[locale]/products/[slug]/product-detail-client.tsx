@@ -140,7 +140,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
               >
                 <Plus className="w-4 h-4" />
               </button>
-              <span className="text-sm text-slate-500 ml-2">
+              <span className="text-sm text-slate-500 ms-2">
                 {t('total')}: <span className="font-semibold text-slate-900">${(price * quantity).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
               </span>
             </div>

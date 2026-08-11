@@ -105,7 +105,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
       <div className="border-t border-slate-200 pt-7">
         <h3 className="text-sm font-semibold text-slate-950">{t('filters.brand')}</h3>
-        <div className="mt-3 max-h-56 space-y-1 overflow-y-auto pr-2">
+        <div className="mt-3 max-h-56 space-y-1 overflow-y-auto pe-2">
           {brands.map((brand) => (
             <Link
               key={brand}

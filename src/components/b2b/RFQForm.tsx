@@ -160,7 +160,7 @@ export default function RFQForm({ product, onClose, variant = 'modal' }: RFQForm
                 <p className="font-semibold text-gray-900">{product.name}</p>
                 <p className="text-sm text-gray-500">{copy.brand}: {product.brand}</p>
               </div>
-              <div className="text-right">
+              <div className="text-end">
                 <p className="text-sm text-gray-500">{copy.startingFrom}</p>
                 <p className="font-bold text-lg text-blue-600">${product.basePrice}</p>
               </div>
@@ -186,14 +186,14 @@ export default function RFQForm({ product, onClose, variant = 'modal' }: RFQForm
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{copy.targetPrice}</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                <span className="absolute start-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
                 <input
                   type="number"
                   min={0}
                   step={0.01}
                   value={formData.targetPrice || ''}
                   onChange={(e) => handleChange('targetPrice', e.target.value ? parseFloat(e.target.value) : null)}
-                  className="w-full pl-8 pr-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  className="w-full ps-8 pe-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   placeholder={copy.targetPricePlaceholder}
                 />
               </div>

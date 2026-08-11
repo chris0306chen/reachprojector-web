@@ -12,6 +12,7 @@ export function LanguageSwitcher() {
 
   // Extract current locale from pathname
   const currentLocale = pathname.split('/')[1] || defaultLocale;
+  const changeLanguage = currentLocale === 'zh' ? '切换语言' : currentLocale === 'es' ? 'Cambiar idioma' : currentLocale === 'ru' ? 'Сменить язык' : currentLocale === 'ar' ? 'تغيير اللغة' : 'Change language';
 
   const handleLocaleChange = (locale: string) => {
     // Replace the locale segment in the pathname
@@ -30,7 +31,7 @@ export function LanguageSwitcher() {
     >
       <button
         className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition-colors"
-        aria-label="Change language"
+        aria-label={changeLanguage}
       >
         <Globe className="w-4 h-4" />
         <span className="uppercase">{currentLocale}</span>
@@ -38,19 +39,19 @@ export function LanguageSwitcher() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 pt-2 z-50">
+        <div className="absolute top-full end-0 pt-2 z-50">
           <div className="bg-white rounded-lg shadow-lg border border-slate-200 py-2 min-w-[140px]">
             {locales.map((locale) => (
               <button
                 key={locale}
                 onClick={() => handleLocaleChange(locale)}
-                className={`w-full text-left px-4 py-2 text-sm transition-colors ${
+                className={`w-full text-start px-4 py-2 text-sm transition-colors ${
                   currentLocale === locale
                     ? 'bg-orange-50 text-orange-600 font-medium'
                     : 'text-slate-700 hover:bg-slate-50'
                 }`}
               >
-                <span className="mr-2">{locale === 'ar' ? '🇸🇦' : locale === 'zh' ? '🇨🇳' : locale === 'es' ? '🇪🇸' : locale === 'ru' ? '🇷🇺' : '🇺🇸'}</span>
+                <span className="me-2">{locale === 'ar' ? '🇸🇦' : locale === 'zh' ? '🇨🇳' : locale === 'es' ? '🇪🇸' : locale === 'ru' ? '🇷🇺' : '🇺🇸'}</span>
                 {localeNames[locale]}
               </button>
             ))}
