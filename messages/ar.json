@@ -25,7 +25,14 @@
     "getQuote": "احصل على عرض سعر",
     "cart": "السلة",
     "search": "بحث",
-    "authorizedDealer": "وكيل معتمد للإلكترونيات المتميزة"
+    "authorizedDealer": "وكيل معتمد للإلكترونيات المتميزة",
+    "shopByScene": "التسوق حسب المشهد",
+    "resources": "الموارد",
+    "compatibilityGuide": "دليل التوافق",
+    "installationGuides": "أدلة التركيب",
+    "certificates": "الشهادات",
+    "oemOdmProjectors": "أجهزة عرض OEM / ODM",
+    "partnerWithUs": "كن شريكاً معنا"
   },
   "home": {
     "hero": {

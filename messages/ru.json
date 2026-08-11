@@ -25,7 +25,14 @@
     "getQuote": "Запросить цену",
     "cart": "Корзина",
     "search": "Поиск",
-    "authorizedDealer": "Авторизованный дилер премиальной электроники"
+    "authorizedDealer": "Авторизованный дилер премиальной электроники",
+    "shopByScene": "Выбор по сценарию",
+    "resources": "Ресурсы",
+    "compatibilityGuide": "Руководство по совместимости",
+    "installationGuides": "Руководства по установке",
+    "certificates": "Сертификаты",
+    "oemOdmProjectors": "Проекторы OEM / ODM",
+    "partnerWithUs": "Стать партнером"
   },
   "home": {
     "hero": {

@@ -25,7 +25,14 @@
     "getQuote": "Solicitar cotización",
     "cart": "Carrito",
     "search": "Buscar",
-    "authorizedDealer": "Distribuidor autorizado de electrónica premium"
+    "authorizedDealer": "Distribuidor autorizado de electrónica premium",
+    "shopByScene": "Comprar por escenario",
+    "resources": "Recursos",
+    "compatibilityGuide": "Guía de compatibilidad",
+    "installationGuides": "Guías de instalación",
+    "certificates": "Certificados",
+    "oemOdmProjectors": "Proyectores OEM / ODM",
+    "partnerWithUs": "Colabore con nosotros"
   },
   "home": {
     "hero": {
