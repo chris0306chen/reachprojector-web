@@ -73,5 +73,69 @@ const privacy: Record<string, PolicyDocument> = {
   },
 };
 
+const terms: Record<string, PolicyDocument> = {
+  en: {
+    title: 'Terms of Sale & Website Use', description: 'Terms for website use, retail purchases, B2B quotations, pricing, payment, shipping, product information and liability.', summary: 'These terms apply to use of this website and supplement the checkout terms, quotation, proforma invoice, or contract governing a specific order.',
+    sections: [
+      { title: 'Seller and order acceptance', paragraphs: ['The selling entity identified on the order confirmation, invoice, or quotation is responsible for that transaction. An online submission is an offer to purchase. An order is accepted only when payment and product availability are confirmed and we issue acceptance or begin fulfillment.'] },
+      { title: 'Product information and suitability', paragraphs: ['We work to keep descriptions and specifications accurate, but manufacturers may revise packaging, firmware, accessories, regional features, plugs, languages, or specifications. Customers must confirm critical compatibility, installation, certification, and regional requirements before ordering.'] },
+      { title: 'Prices and payment', items: ['Unless otherwise stated, website prices are in USD and exclude shipping, duties, taxes, installation, and local charges.', 'Card payments may be processed by Stripe and wallet payments by PayPal. B2B orders may use the payment schedule stated in the quotation or proforma invoice.', 'We may cancel and refund an order affected by an obvious pricing error, suspected fraud, unavailable stock, export restriction, or an unsupported destination.'] },
+      { title: 'B2B, OEM and project orders', paragraphs: ['A written quotation, proforma invoice, specification sheet, sample approval, or contract may add or replace these general terms. Tooling, branding, packaging, certification, sample, deposit, balance, inspection, tolerance, and lead-time requirements must be recorded in that document.'] },
+      { title: 'Shipping, risk and customs', paragraphs: ['Shipping terms are described in our Shipping, Duties & Delivery Policy and the applicable checkout or quotation. Trade terms such as DDP or DAP apply only when expressly stated. Title, risk, insurance, and delivery responsibilities may be further defined by the applicable order document.'] },
+      { title: 'Intellectual property and website use', paragraphs: ['Website content, branding, layout, text, and original media may not be copied, scraped for republication, misrepresented, or commercially reused without permission. Third-party trademarks and product materials remain the property of their respective owners.'] },
+      { title: 'Liability and applicable terms', paragraphs: ['To the maximum extent permitted by applicable law, indirect, incidental, or consequential losses are excluded. Mandatory consumer rights are not limited. Any governing law, dispute procedure, or liability allocation stated in a signed quotation or contract controls that order; otherwise applicable law is determined by the selling entity and transaction.'] },
+    ],
+  },
+  zh: {
+    title: '销售与网站使用条款', description: '关于网站使用、零售购买、B2B 报价、定价、付款、运输、产品信息与责任的条款。', summary: '本条款适用于本网站的使用，并补充适用于具体订单的结账条款、报价单、形式发票或合同。',
+    sections: [
+      { title: '卖方与订单接受', paragraphs: ['订单确认、发票或报价单中标明的销售主体对该交易负责。在线提交仅构成购买要约。只有在付款及产品供应情况确认，并且我们发出接受通知或开始履约后，订单才被接受。'] },
+      { title: '产品信息与适用性', paragraphs: ['我们尽力保持描述和规格准确，但制造商可能调整包装、固件、配件、地区功能、插头、语言或规格。客户必须在订购前确认关键兼容性、安装、认证及地区要求。'] },
+      { title: '价格与付款', items: ['除非另有说明，网站价格以美元计价，不含运输、关税、税费、安装及当地费用。', '银行卡付款可由 Stripe 处理，电子钱包付款可由 PayPal 处理。B2B 订单可采用报价单或形式发票中规定的付款计划。', '对于明显定价错误、涉嫌欺诈、库存不足、出口限制或不支持的目的地，我们可能取消订单并退款。'] },
+      { title: 'B2B、OEM 与项目订单', paragraphs: ['书面报价单、形式发票、规格书、样品批准或合同可以补充或替代这些一般条款。模具、品牌、包装、认证、样品、定金、尾款、检验、公差和交期要求必须记录在该文件中。'] },
+      { title: '运输、风险与海关', paragraphs: ['运输条款见《运输、关税与交付政策》以及适用的结账页面或报价单。DDP、DAP 等贸易条款仅在明确写明时适用。所有权、风险、保险及交付责任可由适用的订单文件进一步规定。'] },
+      { title: '知识产权与网站使用', paragraphs: ['未经许可，不得复制网站内容、品牌、布局、文字和原创媒体，不得抓取后重新发布、歪曲呈现或商业再利用。第三方商标和产品资料仍归各自权利人所有。'] },
+      { title: '责任与适用条款', paragraphs: ['在适用法律允许的最大范围内，间接、附带或后果性损失不予承担。法定消费者权利不受限制。签署的报价单或合同中关于适用法律、争议程序或责任分配的约定适用于该订单；否则，适用法律由销售主体和交易情况决定。'] },
+    ],
+  },
+  es: {
+    title: 'Condiciones de venta y uso del sitio', description: 'Condiciones de uso, compras minoristas, cotizaciones B2B, precios, pagos, envíos, información del producto y responsabilidad.', summary: 'Estas condiciones se aplican al uso del sitio y complementan las condiciones del proceso de compra, la cotización, la factura proforma o el contrato de cada pedido.',
+    sections: [
+      { title: 'Vendedor y aceptación del pedido', paragraphs: ['La entidad vendedora indicada en la confirmación, factura o cotización responde de la transacción. El envío en línea es una oferta de compra. El pedido se acepta solo cuando se confirman el pago y la disponibilidad y emitimos la aceptación o iniciamos su preparación.'] },
+      { title: 'Información e idoneidad del producto', paragraphs: ['Procuramos mantener descripciones y especificaciones exactas, pero el fabricante puede cambiar embalaje, firmware, accesorios, funciones regionales, enchufes, idiomas o especificaciones. El cliente debe confirmar antes de comprar la compatibilidad, instalación, certificación y requisitos regionales críticos.'] },
+      { title: 'Precios y pagos', items: ['Salvo indicación contraria, los precios están en USD y no incluyen envío, aranceles, impuestos, instalación ni cargos locales.', 'Stripe puede procesar tarjetas y PayPal pagos con monedero. Los pedidos B2B pueden seguir el calendario de pago de la cotización o factura proforma.', 'Podemos cancelar y reembolsar pedidos afectados por un error evidente de precio, sospecha de fraude, falta de existencias, restricción de exportación o destino no admitido.'] },
+      { title: 'Pedidos B2B, OEM y de proyectos', paragraphs: ['Una cotización, factura proforma, ficha técnica, aprobación de muestra o contrato por escrito puede complementar o sustituir estas condiciones generales. Los requisitos de utillaje, marca, embalaje, certificación, muestras, depósito, saldo, inspección, tolerancias y plazo deben constar en ese documento.'] },
+      { title: 'Envío, riesgo y aduanas', paragraphs: ['Las condiciones de envío figuran en nuestra Política de envío, aranceles y entrega y en el proceso de compra o cotización aplicable. DDP o DAP solo se aplican si se indican expresamente. El documento del pedido puede definir además propiedad, riesgo, seguro y responsabilidades de entrega.'] },
+      { title: 'Propiedad intelectual y uso del sitio', paragraphs: ['Sin permiso no se pueden copiar, extraer para republicar, tergiversar ni reutilizar comercialmente el contenido, marca, diseño, texto o material original del sitio. Las marcas y materiales de terceros pertenecen a sus titulares.'] },
+      { title: 'Responsabilidad y condiciones aplicables', paragraphs: ['En la máxima medida permitida por la ley, se excluyen pérdidas indirectas, incidentales o consecuentes. No se limitan los derechos obligatorios del consumidor. La ley, procedimiento de disputa o reparto de responsabilidad de una cotización o contrato firmado regirá ese pedido; en otro caso, dependerá de la entidad vendedora y la transacción.'] },
+    ],
+  },
+  ru: {
+    title: 'Условия продажи и использования сайта', description: 'Условия использования сайта, розничных покупок, B2B-расчетов, цен, оплаты, доставки, информации о товарах и ответственности.', summary: 'Эти условия применяются к сайту и дополняют условия оформления заказа, расчет, счет-проформу или договор для конкретного заказа.',
+    sections: [
+      { title: 'Продавец и принятие заказа', paragraphs: ['За сделку отвечает продавец, указанный в подтверждении, счете или расчете. Онлайн-заявка является предложением купить. Заказ принят только после подтверждения оплаты и наличия, когда мы подтверждаем принятие или начинаем исполнение.'] },
+      { title: 'Информация о товаре и пригодность', paragraphs: ['Мы стремимся к точности описаний и характеристик, но производитель может менять упаковку, прошивку, аксессуары, региональные функции, вилки, языки или характеристики. До заказа клиент обязан подтвердить критически важную совместимость, установку, сертификацию и региональные требования.'] },
+      { title: 'Цены и оплата', items: ['Если не указано иное, цены сайта указаны в USD без доставки, пошлин, налогов, установки и местных сборов.', 'Платежи картой может обрабатывать Stripe, а платежи через электронный кошелек — PayPal. Заказы B2B могут использовать график оплаты из расчета или счета-проформы.', 'Мы можем отменить и вернуть оплату по заказу при очевидной ошибке цены, подозрении на мошенничество, отсутствии товара, экспортном ограничении или неподдерживаемой стране.'] },
+      { title: 'B2B, OEM и проектные заказы', paragraphs: ['Письменный расчет, счет-проформа, спецификация, одобрение образца или договор могут дополнять или заменять общие условия. Требования к оснастке, брендингу, упаковке, сертификации, образцам, авансу, остатку, инспекции, допускам и срокам должны быть записаны в этом документе.'] },
+      { title: 'Доставка, риск и таможня', paragraphs: ['Условия доставки указаны в Политике доставки, пошлин и вручения, а также при оформлении заказа или в расчете. DDP и DAP действуют только при прямом указании. Документ заказа может дополнительно определить право собственности, риск, страхование и обязанности по доставке.'] },
+      { title: 'Интеллектуальная собственность и сайт', paragraphs: ['Без разрешения нельзя копировать, извлекать для повторной публикации, искажать или коммерчески использовать содержимое, бренд, оформление, текст и оригинальные материалы сайта. Сторонние товарные знаки и материалы принадлежат их владельцам.'] },
+      { title: 'Ответственность и применимые условия', paragraphs: ['В максимальной степени, разрешенной законом, исключаются косвенные, случайные и последующие убытки. Обязательные права потребителей не ограничиваются. Закон, порядок спора и распределение ответственности в подписанном расчете или договоре регулируют заказ; иначе применимое право определяется продавцом и сделкой.'] },
+    ],
+  },
+  ar: {
+    title: 'شروط البيع واستخدام الموقع', description: 'شروط استخدام الموقع والشراء وعروض B2B والأسعار والدفع والشحن ومعلومات المنتج والمسؤولية.', summary: 'تسري هذه الشروط على استخدام الموقع وتكمل شروط إتمام الطلب أو عرض السعر أو الفاتورة الأولية أو العقد الخاص بطلب محدد.',
+    sections: [
+      { title: 'البائع وقبول الطلب', paragraphs: ['تكون جهة البيع المحددة في تأكيد الطلب أو الفاتورة أو عرض السعر مسؤولة عن المعاملة. يعد الإرسال عبر الإنترنت عرضاً للشراء. ولا يُقبل الطلب إلا بعد تأكيد الدفع وتوفر المنتج وإصدار القبول أو بدء التنفيذ.'] },
+      { title: 'معلومات المنتج وملاءمته', paragraphs: ['نسعى إلى دقة الأوصاف والمواصفات، لكن المصنع قد يغير التغليف أو البرامج الثابتة أو الملحقات أو الميزات الإقليمية أو القوابس أو اللغات أو المواصفات. يجب على العميل تأكيد التوافق والتركيب والشهادات والمتطلبات الإقليمية المهمة قبل الطلب.'] },
+      { title: 'الأسعار والدفع', items: ['ما لم يذكر خلاف ذلك، أسعار الموقع بالدولار الأمريكي ولا تشمل الشحن أو الرسوم الجمركية أو الضرائب أو التركيب أو التكاليف المحلية.', 'قد تعالج Stripe مدفوعات البطاقات وPayPal مدفوعات المحافظ. وقد تتبع طلبات B2B جدول الدفع المذكور في العرض أو الفاتورة الأولية.', 'يجوز لنا إلغاء الطلب ورد المبلغ عند وجود خطأ واضح في السعر أو اشتباه احتيال أو عدم توفر المخزون أو قيد تصدير أو وجهة غير مدعومة.'] },
+      { title: 'طلبات B2B وOEM والمشاريع', paragraphs: ['يجوز لعرض سعر أو فاتورة أولية أو مواصفات أو اعتماد عينة أو عقد مكتوب أن يضيف إلى هذه الشروط العامة أو يحل محلها. ويجب تسجيل متطلبات القوالب والعلامة والتغليف والشهادات والعينة والعربون والرصيد والفحص والتفاوت ومدة التنفيذ في ذلك المستند.'] },
+      { title: 'الشحن والمخاطر والجمارك', paragraphs: ['ترد شروط الشحن في سياسة الشحن والرسوم والتسليم وفي إتمام الطلب أو عرض السعر المعني. ولا تسري شروط مثل DDP أو DAP إلا إذا ذكرت صراحة. وقد يحدد مستند الطلب كذلك الملكية والمخاطر والتأمين ومسؤوليات التسليم.'] },
+      { title: 'الملكية الفكرية واستخدام الموقع', paragraphs: ['لا يجوز دون إذن نسخ محتوى الموقع أو علامته أو تصميمه أو نصه أو وسائطه الأصلية، أو استخراجه لإعادة النشر أو تحريفه أو إعادة استخدامه تجارياً. وتبقى علامات ومواد الأطراف الأخرى ملكاً لأصحابها.'] },
+      { title: 'المسؤولية والشروط السارية', paragraphs: ['إلى أقصى حد يسمح به القانون، تستبعد الخسائر غير المباشرة أو العرضية أو التبعية. ولا تُقيد حقوق المستهلك الإلزامية. ويحكم الطلب أي قانون حاكم أو إجراء لتسوية النزاع أو توزيع للمسؤولية وارد في عرض سعر أو عقد موقّع؛ وإلا فيتحدد القانون بحسب جهة البيع والمعاملة.'] },
+    ],
+  },
+};
+
 export function getPolicyChrome(locale: string) { return chrome[locale] || chrome.en; }
 export function getPrivacyPolicy(locale: string) { return privacy[locale] || privacy.en; }
+export function getTermsPolicy(locale: string) { return terms[locale] || terms.en; }
