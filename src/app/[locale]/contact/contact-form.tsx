@@ -55,15 +55,15 @@ export function ContactForm() {
 
   if (isSubmitted) {
     return (
-      <div className="text-center py-12">
-        <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
+      <div className="py-12 text-center" role="status">
+        <CheckCircle className="mx-auto mb-4 h-12 w-12 text-emerald-600" />
         <h3 className="text-xl font-semibold text-slate-900 mb-2">{t('messageSent')}</h3>
         <p className="text-slate-500 mb-6">
           {t('messageSentDescription')}
         </p>
         <button
           onClick={() => setIsSubmitted(false)}
-          className="text-sm font-medium text-orange-500 hover:text-orange-600"
+          className="min-h-11 rounded-lg px-4 text-sm font-semibold text-orange-600 hover:text-orange-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
         >
           {t('sendAnother')}
         </button>
@@ -72,11 +72,11 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1">
-            Full Name <span className="text-red-500">*</span>
+            {t('nameLabel')} <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -85,13 +85,13 @@ export function ContactForm() {
             value={formData.name}
             onChange={handleChange}
             required
-            className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+            className="min-h-12 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10"
             placeholder={t('namePlaceholder')}
           />
         </div>
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1">
-            Email <span className="text-red-500">*</span>
+            {t('emailLabel')} <span className="text-red-500">*</span>
           </label>
           <input
             type="email"
@@ -100,13 +100,13 @@ export function ContactForm() {
             value={formData.email}
             onChange={handleChange}
             required
-            className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+            className="min-h-12 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10"
             placeholder={t('emailPlaceholder')}
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="phone" className="block text-sm font-medium text-slate-700 mb-1">
             {t('phoneLabel')}
@@ -117,7 +117,7 @@ export function ContactForm() {
             name="phone"
             value={formData.phone}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+            className="min-h-12 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10"
             placeholder={t('phonePlaceholder')}
           />
         </div>
@@ -131,13 +131,13 @@ export function ContactForm() {
             name="company"
             value={formData.company}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+            className="min-h-12 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10"
             placeholder={t('companyPlaceholder')}
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="inquiry_type" className="block text-sm font-medium text-slate-700 mb-1">
             {t('inquiryType')}
@@ -147,7 +147,7 @@ export function ContactForm() {
             name="inquiry_type"
             value={formData.inquiry_type}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 bg-white"
+            className="min-h-12 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10"
           >
             <option value="general">{t('inquiryGeneral')}</option>
             <option value="product">{t('inquiryProduct')}</option>
@@ -165,7 +165,7 @@ export function ContactForm() {
             name="subject"
             value={formData.subject}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+            className="min-h-12 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10"
             placeholder={t('subjectPlaceholder')}
           />
         </div>
@@ -182,19 +182,19 @@ export function ContactForm() {
           onChange={handleChange}
           required
           rows={5}
-          className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 resize-none"
+          className="w-full resize-none rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10"
           placeholder={t('messagePlaceholder')}
         />
       </div>
 
       {error && (
-        <p className="text-sm text-red-500">{error}</p>
+        <p className="rounded-xl bg-red-50 p-3 text-sm text-red-700" role="alert">{error}</p>
       )}
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="inline-flex items-center gap-2 px-6 py-2.5 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white font-medium rounded-lg transition-colors text-sm"
+        className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-orange-600 px-7 py-3 text-sm font-semibold text-white transition-colors hover:bg-orange-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-orange-300"
       >
         <Send className="w-4 h-4" />
         {isSubmitting ? t('sending') : t('sendMessage')}
