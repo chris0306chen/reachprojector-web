@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useLocale } from 'next-intl';
+import { getShippingVisualCopy } from '@/lib/shipping-visual-copy';
 
 const shippingCards = [
   {
     id: 1,
-    title: 'Container Loading',
-    subtitle: '装柜实拍',
     status: 'active' as const,
     image: '/images/shipping/container-loading.jpg',
     icon: (
@@ -17,8 +17,6 @@ const shippingCards = [
   },
   {
     id: 2,
-    title: 'Warehouse Packing',
-    subtitle: '仓库打包',
     status: 'active' as const,
     image: '/images/shipping/warehouse-packing.jpg',
     icon: (
@@ -29,8 +27,6 @@ const shippingCards = [
   },
   {
     id: 3,
-    title: 'Global Shipping',
-    subtitle: '全球发货',
     status: 'coming_soon' as const,
     icon: (
       <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -40,14 +36,8 @@ const shippingCards = [
   },
 ];
 
-const stats = [
-  { label: 'Countries Shipped', subtitle: '已出货国家', value: '50+' },
-  { label: 'Happy Customers', subtitle: '服务客户', value: '1,200+' },
-  { label: 'Orders Delivered', subtitle: '已交付订单', value: '5,000+' },
-  { label: 'On-Time Rate', subtitle: '准时交付率', value: '98.5%' },
-];
-
 export default function ShippingDelivery() {
+  const copy = getShippingVisualCopy(useLocale());
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -78,36 +68,11 @@ export default function ShippingDelivery() {
           }`}
         >
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
-            Shipping &amp; Delivery
+            {copy.title}
           </h2>
-          <p className="text-lg text-gray-400 mb-4">出货实拍</p>
           <p className="max-w-2xl mx-auto text-gray-300">
-            Real photos from our warehouse and shipping operations worldwide
+            {copy.description}
           </p>
-        </div>
-
-        {/* Stats Row */}
-        <div
-          className={`grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 transition-all duration-700 delay-200 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}
-        >
-          {stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="text-center p-4 rounded-xl bg-gray-800/50 border border-gray-700/50"
-            >
-              <div className="text-2xl md:text-3xl font-bold text-orange-400 mb-1">
-                {stat.value}
-              </div>
-              <div className="text-sm text-gray-300 font-medium">
-                {stat.label}
-              </div>
-              <div className="text-xs text-gray-500 mt-0.5">
-                {stat.subtitle}
-              </div>
-            </div>
-          ))}
         </div>
 
         {/* Shipping Cards - Horizontal Scroll on Mobile */}
@@ -117,7 +82,7 @@ export default function ShippingDelivery() {
           }`}
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
-          {shippingCards.map((card) => (
+          {shippingCards.map((card, index) => (
             <div
               key={card.id}
               className="flex-shrink-0 w-[280px] md:w-1/3 bg-gray-800 rounded-2xl border border-gray-700/50 overflow-hidden hover:border-gray-600 transition-all duration-300 group"
@@ -127,7 +92,7 @@ export default function ShippingDelivery() {
                 {card.status === 'active' && card.image ? (
                   <img
                     src={card.image}
-                    alt={card.title}
+                    alt={copy.cards[index].title}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 ) : (
@@ -138,8 +103,8 @@ export default function ShippingDelivery() {
                       </div>
                     </div>
                     {/* Coming Soon Badge */}
-                    <div className="absolute top-3 right-3 bg-orange-500/90 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
-                      Coming Soon
+                    <div className="absolute top-3 end-3 bg-orange-500/90 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
+                      {copy.comingSoon}
                     </div>
                   </>
                 )}
@@ -148,12 +113,12 @@ export default function ShippingDelivery() {
               {/* Content */}
               <div className="p-5">
                 <h3 className="text-lg font-semibold text-white mb-1">
-                  {card.title}
+                  {copy.cards[index].title}
                 </h3>
-                <p className="text-sm text-gray-400">{card.subtitle}</p>
+                <p className="text-sm text-gray-400">{copy.cards[index].subtitle}</p>
                 {card.status === 'coming_soon' && (
                   <p className="text-xs text-gray-500 mt-2 italic">
-                    Photos and videos will be updated soon
+                    {copy.updateSoon}
                   </p>
                 )}
               </div>
@@ -163,7 +128,7 @@ export default function ShippingDelivery() {
 
         {/* Footer note */}
         <p className="text-center text-sm text-gray-500 mt-8">
-          Real shipment from our warehouse to global customers
+          {copy.footer}
         </p>
       </div>
     </section>

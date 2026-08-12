@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ShoppingCart, MessageCircle, ArrowRight, Check, ChevronLeft, ChevronRight, Minus, Plus } from 'lucide-react';
-import { useTranslations, useMessages } from 'next-intl';
+import { useLocale, useTranslations, useMessages } from 'next-intl';
 import type { Product } from '@/storage/database/shared/schema';
 import { ProductCard } from '@/components/product-card';
 import { ProductDetailSections } from '@/components/product-detail-sections';
@@ -15,6 +15,7 @@ interface ProductDetailClientProps {
 
 export function ProductDetailClient({ product, relatedProducts }: ProductDetailClientProps) {
   const t = useTranslations('productDetail');
+  const locale = useLocale();
   const [currentImage, setCurrentImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const images = product.images && product.images.length > 0 ? product.images : ['/images/placeholder-product.jpg'];
@@ -139,7 +140,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
               >
                 <Plus className="w-4 h-4" />
               </button>
-              <span className="text-sm text-slate-500 ml-2">
+              <span className="text-sm text-slate-500 ms-2">
                 {t('total')}: <span className="font-semibold text-slate-900">${(price * quantity).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
               </span>
             </div>
@@ -148,7 +149,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
           {/* CTA Buttons */}
           <div className="flex flex-wrap gap-3 mb-6">
             {isAvailable && <Link
-              href={`/checkout?productId=${product.id}&quantity=${quantity}`}
+              href={`/${locale}/checkout?productId=${product.id}&quantity=${quantity}`}
               className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-all hover:scale-[1.02] shadow-md"
             >
               <ShoppingCart className="w-4 h-4" />
@@ -164,7 +165,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
               {t('whatsappInquiry')}
             </a>
             <Link
-              href={`/contact?product=${product.slug}`}
+              href={`/${locale}/contact?product=${product.slug}`}
               className="inline-flex items-center gap-2 px-6 py-3 border-2 border-slate-300 hover:border-orange-400 text-slate-700 hover:text-orange-600 font-medium rounded-lg transition-colors"
             >
               {t('sendInquiry')}
@@ -178,6 +179,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
         content={product.detail_content}
         legacySpecifications={product.specifications}
         description={displayDescription}
+        locale={locale}
       />
 
       {/* Related Products */}

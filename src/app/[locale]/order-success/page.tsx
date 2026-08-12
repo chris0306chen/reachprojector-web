@@ -4,12 +4,15 @@ import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { CheckCircle, Package, ArrowRight } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+import { getOrderCopy, getOrderStatusLabel } from '@/lib/order-copy';
 
 function OrderSuccessContent() {
   const t = useTranslations('orderSuccess');
+  const locale = useLocale();
+  const copy = getOrderCopy(locale);
   const searchParams = useSearchParams();
-  const productName = searchParams.get('product') || 'your product';
+  const productName = searchParams.get('product') || copy.productFallback;
   const paypalOrderId = searchParams.get('paypal_order_id');
   const sessionId = searchParams.get('session_id');
   const [mounted, setMounted] = useState(false);
@@ -57,20 +60,20 @@ function OrderSuccessContent() {
 
         <div className="bg-slate-50 rounded-xl p-6 mb-8">
           {order && (
-            <dl className="mb-6 grid grid-cols-2 gap-3 border-b border-slate-200 pb-6 text-left text-sm">
-              <dt className="text-slate-500">Order number</dt><dd>{order.order_id}</dd>
-              <dt className="text-slate-500">Product</dt><dd>{order.product_name} × {order.quantity}</dd>
-              <dt className="text-slate-500">Paid</dt><dd>{order.currency} {order.amount}</dd>
-              <dt className="text-slate-500">Shipping</dt><dd>{order.shipping_method || 'Processing'}</dd>
-              <dt className="text-slate-500">Status</dt><dd className="capitalize">{order.status}</dd>
-              <dt className="text-slate-500">Delivery address</dt><dd className="whitespace-pre-line">{order.shipping_address || 'Confirmed by payment provider'}</dd>
+            <dl className="mb-6 grid grid-cols-2 gap-3 border-b border-slate-200 pb-6 text-start text-sm">
+              <dt className="text-slate-500">{copy.orderNumber}</dt><dd>{order.order_id}</dd>
+              <dt className="text-slate-500">{copy.product}</dt><dd>{order.product_name} × {order.quantity}</dd>
+              <dt className="text-slate-500">{copy.paid}</dt><dd>{order.currency} {order.amount}</dd>
+              <dt className="text-slate-500">{copy.shipping}</dt><dd>{order.shipping_method || copy.processing}</dd>
+              <dt className="text-slate-500">{copy.status}</dt><dd>{getOrderStatusLabel(locale, String(order.status))}</dd>
+              <dt className="text-slate-500">{copy.deliveryAddress}</dt><dd className="whitespace-pre-line">{order.shipping_address || copy.providerAddress}</dd>
             </dl>
           )}
           <div className="flex items-center gap-3 mb-4">
             <Package className="w-5 h-5 text-orange-500" />
             <h2 className="font-semibold text-slate-900">{t('whatNext')}</h2>
           </div>
-          <ul className="text-left text-sm text-slate-600 space-y-2">
+          <ul className="text-start text-sm text-slate-600 space-y-2">
             <li className="flex items-start gap-2">
               <span className="text-orange-500 font-bold">1.</span>
               {t('step1')}
@@ -88,20 +91,20 @@ function OrderSuccessContent() {
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
-            href="/order-lookup"
+            href={`/${locale}/order-lookup`}
             className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-slate-300 hover:border-slate-400 text-slate-700 font-medium rounded-lg transition-colors"
           >
-            Track order
+            {copy.trackOrder}
           </Link>
           <Link
-            href="/products"
+            href={`/${locale}/products`}
             className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
           >
             {t('continueShopping')}
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 rtl:rotate-180" />
           </Link>
           <Link
-            href="/contact"
+            href={`/${locale}/contact`}
             className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-slate-300 hover:border-slate-400 text-slate-700 font-medium rounded-lg transition-colors"
           >
             {t('contactSupport')}

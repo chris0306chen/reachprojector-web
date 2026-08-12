@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "title": "REACH PROJECTOR - OEM/ODM Projection Solutions",
-    "description": "Your OEM/ODM projection partner. Turnkey projector solutions for hospitality, retail, events, and education. White-label, bulk deployment, and AI-powered marketing assets.",
-    "keywords": "OEM projector, ODM projector, projection solutions, white-label projector, hospitality projector, education projector, events projector, B2B, REACH"
+    "title": "REACH PROJECTOR - Complete Projection Setups for Every Space",
+    "description": "Plan a complete projection setup for home cinema, bedrooms, living rooms, outdoor viewing, education, hospitality, and events. Match projectors with screens, mounts, furniture, and accessories.",
+    "keywords": "projection setup, home cinema package, projector and screen, living room laser TV, bedroom projector, outdoor cinema, meeting room projector, REACH PROJECTOR"
   },
   "common": {
     "loading": "Loading...",
@@ -25,10 +25,10 @@
     "getQuote": "Get Quote",
     "cart": "Cart",
     "search": "Search",
-    "authorizedDealer": "Your OEM/ODM Projection Partner",
+    "authorizedDealer": "Complete Projection Setups",
     "projectors": "Projectors",
     "solutions": "Solutions",
-    "oemOdmProjectors": "OEM / ODM Projectors",
+    "oemOdmProjectors": "Business & Project Support",
     "educationCorporate": "Education & Corporate",
     "hospitalityLiving": "Hospitality & Living",
     "eventsRentals": "Events & Rentals",
@@ -49,12 +49,12 @@
   },
   "home": {
     "hero": {
-      "subtitle": "Your OEM/ODM Projection Partner",
-      "title1": "Build Your Projection Brand",
-      "title2": "with Turnkey",
-      "title3": "Solutions",
-      "description": "From concept to shelf — we provide OEM/ODM projectors, scenario-based accessories, and AI-powered marketing assets.",
-      "getOemQuote": "Get OEM Quote",
+      "subtitle": "Complete projection setups for real spaces",
+      "title1": "Build the Right Cinema",
+      "title2": "for Your",
+      "title3": "Space",
+      "description": "Choose a viewing scene first. We help match the projector with the right screen, mount or stand, furniture, and accessories for a complete setup.",
+      "getOemQuote": "Plan My Setup",
       "browseProducts": "Browse Products",
       "exploreKits": "Explore Scenario Kits",
       "stats": {
@@ -83,50 +83,50 @@
       "description": "Most popular projection equipment chosen by our global customers"
     },
     "solutions": {
-      "title": "Tailored Solutions for Every Scenario",
-      "description": "Turnkey projection solutions designed for your specific business needs. All solutions available for white-label / OEM.",
+      "title": "Start with the Space, Then Build the System",
+      "description": "Explore complete viewing setups organized by room, audience, lighting, installation, and use—not by a single piece of hardware.",
       "hospitality": {
-        "title": "Hospitality & Living",
-        "desc": "Premium in-room entertainment and lobby installations for hotels, Airbnbs, and residential cinemas. Custom branding and bulk deployment support.",
-        "oem": "Available for White-label / OEM"
+        "title": "Home Cinema",
+        "desc": "A coordinated projector, screen, mounting position, and accessory plan for dedicated movie rooms and residential theaters.",
+        "oem": "Projector + screen + mounting plan"
       },
       "retail": {
-        "title": "Retail & Channels / OEM",
-        "desc": "Complete product line setup for retail chains, distributors, and online sellers. White-label packaging, marketing materials, and dropshipping support.",
-        "oem": "Available for White-label / OEM"
+        "title": "Living Room Laser TV",
+        "desc": "Ultra-short-throw projector, compatible ambient-light-rejecting screen, and furniture-aware placement for bright shared spaces.",
+        "oem": "UST projector + CLR screen + furniture"
       },
       "events": {
-        "title": "Events & Rentals",
-        "desc": "High-brightness, portable projection systems for conferences, exhibitions, live events, and rental businesses. Rugged designs for frequent transport.",
-        "oem": "Available for White-label / OEM"
+        "title": "Outdoor & Portable Cinema",
+        "desc": "Portable projector and screen combinations designed around quick setup, transport, connectivity, and temporary viewing spaces.",
+        "oem": "Portable projector + screen + carry setup"
       },
       "education": {
-        "title": "Education & Corporate",
-        "desc": "Reliable projection solutions for classrooms, boardrooms, and training centers. Easy installation, low maintenance, and volume pricing.",
-        "oem": "Available for White-label / OEM"
+        "title": "Education & Meeting Rooms",
+        "desc": "Projector, screen, mount, and connection planning for classrooms, training rooms, meeting spaces, and multi-room projects.",
+        "oem": "Display + mounting + connection plan"
       }
     },
     "whyPartner": {
-      "title": "Why Partner With Us",
+      "title": "Why Plan the Setup With Us",
       "cards": [
         {
-          "title": "End-to-End Technical Support",
-          "desc": "From optical parameter tuning to certification guidance (CE, FCC, RoHS), we handle the full technical pipeline so you can focus on sales."
+          "title": "Selection Based on the Space",
+          "desc": "We connect viewing distance, ambient light, image size, placement, and intended use with suitable equipment."
         },
         {
-          "title": "Differentiated Product Mix",
-          "desc": "Projector + mount + screen + accessories as bundled solutions. Stand out from competitors with curated, scenario-specific packages."
+          "title": "Complete Equipment Combinations",
+          "desc": "We coordinate the projector, screen, mount or stand, furniture, and accessories as one practical system."
         },
         {
-          "title": "AI-Powered Marketing Assets",
-          "desc": "We provide AI-generated product images, scenario renders, SEO content, and social media materials — ready to use for your channels."
+          "title": "Support for Different Use Cases",
+          "desc": "Plan residential, hospitality, education, meeting, event, rental, and business purchasing requirements from one scene-first framework."
         }
       ]
     },
     "contentStudio": {
-      "title": "Accelerate Your Launch with Our Content Studio",
-      "desc": "Don't just source hardware — launch your brand faster with our AI-powered content library. Get professional product photography, scene renders, marketing copy, and social media assets included with every OEM partnership.",
-      "cta": "Explore Content Services"
+      "title": "See How the Pieces Work Together",
+      "desc": "Compare real viewing environments and understand how screen type, projector placement, ambient light, furniture, and accessories affect the final experience.",
+      "cta": "Explore Solutions by Scene"
     },
     "inspiration": {
       "title": "Inspiration for Your Space",
@@ -302,12 +302,12 @@
   },
   "about": {
     "subtitle": "About REACH PROJECTOR",
-    "title": "Your OEM/ODM Projection Partner",
-    "description": "Founded with a mission to empower businesses worldwide with turnkey projection solutions, REACH PROJECTOR has grown into a trusted OEM/ODM partner for projectors, mounts, screens, and scenario-based accessories.",
+    "title": "Projection Solutions Built Around Real Spaces",
+    "description": "REACH PROJECTOR helps customers plan complete viewing environments by matching projectors with screens, mounts, furniture, and accessories for each room and use case.",
     "story": {
       "title": "Our Story",
-      "paragraph1": "REACH PROJECTOR started as a small team of projection enthusiasts in Shenzhen, China - the heart of the global electronics industry. Our deep connections with manufacturers and our passion for technology gave us a unique advantage.",
-      "paragraph2": "Today, we serve customers in over 50 countries, from individual businesses seeking custom-branded projectors to large enterprises needing bulk deployment solutions. Our commitment to quality, competitive pricing, and exceptional service has made us the preferred partner for many."
+      "paragraph1": "REACH PROJECTOR started as a small team of projection enthusiasts in Quanzhou, Fujian, China. Our deep connections with manufacturers and our passion for projection technology gave us a unique advantage.",
+      "paragraph2": "Today, we support home cinema customers, hospitality teams, educators, offices, event operators, and business buyers. We begin with the space and viewing goal, then help assemble the right combination of projection equipment and accessories."
     },
     "stats": {
       "products": "Products",
@@ -332,8 +332,8 @@
       "dedicatedSupportDesc": "Expert product consultation, technical support, and account management. Available via WhatsApp, email, and phone."
     },
     "cta": {
-      "title": "Ready to Start a Partnership?",
-      "description": "Whether you need a single projector or a container load of electronics, we have the products, pricing, and logistics to make it happen.",
+      "title": "Ready to Plan Your Projection Space?",
+      "description": "Tell us about the room, audience, ambient light, screen size, and installation needs. We will help you identify a practical equipment combination.",
       "contactUs": "Contact Us Today"
     }
   },
@@ -391,7 +391,7 @@
     }
   },
   "Footer": {
-    "description": "Your OEM/ODM projection partner. We provide projectors, mounts, screens and accessories with white-label and bulk deployment support for global businesses.",
+    "description": "Complete projection setups for homes, hospitality, education, meetings, events, and outdoor viewing—combining projectors, screens, mounts, furniture, and accessories.",
     "addressFujian": "No. 1108 Quan'an North Road, Jinjiang City, Quanzhou City, Fujian Province",
     "addressHongKong": "Room S007, 2/F, Capital Plaza, 61-65 Chatham Road South, Tsim Sha Tsui, Hong Kong",
     "products": "Products",
@@ -430,7 +430,7 @@
     "thankYou": "Thank you for purchasing {product}.",
     "whatNext": "What happens next?",
     "step1": "You will receive a confirmation email with your order details.",
-    "step2": "Our team will prepare your order for shipping within 1-2 business days.",
+    "step2": "Our team will prepare your order for shipping.",
     "step3": "You will receive tracking information once your order ships.",
     "continueShopping": "Continue Shopping",
     "contactSupport": "Contact Support"

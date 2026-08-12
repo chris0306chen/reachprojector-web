@@ -5,7 +5,8 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Shield, Lock, CreditCard, Loader2 } from 'lucide-react';
 import { PayPalCheckout } from '@/components/paypal-checkout';
 import { StripeCheckout } from '@/components/stripe-checkout';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+import { getCheckoutCopy } from '@/lib/checkout-copy';
 
 type ShippingQuote = {
   mode: 'automatic';
@@ -19,6 +20,9 @@ type ShippingQuote = {
 
 function CheckoutContent() {
   const t = useTranslations('checkout');
+  const locale = useLocale();
+  const copy = getCheckoutCopy(locale);
+  const regionNames = new Intl.DisplayNames([locale], { type: 'region' });
   const router = useRouter();
   const searchParams = useSearchParams();
   const productId = searchParams.get('productId') || '';
@@ -79,17 +83,17 @@ function CheckoutContent() {
     })
       .then(async (response) => {
         const data = await response.json();
-        if (!response.ok || data.mode !== 'automatic') throw new Error('Online shipping is unavailable. Please request a quote.');
+        if (!response.ok || data.mode !== 'automatic') throw new Error(copy.onlineShippingUnavailable);
         if (active) setShipping(data);
       })
       .catch((error) => {
-        if (active) setShippingError(error instanceof Error ? error.message : 'Shipping quote unavailable');
+        if (active) setShippingError(error instanceof Error ? error.message : copy.shippingQuoteUnavailable);
       })
       .finally(() => {
         if (active) setShippingLoading(false);
       });
     return () => { active = false; };
-  }, [item, countryCode, quantity]);
+  }, [copy.onlineShippingUnavailable, copy.shippingQuoteUnavailable, item, countryCode, quantity]);
 
   const productName = item?.productName || 'Product';
   const price = item?.unitPrice || 0;
@@ -100,7 +104,7 @@ function CheckoutContent() {
     setTimeout(() => {
       const params = new URLSearchParams({ product: productName, order_id: order.order_id });
       if (order.paypal_order_id) params.set('paypal_order_id', order.paypal_order_id);
-      router.push(`/order-success?${params.toString()}`);
+      router.push(`/${locale}/order-success?${params.toString()}`);
     }, 2000);
   };
 
@@ -112,7 +116,7 @@ function CheckoutContent() {
           onClick={() => router.back()}
           className="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 transition-colors mb-4"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
           {t('backToProduct')}
         </button>
         <h1 className="text-3xl font-bold text-slate-900">{t('title')}</h1>
@@ -125,7 +129,7 @@ function CheckoutContent() {
           {/* Payment Method */}
           <div className="bg-white rounded-xl border border-slate-200 p-6 mb-6">
             <label htmlFor="shipping-country" className="block text-sm font-medium text-slate-700 mb-2">
-              Shipping country
+              {copy.shippingCountry}
             </label>
             <select
               id="shipping-country"
@@ -133,15 +137,15 @@ function CheckoutContent() {
               onChange={(event) => setCountryCode(event.target.value)}
               className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm mb-4"
             >
-              <option value="">Select destination</option>
-              {countries.map((code) => <option key={code} value={code}>{code}</option>)}
+              <option value="">{copy.selectDestination}</option>
+              {countries.map((code) => <option key={code} value={code}>{regionNames.of(code) || code}</option>)}
             </select>
-            {shippingLoading && <p className="text-sm text-slate-500 mb-4">Calculating shipping...</p>}
+            {shippingLoading && <p className="text-sm text-slate-500 mb-4">{copy.calculatingShipping}</p>}
             {shippingError && <p className="text-sm text-amber-700 mb-4">{shippingError}</p>}
             {shipping && (
               <p className="text-sm text-green-700 mb-4">
-                {shipping.tradeTerms} shipping: ${shipping.shippingCost.toFixed(2)}
-                {shipping.dutiesIncluded ? ' (duties included)' : ' (duties paid by recipient)'}
+                {shipping.tradeTerms} {t('shipping')}: ${shipping.shippingCost.toFixed(2)}
+                {shipping.dutiesIncluded ? ` (${copy.dutiesIncluded})` : ` (${copy.dutiesRecipient})`}
               </p>
             )}
             <h2 className="text-lg font-semibold text-slate-900 mb-4">{t('selectPayment')}</h2>
@@ -149,9 +153,9 @@ function CheckoutContent() {
               {stripeEnabled && (
                 <div className="flex items-center gap-3 p-4 rounded-lg border-2 border-slate-900 bg-slate-50">
                   <CreditCard className="w-5 h-5 text-slate-900" />
-                  <div className="text-left">
-                    <p className="font-medium text-sm text-slate-900">Credit or debit card</p>
-                    <p className="text-xs text-slate-500">Secure checkout with Stripe</p>
+                  <div className="text-start">
+                    <p className="font-medium text-sm text-slate-900">{copy.card}</p>
+                    <p className="text-xs text-slate-500">{copy.stripeSecure}</p>
                   </div>
                 </div>
               )}
@@ -159,7 +163,7 @@ function CheckoutContent() {
                 <svg className="w-5 h-5 text-orange-500" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.079-.026.175-.041.254-.93 4.783-4.13 6.515-8.227 6.515H9.668l-1.12 7.106h-.51a.641.641 0 0 0 .633.74h3.586c.457 0 .85-.334.922-.788l.038-.207.732-4.644.047-.256a.932.932 0 0 1 .922-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.773-4.445z"/>
                 </svg>
-                <div className="text-left">
+                <div className="text-start">
                   <p className="font-medium text-sm text-orange-600">PayPal</p>
                   <p className="text-xs text-slate-500">{t('paypalAccount')}</p>
                 </div>
@@ -167,14 +171,14 @@ function CheckoutContent() {
             </div>
             <div className="mt-4 rounded-lg bg-slate-50 px-4 py-3 text-xs leading-5 text-slate-600">
               <p>
-                PayPal payments are collected by Quanzhou Reach Technology Co., Ltd.
+                {copy.paypalSeller}
               </p>
               {stripeEnabled && (
                 <p>
-                  Card payments through Stripe are collected by HK REACH SOURCING LIMITED.
+                  {copy.stripeSeller}
                 </p>
               )}
-              <p>The applicable seller is also identified on the order confirmation and invoice.</p>
+              <p>{copy.sellerNotice}</p>
             </div>
           </div>
 
@@ -188,7 +192,7 @@ function CheckoutContent() {
             {!item && !catalogError && (
               <div className="flex items-center justify-center gap-2 py-8 text-sm text-slate-500">
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Loading verified product price…
+                {copy.loadingPrice}
               </div>
             )}
             {item && shipping && stripeEnabled && (
@@ -196,7 +200,7 @@ function CheckoutContent() {
                 <StripeCheckout productId={item.productId} quantity={quantity} countryCode={countryCode} />
                 <div className="flex items-center gap-3 my-6">
                   <div className="h-px flex-1 bg-slate-200" />
-                  <span className="text-xs uppercase tracking-wide text-slate-400">or pay with PayPal</span>
+                  <span className="text-xs uppercase tracking-wide text-slate-400">{copy.payWithPaypal}</span>
                   <div className="h-px flex-1 bg-slate-200" />
                 </div>
               </>
@@ -221,7 +225,7 @@ function CheckoutContent() {
             <div className="space-y-3 pb-4 border-b border-slate-200">
               <div className="flex justify-between text-sm">
                 <span className="text-slate-600">{t('product')}</span>
-                <span className="font-medium text-slate-900 text-right max-w-[180px] truncate">{productName}</span>
+                <span className="font-medium text-slate-900 text-end max-w-[180px] truncate">{productName}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-slate-600">{t('price')}</span>
@@ -234,7 +238,7 @@ function CheckoutContent() {
               <div className="flex justify-between text-sm">
                 <span className="text-slate-600">{t('shipping')}</span>
                 <span className="text-slate-900 font-medium">
-                  {shipping ? `$${shipping.shippingCost.toFixed(2)} ${shipping.tradeTerms}` : 'Select country'}
+                  {shipping ? `$${shipping.shippingCost.toFixed(2)} ${shipping.tradeTerms}` : copy.selectCountry}
                 </span>
               </div>
             </div>

@@ -6,6 +6,7 @@ import { ProductDetailClient } from './product-detail-client';
 import PricingRFQWrapper from '@/components/b2b/PricingRFQWrapper';
 import { generateProductSchema, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo';
 import { normalizeProductDetail } from '@/lib/product-detail';
+import { getTranslations } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,6 +35,7 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
 
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
   const { locale, slug } = await params;
+  const nav = await getTranslations({ locale, namespace: 'nav' });
   const product = await getProductBySlug(slug);
   if (!product) notFound();
 
@@ -52,9 +54,9 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       <div className="border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <nav className="flex items-center gap-2 text-sm">
-            <Link href={`/${locale}`} className="text-slate-500 hover:text-slate-900 transition-colors">Home</Link>
+            <Link href={`/${locale}`} className="text-slate-500 hover:text-slate-900 transition-colors">{nav('home')}</Link>
             <span className="text-slate-300">/</span>
-            <Link href={`/${locale}/products`} className="text-slate-500 hover:text-slate-900 transition-colors">Products</Link>
+            <Link href={`/${locale}/products`} className="text-slate-500 hover:text-slate-900 transition-colors">{nav('products')}</Link>
             <span className="text-slate-300">/</span>
             {category && (
               <>
@@ -108,8 +110,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(generateBreadcrumbSchema([
-            { name: 'Home', url: `/${locale}` },
-            { name: 'Products', url: `/${locale}/products` },
+            { name: nav('home'), url: `/${locale}` },
+            { name: nav('products'), url: `/${locale}/products` },
             { name: product.name, url: `/${locale}/products/${product.slug}` },
           ])),
         }}
