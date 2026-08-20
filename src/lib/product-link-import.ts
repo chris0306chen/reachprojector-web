@@ -19,6 +19,13 @@ export interface ProductLinkPreview {
   model: string;
   sku: string;
   specifications: Array<{ name: string; value: string }>;
+  evidence: Array<{
+    field: "title" | "description" | "brand" | "model" | "sku" | "specification";
+    label: string;
+    value: string;
+    source: "product_json_ld" | "page_metadata" | "specification_table" | "description_pattern";
+  }>;
+  missingFields: string[];
   warnings: string[];
 }
 
@@ -281,6 +288,41 @@ export async function collectProductLink(rawUrl: string): Promise<ProductLinkPre
     (candidate) => candidate.name.toLowerCase() === item.name.toLowerCase()
   ) === index).slice(0, 80);
 
+  const evidence: ProductLinkPreview["evidence"] = [];
+  const addEvidence = (
+    field: ProductLinkPreview["evidence"][number]["field"],
+    label: string,
+    value: string,
+    source: ProductLinkPreview["evidence"][number]["source"]
+  ) => {
+    const cleanValue = decodeHtml(String(value || "")).slice(0, 500);
+    if (cleanValue) evidence.push({ field, label, value: cleanValue, source });
+  };
+  addEvidence("title", "Product name", title, product?.name ? "product_json_ld" : "page_metadata");
+  addEvidence("description", "Source description", description, product?.description ? "product_json_ld" : "page_metadata");
+  addEvidence("brand", "Brand", brand, product?.brand ? "product_json_ld" : "page_metadata");
+  addEvidence("model", "Model", String(product?.model || product?.mpn || ""), "product_json_ld");
+  addEvidence("sku", "SKU", String(product?.sku || ""), "product_json_ld");
+  for (const item of specifications) {
+    const inStructuredData = structuredSpecifications.some(
+      (candidate) => candidate.name.toLowerCase() === item.name.toLowerCase()
+    );
+    addEvidence(
+      "specification",
+      item.name,
+      item.value,
+      inStructuredData ? "product_json_ld" : "specification_table"
+    );
+  }
+  const missingFields = [
+    !title ? "Product name" : "",
+    !brand ? "Brand" : "",
+    !(product?.model || product?.mpn) ? "Model" : "",
+    !product?.sku ? "SKU" : "",
+    !description ? "Source description" : "",
+    !specifications.length ? "Specifications" : "",
+  ].filter(Boolean);
+
   return {
     sourceType,
     sourceUrl: initial.url.toString(),
@@ -292,6 +334,8 @@ export async function collectProductLink(rawUrl: string): Promise<ProductLinkPre
     model: String(product?.model || product?.mpn || "").trim(),
     sku: String(product?.sku || "").trim(),
     specifications,
+    evidence,
+    missingFields,
     warnings,
   };
 }
