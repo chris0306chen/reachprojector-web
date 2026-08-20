@@ -8,6 +8,7 @@
 - Git 分支：`codex/reach-visual-refresh-main`
 - 远程分支：`origin/codex/reach-visual-refresh-main`
 - 最近确认提交：`ea95d0d Complete global UI localization`
+- 本次本地提交：`57a6371 Build reviewed product collection workflow`（待推送到远程预览分支）
 - 核对日期：2026-08-20
 
 不要把以下旧工作区当作最终网站版本：
