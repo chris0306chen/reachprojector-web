@@ -8,7 +8,9 @@
 - Git 分支：`codex/reach-visual-refresh-main`
 - 远程分支：`origin/codex/reach-visual-refresh-main`
 - 最近确认提交：`ea95d0d Complete global UI localization`
-- 本次本地提交：`57a6371 Build reviewed product collection workflow`（待推送到远程预览分支）
+- 产品采集功能提交：`57a6371 Build reviewed product collection workflow`
+- 状态记录提交：`c544fd8 Update Reach project status`
+- 远程预览分支：以上提交已推送，Vercel 对 `c544fd8` 返回 `success`
 - 核对日期：2026-08-20
 
 不要把以下旧工作区当作最终网站版本：
@@ -34,6 +36,7 @@
 - TypeScript 类型检查：通过。
 - 本次涉及文件 ESLint：通过，无错误或警告。
 - Next.js 生产构建：通过。验证使用仅存在于构建进程内的占位环境变量，没有写入真实密钥。
+- Vercel Preview 构建：通过（GitHub 提交状态 `Vercel: success`）。
 - Impeccable 机械界面检测：已执行；发现的同一行嵌套样式误报已通过整理 JSX 消除。
 - 浏览器可视检查：本机 Browser 插件因带空格的插件路径未通过其受信任路径检查，未能执行；没有使用其他浏览器脚本绕过。
 
