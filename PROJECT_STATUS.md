@@ -67,6 +67,7 @@
 - 使用真实后台账号测试一个已获授权的品牌官网产品链接，逐步确认采集、审核、预检和草稿入库。
 - 动态渲染或阻止普通 HTTP 访问的网站仍需独立 Crawlee Worker；该 Worker 不应部署在 Vercel 请求进程中。当前 MVP 优先支持可直接读取 HTML 或 Product JSON-LD 的品牌官网。
 - 待用户确认 AWOL Vision LTV-3000 Pro 在 Reach 中应使用的内部 SKU；确认后才能通过预检并创建下架草稿。
+- 用户已确认内部 SKU：`AWOL-LTV-3000PRO`。已生成安全预检文件 `drafts/awol-ltv-3000pro.preflight.json`；因当前没有后台登录会话或 Supabase 环境变量，尚未写入数据库。
 
 ## 上线判定
 
