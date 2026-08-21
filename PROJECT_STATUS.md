@@ -11,7 +11,7 @@
 - 产品采集功能提交：`57a6371 Build reviewed product collection workflow`
 - 状态记录提交：`c544fd8 Update Reach project status`
 - 远程预览分支：以上提交已推送，Vercel 对 `c544fd8` 返回 `success`
-- 核对日期：2026-08-20
+- 核对日期：2026-08-21
 
 不要把以下旧工作区当作最终网站版本：
 
@@ -40,6 +40,15 @@
 - Impeccable 机械界面检测：已执行；发现的同一行嵌套样式误报已通过整理 JSX 消除。
 - 浏览器可视检查：本机 Browser 插件因带空格的插件路径未通过其受信任路径检查，未能执行；没有使用其他浏览器脚本绕过。
 
+## 2026-08-21 AWOL Vision 实站采集测试
+
+- 用户提供并授权测试 AWOL Vision 品牌官网首页；已清除广告追踪参数，未把追踪链接保存为产品来源。
+- 选定官方产品页：`https://awolvision.com/products/4k-3d-triple-laser-projector-ltv-3000pro`。
+- 已从官方页面核实产品名称 `LTV-3000 Pro 4K 3D RGB Laser Projector`、品牌 `AWOL Vision`、型号 `LTV-3000 Pro` 和完整公开规格表。
+- Reach 普通 HTTP 采集器访问该页面时收到 `ECONNRESET`；AWOL Vision 会重置服务器直连，需要独立浏览器采集 Worker 才能实现后台一键采集。
+- 官方产品页没有明确展示可安全映射的 SKU。未合成 SKU，产品尚未写入后台草稿。
+- 未采集或写入图片、官网价格、库存、评论、评分、保修、配送或地区商业条款。
+
 ## 产品状态
 
 - 用户已确认：后台目前已有 1 个产品。
@@ -57,6 +66,7 @@
 - 全流程通过后，再批量上传和发布其余产品。
 - 使用真实后台账号测试一个已获授权的品牌官网产品链接，逐步确认采集、审核、预检和草稿入库。
 - 动态渲染或阻止普通 HTTP 访问的网站仍需独立 Crawlee Worker；该 Worker 不应部署在 Vercel 请求进程中。当前 MVP 优先支持可直接读取 HTML 或 Product JSON-LD 的品牌官网。
+- 待用户确认 AWOL Vision LTV-3000 Pro 在 Reach 中应使用的内部 SKU；确认后才能通过预检并创建下架草稿。
 
 ## 上线判定
 
