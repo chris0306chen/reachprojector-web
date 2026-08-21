@@ -51,6 +51,13 @@ export const importedProductSchema = z.object({
     canonicalUrl: z.string().url().max(2048),
     retrievedAt: z.string().datetime(),
     warnings: z.array(z.string().max(500)).max(20).default([]),
+    missingFields: z.array(z.string().max(120)).max(20).default([]),
+    evidence: z.array(z.object({
+      field: z.enum(["title", "description", "brand", "model", "sku", "specification"]),
+      label: z.string().trim().min(1).max(120),
+      value: z.string().trim().min(1).max(500),
+      source: z.enum(["product_json_ld", "page_metadata", "specification_table", "description_pattern"]),
+    })).max(100).default([]),
   }).optional(),
   status: z.literal("draft").default("draft"),
   specifications: z.array(z.object({

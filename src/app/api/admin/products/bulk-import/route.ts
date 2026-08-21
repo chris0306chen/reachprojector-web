@@ -7,6 +7,7 @@ import {
   type ImportedProduct,
 } from "@/lib/product-bulk-import";
 import { calculatePackageQuote, type ShippingRate } from "@/lib/shipping-quote";
+import { buildProductGeoContent } from "@/lib/product-seo-geo";
 
 interface ProductReport {
   sku: string;
@@ -129,6 +130,7 @@ async function buildReport(products: ImportedProduct[]): Promise<ProductReport[]
       warnings.push("没有启用中的运费模板可以匹配当前计费重量");
     }
     const representativeQuote = matchingQuotes[0]?.quote;
+    const geoContent = buildProductGeoContent(product);
     const matchingCountries = new Set(matchingQuotes.map((item) => item.countryCode).filter(Boolean)).size;
     if (product.retailPrice <= 0) warnings.push("零售价待填写；该草稿不能发布");
     if (!product.seoTitle) warnings.push("SEO 标题为空，将暂时使用产品名称");
@@ -147,17 +149,7 @@ async function buildReport(products: ImportedProduct[]): Promise<ProductReport[]
       imageCount: product.images.length,
       action: "new",
       generated: {
-        seoTitle: product.seoTitle || product.name.slice(0, 70),
-        metaDescription: (product.metaDescription || product.shortDescription).slice(0, 170),
-        factualSummary: [
-          `${product.name} by ${product.brand}.`,
-          product.model ? `Model: ${product.model}.` : "",
-          ...product.specifications.slice(0, 6).map((item) => `${item.name}: ${item.value}.`),
-        ].filter(Boolean).join(" "),
-        faq: product.specifications.length ? [{
-          question: `What are the key specifications of ${product.name}?`,
-          answer: product.specifications.slice(0, 5).map((item) => `${item.name}: ${item.value}`).join("; "),
-        }] : [],
+        ...geoContent,
         volumetricWeightKg: representativeQuote?.volumetricWeightPerPackageKg ?? null,
         chargeableWeightKg: representativeQuote?.chargeableWeightPerPackageKg ?? null,
         matchingShippingCountries: matchingCountries,

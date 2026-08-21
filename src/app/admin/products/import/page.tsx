@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { AlertCircle, CheckCircle2, Download, FileSpreadsheet, Loader2, Upload } from "lucide-react";
+import {
+  AlertCircle, ArrowRight, CheckCircle2, ClipboardCheck, Download, ExternalLink,
+  FileSearch, FileSpreadsheet, Loader2, Search, ShieldCheck,
+} from "lucide-react";
 import {
   slugify,
   type ImportedProduct,
@@ -35,6 +38,13 @@ type LinkPreview = {
   model: string;
   sku: string;
   specifications: Array<{ name: string; value: string }>;
+  evidence: Array<{
+    field: "title" | "description" | "brand" | "model" | "sku" | "specification";
+    label: string;
+    value: string;
+    source: "product_json_ld" | "page_metadata" | "specification_table" | "description_pattern";
+  }>;
+  missingFields: string[];
   warnings: string[];
 };
 
@@ -61,6 +71,8 @@ export default function ProductImportPage() {
   const [linkUrl, setLinkUrl] = useState("");
   const [linkDraft, setLinkDraft] = useState<ImportedProduct | null>(null);
   const [linkWarnings, setLinkWarnings] = useState<string[]>([]);
+  const [linkPreview, setLinkPreview] = useState<LinkPreview | null>(null);
+  const [reviewStep, setReviewStep] = useState<1 | 2 | 3 | 4>(1);
 
   useEffect(() => {
     fetch("/api/admin/products/bulk-import/history")
@@ -78,6 +90,8 @@ export default function ProductImportPage() {
     setBusy(true);
     setMessage("");
     setLinkDraft(null);
+    setLinkPreview(null);
+    setReviewStep(1);
     try {
       const response = await fetch("/api/admin/products/link-import", {
         method: "POST",
@@ -129,9 +143,12 @@ export default function ProductImportPage() {
           canonicalUrl: preview.canonicalUrl,
           retrievedAt: preview.retrievedAt,
           warnings: preview.warnings,
+          missingFields: preview.missingFields,
+          evidence: preview.evidence,
         },
       };
       setLinkDraft(product);
+      setLinkPreview(preview);
       setLinkWarnings(preview.warnings);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Unable to collect this product link");
@@ -145,7 +162,14 @@ export default function ProductImportPage() {
     setProducts([linkDraft]);
     setReport([]);
     setSummary(null);
-    setMessage("Link data added. Review the required fields, then run preflight.");
+    setReviewStep(4);
+    setMessage("资料已进入预检队列。确认检查结果后，只会保存为下架草稿。");
+  }
+
+  function updateLinkDraft<K extends keyof ImportedProduct>(key: K, value: ImportedProduct[K]) {
+    setLinkDraft((current) => current ? { ...current, [key]: value } : current);
+    setReport([]);
+    setSummary(null);
   }
 
   async function readWorkbook(file: File) {
@@ -285,91 +309,148 @@ export default function ProductImportPage() {
     }
   };
 
+  const steps = [
+    { id: 1, label: "来源证据", icon: FileSearch },
+    { id: 2, label: "产品事实", icon: ClipboardCheck },
+    { id: 3, label: "SEO / GEO", icon: Search },
+    { id: 4, label: "预检入库", icon: ShieldCheck },
+  ] as const;
+  const requiredFactsComplete = Boolean(linkDraft?.name && linkDraft.brand && linkDraft.sku && linkDraft.slug);
+
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-6xl space-y-6 pb-20">
       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">产品批量导入</h1>
-          <p className="mt-1 text-sm text-slate-500">上传 Excel/CSV，先预检，再一次导入最多 100 个下架草稿；图片后续在产品编辑器中上传。</p>
+          <h1 className="text-2xl font-bold text-slate-900">产品采集与审核</h1>
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-600">从授权的产品页面提取可验证事实，审核 SEO/GEO 内容，再保存为下架草稿。系统不会采集图片、价格、库存或商业承诺。</p>
         </div>
-        <a href="/templates/reach-projector-product-import.xlsx" download className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white">
-          <Download className="h-4 w-4" />下载标准 Excel 模板
+        <a href="/templates/reach-projector-product-import.xlsx" download className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500">
+          <Download className="h-4 w-4" />批量导入模板
         </a>
       </div>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-5">
-        <h2 className="font-semibold text-slate-900">从产品链接提取（可选）</h2>
-        <p className="mt-1 text-sm text-slate-500">
-          部分品牌官网、Amazon 和 Alibaba 会阻止自动访问。提取失败时请直接使用产品管理中的“新增产品草稿”，不影响正常上架流程。
-        </p>
+      <div className="grid grid-cols-2 gap-2 rounded-xl bg-slate-100 p-2 md:grid-cols-4" aria-label="审核进度">
+        {steps.map((step) => {
+          const active = reviewStep === step.id;
+          const complete = reviewStep > step.id;
+          return (
+            <button key={step.id} type="button" onClick={() => linkDraft && setReviewStep(step.id)} disabled={!linkDraft && step.id > 1}
+              className={`flex min-h-12 items-center gap-2 rounded-lg px-3 text-left text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${active ? "bg-white text-slate-950 shadow-sm" : complete ? "text-emerald-700" : "text-slate-500 disabled:cursor-not-allowed disabled:opacity-60"}`}>
+              {complete ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <step.icon className="h-4 w-4 shrink-0" />}
+              <span>{step.label}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <section className="rounded-xl border border-slate-200 bg-white p-5 md:p-6">
+        <div className="flex items-start gap-3">
+          <div className="rounded-lg bg-orange-50 p-2 text-orange-600"><FileSearch className="h-5 w-5" /></div>
+          <div>
+            <h2 className="font-semibold text-slate-900">粘贴授权产品链接</h2>
+            <p className="mt-1 text-sm leading-6 text-slate-600">优先使用品牌或供应商官网。Amazon、Alibaba 受限页面应改用官方接口或供应商导出资料。</p>
+          </div>
+        </div>
         <div className="mt-4 flex flex-col gap-2 md:flex-row">
           <input
             type="url"
             value={linkUrl}
             onChange={(event) => setLinkUrl(event.target.value)}
             placeholder="https://brand.com/product/..."
-            className="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="min-h-11 min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition-colors placeholder:text-slate-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
           />
           <button
             type="button"
             onClick={collectLink}
             disabled={busy || !linkUrl}
-            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+            className="inline-flex min-h-11 items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {busy ? <Loader2 className="mr-2 inline h-4 w-4 animate-spin" /> : null}提取产品资料
+            {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}开始采集
           </button>
         </div>
-        {linkDraft && (
-          <div className="mt-4 space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-4">
-            <div>
-              <p className="font-medium">{linkDraft.name || "待补充产品名称"}</p>
-              <p className="text-xs text-slate-500">{linkDraft.source?.type} · {linkDraft.specifications.length} 项已验证参数 · 图片由后台人工上传</p>
-            </div>
-            <div className="grid gap-3 md:grid-cols-3">
-              <label className="text-xs text-slate-600">SKU
-                <input value={linkDraft.sku} onChange={(event) => setLinkDraft({ ...linkDraft, sku: event.target.value })} className="mt-1 w-full rounded border border-slate-300 bg-white px-2 py-2 text-sm" />
-              </label>
-              <label className="text-xs text-slate-600">品牌
-                <input value={linkDraft.brand} onChange={(event) => setLinkDraft({ ...linkDraft, brand: event.target.value })} className="mt-1 w-full rounded border border-slate-300 bg-white px-2 py-2 text-sm" />
-              </label>
-              <label className="text-xs text-slate-600">分类
-                <input value={linkDraft.category} onChange={(event) => setLinkDraft({ ...linkDraft, category: event.target.value })} className="mt-1 w-full rounded border border-slate-300 bg-white px-2 py-2 text-sm" />
-              </label>
-            </div>
-            {linkWarnings.map((warning) => <p key={warning} className="text-xs text-amber-700">提醒：{warning}</p>)}
-            <button type="button" onClick={addLinkDraft} disabled={!linkDraft.sku || !linkDraft.brand} className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white disabled:opacity-50">
-              加入现有预检与草稿流程
-            </button>
-          </div>
-        )}
+        {message && <p role="status" className="mt-4 rounded-lg bg-slate-50 px-4 py-3 text-sm text-slate-700">{message}</p>}
       </section>
 
-      <div>
-        <label className="block cursor-pointer rounded-xl border-2 border-dashed border-slate-300 bg-white p-6 hover:border-orange-400">
-          <FileSpreadsheet className="mb-3 h-8 w-8 text-orange-500" />
-          <span className="block font-semibold">1. 上传产品 Excel 或 CSV</span>
-          <span className="mt-1 block text-sm text-slate-500">{workbookName || "最多 100 个产品；只导入文字资料，不需要图片 ZIP"}</span>
-          <input className="hidden" type="file" accept=".xlsx,.csv" disabled={busy} onChange={fileHandler(readWorkbook)} />
-        </label>
-      </div>
+      {linkDraft && linkPreview && reviewStep === 1 && (
+        <section className="space-y-5 rounded-xl border border-slate-200 bg-white p-5 md:p-6">
+          <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+            <div><h2 className="font-semibold text-slate-900">确认来源与证据</h2><p className="mt-1 text-sm text-slate-600">所有采集字段都保留来源。网页内容仅作为资料，不会被当作系统指令。</p></div>
+            <a href={linkPreview.canonicalUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm font-medium text-orange-700 hover:text-orange-800">打开原页面<ExternalLink className="h-4 w-4" /></a>
+          </div>
+          <dl className="grid gap-3 rounded-lg bg-slate-50 p-4 text-sm md:grid-cols-3">
+            <div><dt className="text-slate-500">来源类型</dt><dd className="mt-1 font-medium text-slate-900">{linkPreview.sourceType}</dd></div>
+            <div><dt className="text-slate-500">采集时间</dt><dd className="mt-1 font-medium text-slate-900">{new Date(linkPreview.retrievedAt).toLocaleString("zh-CN")}</dd></div>
+            <div><dt className="text-slate-500">证据条目</dt><dd className="mt-1 font-medium text-slate-900">{linkPreview.evidence.length}</dd></div>
+          </dl>
+          {(linkWarnings.length > 0 || linkPreview.missingFields.length > 0) && <div className="space-y-2 rounded-lg bg-amber-50 p-4 text-sm text-amber-900">
+            {linkWarnings.map((warning) => <p key={warning}><strong>提醒：</strong>{warning}</p>)}
+            {linkPreview.missingFields.length > 0 && <p><strong>需要补充：</strong>{linkPreview.missingFields.join("、")}</p>}
+          </div>}
+          <div className="overflow-hidden rounded-lg border border-slate-200">
+            <div className="grid grid-cols-[minmax(120px,0.35fr)_1fr] bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-600"><span>字段与来源</span><span>采集证据</span></div>
+            {linkPreview.evidence.slice(0, 30).map((item, index) => <div key={`${item.field}-${item.label}-${index}`} className="grid grid-cols-[minmax(120px,0.35fr)_1fr] gap-4 border-t border-slate-100 px-4 py-3 text-sm">
+              <div><p className="font-medium text-slate-900">{item.label}</p><p className="mt-1 text-xs text-slate-500">{item.source.replaceAll("_", " ")}</p></div>
+              <p className="line-clamp-3 leading-6 text-slate-700">{item.value}</p>
+            </div>)}
+          </div>
+          <div className="flex justify-end"><button type="button" onClick={() => setReviewStep(2)} className="inline-flex items-center rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-slate-800">审核产品事实<ArrowRight className="ml-2 h-4 w-4" /></button></div>
+        </section>
+      )}
 
-      <div className="rounded-xl border border-slate-200 bg-white p-5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="font-semibold">2. 预检并导入</h2>
-            <p className="text-sm text-slate-500">所有产品强制保存为下架草稿，不覆盖已有 SKU 或 Slug；图片和价格可以导入后补充。</p>
+      {linkDraft && reviewStep === 2 && (
+        <section className="space-y-5 rounded-xl border border-slate-200 bg-white p-5 md:p-6">
+          <div><h2 className="font-semibold text-slate-900">审核产品事实</h2><p className="mt-1 text-sm text-slate-600">修正身份字段。SKU、品牌、名称和分类是创建草稿的必填项。</p></div>
+          <div className="grid gap-4 md:grid-cols-2">
+            {([
+              ["name", "产品名称"], ["brand", "品牌"], ["model", "型号"], ["sku", "SKU"], ["category", "分类"], ["slug", "Slug"],
+            ] as Array<[keyof ImportedProduct, string]>).map(([key, label]) => <label key={key} className="text-sm font-medium text-slate-700">{label}
+              <input value={String(linkDraft[key] ?? "")} onChange={(event) => updateLinkDraft(key, event.target.value as never)} className="mt-1.5 min-h-11 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100" />
+            </label>)}
           </div>
-          <div className="flex gap-2">
-            <button onClick={preflight} disabled={busy || !products.length} className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium disabled:opacity-50">
-              {busy ? <Loader2 className="inline h-4 w-4 animate-spin" /> : <Upload className="mr-2 inline h-4 w-4" />}运行预检
-            </button>
-            <button onClick={importDrafts} disabled={!canImport} className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white disabled:opacity-50">
-              一键导入为草稿
-            </button>
+          <div><h3 className="text-sm font-semibold text-slate-900">已验证规格（{linkDraft.specifications.length}）</h3><div className="mt-2 grid gap-2 md:grid-cols-2">{linkDraft.specifications.map((item, index) => <div key={`${item.name}-${index}`} className="rounded-lg bg-slate-50 px-3 py-2 text-sm"><span className="text-slate-500">{item.name}</span><p className="mt-0.5 font-medium text-slate-900">{item.value}</p></div>)}</div></div>
+          {!requiredFactsComplete && <p className="rounded-lg bg-red-50 p-3 text-sm text-red-700">请补全产品名称、品牌、SKU 和 Slug。</p>}
+          <div className="flex justify-between gap-3"><button type="button" onClick={() => setReviewStep(1)} className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700">返回证据</button><button type="button" disabled={!requiredFactsComplete} onClick={() => setReviewStep(3)} className="inline-flex items-center rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-50">审核 SEO / GEO<ArrowRight className="ml-2 h-4 w-4" /></button></div>
+        </section>
+      )}
+
+      {linkDraft && reviewStep === 3 && (
+        <section className="space-y-5 rounded-xl border border-slate-200 bg-white p-5 md:p-6">
+          <div><h2 className="font-semibold text-slate-900">审核 SEO / GEO 草稿</h2><p className="mt-1 text-sm text-slate-600">只使用已确认事实。最终预检会生成事实摘要、适用人群、限制说明、FAQ 和来源日期。</p></div>
+          <div className="grid gap-5 lg:grid-cols-2">
+            <div className="space-y-4">
+              <label className="block text-sm font-medium text-slate-700">SEO 标题 <span className="font-normal text-slate-400">{linkDraft.seoTitle.length}/70</span><input value={linkDraft.seoTitle} maxLength={70} onChange={(event) => updateLinkDraft("seoTitle", event.target.value)} className="mt-1.5 min-h-11 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100" /></label>
+              <label className="block text-sm font-medium text-slate-700">Meta 描述 <span className="font-normal text-slate-400">{linkDraft.metaDescription.length}/170</span><textarea value={linkDraft.metaDescription} maxLength={170} rows={4} onChange={(event) => updateLinkDraft("metaDescription", event.target.value)} className="mt-1.5 w-full rounded-lg border border-slate-300 p-3 text-sm leading-6 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100" /></label>
+              <label className="block text-sm font-medium text-slate-700">事实型产品摘要<textarea value={linkDraft.shortDescription} maxLength={600} rows={6} onChange={(event) => updateLinkDraft("shortDescription", event.target.value)} className="mt-1.5 w-full rounded-lg border border-slate-300 p-3 text-sm leading-6 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100" /></label>
+            </div>
+            <div className="rounded-xl bg-slate-50 p-5"><p className="text-sm font-medium text-slate-500">Google 搜索预览</p><p className="mt-4 text-lg font-medium text-blue-800">{linkDraft.seoTitle || linkDraft.name}</p><p className="mt-1 text-sm text-emerald-700">reachprojector.com/products/{linkDraft.slug}</p><p className="mt-2 text-sm leading-6 text-slate-600">{linkDraft.metaDescription || linkDraft.shortDescription || "补充清晰、事实型的产品描述。"}</p><div className="mt-6 border-t border-slate-200 pt-5"><p className="text-sm font-semibold text-slate-900">GEO 将包含</p><ul className="mt-2 space-y-2 text-sm text-slate-600"><li>产品定义与明确型号</li><li>结构化已验证规格</li><li>适用人群与应用场景</li><li>缺失信息与购买限制</li><li>事实型 FAQ、来源与审核日期</li></ul></div></div>
           </div>
-        </div>
-        {message && <p className="mt-4 rounded-lg bg-slate-50 p-3 text-sm">{message}</p>}
-      </div>
+          <div className="flex justify-between gap-3">
+            <button type="button" onClick={() => setReviewStep(2)} className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700">返回事实</button>
+            <button type="button" onClick={addLinkDraft} className="inline-flex items-center rounded-lg bg-orange-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-orange-600">进入预检<ArrowRight className="ml-2 h-4 w-4" /></button>
+          </div>
+        </section>
+      )}
+
+      {reviewStep === 4 && (
+        <section className="space-y-5 rounded-xl border border-slate-200 bg-white p-5 md:p-6">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h2 className="font-semibold text-slate-900">预检并创建下架草稿</h2>
+              <p className="mt-1 text-sm text-slate-600">检查重复、分类、SEO、运费资料和发布缺口。此操作不会自动上架。</p>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={preflight} disabled={busy || !products.length} className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700 disabled:opacity-50">{busy ? <Loader2 className="mr-2 inline h-4 w-4 animate-spin" /> : <ShieldCheck className="mr-2 inline h-4 w-4" />}运行预检</button>
+              <button onClick={importDrafts} disabled={!canImport} className="rounded-lg bg-orange-500 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-50">保存为草稿</button>
+            </div>
+          </div>
+          {message && <p role="status" className="rounded-lg bg-slate-50 p-3 text-sm text-slate-700">{message}</p>}
+        </section>
+      )}
+
+      <details className="rounded-xl border border-slate-200 bg-white p-5">
+        <summary className="cursor-pointer list-none font-semibold text-slate-900"><span className="inline-flex items-center gap-2"><FileSpreadsheet className="h-5 w-5 text-slate-500" />需要一次导入多个产品？</span></summary>
+        <label className="mt-4 block cursor-pointer rounded-lg border border-dashed border-slate-300 bg-slate-50 p-5 transition-colors hover:border-orange-400"><span className="block font-medium text-slate-900">上传 Excel 或 CSV</span><span className="mt-1 block text-sm text-slate-500">{workbookName || "最多 100 个产品，仍会经过相同预检并保存为下架草稿"}</span><input className="hidden" type="file" accept=".xlsx,.csv" disabled={busy} onChange={fileHandler(readWorkbook)} /></label>
+      </details>
 
       {summary && (
         <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
@@ -385,8 +466,8 @@ export default function ProductImportPage() {
       )}
 
       {report.length > 0 && (
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-          <table className="w-full text-left text-sm">
+        <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+          <table className="min-w-[760px] w-full text-left text-sm">
             <thead className="bg-slate-50"><tr><th className="p-3">状态</th><th className="p-3">SKU / 产品</th><th className="p-3">图片</th><th className="p-3">检查结果</th></tr></thead>
             <tbody>
               {report.map((item) => (
@@ -422,7 +503,7 @@ export default function ProductImportPage() {
         <div className="rounded-xl border border-slate-200 bg-white p-5">
           <h2 className="mb-3 font-semibold">最近导入记录</h2>
           <div className="space-y-2 text-sm">
-            {history.map((job) => <p key={String(job.id)}>{String(job.created_at)} · {String(job.status)} · {String(job.success_count)}/{String(job.product_count)} products</p>)}
+            {history.map((job) => <p key={String(job.id)}>{new Date(String(job.created_at)).toLocaleString("zh-CN")} · {String(job.status)} · {String(job.success_count)}/{String(job.product_count)} 个产品</p>)}
           </div>
         </div>
       )}

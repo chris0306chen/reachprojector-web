@@ -8,6 +8,7 @@ const intlMiddleware = createMiddleware({
   locales,
   defaultLocale,
   localePrefix: 'always',
+  localeDetection: false,
 });
 
 interface AdminTokenPayload {
