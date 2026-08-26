@@ -295,6 +295,18 @@ export async function DELETE(
     }
     const { id } = await params;
     const supabase = await getSupabaseClient();
+    const [{ count: orderCount, error: orderError }, { count: inquiryCount, error: inquiryError }] = await Promise.all([
+      supabase.from("orders").select("id", { count: "exact", head: true }).eq("product_id", id),
+      supabase.from("inquiries").select("id", { count: "exact", head: true }).eq("product_id", id),
+    ]);
+    if (orderError) throw orderError;
+    if (inquiryError) throw inquiryError;
+    if ((orderCount || 0) > 0 || (inquiryCount || 0) > 0) {
+      return NextResponse.json(
+        { error: "该产品已有订单或询价记录，不能永久删除；请改为下架" },
+        { status: 409 }
+      );
+    }
     const { error } = await supabase.from("products").delete().eq("id", id);
     if (error) throw error;
     return NextResponse.json({ success: true });

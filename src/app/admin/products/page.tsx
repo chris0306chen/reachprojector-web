@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, Plus, Edit2, Trash2, AlertCircle, CheckSquare, Square, ArrowUp, ArrowDown, Paperclip, Upload, X } from "lucide-react";
+import { Search, Plus, Edit2, Trash2, AlertCircle, CheckSquare, Square, ArrowUp, ArrowDown, Paperclip, Upload, X, Tags } from "lucide-react";
 import Link from "next/link";
 import { ProductDetailEditor } from "@/components/admin/product-detail-editor";
 import { normalizeProductDetail, type ProductDetailContent } from "@/lib/product-detail";
@@ -61,6 +61,23 @@ interface Category {
   id: string;
   name: string;
   parent_id?: string | null;
+  sort_order?: number;
+  is_active?: boolean;
+  product_count?: number;
+}
+
+function getCategoryLabel(category: Category, categories: Category[]) {
+  const names = [category.name];
+  const visited = new Set([category.id]);
+  let parentId = category.parent_id;
+  while (parentId && !visited.has(parentId)) {
+    visited.add(parentId);
+    const parent = categories.find((item) => item.id === parentId);
+    if (!parent) break;
+    names.unshift(parent.name);
+    parentId = parent.parent_id;
+  }
+  return names.join(" › ");
 }
 
 interface Scene {
@@ -114,6 +131,7 @@ export default function AdminProductsPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [batchAction, setBatchAction] = useState<string>("");
+  const [batchCategoryId, setBatchCategoryId] = useState("");
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showCreateProduct, setShowCreateProduct] = useState(false);
 
@@ -157,11 +175,19 @@ export default function AdminProductsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("确定要删除此产品吗？")) return;
+    const product = products.find((item) => item.id === id);
+    if (product?.is_active) {
+      setError("上架产品不能直接删除，请先下架后再处理");
+      return;
+    }
+    if (!confirm(`这是永久删除，无法恢复。确定删除“${product?.name || "该产品"}”吗？`)) return;
     try {
       const res = await fetch(`/api/admin/products/${id}`, { method: "DELETE" });
+      const data = await res.json();
       if (res.ok) {
         fetchProducts();
+      } else {
+        setError(data.error || "删除产品失败");
       }
     } catch (err) {
       console.error("Failed to delete:", err);
@@ -224,10 +250,17 @@ export default function AdminProductsPage() {
     const actionMap: Record<string, { action: string; value: unknown }> = {
       activate: { action: "toggle_active", value: true },
       deactivate: { action: "toggle_active", value: false },
+      category: { action: "update_category", value: batchCategoryId },
     };
 
     const batchOp = actionMap[batchAction];
-    if (!batchOp) return;
+    if (!batchOp || (batchAction === "category" && !batchCategoryId)) return;
+
+    const targetCategory = categories.find((category) => category.id === batchCategoryId);
+    const actionLabel = batchAction === "category" && targetCategory
+      ? `移动到“${getCategoryLabel(targetCategory, categories)}”`
+      : batchAction === "activate" ? "批量上架" : "批量下架（可恢复）";
+    if (!confirm(`确定要对 ${selectedIds.size} 个产品执行“${actionLabel}”吗？`)) return;
 
     try {
       const res = await fetch("/api/admin/products/batch-update", {
@@ -248,6 +281,7 @@ export default function AdminProductsPage() {
       }
       setSelectedIds(new Set());
       setBatchAction("");
+      setBatchCategoryId("");
       fetchProducts();
     } catch (err) {
       console.error("Batch action failed:", err);
@@ -258,7 +292,8 @@ export default function AdminProductsPage() {
     const matchesSearch =
       product.name?.toLowerCase().includes(search.toLowerCase()) ||
       product.slug?.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory = categoryFilter === "all" || product.category_id === categoryFilter;
+    const matchesCategory = categoryFilter === "all"
+      || (categoryFilter === "uncategorized" ? !product.category_id : product.category_id === categoryFilter);
     const matchesStatus = statusFilter === "all" || (statusFilter === "active" ? product.is_active : !product.is_active);
     return matchesSearch && matchesCategory && matchesStatus;
   });
@@ -280,6 +315,13 @@ export default function AdminProductsPage() {
           <p className="text-slate-500 mt-1">管理所有产品信息</p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Link
+            href="/admin/categories"
+            className="flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          >
+            <Tags className="h-4 w-4" />
+            分类管理
+          </Link>
           <button
             type="button"
             onClick={() => setShowCreateProduct(true)}
@@ -323,9 +365,10 @@ export default function AdminProductsPage() {
             className="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
           >
             <option value="all">全部分类</option>
-            {categories.map((cat) => (
+            <option value="uncategorized">未分类</option>
+            {categories.filter((cat) => cat.is_active !== false).map((cat) => (
               <option key={cat.id} value={cat.id}>
-                {cat.name}
+                {getCategoryLabel(cat, categories)}
               </option>
             ))}
           </select>
@@ -356,10 +399,24 @@ export default function AdminProductsPage() {
               <option value="">选择操作...</option>
               <option value="activate">批量上架</option>
               <option value="deactivate">批量下架</option>
+              <option value="category">批量修改分类</option>
             </select>
+            {batchAction === "category" && (
+              <select
+                value={batchCategoryId}
+                onChange={(event) => setBatchCategoryId(event.target.value)}
+                className="max-w-xs rounded-lg border border-orange-200 bg-white px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                aria-label="目标分类"
+              >
+                <option value="">选择目标分类...</option>
+                {categories.filter((category) => category.is_active !== false).map((category) => (
+                  <option key={category.id} value={category.id}>{getCategoryLabel(category, categories)}</option>
+                ))}
+              </select>
+            )}
             <button
               onClick={handleBatchAction}
-              disabled={!batchAction}
+              disabled={!batchAction || (batchAction === "category" && !batchCategoryId)}
               className="px-3 py-1.5 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 disabled:opacity-50"
             >
               执行
@@ -368,6 +425,7 @@ export default function AdminProductsPage() {
               onClick={() => {
                 setSelectedIds(new Set());
                 setBatchAction("");
+                setBatchCategoryId("");
               }}
               className="px-3 py-1.5 text-orange-700 text-sm hover:underline"
             >
@@ -404,6 +462,9 @@ export default function AdminProductsPage() {
                   </th>
                   <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
                     产品
+                  </th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
+                    分类
                   </th>
                   <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-4 py-3">
                     价格
@@ -470,6 +531,16 @@ export default function AdminProductsPage() {
                           <div className="text-xs text-slate-500">/{product.slug}</div>
                         </div>
                       </div>
+                    </td>
+                    <td className="px-4 py-3 text-sm text-slate-600">
+                      {(() => {
+                        const category = categories.find((item) => item.id === product.category_id);
+                        return category ? (
+                          <span className="block max-w-48 truncate" title={getCategoryLabel(category, categories)}>
+                            {getCategoryLabel(category, categories)}
+                          </span>
+                        ) : <span className="font-medium text-amber-700">未分类</span>;
+                      })()}
                     </td>
                     <td className="px-4 py-3 text-sm text-right">
                       {product.sale_price ? (

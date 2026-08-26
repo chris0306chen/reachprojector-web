@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { 
   LayoutDashboard, 
   Package, 
+  Tags,
   ShoppingCart, 
   Mail, 
   Truck, 
@@ -21,6 +22,7 @@ import { useState, useEffect } from "react";
 const navItems = [
   { href: "/admin/dashboard", label: "仪表盘", icon: LayoutDashboard },
   { href: "/admin/products", label: "产品管理", icon: Package },
+  { href: "/admin/categories", label: "分类管理", icon: Tags },
   { href: "/admin/products/import", label: "导入产品", icon: Download },
   { href: "/admin/orders", label: "订单管理", icon: ShoppingCart },
   { href: "/admin/inquiries", label: "询价管理", icon: Mail },

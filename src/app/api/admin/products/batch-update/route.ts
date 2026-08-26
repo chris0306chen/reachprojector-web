@@ -10,6 +10,7 @@ import { getCurrentUser, hasPermission } from "@/lib/auth";
  * - { action: "toggle_active", ids: number[], value: boolean }
  * - { action: "update_price", ids: number[], value: number }
  * - { action: "update_stock", ids: number[], value: "in_stock" | "out_of_stock" | "preorder" }
+ * - { action: "update_category", ids: string[], value: string }
  */
 export async function POST(request: NextRequest) {
   try {
@@ -62,9 +63,30 @@ export async function POST(request: NextRequest) {
         updateData = { stock_status: value };
         break;
 
+      case "update_category": {
+        if (typeof value !== "string" || !value.trim()) {
+          return NextResponse.json(
+            { error: "value must be a category id for update_category" },
+            { status: 400 }
+          );
+        }
+        const { data: category, error: categoryError } = await supabase
+          .from("categories")
+          .select("id")
+          .eq("id", value)
+          .eq("is_active", true)
+          .maybeSingle();
+        if (categoryError) throw categoryError;
+        if (!category) {
+          return NextResponse.json({ error: "所选分类不存在或已停用" }, { status: 400 });
+        }
+        updateData = { category_id: value };
+        break;
+      }
+
       default:
         return NextResponse.json(
-          { error: `Unknown action: ${action}. Supported: toggle_active, update_price, update_stock` },
+          { error: `Unknown action: ${action}. Supported: toggle_active, update_price, update_stock, update_category` },
           { status: 400 }
         );
     }
