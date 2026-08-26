@@ -16,6 +16,7 @@ interface PayPalCheckoutProps {
   quantity?: number;
   currency?: string;
   countryCode?: string;
+  displayTotal?: string;
   onSuccess?: (order: { order_id: string; paypal_order_id?: string | null }) => void;
 }
 
@@ -27,6 +28,7 @@ export function PayPalCheckout({
   quantity = 1,
   currency = 'USD',
   countryCode = '',
+  displayTotal,
   onSuccess,
 }: PayPalCheckoutProps) {
   const locale = useLocale();
@@ -34,7 +36,7 @@ export function PayPalCheckout({
   const [status, setStatus] = useState<PaymentStatus>('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const totalAmount = (price * quantity).toFixed(2);
+  const totalAmount = displayTotal || (price * quantity).toFixed(2);
 
   const paypalOptions = {
     clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '',

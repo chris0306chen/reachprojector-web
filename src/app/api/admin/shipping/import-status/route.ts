@@ -4,7 +4,7 @@ import { getSupabaseClient } from "@/storage/database/supabase-client";
 export async function GET() {
   try {
     const supabase = await getSupabaseClient();
-    const [countries, conflicts, rates, products] = await Promise.all([
+    const [countries, conflicts, rates, products, automaticRates] = await Promise.all([
       supabase.from("shipping_country_rules").select("id", { count: "exact", head: true }),
       supabase
         .from("shipping_country_rules")
@@ -15,8 +15,13 @@ export async function GET() {
         .from("products")
         .select("id", { count: "exact", head: true })
         .not("packed_weight_kg", "is", null),
+      supabase
+        .from("shipping_templates")
+        .select("id", { count: "exact", head: true })
+        .eq("is_active", true)
+        .in("trade_terms", ["DDP", "DAP"]),
     ]);
-    const error = countries.error || conflicts.error || rates.error || products.error;
+    const error = countries.error || conflicts.error || rates.error || products.error || automaticRates.error;
     if (error) throw error;
 
     return NextResponse.json({
@@ -25,7 +30,7 @@ export async function GET() {
         countryConflicts: conflicts.count || 0,
         stagedRates: rates.count || 0,
         productsWithPackaging: products.count || 0,
-        automaticRates: 0,
+        automaticRates: automaticRates.count || 0,
       },
     });
   } catch (error) {

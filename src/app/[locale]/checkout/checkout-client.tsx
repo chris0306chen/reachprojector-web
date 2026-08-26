@@ -212,6 +212,7 @@ function CheckoutContent() {
                 quantity={quantity}
                 currency="USD"
                 countryCode={countryCode}
+                displayTotal={grandTotal}
                 onSuccess={handleSuccess}
               />
             )}
