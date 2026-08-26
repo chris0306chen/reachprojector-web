@@ -7,6 +7,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { WhatsAppFloat } from '@/components/WhatsAppFloat';
 import { generateOrganizationSchema } from '@/lib/seo';
+import { getCategories } from '@/lib/data-service';
 import './globals.css';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -55,6 +56,7 @@ export default async function LocaleLayout({
   }
 
   const messages = await getMessages();
+  const categories = await getCategories();
   const isRtl = rtlLocales.includes(locale as Locale);
   const dir = isRtl ? 'rtl' : 'ltr';
 
@@ -63,7 +65,7 @@ export default async function LocaleLayout({
       <body className="antialiased">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateOrganizationSchema()) }} />
         <NextIntlClientProvider messages={messages}>
-          <Header />
+          <Header categories={categories.map(({ id, name, slug, parent_id, sort_order }) => ({ id, name, slug, parent_id, sort_order }))} />
           <main className="min-h-screen">{children}</main>
           <Footer />
           <WhatsAppFloat />

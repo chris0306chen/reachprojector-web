@@ -54,6 +54,20 @@ export async function PATCH(request: NextRequest) {
     if (typeof body.is_active === "boolean") update.is_active = body.is_active;
 
     const supabase = await getSupabaseClient();
+    if (typeof body.parent_id === "string" && body.parent_id) {
+      const { data: allCategories, error: hierarchyError } = await supabase
+        .from("categories").select("id, parent_id");
+      if (hierarchyError) throw hierarchyError;
+      let cursor: string | null = body.parent_id;
+      const visited = new Set<string>();
+      while (cursor && !visited.has(cursor)) {
+        if (cursor === id) {
+          return NextResponse.json({ error: "不能把分类移动到自己的下级分类" }, { status: 400 });
+        }
+        visited.add(cursor);
+        cursor = allCategories?.find((category) => category.id === cursor)?.parent_id || null;
+      }
+    }
     if (body.is_active === false) {
       const [{ count: productCount, error: countError }, { count: childCount, error: childError }] = await Promise.all([
         supabase.from("products").select("id", { count: "exact", head: true }).eq("category_id", id),

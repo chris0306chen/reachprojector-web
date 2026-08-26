@@ -24,7 +24,15 @@ interface NavLink {
   children?: NavChild[];
 }
 
-export function Header() {
+interface HeaderCategory {
+  id: string;
+  name: string;
+  slug: string;
+  parent_id: string | null;
+  sort_order: number;
+}
+
+export function Header({ categories = [] }: { categories?: HeaderCategory[] }) {
   const locale = useLocale();
   const router = useRouter();
   const t = useTranslations('nav');
@@ -56,37 +64,51 @@ export function Header() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const parentCategories = categories.filter((category) => !category.parent_id);
+  const projectorParent = parentCategories.find((category) => category.slug === 'projectors')
+    || parentCategories.find((category) => category.name.toLowerCase() === 'projectors');
+  const databaseProductChildren: NavChild[] = projectorParent ? [
+    {
+      href: `/${locale}/products?category=${projectorParent.slug}`,
+      label: 'All Projectors',
+      group: 'Projectors',
+    },
+    ...categories
+      .filter((category) => category.parent_id === projectorParent.id)
+      .sort((a, b) => a.sort_order - b.sort_order)
+      .map((category) => ({
+        href: `/${locale}/products?category=${category.slug}`,
+        label: category.name,
+        group: 'Projectors',
+      })),
+    ...parentCategories
+      .filter((category) => category.id !== projectorParent.id)
+      .sort((a, b) => a.sort_order - b.sort_order)
+      .map((category) => ({
+        href: `/${locale}/products?category=${category.slug}`,
+        label: category.name,
+        group: 'Other Categories',
+      })),
+  ] : [];
+  const fallbackProductChildren: NavChild[] = [
+    ...productNavigation[0].children.map(([label, slug]) => ({
+      href: `/${locale}/products?category=${slug}`,
+      label,
+      group: 'Projectors',
+    })),
+    ...productNavigation.slice(1).map((category) => ({
+      href: `/${locale}/products?category=${category.slug}`,
+      label: category.label,
+      group: 'Other Categories',
+    })),
+  ];
+  const productChildren = databaseProductChildren.length ? databaseProductChildren : fallbackProductChildren;
+
   const navLinks: NavLink[] = [
     {
       label: t('products'),
       sectionLabel: 'SHOP BY PRODUCT',
-      children: [
-        ...productNavigation[0].children.map(([label, slug]) => ({
-          href: `/${locale}/products?category=${slug}`,
-          label,
-          group: 'Projectors',
-        })),
-        {
-          href: `/${locale}/products?category=projector-mounts-stands`,
-          label: 'Mounts & Stands',
-          group: 'Projector Accessories',
-        },
-        {
-          href: `/${locale}/products?category=accessories-parts`,
-          label: 'Accessories & Parts',
-          group: 'Projector Accessories',
-        },
-        {
-          href: `/${locale}/products?category=projection-screens`,
-          label: 'Projection Screens',
-          group: 'Projector Accessories',
-        },
-        {
-          href: `/${locale}/products?category=av-furniture`,
-          label: 'AV Furniture',
-          group: 'Projector Accessories',
-        },
-      ],
+      children: productChildren,
     },
     {
       label: t('shopByScene'),
@@ -201,7 +223,7 @@ export function Header() {
                         )}
                         {link.children.some((child) => child.group) ? (
                           <div className="grid grid-cols-2 gap-6 px-4 py-2">
-                            {['Projectors', 'Projector Accessories'].map((group) => (
+                            {['Projectors', 'Other Categories'].map((group) => (
                               <section key={group} aria-labelledby={`products-${group.toLowerCase().replace(' ', '-')}`}>
                                 <h3
                                   id={`products-${group.toLowerCase().replace(' ', '-')}`}
@@ -216,7 +238,7 @@ export function Header() {
                                       <li key={child.label}>
                                         <Link
                                           href={child.href}
-                                          className="block rounded-lg px-2 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-orange-50 hover:text-orange-600"
+                                          className="block rounded-lg px-2 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 hover:text-orange-600"
                                         >
                                           {child.label}
                                         </Link>
@@ -232,7 +254,7 @@ export function Header() {
                               <Link
                                 key={child.label}
                                 href={child.href}
-                                className="block rounded-lg px-3 py-2.5 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                                className="block rounded-lg px-3 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-orange-600 transition-colors"
                               >
                                 <span className="block font-medium">{child.label}</span>
                                 {child.description && <span className="mt-0.5 block text-xs text-slate-400">{child.description}</span>}
@@ -423,7 +445,7 @@ export function Header() {
                           </div>
                         )}
                         {link.children.some((child) => child.group) ? (
-                          ['Projectors', 'Projector Accessories'].map((group) => (
+                          ['Projectors', 'Other Categories'].map((group) => (
                             <div key={group} className="mb-3">
                               <p className="px-2 py-1 text-xs font-bold uppercase tracking-wider text-slate-400">{group}</p>
                               {link.children.filter((child) => child.group === group).map((child) => (

@@ -58,6 +58,31 @@ export default function AdminCategoriesPage() {
     () => categories.filter((category) => category.is_active),
     [categories]
   );
+  const parentCategories = useMemo(
+    () => activeCategories.filter((category) => !category.parent_id),
+    [activeCategories]
+  );
+  const groupedCategories = useMemo(() => {
+    const rows: Array<{ category: Category; depth: number }> = [];
+    const appendChildren = (parentId: string, depth: number, visited: Set<string>) => {
+      for (const child of categories.filter((category) => category.parent_id === parentId)) {
+        if (visited.has(child.id)) continue;
+        visited.add(child.id);
+        rows.push({ category: child, depth });
+        appendChildren(child.id, depth + 1, visited);
+      }
+    };
+    const visited = new Set<string>();
+    for (const parent of categories.filter((category) => !category.parent_id)) {
+      visited.add(parent.id);
+      rows.push({ category: parent, depth: 0 });
+      appendChildren(parent.id, 1, visited);
+    }
+    for (const category of categories) {
+      if (!visited.has(category.id)) rows.push({ category, depth: 0 });
+    }
+    return rows;
+  }, [categories]);
 
   const updateCategory = async (id: string, update: Record<string, unknown>, success: string) => {
     setSaving(true);
@@ -147,15 +172,35 @@ export default function AdminCategoriesPage() {
         <div className="overflow-x-auto">
           <table className="w-full min-w-[720px]">
             <thead className="bg-slate-50 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-              <tr><th className="px-5 py-3">分类层级</th><th className="px-5 py-3">Slug</th><th className="px-5 py-3 text-right">产品数</th><th className="px-5 py-3 text-center">状态</th><th className="px-5 py-3 text-right">操作</th></tr>
+              <tr><th className="px-5 py-3">母类目 / 子类目</th><th className="px-5 py-3">所属母类目</th><th className="px-5 py-3">Slug</th><th className="px-5 py-3 text-right">产品数</th><th className="px-5 py-3 text-center">状态</th><th className="px-5 py-3 text-right">操作</th></tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
-              {categories.map((category) => (
+              {groupedCategories.map(({ category, depth }) => (
                 <tr key={category.id} className={category.is_active ? "" : "bg-slate-50 text-slate-400"}>
                   <td className="px-5 py-3">
                     {editingId === category.id ? (
                       <input value={editingName} onChange={(event) => setEditingName(event.target.value)} maxLength={100} className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-900" autoFocus />
-                    ) : <span className="text-sm font-medium text-slate-800">{categoryLabel(category, categories)}</span>}
+                    ) : (
+                      <div className="flex items-center gap-2" style={{ paddingInlineStart: `${Math.min(depth, 3) * 20}px` }}>
+                        {depth > 0 && <span className="h-px w-3 bg-slate-300" aria-hidden="true" />}
+                        <span className={`text-sm ${depth === 0 ? "font-semibold text-slate-900" : "font-medium text-slate-700"}`}>{category.name}</span>
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-5 py-3">
+                    {category.parent_id ? (
+                      <select
+                        value={category.parent_id}
+                        disabled={saving || !category.is_active}
+                        onChange={(event) => updateCategory(category.id, { parent_id: event.target.value }, "子类目已移动")}
+                        className="max-w-56 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm text-slate-700 disabled:bg-slate-100"
+                        aria-label={`移动 ${category.name} 到母类目`}
+                      >
+                        {parentCategories.filter((parent) => parent.id !== category.id).map((parent) => (
+                          <option key={parent.id} value={parent.id}>{parent.name}</option>
+                        ))}
+                      </select>
+                    ) : <span className="text-xs font-medium text-slate-400">母类目</span>}
                   </td>
                   <td className="px-5 py-3 text-sm text-slate-500">{category.slug}</td>
                   <td className="px-5 py-3 text-right text-sm tabular-nums">{category.product_count}</td>
