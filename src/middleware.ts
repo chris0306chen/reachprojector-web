@@ -31,7 +31,7 @@ async function verifyAdminToken(token: string): Promise<AdminTokenPayload | null
 function requiredPermission(pathname: string): string | null {
   if (pathname.startsWith('/api/admin/users') || pathname === '/api/admin/register') return 'users';
   if (pathname.startsWith('/api/admin/products/import')) return 'import';
-  if (pathname.startsWith('/api/admin/products') || pathname.startsWith('/api/admin/categories')) return 'products';
+  if (pathname.startsWith('/api/admin/products') || pathname.startsWith('/api/admin/categories') || pathname.startsWith('/api/admin/scenes')) return 'products';
   if (pathname.startsWith('/api/admin/orders')) return 'orders';
   if (pathname.startsWith('/api/admin/inquiries')) return 'inquiries';
   if (pathname.startsWith('/api/admin/email-test')) return 'inquiries';

@@ -3,11 +3,12 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowRight, CheckCircle2, Layers3, MessageSquareText } from 'lucide-react';
 import { ProductCard } from '@/components/product-card';
-import { sceneDetails, sceneNavigation } from '@/lib/catalog-navigation';
+import { getSceneFamilyForSlug, sceneDetails, sceneNavigation } from '@/lib/catalog-navigation';
 import { getProducts } from '@/lib/data-service';
 import {
   getLocalizedCategoryLabel,
   getLocalizedSceneDetails,
+  getLocalizedSceneFamilyTitle,
   getLocalizedSceneTitle,
   getSolutionsCopy,
 } from '@/lib/solutions-copy';
@@ -42,6 +43,7 @@ export default async function ScenePage({
   const copy = getSolutionsCopy(locale);
   const localizedTitle = getLocalizedSceneTitle(locale, slug, scene.title);
   const localizedScene = getLocalizedSceneDetails(locale, slug, scene);
+  const family = getSceneFamilyForSlug(slug);
 
   const componentLabels = scene.categorySlugs.map((category) => ({
     slug: category,
@@ -62,7 +64,9 @@ export default async function ScenePage({
       <section className="relative overflow-hidden bg-slate-950 px-4 pb-20 pt-32 text-white">
         <div className="absolute inset-y-0 right-0 w-2/3 bg-[radial-gradient(circle_at_center,rgba(234,88,12,.18),transparent_65%)]" />
         <div className="relative mx-auto max-w-7xl">
-          <Link href={`/${locale}/solutions`} className="text-sm text-slate-400 hover:text-white">{copy.eyebrow} / {scene.eyebrow === 'Residential' ? copy.residential : copy.business}</Link>
+          <Link href={`/${locale}/solutions${family ? `#${family.slug}` : ''}`} className="text-sm text-slate-400 hover:text-white">
+            {copy.eyebrow}{family ? ` / ${getLocalizedSceneFamilyTitle(locale, family.slug, family.group)}` : ''}
+          </Link>
           <h1 className="mt-5 max-w-4xl text-4xl font-semibold tracking-[-0.04em] md:text-6xl">{localizedTitle}</h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">{localizedScene.description}</p>
           <Link

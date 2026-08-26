@@ -99,6 +99,25 @@ const sceneTitles: Record<string, Record<string, string>> = {
   },
 };
 
+const sceneFamilyTitles: Record<string, Record<string, string>> = {
+  zh: {
+    'home-theater': '家庭影院', 'business-education': '商务与教育', 'professional-large-venues': '专业工程与大型场馆',
+    'events-rental': '活动与租赁', 'hospitality-entertainment': '酒店与娱乐空间',
+  },
+  es: {
+    'home-theater': 'Cine en casa', 'business-education': 'Empresas y educación', 'professional-large-venues': 'Instalaciones profesionales y grandes espacios',
+    'events-rental': 'Eventos y alquiler', 'hospitality-entertainment': 'Hospitalidad y entretenimiento',
+  },
+  ru: {
+    'home-theater': 'Домашний кинотеатр', 'business-education': 'Бизнес и образование', 'professional-large-venues': 'Профессиональные и крупные площадки',
+    'events-rental': 'Мероприятия и аренда', 'hospitality-entertainment': 'Гостиницы и развлечения',
+  },
+  ar: {
+    'home-theater': 'السينما المنزلية', 'business-education': 'الأعمال والتعليم', 'professional-large-venues': 'المنشآت الاحترافية والقاعات الكبيرة',
+    'events-rental': 'الفعاليات والتأجير', 'hospitality-entertainment': 'الضيافة والترفيه',
+  },
+};
+
 type LocalizedSceneDetails = {
   description: string;
   considerations: string[];
@@ -288,6 +307,10 @@ export function getSolutionsCopy(locale: string) {
 
 export function getLocalizedSceneTitle(locale: string, slug: string, fallback: string) {
   return sceneTitles[locale]?.[slug] || fallback;
+}
+
+export function getLocalizedSceneFamilyTitle(locale: string, slug: string, fallback: string) {
+  return sceneFamilyTitles[locale]?.[slug] || fallback;
 }
 
 export function getLocalizedSceneDetails(

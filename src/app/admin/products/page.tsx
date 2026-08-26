@@ -925,6 +925,7 @@ function ProductEditModal({
     ]).then(([categoryRows, sceneRows]) => {
       if (Array.isArray(categoryRows)) setCategories(categoryRows);
       if (Array.isArray(sceneRows)) setScenes(sceneRows);
+      else if (Array.isArray(sceneRows?.scenes)) setScenes(sceneRows.scenes.filter((scene: Scene & { is_active?: boolean }) => scene.is_active !== false));
     }).catch(() => setError("加载分类与场景失败"));
   }, []);
 

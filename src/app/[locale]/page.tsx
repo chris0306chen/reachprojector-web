@@ -10,17 +10,20 @@ import {
   Tv,
   Wrench,
 } from 'lucide-react';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { ProductCard } from '@/components/product-card';
 import RealWorldApplications from '@/components/real-world-applications';
 import ShippingDelivery from '@/components/shipping-delivery';
 import { getProducts } from '@/lib/data-service';
 import { generateWebSiteSchema } from '@/lib/seo';
+import { sceneFamilyDescriptions, sceneNavigation } from '@/lib/catalog-navigation';
+import { getLocalizedSceneFamilyTitle } from '@/lib/solutions-copy';
 
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
   const t = await getTranslations('home');
+  const locale = await getLocale();
   const bestsellers = await getProducts({ pageSize: 8 });
 
   const categories = [
@@ -54,36 +57,19 @@ export default async function HomePage() {
     },
   ];
 
-  const solutions = [
-    {
-      titleKey: 'solutions.hospitality.title',
-      descKey: 'solutions.hospitality.desc',
-      oemKey: 'solutions.hospitality.oem',
-      href: '/solutions/home-cinema',
-      image: '/images/scenarios/hospitality.jpg',
-    },
-    {
-      titleKey: 'solutions.retail.title',
-      descKey: 'solutions.retail.desc',
-      oemKey: 'solutions.retail.oem',
-      href: '/solutions/living-room-laser-tv',
-      image: '/images/scenarios/retail-oem.jpg',
-    },
-    {
-      titleKey: 'solutions.events.title',
-      descKey: 'solutions.events.desc',
-      oemKey: 'solutions.events.oem',
-      href: '/solutions/outdoor-cinema',
-      image: '/images/scenarios/events.jpg',
-    },
-    {
-      titleKey: 'solutions.education.title',
-      descKey: 'solutions.education.desc',
-      oemKey: 'solutions.education.oem',
-      href: '/solutions/education-training',
-      image: '/images/scenarios/education.jpg',
-    },
+  const sceneImages = [
+    '/images/scenarios/retail-oem.jpg',
+    '/images/scenarios/education.jpg',
+    '/images/scenarios/education.jpg',
+    '/images/scenarios/events.jpg',
+    '/images/scenarios/hospitality.jpg',
   ];
+  const solutions = sceneNavigation.map((family, index) => ({
+    title: getLocalizedSceneFamilyTitle(locale, family.slug, family.group),
+    description: sceneFamilyDescriptions[family.slug],
+    href: `/solutions#${family.slug}`,
+    image: sceneImages[index],
+  }));
 
   const partnerReasons = [
     { icon: Settings, titleKey: 'whyPartner.cards.0.title', descKey: 'whyPartner.cards.0.desc' },
@@ -268,7 +254,7 @@ export default async function HomePage() {
               <div className="grid gap-3 sm:grid-cols-2">
                 {solutions.map((solution, index) => (
                   <Link
-                    key={solution.titleKey}
+                    key={solution.title}
                     href={solution.href}
                     className={`group relative isolate overflow-hidden rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-400 ${
                       index === 0 ? 'min-h-[25rem] sm:row-span-2' : 'min-h-[12rem]'
@@ -283,9 +269,9 @@ export default async function HomePage() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
                     <div className="relative flex h-full min-h-[inherit] flex-col justify-end p-5">
-                      <h3 className="text-lg font-semibold text-white">{t(solution.titleKey)}</h3>
-                      <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-200">{t(solution.descKey)}</p>
-                      <span className="mt-3 text-xs font-semibold text-orange-300">{t(solution.oemKey)}</span>
+                      <h3 className="text-lg font-semibold text-white">{solution.title}</h3>
+                      <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-200">{solution.description}</p>
+                      <span className="mt-3 text-xs font-semibold text-orange-300">{t('hero.exploreKits')}</span>
                     </div>
                   </Link>
                 ))}

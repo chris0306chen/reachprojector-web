@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { Menu, X, Search, ChevronDown, Store, Building2 } from 'lucide-react';
 import { LanguageSwitcher } from './language-switcher';
 import { productNavigation, sceneNavigation } from '@/lib/catalog-navigation';
+import { getLocalizedSceneFamilyTitle } from '@/lib/solutions-copy';
 
 type BusinessMode = 'retail' | 'b2b';
 
@@ -113,11 +114,10 @@ export function Header({ categories = [] }: { categories?: HeaderCategory[] }) {
     {
       label: t('shopByScene'),
       sectionLabel: 'SOLUTIONS BY APPLICATION',
-      children: sceneNavigation.flatMap((group) => group.items.map(([label, slug]) => ({
-        href: `/${locale}/solutions/${slug}`,
-        label,
-        description: group.group,
-      }))),
+      children: sceneNavigation.map((group) => ({
+        href: `/${locale}/solutions#${group.slug}`,
+        label: getLocalizedSceneFamilyTitle(locale, group.slug, group.group),
+      })),
     },
     {
       label: t('resources'),

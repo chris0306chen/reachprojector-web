@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, Building2, Home, Layers3 } from 'lucide-react';
-import { sceneDetails, sceneNavigation } from '@/lib/catalog-navigation';
-import { getLocalizedSceneDetails, getLocalizedSceneTitle, getSolutionsCopy } from '@/lib/solutions-copy';
+import { ArrowRight, Building2, GraduationCap, Home, Layers3, PartyPopper, Theater } from 'lucide-react';
+import { sceneDetails, sceneFamilyDescriptions, sceneNavigation } from '@/lib/catalog-navigation';
+import { getLocalizedSceneDetails, getLocalizedSceneFamilyTitle, getLocalizedSceneTitle, getSolutionsCopy } from '@/lib/solutions-copy';
 
 export async function generateMetadata({
   params,
@@ -24,6 +24,7 @@ export default async function SolutionsPage({
 }) {
   const { locale } = await params;
   const copy = getSolutionsCopy(locale);
+  const familyIcons = [Home, GraduationCap, Theater, PartyPopper, Building2];
 
   return (
     <div className="min-h-screen bg-[#f7f7f5]">
@@ -43,26 +44,28 @@ export default async function SolutionsPage({
       </section>
 
       <section className="mx-auto max-w-7xl space-y-16 px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
-        {sceneNavigation.map((group) => (
-          <div key={group.group}>
+        {sceneNavigation.map((group, groupIndex) => {
+          const FamilyIcon = familyIcons[groupIndex] || Layers3;
+          return (
+          <div key={group.group} id={group.slug} className="scroll-mt-28">
             <div className="mb-7 flex items-center gap-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-100">
-                {group.group === 'Residential' ? <Home className="h-5 w-5 text-orange-700" /> : <Building2 className="h-5 w-5 text-orange-700" />}
+                <FamilyIcon className="h-5 w-5 text-orange-700" />
               </span>
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-orange-600">{copy.chooseUseCase}</p>
-                <h2 className="text-2xl font-semibold tracking-tight text-slate-950">{group.group === 'Residential' ? copy.residential : copy.business}</h2>
+                <h2 className="text-2xl font-semibold tracking-tight text-slate-950">{getLocalizedSceneFamilyTitle(locale, group.slug, group.group)}</h2>
               </div>
             </div>
+            <p className="mb-7 max-w-3xl text-sm leading-6 text-slate-600">{sceneFamilyDescriptions[group.slug]}</p>
             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {group.items.map(([label, slug], index) => (
+              {group.items.map(([label, slug]) => (
                 <Link
                   key={slug}
                   href={`/${locale}/solutions/${slug}`}
                   className="group flex min-h-64 flex-col rounded-2xl border border-slate-200 bg-white p-7 transition hover:-translate-y-1 hover:border-orange-300 hover:shadow-[0_24px_60px_-40px_rgba(15,23,42,.5)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
                 >
-                  <span className="text-xs font-bold tracking-[0.18em] text-slate-400">{String(index + 1).padStart(2, '0')}</span>
-                  <h3 className="mt-8 text-xl font-semibold tracking-tight text-slate-950 group-hover:text-orange-700">{getLocalizedSceneTitle(locale, slug, label)}</h3>
+                  <h3 className="text-xl font-semibold tracking-tight text-slate-950 group-hover:text-orange-700">{getLocalizedSceneTitle(locale, slug, label)}</h3>
                   <p className="mt-3 text-sm leading-6 text-slate-600">
                     {getLocalizedSceneDetails(locale, slug, sceneDetails[slug]).description}
                   </p>
@@ -73,7 +76,7 @@ export default async function SolutionsPage({
               ))}
             </div>
           </div>
-        ))}
+        )})}
       </section>
     </div>
   );

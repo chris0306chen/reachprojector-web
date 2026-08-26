@@ -63,7 +63,8 @@ export const productNavigation = [
 
 export const sceneNavigation = [
   {
-    group: 'Residential',
+    group: 'Home Theater',
+    slug: 'home-theater',
     items: [
       ['Home Cinema', 'home-cinema'],
       ['Living Room Laser TV', 'living-room-laser-tv'],
@@ -73,18 +74,49 @@ export const sceneNavigation = [
     ],
   },
   {
-    group: 'Business & Projects',
+    group: 'Business & Education',
+    slug: 'business-education',
     items: [
       ['Office & Meeting Rooms', 'meeting-rooms'],
       ['Classrooms & Training', 'education-training'],
-      ['Hotels & Hospitality', 'hotels-hospitality'],
-      ['Bars & Restaurants', 'bars-restaurants'],
-      ['Retail & Showrooms', 'retail-showrooms'],
-      ['Events & Rental', 'events-rental'],
+    ],
+  },
+  {
+    group: 'Professional & Large Venues',
+    slug: 'professional-large-venues',
+    items: [
       ['Auditoriums & Large Venues', 'large-venues'],
     ],
   },
+  {
+    group: 'Events & Rental',
+    slug: 'events-rental',
+    items: [
+      ['Events & Rental', 'events-rental'],
+    ],
+  },
+  {
+    group: 'Hospitality & Entertainment',
+    slug: 'hospitality-entertainment',
+    items: [
+      ['Hotels & Hospitality', 'hotels-hospitality'],
+      ['Bars & Restaurants', 'bars-restaurants'],
+      ['Retail & Showrooms', 'retail-showrooms'],
+    ],
+  },
 ] as const;
+
+export const sceneFamilyDescriptions: Record<string, string> = {
+  'home-theater': 'Cinema, living-room, gaming, compact-space, and outdoor viewing systems for residential use.',
+  'business-education': 'Presentation and collaboration systems for offices, meeting rooms, classrooms, and training spaces.',
+  'professional-large-venues': 'High-brightness engineered systems for auditoriums, halls, houses of worship, and large public venues.',
+  'events-rental': 'Transportable projection packages for events, exhibitions, temporary installations, and rental fleets.',
+  'hospitality-entertainment': 'Projection systems for hotels, restaurants, bars, retail spaces, showrooms, and entertainment venues.',
+};
+
+export function getSceneFamilyForSlug(sceneSlug: string) {
+  return sceneNavigation.find((family) => family.items.some(([, slug]) => slug === sceneSlug));
+}
 
 export const sceneDetails: Record<string, {
   title: string;
