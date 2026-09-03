@@ -201,6 +201,115 @@ export const buyingGuides: BuyingGuide[] = [
     ],
     cta: { label: 'Request a project quotation', href: '/wholesale' },
   },
+  {
+    slug: 'white-vs-alr-vs-clr-projector-screen',
+    audience: 'Home buyers',
+    title: 'White vs ALR vs CLR Projector Screens',
+    description: 'Choose a screen by projector position, room light and seating layout—not by the ALR label alone.',
+    directAnswer: 'Use a white screen when you can control room light and want wide, predictable viewing. Consider ALR when ambient light is a real constraint, but match the material to the projector throw direction. For a table-mounted ultra-short-throw projector, use a CLR/UST material specifically designed to receive light from below; a standard-throw ALR screen may reject the projector light itself.',
+    updatedAt: '2026-09-03',
+    readTime: '7 min read',
+    sections: [
+      {
+        title: 'Start with the projector position',
+        paragraphs: [
+          'Screen material is directional. The first question is not “Do I want ALR?” but “Where does the projector light come from?” A standard-throw projector normally sends light from the back of the room. A table-mounted UST sends light upward from directly below the screen. Materials designed for one geometry may perform badly with the other.',
+        ],
+      },
+      {
+        title: 'When a white screen is the sensible choice',
+        checklist: [
+          'You normally watch with blinds closed or lights dimmed.',
+          'Seats spread across a wide viewing angle.',
+          'You want a neutral starting point without a narrow directional structure.',
+          'Your projector and room already provide sufficient perceived contrast.',
+        ],
+      },
+      {
+        title: 'When ALR or CLR can help',
+        checklist: [
+          'The room regularly has ceiling or side light that cannot be removed.',
+          'The screen material is explicitly compatible with the projector throw type and mounting direction.',
+          'The intended seats fall inside the manufacturer viewing-angle guidance.',
+          'You have checked gain, color shift, hotspot risk and installation tolerances for the exact material.',
+        ],
+      },
+      {
+        title: 'Four mistakes to avoid',
+        checklist: [
+          'Buying any product labeled ALR without checking compatible projector geometry.',
+          'Using a bottom-throw CLR material with a ceiling-mounted or standard-throw projector.',
+          'Comparing only rejection percentages across different test methods.',
+          'Ignoring screen flatness, frame installation and the final seating angle.',
+        ],
+      },
+      {
+        title: 'What to send for a screen recommendation',
+        paragraphs: ['Provide the exact projector model, mounting position, target diagonal size, room-light direction, wall dimensions and seating spread. A useful recommendation needs the whole optical layout, not just the screen size.'],
+      },
+    ],
+    sources: [
+      { label: 'Elite Screens: CLR/ALR fixed-frame comparison', url: 'https://www.elitescreens.com/wp-content/uploads/ALR_CLR_FixedFrameScreens_Comp.pdf' },
+      { label: 'Elite Screens: Aeon CLR installation guidance', url: 'https://www.elitescreens.com/wp-content/uploads/UserGuide_AeonCLR_MType.pdf' },
+    ],
+    cta: { label: 'Plan your room', href: '/solutions' },
+  },
+  {
+    slug: 'international-projector-regional-version-checklist',
+    audience: 'Home buyers',
+    title: 'International Projector Regional-Version Checklist',
+    description: 'Check system language, apps, streaming hardware, power, warranty and support before importing a projector.',
+    directAnswer: 'A menu that supports English does not automatically make a projector an official regional model. Before importing, confirm the exact hardware and firmware version, local power and plug, app availability, streaming-device path, warranty territory, return process and included accessories in writing.',
+    updatedAt: '2026-09-03',
+    readTime: '8 min read',
+    sections: [
+      {
+        title: 'Identify the exact version',
+        checklist: [
+          'Full model name, model code and region shown on the product label.',
+          'Firmware or operating-system version and available interface languages.',
+          'Power-input range, plug type and included power cable.',
+          'Included remote, accessories and printed documentation.',
+        ],
+      },
+      {
+        title: 'Separate the projector from the streaming platform',
+        paragraphs: [
+          'A projector may accept a 4K HDMI signal without having an officially supported Netflix app. Netflix advises using a supported device connected to the projector when necessary, and its 4K/HDR requirements also depend on the projector, plan, connection and playback settings.',
+          'Likewise, Google TV content, tabs and apps can vary by country and language. Do not treat a screenshot from one market as proof of the experience in another market.',
+        ],
+      },
+      {
+        title: 'Ask these compatibility questions',
+        checklist: [
+          'Will streaming use the projector OS or a separate certified device?',
+          'Which HDMI port is required, and does that conflict with ARC/eARC audio?',
+          'Which apps have been tested on this exact device and target-country account?',
+          'Do power, volume and input switching require two remotes?',
+          'Can the customer restore the system without a seller-owned account or hidden setup?',
+        ],
+      },
+      {
+        title: 'Confirm the commercial safety net',
+        checklist: [
+          'Who handles warranty service and in which country?',
+          'Where would a return be sent, and who pays return freight?',
+          'Which defects or compatibility issues qualify for return?',
+          'Is the route DDP or DAP, and who handles import duties and taxes?',
+        ],
+      },
+      {
+        title: 'How Reach Projector should describe imported versions',
+        paragraphs: ['Each product page should distinguish confirmed specifications from regional details that still need confirmation. Until a projector-and-streaming-device combination is physically tested for a target market, it should be described as under validation—not as a guaranteed compatible solution.'],
+      },
+    ],
+    sources: [
+      { label: 'Netflix: How to watch Netflix on a projector', url: 'https://help.netflix.com/en/node/360036298050660' },
+      { label: 'Google TV Help: How Google TV and Android TV work', url: 'https://support.google.com/googletv/answer/10267283?hl=en' },
+      { label: 'Google Play Help: Change your Google Play country', url: 'https://support.google.com/googleplay/answer/7431675?hl=en' },
+    ],
+    cta: { label: 'Ask us to confirm a configuration', href: '/contact' },
+  },
 ]
 
 export function getBuyingGuide(slug: string) {
