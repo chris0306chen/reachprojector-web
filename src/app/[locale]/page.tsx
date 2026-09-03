@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import {
   ArrowRight,
+  BookOpen,
   Monitor,
   Package,
   RectangleVertical,
@@ -18,6 +19,7 @@ import { getProducts } from '@/lib/data-service';
 import { generateWebSiteSchema } from '@/lib/seo';
 import { sceneFamilyDescriptions, sceneNavigation } from '@/lib/catalog-navigation';
 import { getLocalizedSceneFamilyTitle } from '@/lib/solutions-copy';
+import { buyingGuides } from '@/lib/guides';
 
 export const dynamic = 'force-dynamic';
 
@@ -232,6 +234,32 @@ export default async function HomePage() {
           </div>
         </section>
 
+        <section className="border-y border-slate-200 bg-[#f7f7f5] py-20 lg:py-28">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+              <div className="max-w-3xl">
+                <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-orange-600">{t('guides.eyebrow')}</p>
+                <h2 className="text-balance text-3xl font-bold tracking-[-0.025em] text-slate-950 sm:text-4xl">{t('guides.title')}</h2>
+                <p className="mt-4 max-w-[65ch] text-base leading-7 text-slate-600">{t('guides.description')}</p>
+              </div>
+              <Link href={`/${locale}/guides`} className="inline-flex items-center gap-2 text-sm font-semibold text-orange-600 underline decoration-orange-200 underline-offset-8 transition hover:decoration-orange-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-500">
+                {t('guides.viewAll')}<ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </div>
+            <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              {buyingGuides.map((guide) => (
+                <Link key={guide.slug} href={`/${locale}/guides/${guide.slug}`} className="group flex min-h-72 flex-col rounded-xl border border-slate-200 bg-white p-6 transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-500">
+                  <div className="flex items-center justify-between gap-3 text-[11px] font-bold uppercase tracking-wider"><span className="text-orange-700">{guide.audience}</span><span className="text-slate-400">{guide.readTime}</span></div>
+                  <BookOpen className="mt-8 h-7 w-7 text-slate-300" aria-hidden="true" />
+                  <h3 className="mt-5 text-xl font-semibold tracking-tight text-slate-950">{guide.title}</h3>
+                  <p className="mt-3 flex-1 text-sm leading-6 text-slate-600">{guide.description}</p>
+                  <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-950 transition group-hover:text-orange-600">{t('guides.read')}<ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" /></span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="bg-slate-950 py-20 text-white lg:py-28">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
@@ -353,10 +381,10 @@ export default async function HomePage() {
               <p className="mt-4 max-w-[65ch] text-base leading-7 text-orange-950/85">{t('b2b.description')}</p>
             </div>
             <Link
-              href="/solutions"
+              href="/wholesale"
               className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-lg bg-slate-950 px-7 py-3 font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-slate-950 active:translate-y-px"
             >
-              {t('hero.exploreKits')}
+              {t('b2b.cta')}
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>

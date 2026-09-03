@@ -51,12 +51,12 @@ export interface FAQItem {
 // ---------------------------------------------------------------------------
 
 export function generateProductMetadata(product: ProductSEOData) {
-  const title = `${product.name} ${product.brand} | Wholesale Price | ${SITE_NAME}`
+  const title = `${product.name} | Specifications & Buying Advice | ${SITE_NAME}`
   const truncatedDesc =
     product.description.length > 155
       ? `${product.description.slice(0, 155)}...`
       : product.description
-  const description = `${truncatedDesc} International shipping and DDP are available for selected destinations, subject to confirmation. Wholesale pricing available.`
+  const description = `${truncatedDesc} Review specifications, regional configuration and destination-specific purchase requirements.`
 
   return {
     title,
@@ -65,9 +65,9 @@ export function generateProductMetadata(product: ProductSEOData) {
       product.name.toLowerCase(),
       product.brand.toLowerCase(),
       `${product.brand.toLowerCase()} ${product.category.toLowerCase()}`,
-      `${product.category.toLowerCase()} wholesale`,
-      `${product.category.toLowerCase()} supplier`,
-      'ddp shipping',
+      `${product.category.toLowerCase()} buying guide`,
+      `${product.name.toLowerCase()} specifications`,
+      'international projector shipping',
     ],
     openGraph: {
       title,
@@ -234,7 +234,7 @@ export function generateOrganizationSchema() {
     url: SITE_URL,
     logo: `${SITE_URL}/images/logo.png`,
     description:
-      'Projection solutions supplier for home cinema, hospitality, education, events, integrators, and retail partners.',
+      'Projector advice and global retail for home buyers, with wholesale sourcing and AV project support for business customers.',
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: '+86-13655920080',
@@ -257,7 +257,7 @@ export function generateWebSiteSchema() {
     name: SITE_NAME,
     url: SITE_URL,
     description:
-      'Projectors, projection screens, mounts, and scenario-based projection solutions for retail and business customers.',
+      'Expert projector selection guidance and global retail for home buyers, with wholesale sourcing and AV project support for business customers.',
     publisher: {
       '@type': 'Organization',
       name: SITE_NAME,

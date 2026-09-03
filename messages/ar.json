@@ -28,6 +28,7 @@
     "authorizedDealer": "وكيل معتمد للإلكترونيات المتميزة",
     "shopByScene": "التسوق حسب المشهد",
     "resources": "الموارد",
+    "buyingGuides": "أدلة الشراء",
     "compatibilityGuide": "دليل التوافق",
     "installationGuides": "أدلة التركيب",
     "certificates": "الشهادات",
@@ -65,6 +66,13 @@
     "viewProducts": "عرض المنتجات",
     "viewAll": "عرض الكل",
     "viewAllProducts": "عرض جميع المنتجات",
+    "guides": {
+      "eyebrow": "أدلة شراء أجهزة العرض",
+      "title": "اتخذ القرار قبل الشراء",
+      "description": "إجابات واضحة لتخطيط الغرفة والمقارنة والشحن الدولي والمشتريات التجارية.",
+      "viewAll": "عرض جميع الأدلة",
+      "read": "قراءة الدليل"
+    },
     "bestsellers": {
       "title": "الأكثر مبيعاً",
       "description": "منتجاتنا الأكثر شعبية المختارة من قبل العملاء حول العالم"

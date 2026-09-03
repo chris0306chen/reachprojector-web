@@ -69,11 +69,11 @@ export function buildSeoGeoSuggestions(input: SuggestionInput): SeoGeoSuggestion
   const selectedFacts = facts.slice(0, 3);
   const factPhrase = selectedFacts.map((item) => `${item.name} ${item.value}`).join(", ");
   const useCase = input.category
-    ? `for ${input.category.toLowerCase()} buyers and AV projects`
-    : "for home theater and commercial AV projects";
+    ? `for buyers comparing ${input.category.toLowerCase()} and for AV project evaluation`
+    : "for home theater buyers and commercial AV project evaluation";
   const metaBase = factPhrase
-    ? `Explore ${identity} with ${factPhrase}, ${useCase}. Worldwide DDP/DAP shipping and project support available.`
-    : `Explore ${identity} specifications for home theater, commercial AV and project installations. Worldwide DDP/DAP shipping and project support available.`;
+    ? `Review ${identity} with ${factPhrase}, ${useCase}. Confirm regional configuration, shipping terms and warranty before ordering.`
+    : `Review ${identity} specifications for home theater and commercial AV use. Confirm regional configuration, shipping terms and warranty before ordering.`;
   const metaDescription = atWordBoundary(metaBase, 165);
   const shortDescription = factPhrase
     ? `${identity} is designed ${useCase}. Key verified specifications include ${factPhrase}.`

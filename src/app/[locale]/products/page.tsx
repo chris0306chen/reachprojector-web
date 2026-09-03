@@ -10,24 +10,24 @@ export const dynamic = 'force-dynamic';
 
 const CATEGORY_META: Record<string, { title: string; description: string; keywords: string[] }> = {
   '4k-laser-projectors': {
-    title: '4K Laser Projectors Wholesale | XGIMI, Hisense, JMGO',
-    description: 'Shop wholesale 4K laser projectors. Triple laser, ultra-short throw, up to 120-inch. Bulk pricing, DDP shipping to 50+ countries.',
-    keywords: ['4k laser projector', 'wholesale 4k projector', 'xgimi 4k projector', 'hisense 4k laser'],
+    title: '4K Laser Projectors | Compare XGIMI, Hisense & JMGO',
+    description: 'Compare 4K laser projectors by brightness, throw type, room fit and regional configuration. Retail purchasing and business quotations are available.',
+    keywords: ['4k laser projector', 'compare 4k projectors', 'xgimi 4k projector', 'hisense 4k laser'],
   },
   'ust-laser-tv': {
-    title: 'UST Laser TV Wholesale | Ultra Short Throw | Hisense, Formovie',
-    description: 'Wholesale ultra-short throw laser TVs. 100-120 inch display. Bulk pricing with DDP global shipping.',
+    title: 'Ultra Short Throw Projectors & Laser TVs | Buying Guide',
+    description: 'Compare ultra-short-throw projectors and laser TVs by screen compatibility, room light, image size and installation requirements.',
     keywords: ['ust laser tv', 'ultra short throw projector', 'hisense laser tv', 'formovie theater'],
   },
   'projector-mounts': {
-    title: 'Projector Mounts Wholesale | Ceiling, Wall, Floor Stands',
-    description: 'Wholesale projector mounts and brackets. Ceiling, wall, floor stands and UST adjustable mounts. Bulk pricing with global DDP shipping.',
-    keywords: ['projector mount', 'wholesale projector bracket', 'ceiling projector mount', 'UST projector stand'],
+    title: 'Projector Mounts | Ceiling, Wall & Floor Stands',
+    description: 'Choose projector mounts and stands by projector type, placement, adjustment range and installation requirements.',
+    keywords: ['projector mount', 'projector bracket', 'ceiling projector mount', 'UST projector stand'],
   },
   'projection-screens': {
-    title: 'Projection Screens Wholesale | Motorized, ALR, Fixed Frame',
-    description: 'Wholesale projection screens. Motorized, fixed frame, portable and ALR screens for any environment. Bulk pricing, worldwide DDP shipping.',
-    keywords: ['projection screen', 'wholesale projector screen', 'ALR screen', 'motorized screen', 'fixed frame screen'],
+    title: 'Projection Screens | Motorized, ALR & Fixed Frame',
+    description: 'Compare motorized, fixed-frame, portable, ALR and CLR screens by projector type, room light and installation needs.',
+    keywords: ['projection screen', 'projector screen', 'ALR screen', 'motorized screen', 'fixed frame screen'],
   },
 }
 

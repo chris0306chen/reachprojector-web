@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { locales } from '@/i18n/config'
 import { productNavigation, sceneNavigation } from '@/lib/catalog-navigation'
+import { buyingGuides } from '@/lib/guides'
 
 const SITE_URL = 'https://www.reachprojector.com'
 
@@ -39,5 +40,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const scenePages: MetadataRoute.Sitemap = sceneNavigation.flatMap((group) => group.items.flatMap(([, slug]) => locales.map((locale) => ({ url: `${SITE_URL}/${locale}/solutions/${slug}`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.8, alternates: buildAlternates(`/solutions/${slug}`) }))))
   const products = await fetchProductSlugs()
   const productPages: MetadataRoute.Sitemap = products.flatMap((product) => locales.map((locale) => ({ url: `${SITE_URL}/${locale}/products/${product.slug}`, lastModified: new Date(product.updatedAt), changeFrequency: 'weekly' as const, priority: 0.6, alternates: buildAlternates(`/products/${product.slug}`) })))
-  return [...staticPages, ...categoryPages, ...scenePages, ...productPages]
+  const guidePages: MetadataRoute.Sitemap = [
+    { url: `${SITE_URL}/en/guides`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
+    ...buyingGuides.map((guide) => ({ url: `${SITE_URL}/en/guides/${guide.slug}`, lastModified: new Date(guide.updatedAt), changeFrequency: 'monthly' as const, priority: 0.7 })),
+  ]
+  return [...staticPages, ...categoryPages, ...scenePages, ...guidePages, ...productPages]
 }

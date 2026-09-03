@@ -123,15 +123,19 @@ export function Header({ categories = [] }: { categories?: HeaderCategory[] }) {
       label: t('resources'),
       children: [
         {
-          href: `/${locale}/about`,
+          href: `/${locale}/guides`,
+          label: t('buyingGuides'),
+        },
+        {
+          href: `/${locale}/solutions`,
           label: t('compatibilityGuide'),
         },
         {
-          href: `/${locale}/about`,
+          href: `/${locale}/shipping-policy`,
           label: t('installationGuides'),
         },
         {
-          href: `/${locale}/about`,
+          href: `/${locale}/warranty`,
           label: t('certificates'),
         },
       ],

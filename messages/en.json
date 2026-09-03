@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "title": "REACH PROJECTOR - Complete Projection Setups for Every Space",
-    "description": "Plan a complete projection setup for home cinema, bedrooms, living rooms, outdoor viewing, education, hospitality, and events. Match projectors with screens, mounts, furniture, and accessories.",
-    "keywords": "projection setup, home cinema package, projector and screen, living room laser TV, bedroom projector, outdoor cinema, meeting room projector, REACH PROJECTOR"
+    "title": "Reach Projector | Expert Projector Advice & Global Retail",
+    "description": "Choose a projector for your room, screen size, ambient light and budget. Compare verified specifications, regional versions, shipping terms and buying options.",
+    "keywords": "projector buying guide, compare projectors, home theater projector, laser projector, ultra short throw projector, projector shipping, wholesale projectors, REACH PROJECTOR"
   },
   "common": {
     "loading": "Loading...",
@@ -25,7 +25,7 @@
     "getQuote": "Get Quote",
     "cart": "Cart",
     "search": "Search",
-    "authorizedDealer": "Complete Projection Setups",
+    "authorizedDealer": "Projector Advice & Global Retail",
     "projectors": "Projectors",
     "solutions": "Solutions",
     "oemOdmProjectors": "Business & Project Support",
@@ -37,11 +37,12 @@
     "bedroomCinema": "Bedroom Cinema",
     "backyardCamping": "Backyard & Camping",
     "portableScreen": "Portable Screen",
-    "resources": "Resources",
-    "compatibilityGuide": "Compatibility Guide",
-    "installationGuides": "Installation Guides/PDF",
-    "certificates": "Certificates",
-    "partnerWithUs": "Partner With Us",
+    "resources": "Buying Help",
+    "buyingGuides": "Buying Guides",
+    "compatibilityGuide": "Room & Screen Planning",
+    "installationGuides": "Shipping & Duties",
+    "certificates": "Warranty & Support",
+    "partnerWithUs": "Ask an Expert",
     "privateLabelStore": "Private Label Store",
     "allProducts": "All Products",
     "mounts": "Projector Mounts",
@@ -49,14 +50,14 @@
   },
   "home": {
     "hero": {
-      "subtitle": "Complete projection setups for real spaces",
-      "title1": "Build the Right Cinema",
-      "title2": "for Your",
-      "title3": "Space",
-      "description": "Choose a viewing scene first. We help match the projector with the right screen, mount or stand, furniture, and accessories for a complete setup.",
-      "getOemQuote": "Plan My Setup",
-      "browseProducts": "Browse Products",
-      "exploreKits": "Explore Scenario Kits",
+      "subtitle": "Expert guidance for home and business buyers",
+      "title1": "Choose the Right",
+      "title2": "Projector. Buy with",
+      "title3": "Confidence.",
+      "description": "Compare projectors by room, ambient light, screen size, throw distance and budget—with clear guidance on regional versions, shipping, duties and support.",
+      "getOemQuote": "Find My Projector",
+      "browseProducts": "Shop Projectors",
+      "exploreKits": "Shop by Use Case",
       "stats": {
         "countries": "Countries",
         "oemProjects": "OEM Projects",
@@ -66,9 +67,16 @@
     "viewProducts": "View Products",
     "viewAll": "View All",
     "viewAllProducts": "View All Products",
+    "guides": {
+      "eyebrow": "Projector Buying Guides",
+      "title": "Make the decision before you make the purchase",
+      "description": "Clear answers for room planning, product comparison, international shipping and business procurement.",
+      "viewAll": "View all guides",
+      "read": "Read guide"
+    },
     "categories": {
       "title": "Shop by Category",
-      "description": "Browse our complete range of projection equipment and accessories",
+      "description": "Start with the projector type or accessory you need, then compare verified specifications and practical fit.",
       "projectors": "4K Laser Projectors",
       "projectorsDesc": "Premium 4K projectors from XGIMI, Hisense, JMGO with laser light source",
       "ustLaser": "UST Laser TV",
@@ -80,7 +88,7 @@
     },
     "bestsellers": {
       "title": "Best Sellers",
-      "description": "Most popular projection equipment chosen by our global customers"
+      "description": "A focused selection for buyers comparing real specifications, room fit and international purchase requirements."
     },
     "solutions": {
       "title": "Start with the Space, Then Build the System",
@@ -107,26 +115,26 @@
       }
     },
     "whyPartner": {
-      "title": "Why Plan the Setup With Us",
+      "title": "Why Buy from Reach Projector",
       "cards": [
         {
-          "title": "Selection Based on the Space",
-          "desc": "We connect viewing distance, ambient light, image size, placement, and intended use with suitable equipment."
+          "title": "Advice Based on Your Space",
+          "desc": "Compare viewing distance, ambient light, image size, placement and intended use before choosing a model."
         },
         {
-          "title": "Complete Equipment Combinations",
-          "desc": "We coordinate the projector, screen, mount or stand, furniture, and accessories as one practical system."
+          "title": "Verified Product Information",
+          "desc": "We separate confirmed specifications from regional-version, compatibility and commercial details that still require confirmation."
         },
         {
-          "title": "Support for Different Use Cases",
-          "desc": "Plan residential, hospitality, education, meeting, event, rental, and business purchasing requirements from one scene-first framework."
+          "title": "Clear International Buying Terms",
+          "desc": "Available shipping, duties, warranty and payment terms are shown or confirmed for the product and destination before purchase."
         }
       ]
     },
     "contentStudio": {
-      "title": "See How the Pieces Work Together",
-      "desc": "Compare real viewing environments and understand how screen type, projector placement, ambient light, furniture, and accessories affect the final experience.",
-      "cta": "Explore Solutions by Scene"
+      "title": "Choose for the Room, Not the Spec Sheet Alone",
+      "desc": "Understand how screen type, throw distance, ambient light, placement and regional configuration affect the result before you buy.",
+      "cta": "Explore Use Cases"
     },
     "inspiration": {
       "title": "Inspiration for Your Space",
@@ -156,9 +164,9 @@
       }
     },
     "b2b": {
-      "title": "Ready to Build Your Brand?",
-      "description": "Whether you need 10 units or 10,000, we provide the products, branding, and content to make your projection business a success.",
-      "cta": "Start Your Partnership",
+      "title": "Projector Sourcing for Business & AV Projects",
+      "description": "For dealers, installers, hotels, schools, offices and event teams: request product selection, volume pricing, regional configuration and international delivery support.",
+      "cta": "Request a Business Quote",
       "features": {
         "bulkPricing": "Bulk Pricing",
         "bulkPricingDesc": "Competitive wholesale pricing for volume orders",
@@ -171,7 +179,7 @@
   },
   "footer": {
     "aboutTitle": "About REACH PROJECTOR",
-    "aboutText": "Your OEM/ODM projection partner. We provide projectors, mounts, screens and accessories with white-label and bulk deployment support for global businesses.",
+    "aboutText": "Projector advice and global retail for home buyers, with wholesale sourcing, OEM/ODM discussion and project support for qualified business customers.",
     "company1": "Quanzhou Reach Technology Co., Ltd.",
     "company2": "HK REACH SOURCING LIMITED",
     "quickLinks": "Quick Links",
@@ -302,8 +310,8 @@
   },
   "about": {
     "subtitle": "About REACH PROJECTOR",
-    "title": "Projection Solutions Built Around Real Spaces",
-    "description": "REACH PROJECTOR helps customers plan complete viewing environments by matching projectors with screens, mounts, furniture, and accessories for each room and use case.",
+    "title": "Helping Buyers Choose the Right Projector",
+    "description": "REACH PROJECTOR helps home and business buyers compare verified specifications, room fit, regional versions and international purchase requirements before ordering.",
     "story": {
       "title": "Our Story",
       "paragraph1": "REACH PROJECTOR started as a small team of projection enthusiasts in Quanzhou, Fujian, China. Our deep connections with manufacturers and our passion for projection technology gave us a unique advantage.",
@@ -316,20 +324,20 @@
       "customerSatisfaction": "Customer Satisfaction"
     },
     "whyChoose": {
-      "title": "Why Businesses Choose Us",
-      "description": "We provide end-to-end solutions for B2B and B2C customers worldwide",
-      "authenticProducts": "Authorized Dealer",
-      "authenticProductsDesc": "Official authorization from all brands we carry. Every product is 100% genuine with full manufacturer warranty and support.",
-      "competitivePricing": "Competitive Pricing",
-      "competitivePricingDesc": "Direct relationships with manufacturers mean we can offer the most competitive prices. Volume discounts available for B2B orders.",
-      "globalLogistics": "DDP Global Shipping",
-      "globalLogisticsDesc": "Delivered Duty Paid service to 50+ countries. We handle all customs, duties, taxes, and logistics. Zero hassle for you.",
-      "expertTeam": "Quality Assurance",
-      "expertTeamDesc": "Every product undergoes quality inspection before shipping. We stand behind every product with comprehensive after-sales support.",
+      "title": "Why Buyers Work With Us",
+      "description": "Clearer decisions for individual purchases, wholesale orders and AV projects",
+      "authenticProducts": "Source-Checked Product Information",
+      "authenticProductsDesc": "Product identity and key specifications are reviewed against available manufacturer or supplier evidence before publication.",
+      "competitivePricing": "Retail and Volume Options",
+      "competitivePricingDesc": "Individual buyers can shop listed products, while qualified business customers can request volume pricing and project quotations.",
+      "globalLogistics": "Destination-Specific Shipping",
+      "globalLogisticsDesc": "Available DDP, DAP or manual-quotation terms are identified by destination instead of being presented as one universal promise.",
+      "expertTeam": "Configuration Review",
+      "expertTeamDesc": "Regional version, system language, plug type, included accessories and warranty terms can be confirmed before ordering.",
       "globalReach": "Global Reach",
       "globalReachDesc": "Serving customers across Europe, Americas, Southeast Asia, and the Middle East. Multi-language support available.",
       "dedicatedSupport": "Dedicated Support",
-      "dedicatedSupportDesc": "Expert product consultation, technical support, and account management. Available via WhatsApp, email, and phone."
+      "dedicatedSupportDesc": "Product consultation and business account support are available through WhatsApp, email and the website inquiry forms."
     },
     "cta": {
       "title": "Ready to Plan Your Projection Space?",
@@ -340,7 +348,7 @@
   "contact": {
     "title": "Let's Start a Conversation",
     "subtitle": "Have a question about our products? Need a wholesale quote? We're here to help.",
-    "description": "Our team is ready to help you find the perfect solution. Get in touch via WhatsApp, email, or phone.",
+    "description": "Tell us about your room, use case, destination or business requirements. We will help narrow the suitable options and identify details that need confirmation.",
     "getInTouch": "Get in Touch",
     "email": "Email",
     "phone": "Phone",
@@ -391,7 +399,7 @@
     }
   },
   "Footer": {
-    "description": "Complete projection setups for homes, hospitality, education, meetings, events, and outdoor viewing—combining projectors, screens, mounts, furniture, and accessories.",
+    "description": "Projector advice and global retail for home buyers, with wholesale sourcing and AV project support for business customers.",
     "addressFujian": "No. 1108 Quan'an North Road, Jinjiang City, Quanzhou City, Fujian Province",
     "addressHongKong": "Room S007, 2/F, Capital Plaza, 61-65 Chatham Road South, Tsim Sha Tsui, Hong Kong",
     "products": "Products",

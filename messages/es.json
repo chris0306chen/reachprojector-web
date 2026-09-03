@@ -28,6 +28,7 @@
     "authorizedDealer": "Distribuidor autorizado de electrónica premium",
     "shopByScene": "Comprar por escenario",
     "resources": "Recursos",
+    "buyingGuides": "Guías de compra",
     "compatibilityGuide": "Guía de compatibilidad",
     "installationGuides": "Guías de instalación",
     "certificates": "Certificados",
@@ -65,6 +66,13 @@
     "viewProducts": "Ver productos",
     "viewAll": "Ver todo",
     "viewAllProducts": "Ver todos los productos",
+    "guides": {
+      "eyebrow": "Guías de compra de proyectores",
+      "title": "Decide bien antes de comprar",
+      "description": "Respuestas claras sobre planificación de salas, comparación, envíos internacionales y compras empresariales.",
+      "viewAll": "Ver todas las guías",
+      "read": "Leer guía"
+    },
     "bestsellers": {
       "title": "Más vendidos",
       "description": "Nuestros productos más populares elegidos por clientes en todo el mundo"

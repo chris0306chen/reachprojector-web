@@ -7,18 +7,18 @@ const applications = [
   {
     id: 1,
     title: 'Home Cinema Experience',
-    subtitle: '客厅家庭影院场景',
+    subtitle: 'Dedicated home cinema',
     description:
-      'Transform your living room into a cinematic paradise. Our 4K laser projectors deliver theater-quality visuals with stunning brightness and color accuracy, perfect for family movie nights.',
+      'Plan around viewing distance, screen size, room light and projector placement before comparing suitable home-cinema models.',
     image: '/images/cases/case-home-cinema.png',
     videoUrl: null, // 视频后续添加
   },
   {
     id: 2,
     title: 'Living Room Entertainment',
-    subtitle: '客厅休闲观影场景',
+    subtitle: 'Shared living space',
     description:
-      'Create the ultimate entertainment hub. Enjoy sports, gaming, and streaming on a massive screen that brings every moment to life with immersive detail.',
+      'Compare brightness, screen compatibility, throw distance and regional smart-platform support for everyday movies, sports and gaming.',
     image: '/images/cases/case-living-room.png',
     videoUrl: null, // 视频后续添加
   },
@@ -57,9 +57,8 @@ export default function RealWorldApplications() {
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
             Real-World Applications
           </h2>
-          <p className="text-lg text-gray-500 mb-4">真实应用场景</p>
           <p className="max-w-2xl mx-auto text-gray-600">
-            See how our projectors bring entertainment to life in real homes around the world
+            Start with the room and viewing goal, then compare the equipment requirements that shape a dependable result.
           </p>
         </div>
 
@@ -124,8 +123,8 @@ export default function RealWorldApplications() {
 
         {/* Expand Notice */}
         <div className="text-center mt-8">
-          <p className="text-sm text-gray-400 italic">
-            More application scenarios coming soon...
+          <p className="text-sm text-gray-500">
+            Need help with a specific room? Share the space, screen size and ambient-light conditions with our team.
           </p>
         </div>
       </div>

@@ -38,6 +38,7 @@
     "backyardCamping": "露营",
     "portableScreen": "便携屏",
     "resources": "资料下载",
+    "buyingGuides": "购买指南",
     "compatibilityGuide": "兼容性数据库",
     "installationGuides": "安装视频/PDF",
     "certificates": "认证文件",
@@ -66,6 +67,13 @@
     "viewProducts": "查看产品",
     "viewAll": "查看全部",
     "viewAllProducts": "查看所有产品",
+    "guides": {
+      "eyebrow": "投影仪购买指南",
+      "title": "先做正确判断，再决定购买",
+      "description": "提供房间规划、产品比较、国际运输和商业采购方面的清晰答案。",
+      "viewAll": "查看全部指南",
+      "read": "阅读指南"
+    },
     "categories": {
       "title": "按品类选购",
       "description": "浏览我们完整的投影设备和配件产品线",
