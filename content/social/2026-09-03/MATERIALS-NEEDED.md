@@ -8,7 +8,9 @@ Provide these items once; production can then continue without repeated question
 - YouTube supplied: `https://www.youtube.com/@reachprojector`.
 - LinkedIn personal profile supplied: `https://www.linkedin.com/in/chris-chen-488993186/?locale=en`.
 - TikTok is deferred until the owner registers an account.
-- Still needed: confirmation of the public display name and the job title used for LinkedIn B2B posts.
+- Public identity confirmed: Chris Chen, Sales Manager.
+- Instagram target display name confirmed: `Reach Projector | Buying Advice` (mobile-app change still required).
+- YouTube business email confirmed: `sales@reachtronics.com`.
 - Account access must be connected through the platform or browser at publication time; do not send passwords in chat or store them in the repository.
 
 ## First-week B2C filming
@@ -39,4 +41,4 @@ Record vertical 4K or 1080p video, 9:16, with the phone’s rear camera. Keep ea
 
 ## Publication handoff
 
-When the accounts are connected and the above clips are available, confirm which post should go first. Live posting, replies and messages remain human-reviewed actions even when the copy and scheduling are prepared by Codex.
+Accounts are connected. The first Instagram carousel and first LinkedIn text post can proceed without new filming. YouTube Shorts remains dependent on the original clips above. Live posting, replies and messages remain human-reviewed actions even when the copy and scheduling are prepared by Codex.
