@@ -1,5 +1,5 @@
 ---
-status: draft
+status: ready-for-review
 audience: B2C
 segment: First-time home projector buyers in North America and Europe
 platform: Instagram carousel
@@ -67,3 +67,17 @@ Most projector regrets begin before the projector arrives: the room was not meas
 Save this checklist and use it before comparing specifications. A good recommendation starts with your room—not a bestseller list.
 
 Research basis: recurring installation, screen, regional-system and connectivity questions in public projector-owner discussions. Product-specific claims require verification before publication.
+
+## Final assets
+
+Post the seven files in this order:
+
+1. `assets/instagram-carousel/01-check.png`
+2. `assets/instagram-carousel/02-screen.png`
+3. `assets/instagram-carousel/03-throw.png`
+4. `assets/instagram-carousel/04-light.png`
+5. `assets/instagram-carousel/05-use.png`
+6. `assets/instagram-carousel/06-connect.png`
+7. `assets/instagram-carousel/07-check.png`
+
+Each asset is 1080 × 1350 PNG. These are deterministic branded information graphics, not AI product imagery or real-room photography.
