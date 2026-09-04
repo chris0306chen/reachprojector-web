@@ -4,8 +4,11 @@ Provide these items once; production can then continue without repeated question
 
 ## Brand accounts
 
-- Instagram, TikTok, YouTube and LinkedIn company-page URLs.
-- Confirmation of the public account name and handle to use consistently.
+- Instagram supplied: `https://www.instagram.com/reachprojector/`.
+- YouTube supplied: `https://www.youtube.com/@reachprojector`.
+- LinkedIn personal profile supplied: `https://www.linkedin.com/in/chris-chen-488993186/?locale=en`.
+- TikTok is deferred until the owner registers an account.
+- Still needed: confirmation of the public display name and the job title used for LinkedIn B2B posts.
 - Account access must be connected through the platform or browser at publication time; do not send passwords in chat or store them in the repository.
 
 ## First-week B2C filming
