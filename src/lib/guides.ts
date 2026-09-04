@@ -310,6 +310,63 @@ export const buyingGuides: BuyingGuide[] = [
     ],
     cta: { label: 'Ask us to confirm a configuration', href: '/contact' },
   },
+  {
+    slug: 'ust-projector-cabinet-placement-checklist',
+    audience: 'Home buyers',
+    title: 'UST Projector Cabinet and Placement Checklist',
+    description: 'Measure cabinet depth, screen height, ventilation and cable space before buying an ultra-short-throw projector.',
+    directAnswer: 'Choose the target screen size first, then use the exact projector manual or calculator to determine the required distance from the screen and the image offset above the projector. Confirm that the cabinet can hold that position while leaving room for ventilation, cables, speakers and normal walking space.',
+    updatedAt: '2026-09-04',
+    readTime: '7 min read',
+    sections: [
+      {
+        title: 'Measure the complete geometry',
+        checklist: [
+          'Target screen diagonal and the screen\'s exact visible width and height.',
+          'Required distance from the screen surface to the projector reference point for that image size.',
+          'Vertical offset from the projector to the bottom of the visible image.',
+          'Final height of the screen bottom from the floor at the normal seating position.',
+        ],
+      },
+      {
+        title: 'Check whether the cabinet actually fits',
+        paragraphs: [
+          'UST placement changes quickly with small movements. A cabinet that looks deep enough may still push the projector into the walkway, raise the image too high or leave no room for rear-facing connectors. Use the exact model drawing rather than a generic UST distance.',
+          'If the projector will sit inside a recess, confirm that the cabinet sides and top do not block the expanding light path. A motorized tray can solve some layouts, but its travel, repeatability and load rating must be checked as part of the system.',
+        ],
+      },
+      {
+        title: 'Leave room for the rest of the system',
+        checklist: [
+          'Ventilation clearance specified by the manufacturer.',
+          'HDMI, power, Ethernet and audio cable bend radius.',
+          'Soundbar or center-speaker position without blocking the image path.',
+          'Screen case, motorized mechanism and service access.',
+          'A stable surface that will not shift during cleaning or daily use.',
+        ],
+      },
+      {
+        title: 'Avoid correcting a furniture problem digitally',
+        paragraphs: ['Digital keystone and geometric correction can help with final alignment, but they should not replace correct physical placement. Plan the cabinet and screen position first, then use correction only for minor finishing adjustments.'],
+      },
+      {
+        title: 'What to send for a compatibility check',
+        checklist: [
+          'Exact projector model and screen model.',
+          'Target image size and available wall dimensions.',
+          'Cabinet width, depth and height.',
+          'Photos from the front and side of the proposed location.',
+          'Speaker, game console, streaming box and AVR or soundbar connections.',
+        ],
+      },
+    ],
+    sources: [
+      { label: 'Hisense: PX3-PRO support and documentation', url: 'https://www.hisense-usa.com/support/projectors-laser-cinema-trichroma-laser-projector-px3-pro' },
+      { label: 'AWOL Vision: UST cabinet selection guide', url: 'https://awolvision.com/en-ca/blogs/awol-vision-blog/how-to-choose-cabinet-for-ust-projector' },
+      { label: 'AWOL Vision Support: image and screen alignment', url: 'https://support.awolvision.com/hc/en-us/articles/15956289161615-How-do-I-fine-tune-the-alignment-between-the-image-and-the-screen' },
+    ],
+    cta: { label: 'Send your room measurements', href: '/contact' },
+  },
 ]
 
 export function getBuyingGuide(slug: string) {

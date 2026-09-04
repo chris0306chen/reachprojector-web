@@ -11,11 +11,13 @@ Last reviewed: 2026-09-04
 
 | Priority | Channel | Content | Readiness | Owner input required |
 | --- | --- | --- | --- | --- |
-| 1 | Instagram | “6 Checks Before You Choose a Projector” carousel | Assets and caption ready | Login and final preview approval |
-| 2 | LinkedIn | Projector RFQ checklist | Copy and public identity ready | Login and final preview approval |
+| 1 | Instagram | “6 Checks Before You Choose a Projector” carousel | Published 2026-09-04 | Weekly metrics export |
+| 2 | LinkedIn | Projector RFQ checklist | Published 2026-09-04 | Weekly metrics export |
 | 3 | YouTube Shorts | “Measure First, Buy Second” | Script ready | Original vertical footage, login and final preview approval |
 | 4 | YouTube | Screen and regional-version buying guides | Article sources ready; video adaptation pending | Product/room footage and voice preference |
 | 5 | TikTok | Approved Shorts/Reels adaptations | Deferred | Register account and supply URL |
+| 6 | LinkedIn | Comparable international shipping brief | Copy ready for 2026-09-08 | Final preview approval |
+| 7 | Instagram | UST cabinet and placement checklist | Slide copy and caption ready for 2026-09-10; visual production pending | Final preview approval |
 
 ## Publication rules
 
