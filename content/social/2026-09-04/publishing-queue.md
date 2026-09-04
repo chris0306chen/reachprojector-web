@@ -5,9 +5,9 @@ Last reviewed: 2026-09-04
 ## Profile setup status
 
 - LinkedIn: primary and English headlines updated; About section published under Chris Chen, Sales Manager.
-- Instagram: English bio published. Display name remains `Reach projector Home theater` because Instagram web does not expose a name field; change it in the mobile app when convenient.
+- Instagram: English bio published. Target display name confirmed as `Reach Projector | Buying Advice`; Instagram web does not expose a name field, so this remains a mobile-app action.
 - YouTube: channel name changed to `Reach Projector`; English description and `Shop & Buying Guides` website link title published.
-- YouTube business contact remains `sales@reachtronics.com` pending confirmation of the preferred public email address.
+- YouTube business contact `sales@reachtronics.com` is confirmed and remains in use.
 
 | Priority | Channel | Content | Readiness | Owner input required |
 | --- | --- | --- | --- | --- |

@@ -8,6 +8,8 @@ Status: ready for owner review
 
 Reach Projector | Buying Advice
 
+Confirmed. Apply in the Instagram mobile app; the web profile editor does not expose this field.
+
 ### Bio
 
 Choose the right projector for your room.  
@@ -33,6 +35,10 @@ Wholesale and project inquiries: https://www.reachprojector.com/wholesale
 ### Short description
 
 Compatibility-first projector advice for home buyers, businesses and AV projects.
+
+### Business contact
+
+sales@reachtronics.com
 
 ## LinkedIn personal profile
 
