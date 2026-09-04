@@ -11,6 +11,8 @@ human_review_required: true
 
 # A projector RFQ should describe the room, not only the model
 
+By Chris Chen, Sales Manager at Reach Projector
+
 “Please quote Model X” is enough to receive a price. It is rarely enough to compare complete solutions.
 
 A procurement-ready projector RFQ should include:
@@ -29,4 +31,4 @@ Reach Projector supports retail purchases, wholesale sourcing and AV project req
 
 **CTA:** [Use the complete RFQ checklist](/en/guides/projector-rfq-checklist-for-business-buyers?utm_source=linkedin&utm_medium=organic_social&utm_campaign=projector_rfq_quality&utm_content=rfq_checklist_post_01)
 
-**Publication note:** Add the company representative’s real name and role before posting.
+**Publication note:** Public identity confirmed as Chris Chen, Sales Manager. Final platform preview still requires owner approval before posting.
