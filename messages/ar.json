@@ -207,6 +207,10 @@
       }
     },
     "showingProducts": "عرض {count} منتج",
+    "decisionFacts": "معلومات الشراء الأساسية",
+    "requestQuote": "اطلب عرض سعر للمشروع",
+    "priceOnRequest": "السعر عند الطلب",
+    "projectSupply": "توريد للمشاريع",
     "sort": {
       "newest": "الأحدث أولاً",
       "priceLowHigh": "السعر: من الأقل إلى الأعلى",
@@ -396,7 +400,24 @@
     "buyWithPaypal": "الشراء عبر PayPal",
     "description": "الوصف",
     "specifications": "المواصفات",
-    "relatedProducts": "منتجات ذات صلة"
+    "relatedProducts": "منتجات ذات صلة",
+    "projectQuote": "اطلب عرض سعر للمشروع",
+    "quoteOnly": "تتم التهيئة والتسعير حسب مشروعك",
+    "regionalTitle": "التهيئة المناسبة لمنطقتك",
+    "marketVersion": "إصدار السوق",
+    "systemLanguage": "لغة النظام",
+    "streamingSetup": "إعداد البث",
+    "plugAndVoltage": "القابس والجهد",
+    "warrantyLabel": "الضمان",
+    "dutiesLabel": "الرسوم والضرائب",
+    "confirmConfiguration": "نؤكد الجهاز المحدد ومتطلبات الوجهة قبل الشحن.",
+    "retailSupport": "هل تشتري لشركة أو تطلب 5 أجهزة فأكثر؟",
+    "bulkQuote": "اطلب سعر الكمية",
+    "orderConfidence": "اطلب بشروط واضحة",
+    "orderConfidenceText": "يتم عرض أو تأكيد طريقة الشحن وشروط DDP أو DAP والتكلفة النهائية قبل الدفع. لا يتم الجمع بين DDP وDAP.",
+    "securePayment": "دفع آمن بالبطاقة وPayPal",
+    "shippingTerms": "شروط شحن حسب الوجهة",
+    "preShipmentCheck": "فحص التهيئة قبل الشحن"
   },
   "about": {
     "subtitle": "عن REACH PROJECTOR",

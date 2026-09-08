@@ -54,7 +54,19 @@ interface Product {
   created_at: string;
   detail_content?: ProductDetailContent;
   scene_ids?: string[];
-  import_data?: { warranty?: string };
+  import_data?: {
+    warranty?: string;
+    sale_mode?: "retail" | "retail_and_bulk" | "quote_only";
+    commerce_profile?: {
+      sale_mode?: "retail" | "retail_and_bulk" | "quote_only";
+      market_version?: string;
+      system_language?: string;
+      streaming_setup?: string;
+      plug_and_voltage?: string;
+      warranty?: string;
+      duties?: string;
+    };
+  };
 }
 
 interface Category {
@@ -840,6 +852,12 @@ function ProductEditModal({
     oem_available: product.oem_available || product.support_oem || false,
     oem_notes: product.oem_notes || "",
     warranty: product.import_data?.warranty || "",
+    sale_mode: product.import_data?.commerce_profile?.sale_mode || product.import_data?.sale_mode || "retail" as "retail" | "retail_and_bulk" | "quote_only",
+    market_version: product.import_data?.commerce_profile?.market_version || "",
+    system_language: product.import_data?.commerce_profile?.system_language || "",
+    streaming_setup: product.import_data?.commerce_profile?.streaming_setup || "",
+    plug_and_voltage: product.import_data?.commerce_profile?.plug_and_voltage || "",
+    duties: product.import_data?.commerce_profile?.duties || "",
   });
   const [attachments, setAttachments] = useState<Array<{ url: string; name: string; size: number }>>(
     product.attachments || []
@@ -1014,6 +1032,15 @@ function ProductEditModal({
           ...(form.meta_description !== (product.meta_description || "")
             ? { meta_description: form.meta_description } : {}),
           ...(form.warranty !== (product.import_data?.warranty || "") ? { warranty: form.warranty } : {}),
+          commerce_profile: {
+            sale_mode: form.sale_mode,
+            market_version: form.market_version.trim(),
+            system_language: form.system_language.trim(),
+            streaming_setup: form.streaming_setup.trim(),
+            plug_and_voltage: form.plug_and_voltage.trim(),
+            warranty: form.warranty.trim(),
+            duties: form.duties.trim(),
+          },
         }),
       });
       const data = await res.json();
@@ -1314,6 +1341,45 @@ function ProductEditModal({
             </label>
             <span className="text-sm font-medium text-slate-700">支持 OEM 定制</span>
           </div>
+          <section className="space-y-4 rounded-xl border border-slate-200 p-4">
+            <div>
+              <h3 className="font-semibold text-slate-900">销售模式与海外配置</h3>
+              <p className="text-xs leading-5 text-slate-500">这些信息会显示在产品购买区。工程型号选择“仅项目询价”后不会出现零售价格和结账按钮。</p>
+            </div>
+            <label className="block text-sm font-medium text-slate-700">
+              <span className="mb-1 block">销售模式</span>
+              <select
+                value={form.sale_mode}
+                onChange={(event) => setForm({ ...form, sale_mode: event.target.value as "retail" | "retail_and_bulk" | "quote_only" })}
+                className="w-full rounded-lg border border-slate-200 px-3 py-2"
+              >
+                <option value="retail">零售——直接结账</option>
+                <option value="retail_and_bulk">零售 + 批量询价</option>
+                <option value="quote_only">仅项目询价——不显示结账</option>
+              </select>
+            </label>
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              {[
+                ["市场版本", "market_version", "例如：中国市场版本 / Global version"],
+                ["系统语言", "system_language", "例如：中文、英文"],
+                ["流媒体方案", "streaming_setup", "例如：建议搭配经过测试的 HDMI 流媒体盒"],
+                ["插头与电压", "plug_and_voltage", "例如：国标插头，100–240V；按目的地配转换头"],
+                ["关税与税费", "duties", "例如：按结账目的地显示 DDP 或 DAP"],
+              ].map(([label, field, placeholder]) => (
+                <label key={field} className="text-sm text-slate-700">
+                  <span className="mb-1 block font-medium">{label}</span>
+                  <input
+                    type="text"
+                    maxLength={240}
+                    value={form[field as keyof typeof form] as string}
+                    onChange={(event) => setForm({ ...form, [field]: event.target.value })}
+                    placeholder={placeholder}
+                    className="w-full rounded-lg border border-slate-200 px-3 py-2"
+                  />
+                </label>
+              ))}
+            </div>
+          </section>
           <section className="rounded-xl border border-slate-200 p-4 space-y-4">
             <div>
               <h3 className="font-semibold text-slate-900">尺寸、重量与运费</h3>

@@ -6,6 +6,7 @@ import { ProductDetailClient } from './product-detail-client';
 import PricingRFQWrapper from '@/components/b2b/PricingRFQWrapper';
 import { generateProductSchema, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo';
 import { normalizeProductDetail } from '@/lib/product-detail';
+import { getProductCommerceProfile } from '@/lib/product-commerce';
 import { getTranslations } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
@@ -47,6 +48,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     ? (product.import_data as { geo_content?: { faq?: Array<{ question: string; answer: string }> } }).geo_content
     : undefined;
   const verifiedFaq = Array.isArray(geoContent?.faq) ? geoContent.faq : [];
+  const commerceProfile = getProductCommerceProfile(product.import_data);
+  const hasRetailOffer = commerceProfile.saleMode !== 'quote_only' && Number(product.price) > 0;
 
   return (
     <div className="bg-white min-h-screen">
@@ -98,6 +101,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               ? 'in_stock'
               : 'out_of_stock',
             locale,
+            includeOffer: hasRetailOffer,
             additionalProperties: structuredDetail.specifications.map((item) => ({
               name: item.name,
               value: item.value,

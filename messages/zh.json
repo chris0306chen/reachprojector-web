@@ -212,6 +212,10 @@
       }
     },
     "showingProducts": "显示 {count} 个产品",
+    "decisionFacts": "关键选购信息",
+    "requestQuote": "获取项目报价",
+    "priceOnRequest": "价格请询价",
+    "projectSupply": "项目供应",
     "sort": {
       "newest": "最新优先",
       "priceLowHigh": "价格：从低到高",
@@ -306,7 +310,24 @@
     "buyWithPaypal": "使用 PayPal 购买",
     "description": "产品描述",
     "specifications": "规格参数",
-    "relatedProducts": "相关产品"
+    "relatedProducts": "相关产品",
+    "projectQuote": "获取项目报价",
+    "quoteOnly": "根据项目配置并报价",
+    "regionalTitle": "适用于您所在地区的配置",
+    "marketVersion": "市场版本",
+    "systemLanguage": "系统语言",
+    "streamingSetup": "流媒体方案",
+    "plugAndVoltage": "插头与电压",
+    "warrantyLabel": "保修",
+    "dutiesLabel": "关税与税费",
+    "confirmConfiguration": "发货前我们会确认具体机器版本和目的地要求。",
+    "retailSupport": "企业采购或购买 5 台以上？",
+    "bulkQuote": "申请批量报价",
+    "orderConfidence": "条款清楚后再下单",
+    "orderConfidenceText": "付款前会显示或确认运输方式、DDP 或 DAP 条款及最终到岸成本。DDP 与 DAP 不会混用。",
+    "securePayment": "安全的银行卡及 PayPal 支付",
+    "shippingTerms": "按目的地确定运输条款",
+    "preShipmentCheck": "发货前核对产品配置"
   },
   "about": {
     "subtitle": "关于REACH PROJECTOR",

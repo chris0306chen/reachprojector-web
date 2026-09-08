@@ -212,6 +212,10 @@
       }
     },
     "showingProducts": "Showing {count} products",
+    "decisionFacts": "Key buying facts",
+    "requestQuote": "Request a project quote",
+    "priceOnRequest": "Price on request",
+    "projectSupply": "Project supply",
     "sort": {
       "newest": "Newest First",
       "priceLowHigh": "Price: Low to High",
@@ -306,7 +310,24 @@
     "buyWithPaypal": "Buy Now with PayPal",
     "description": "Description",
     "specifications": "Specifications",
-    "relatedProducts": "Related Products"
+    "relatedProducts": "Related Products",
+    "projectQuote": "Request Project Quote",
+    "quoteOnly": "Configured and quoted for your project",
+    "regionalTitle": "Configuration for your region",
+    "marketVersion": "Market version",
+    "systemLanguage": "System language",
+    "streamingSetup": "Streaming setup",
+    "plugAndVoltage": "Plug and voltage",
+    "warrantyLabel": "Warranty",
+    "dutiesLabel": "Duties and taxes",
+    "confirmConfiguration": "We confirm the exact unit and destination requirements before shipment.",
+    "retailSupport": "Buying for a business or ordering 5+ units?",
+    "bulkQuote": "Request volume pricing",
+    "orderConfidence": "Order with clear terms",
+    "orderConfidenceText": "Shipping method, DDP or DAP terms, and the final landed cost are shown or confirmed before payment. DDP and DAP are never combined.",
+    "securePayment": "Secure card and PayPal payment",
+    "shippingTerms": "Destination-specific shipping terms",
+    "preShipmentCheck": "Configuration checked before shipment"
   },
   "about": {
     "subtitle": "About REACH PROJECTOR",

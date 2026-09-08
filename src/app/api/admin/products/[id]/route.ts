@@ -53,6 +53,41 @@ export async function PUT(
       Object.entries(body).filter(([key]) => allowedFields.has(key))
     ) as Record<string, unknown>;
 
+    if (Object.prototype.hasOwnProperty.call(body, "commerce_profile")) {
+      const profile = body.commerce_profile;
+      if (!profile || typeof profile !== "object" || Array.isArray(profile)) {
+        return NextResponse.json({ error: "销售与区域配置格式不正确" }, { status: 400 });
+      }
+      const source = profile as Record<string, unknown>;
+      const saleMode = String(source.sale_mode || "");
+      if (!["retail", "retail_and_bulk", "quote_only"].includes(saleMode)) {
+        return NextResponse.json({ error: "请选择有效的销售模式" }, { status: 400 });
+      }
+      const commerceProfile: Record<string, string> = { sale_mode: saleMode };
+      for (const field of ["market_version", "system_language", "streaming_setup", "plug_and_voltage", "warranty", "duties"]) {
+        const value = typeof source[field] === "string" ? source[field].trim() : "";
+        if (value.length > 240) {
+          return NextResponse.json({ error: `${field} 不能超过 240 个字符` }, { status: 400 });
+        }
+        commerceProfile[field] = value;
+      }
+      const supabase = await getSupabaseClient();
+      const { data: currentProduct, error: currentProductError } = await supabase
+        .from("products")
+        .select("import_data")
+        .eq("id", id)
+        .single();
+      if (currentProductError) throw currentProductError;
+      const currentImportData = currentProduct?.import_data && typeof currentProduct.import_data === "object"
+        ? currentProduct.import_data as Record<string, unknown>
+        : {};
+      updateData.import_data = {
+        ...currentImportData,
+        commerce_profile: commerceProfile,
+        sale_mode: saleMode,
+      };
+    }
+
     if (Object.prototype.hasOwnProperty.call(body, "warranty")) {
       const warranty = typeof body.warranty === "string" ? body.warranty.trim() : "";
       if (warranty.length > 160) {
@@ -75,6 +110,9 @@ export async function PUT(
           : {};
       updateData.import_data = {
         ...currentImportData,
+        ...(updateData.import_data && typeof updateData.import_data === "object"
+          ? updateData.import_data as Record<string, unknown>
+          : {}),
         warranty,
       };
       const detail = normalizeProductDetail(updateData.detail_content ?? mediaBackup.detail_content);
@@ -121,6 +159,14 @@ export async function PUT(
         publicationProduct?.import_data && typeof publicationProduct.import_data === "object"
           ? publicationProduct.import_data as Record<string, unknown>
           : {};
+      const effectiveImportData = updateData.import_data && typeof updateData.import_data === "object"
+        ? updateData.import_data as Record<string, unknown>
+        : publicationImportData;
+      const commerceProfile = effectiveImportData.commerce_profile && typeof effectiveImportData.commerce_profile === "object"
+        ? effectiveImportData.commerce_profile as Record<string, unknown>
+        : {};
+      const saleMode = String(commerceProfile.sale_mode || effectiveImportData.sale_mode || "retail");
+      const quoteOnly = saleMode === "quote_only";
       const publicationMediaBackup =
         publicationImportData.admin_media_backup && typeof publicationImportData.admin_media_backup === "object"
           ? publicationImportData.admin_media_backup as Record<string, unknown>
@@ -139,14 +185,16 @@ export async function PUT(
       const effectiveInventory = updateData.inventory_quantity ?? publicationProduct?.inventory_quantity;
       const images = Array.isArray(effectiveImages) ? effectiveImages : [];
       if (!effectiveName || !effectiveSku || !effectiveBrand || !effectiveSlug || !effectiveCategory
-          || !Number.isFinite(Number(effectivePrice))
-          || Number(effectivePrice) <= 0 || images.length === 0) {
+          || (!quoteOnly && (!Number.isFinite(Number(effectivePrice)) || Number(effectivePrice) <= 0))
+          || images.length === 0) {
         return NextResponse.json(
-          { error: "发布前必须填写产品名称、SKU、品牌、Slug、分类、有效价格并至少上传一张主图" },
+          { error: quoteOnly
+            ? "询价产品发布前必须填写产品名称、SKU、品牌、Slug、分类并至少上传一张主图"
+            : "零售产品发布前必须填写产品名称、SKU、品牌、Slug、分类、有效价格并至少上传一张主图" },
           { status: 400 }
         );
       }
-      if (effectiveStockStatus === "in_stock" && Number(effectiveInventory) <= 0) {
+      if (!quoteOnly && effectiveStockStatus === "in_stock" && Number(effectiveInventory) <= 0) {
         return NextResponse.json(
           { error: "现货商品上架前必须填写大于 0 的可售库存数量" },
           { status: 400 }

@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { useTranslations, useMessages } from 'next-intl';
+import { useTranslations, useMessages, useLocale } from 'next-intl';
 import type { Product } from '@/storage/database/shared/schema';
+import { getProductCommerceProfile, getProductDecisionFacts } from '@/lib/product-commerce';
 
 interface ProductCardProps {
   product: Product;
@@ -8,9 +9,13 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const t = useTranslations('products');
+  const locale = useLocale();
   const messages = useMessages();
   const imageUrl = product.images?.[0] || '/images/placeholder-product.jpg';
   const price = parseFloat(product.price);
+  const commerce = getProductCommerceProfile(product.import_data);
+  const decisionFacts = getProductDecisionFacts(product.specifications, product.import_data);
+  const isAvailable = product.stock_status === 'in_stock' && product.inventory_quantity > 0;
 
   // Get translated product name and description with fallback
   const productItems = (messages as Record<string, unknown>)?.products as Record<string, unknown> | undefined;
@@ -21,7 +26,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Link
-      href={`/products/${product.slug}`}
+      href={`/${locale}/products/${product.slug}`}
       className="group block overflow-hidden rounded-xl bg-white shadow-[0_1px_0_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_48px_rgba(15,23,42,0.12)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-500"
     >
       {/* Image */}
@@ -60,18 +65,33 @@ export function ProductCard({ product }: ProductCardProps) {
             {displayShortDesc}
           </p>
         )}
+        {decisionFacts.length > 0 && (
+          <ul className="mb-4 flex flex-wrap gap-1.5" aria-label={t('decisionFacts')}>
+            {decisionFacts.map((fact) => (
+              <li key={fact} className="rounded border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-medium leading-4 text-slate-600">
+                {fact}
+              </li>
+            ))}
+          </ul>
+        )}
         <div className="flex items-end justify-between gap-3 border-t border-slate-100 pt-4">
-          <div className="flex items-baseline gap-2">
+          {commerce.saleMode === 'quote_only' ? (
+            <span className="text-sm font-semibold text-orange-600">{t('requestQuote')}</span>
+          ) : <div className="flex items-baseline gap-2">
             <span className="text-lg font-bold text-slate-900">
-              ${price.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              {Number.isFinite(price) && price > 0
+                ? `$${price.toLocaleString('en-US', { minimumFractionDigits: 2 })}`
+                : t('priceOnRequest')}
             </span>
             {product.compare_at_price && (
               <span className="text-xs text-slate-400 line-through">
                 ${parseFloat(product.compare_at_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </span>
             )}
-          </div>
-          {product.stock_status === 'in_stock' ? (
+          </div>}
+          {commerce.saleMode === 'quote_only' ? (
+            <span className="text-xs font-medium text-slate-500">{t('projectSupply')}</span>
+          ) : isAvailable ? (
             <span className="text-xs text-green-600 font-medium">{t('stock.inStock')}</span>
           ) : (
             <span className="text-xs text-red-500 font-medium">{t('stock.outOfStock')}</span>

@@ -207,6 +207,10 @@
       }
     },
     "showingProducts": "Показано {count} продуктов",
+    "decisionFacts": "Ключевые данные для выбора",
+    "requestQuote": "Запросить проектное предложение",
+    "priceOnRequest": "Цена по запросу",
+    "projectSupply": "Проектная поставка",
     "sort": {
       "newest": "Сначала новые",
       "priceLowHigh": "Цена: по возрастанию",
@@ -396,7 +400,24 @@
     "buyWithPaypal": "Купить через PayPal",
     "description": "Описание",
     "specifications": "Характеристики",
-    "relatedProducts": "Похожие продукты"
+    "relatedProducts": "Похожие продукты",
+    "projectQuote": "Запросить проектное предложение",
+    "quoteOnly": "Комплектация и цена определяются для проекта",
+    "regionalTitle": "Конфигурация для вашего региона",
+    "marketVersion": "Версия для рынка",
+    "systemLanguage": "Язык системы",
+    "streamingSetup": "Настройка стриминга",
+    "plugAndVoltage": "Вилка и напряжение",
+    "warrantyLabel": "Гарантия",
+    "dutiesLabel": "Пошлины и налоги",
+    "confirmConfiguration": "Перед отправкой мы подтверждаем точную версию и требования страны назначения.",
+    "retailSupport": "Покупаете для бизнеса или 5 и более устройств?",
+    "bulkQuote": "Запросить оптовую цену",
+    "orderConfidence": "Заказ с понятными условиями",
+    "orderConfidenceText": "Способ доставки, условия DDP или DAP и итоговая стоимость показываются или подтверждаются до оплаты. DDP и DAP не смешиваются.",
+    "securePayment": "Безопасная оплата картой и PayPal",
+    "shippingTerms": "Условия доставки для страны назначения",
+    "preShipmentCheck": "Проверка конфигурации перед отправкой"
   },
   "about": {
     "subtitle": "О REACH PROJECTOR",

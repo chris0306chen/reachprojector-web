@@ -207,6 +207,10 @@
       }
     },
     "showingProducts": "Mostrando {count} productos",
+    "decisionFacts": "Datos clave de compra",
+    "requestQuote": "Solicitar cotización del proyecto",
+    "priceOnRequest": "Precio bajo consulta",
+    "projectSupply": "Suministro para proyectos",
     "sort": {
       "newest": "Más recientes",
       "priceLowHigh": "Precio: menor a mayor",
@@ -396,7 +400,24 @@
     "buyWithPaypal": "Comprar con PayPal",
     "description": "Descripción",
     "specifications": "Especificaciones",
-    "relatedProducts": "Productos relacionados"
+    "relatedProducts": "Productos relacionados",
+    "projectQuote": "Solicitar cotización del proyecto",
+    "quoteOnly": "Configurado y cotizado para su proyecto",
+    "regionalTitle": "Configuración para su región",
+    "marketVersion": "Versión de mercado",
+    "systemLanguage": "Idioma del sistema",
+    "streamingSetup": "Configuración de streaming",
+    "plugAndVoltage": "Enchufe y voltaje",
+    "warrantyLabel": "Garantía",
+    "dutiesLabel": "Aranceles e impuestos",
+    "confirmConfiguration": "Confirmamos la unidad exacta y los requisitos del destino antes del envío.",
+    "retailSupport": "¿Compra para una empresa o 5 unidades o más?",
+    "bulkQuote": "Solicitar precio por volumen",
+    "orderConfidence": "Compre con condiciones claras",
+    "orderConfidenceText": "El método de envío, las condiciones DDP o DAP y el coste final se muestran o confirman antes del pago. DDP y DAP nunca se combinan.",
+    "securePayment": "Pago seguro con tarjeta y PayPal",
+    "shippingTerms": "Condiciones de envío según destino",
+    "preShipmentCheck": "Configuración verificada antes del envío"
   },
   "about": {
     "subtitle": "Sobre REACH PROJECTOR",

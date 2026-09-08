@@ -34,6 +34,7 @@ export interface ProductSEOData {
   reviewCount?: number
   locale?: string
   additionalProperties?: Array<{ name: string; value: string }>
+  includeOffer?: boolean
 }
 
 export interface BreadcrumbItem {
@@ -127,26 +128,30 @@ export function generateProductSchema(product: ProductSEOData) {
           })),
         }
       : {}),
-    offers: {
-      '@type': 'Offer',
-      price: product.price,
-      priceCurrency: product.currency,
-      availability: availabilityMap[product.availability],
-      url: `${SITE_URL}/${product.locale || 'en'}/products/${product.sku}`,
-      seller: {
-        '@type': 'Organization',
-        name: SITE_NAME,
-      },
-      ...(product.originalPrice
-        ? {
-            priceSpecification: {
-              '@type': 'PriceSpecification',
-              price: product.price,
-              priceCurrency: product.currency,
+    ...(product.includeOffer !== false
+      ? {
+          offers: {
+            '@type': 'Offer',
+            price: product.price,
+            priceCurrency: product.currency,
+            availability: availabilityMap[product.availability],
+            url: `${SITE_URL}/${product.locale || 'en'}/products/${product.sku}`,
+            seller: {
+              '@type': 'Organization',
+              name: SITE_NAME,
             },
-          }
-        : {}),
-    },
+            ...(product.originalPrice
+              ? {
+                  priceSpecification: {
+                    '@type': 'PriceSpecification',
+                    price: product.price,
+                    priceCurrency: product.currency,
+                  },
+                }
+              : {}),
+          },
+        }
+      : {}),
     ...(product.rating && product.reviewCount
       ? {
           aggregateRating: {
