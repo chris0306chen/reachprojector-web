@@ -13,11 +13,9 @@ export function Footer() {
 
   const footerLinks = {
     products: [
-      { href: `/${locale}/products?category=high-end-home-theater-projectors`, label: t('home.categories.projectors') },
-      { href: `/${locale}/products?category=ust-laser-tv`, label: t('home.categories.ustLaser') },
-      { href: `/${locale}/products?category=projector-mounts`, label: t('home.categories.mounts') },
-      { href: `/${locale}/products?category=projection-screens`, label: t('home.categories.screens') },
       { href: `/${locale}/products`, label: t('allProducts') },
+      { href: `/${locale}/products?category=projection-screens`, label: t('projectionScreens') },
+      { href: `/${locale}/products?category=projector-mounts`, label: t('mountsAccessories') },
     ],
     company: [
       { href: `/${locale}/about`, label: tNav('about') },
