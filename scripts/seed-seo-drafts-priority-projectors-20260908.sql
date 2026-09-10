@@ -145,17 +145,11 @@ SELECT
   meta_description, import_data, 'out_of_stock', 0,
   false, false, false, false, 0, now()
 FROM prepared
-ON CONFLICT (sku) DO UPDATE SET
-  short_description = EXCLUDED.short_description,
-  description = EXCLUDED.description,
-  specifications = EXCLUDED.specifications,
-  features = EXCLUDED.features,
-  detail_content = EXCLUDED.detail_content,
-  seo_title = EXCLUDED.seo_title,
-  meta_description = EXCLUDED.meta_description,
-  import_data = COALESCE(public.products.import_data, '{}'::jsonb) || EXCLUDED.import_data,
-  updated_at = now()
-WHERE public.products.is_active = false;
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM public.products existing
+  WHERE existing.sku = prepared.sku OR existing.slug = prepared.slug
+);
 
 UPDATE public.products
 SET import_data = COALESCE(import_data, '{}'::jsonb) || jsonb_build_object(
