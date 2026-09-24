@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useTranslations, useMessages, useLocale } from 'next-intl';
 import type { Product } from '@/storage/database/shared/schema';
 import { getProductCommerceProfile, getProductDecisionFacts } from '@/lib/product-commerce';
+import { cleanPublicProductText } from '@/lib/public-product-copy';
 
 interface ProductCardProps {
   product: Product;
@@ -22,7 +23,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const items = productItems?.items as Record<string, { name?: string; shortDescription?: string }> | undefined;
   const translatedItem = items?.[product.slug];
   const displayName = translatedItem?.name || product.name;
-  const displayShortDesc = translatedItem?.shortDescription || product.short_description;
+  const displayShortDesc = cleanPublicProductText(translatedItem?.shortDescription || product.short_description);
 
   return (
     <Link

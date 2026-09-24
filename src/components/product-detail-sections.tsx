@@ -3,6 +3,7 @@ import {
   type ProductDetailContent,
   type ProductSpecificationItem,
 } from "@/lib/product-detail";
+import { cleanPublicProductText } from "@/lib/public-product-copy";
 
 interface ProductDetailSectionsProps {
   content: ProductDetailContent | null | undefined;
@@ -39,11 +40,15 @@ export function ProductDetailSections({
   const detail = normalizeProductDetail(content);
   const specifications: ProductSpecificationItem[] =
     detail.specifications.length > 0
-      ? detail.specifications
+      ? detail.specifications.map((item) => ({
+          ...item,
+          name: cleanPublicProductText(item.name),
+          value: cleanPublicProductText(item.value),
+        }))
       : Object.entries(legacySpecifications || {}).map(([name, value]) => ({
           group: "Other",
-          name,
-          value: String(value),
+          name: cleanPublicProductText(name),
+          value: cleanPublicProductText(String(value)),
         }));
 
   const groupedSpecifications = specifications.reduce<Record<string, ProductSpecificationItem[]>>(

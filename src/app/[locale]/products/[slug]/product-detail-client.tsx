@@ -8,6 +8,7 @@ import type { Product } from '@/storage/database/shared/schema';
 import { ProductCard } from '@/components/product-card';
 import { ProductDetailSections } from '@/components/product-detail-sections';
 import { getProductCommerceProfile } from '@/lib/product-commerce';
+import { cleanPublicProductText } from '@/lib/public-product-copy';
 
 interface ProductDetailClientProps {
   product: Product;
@@ -28,7 +29,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
     commerce.marketVersion || commerce.systemLanguage || commerce.streamingSetup
     || commerce.plugAndVoltage || commerce.warranty || commerce.duties
   );
-  const features = product.features || [];
+  const features = (product.features || []).map(cleanPublicProductText).filter(Boolean);
 
   // Get translated product name and description with fallback
   const messages = useMessages();
@@ -36,8 +37,8 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
   const items = productItems?.items as Record<string, { name?: string; shortDescription?: string; description?: string }> | undefined;
   const translatedItem = items?.[product.slug];
   const displayName = translatedItem?.name || product.name;
-  const displayShortDesc = translatedItem?.shortDescription || product.short_description;
-  const displayDescription = translatedItem?.description || product.description;
+  const displayShortDesc = cleanPublicProductText(translatedItem?.shortDescription || product.short_description);
+  const displayDescription = cleanPublicProductText(translatedItem?.description || product.description);
 
   const whatsappMessage = encodeURIComponent(
     `Hi, I am interested in ${displayName} (${product.brand}). Could you please provide more details and pricing?`

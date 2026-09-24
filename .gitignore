@@ -106,6 +106,9 @@ out/
 coverage/
 *.lcov
 .nyc_output
+playwright-report/
+test-results/
+.lighthouseci/
 # Environment variables
 .env.local
 .env.development.local
