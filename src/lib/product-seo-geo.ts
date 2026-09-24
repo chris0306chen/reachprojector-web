@@ -41,7 +41,7 @@ export function buildProductGeoContent(product: ImportedProduct): ProductGeoCont
   const limitations = [
     !product.model ? "The source did not provide a confirmed model number." : "",
     !product.specifications.length ? "The source did not provide a structured specification list." : "",
-    "Price, inventory, regional version, warranty and shipping terms require confirmation before publication.",
+    "Confirm current price, inventory, regional version, warranty and shipping terms before ordering.",
   ].filter(Boolean);
   const faq = [
     ...(product.specifications.length ? [{
