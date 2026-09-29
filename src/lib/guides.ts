@@ -367,6 +367,70 @@ export const buyingGuides: BuyingGuide[] = [
     ],
     cta: { label: 'Send your room measurements', href: '/contact' },
   },
+
+  {
+    slug: 'projector-distance-for-100-inch-screen',
+    audience: 'Home buyers',
+    title: 'How Far Should a Projector Be from a 100-Inch Screen?',
+    description: 'Calculate the distance for a 100-inch image and check whether your shelf, ceiling mount or cabinet position will work before buying.',
+    directAnswer: 'A 100-inch 16:9 image is about 2.214 metres wide. Multiply that width by the exact projector throw ratio: at 1.2:1, the calculated distance is 2.66 metres (8.72 feet). Confirm the position with the model installation drawing before ordering or fixing a mount.',
+    updatedAt: '2026-09-29',
+    readTime: '5 min read',
+    sections: [
+      {
+        title: 'Start with the image width',
+        paragraphs: [
+          'The 100-inch label is a diagonal measurement. Throw ratio uses image width: distance divided by width. For a 16:9 image, width is diagonal × 16 ÷ √337; height is diagonal × 9 ÷ √337.',
+          'That gives an image approximately 221.4 cm wide and 124.5 cm high. These are calculated image dimensions, not the outside dimensions of a screen frame. Check the screen drawing before deciding whether it fits your wall.',
+        ],
+      },
+      {
+        title: 'What different ratios mean for your room',
+        paragraphs: ['The following are rounded calculations for a 100-inch 16:9 image using hypothetical ratios. They are not tested mounting positions or claims that a particular model supports this image size.'],
+        checklist: [
+          '0.5:1 — 1.11 metres (3.63 feet).',
+          '1.0:1 — 2.21 metres (7.26 feet).',
+          '1.2:1 — 2.66 metres (8.72 feet).',
+          '1.5:1 — 3.32 metres (10.89 feet).',
+          '2.0:1 — 4.43 metres (14.53 feet).',
+        ],
+      },
+      {
+        title: 'A three-metre room is not a three-metre throw',
+        paragraphs: [
+          'For a conventional front-lens projector, use the lens-to-screen measurement in its manual. A rear shelf, the projector body, connectors and required ventilation can reduce the usable distance. Measure the planned lens position rather than assuming the full room depth is available.',
+          'If the lens can actually sit 3.00 metres from the image surface, the required ratio is approximately 3.00 ÷ 2.214 = 1.36:1. Check whether the exact model and lens support that ratio at a 100-inch image size. A model outside that range needs a different position or image size.',
+          'This calculation answers a placement question. It does not establish brightness, source compatibility or image quality. Your seating distance is a separate measurement.',
+        ],
+      },
+      {
+        title: 'Before buying the screen or drilling the ceiling',
+        checklist: [
+          'Confirm the exact model, lens where applicable, aspect ratio and supported image-size range.',
+          'Check the manufacturer calculator and installation drawing, including zoom range and vertical placement.',
+          'Allow for the screen frame, cables and model-specific ventilation clearances.',
+          'Verify the proposed image position with the actual unit before permanent installation.',
+        ],
+      },
+      {
+        title: 'For UST, use the cabinet drawing',
+        paragraphs: ['Do not treat a calculated optical throw distance as the gap between an ultra-short-throw projector and the wall. Use the exact model placement drawing to check cabinet depth and screen height together. A distance that looks small in a specification does not establish that your existing furniture fits.'],
+      },
+      {
+        title: 'Send a room brief, not just a model name',
+        paragraphs: [
+          'For a home setup, send the target image size, available wall dimensions, planned lens or cabinet position, viewing light conditions and candidate model. Include the screen model if you have chosen one.',
+          'For a classroom, hotel or multi-room project, add room count, quantities, signal sources, destination and installation constraints to the same contact request. Record measurements for each room layout before requesting a common equipment specification.',
+        ],
+      },
+    ],
+    sources: [
+      { label: 'BenQ: screen size and throw-ratio calculation', url: 'https://www.benq.com/en-me/knowledge-center/knowledge/projector-installation-calculator.html' },
+      { label: 'Epson: throw distance and positioning', url: 'https://epson.com/projector-guide-how-to-buy-a-projector-throw-distance-and-positioning' },
+      { label: 'BenQ LU9750 manual: lens-to-screen geometry (model-specific example)', url: 'https://esupportdownload.benq.com/esupport/PROJECTOR/UserManual/LU9750/LU9750_UM_EN_211108155601.pdf' },
+    ],
+    cta: { label: 'Send your room or project measurements', href: '/contact' },
+  },
 ]
 
 export function getBuyingGuide(slug: string) {
