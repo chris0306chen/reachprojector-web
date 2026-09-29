@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowDown, ArrowUp, ImagePlus, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, GripVertical, ImagePlus, Star, Trash2 } from "lucide-react";
 import {
   EMPTY_PRODUCT_DETAIL,
   LOGISTICS_IMAGE_TYPES,
@@ -10,6 +10,7 @@ import {
   type ProductDetailImage,
   type ProductLogisticsImage,
 } from "@/lib/product-detail";
+import { moveArrayItem } from "@/lib/product-presentation";
 
 interface ProductDetailEditorProps {
   value: ProductDetailContent | null | undefined;
@@ -87,6 +88,7 @@ export function ProductDetailEditor({
   const detail = value || EMPTY_PRODUCT_DETAIL;
   const [specificationSource, setSpecificationSource] = useState("");
   const [uploadStatus, setUploadStatus] = useState<UploadStatus>(null);
+  const [draggedMainImage, setDraggedMainImage] = useState<number | null>(null);
   const update = <K extends keyof ProductDetailContent>(key: K, next: ProductDetailContent[K]) =>
     onChange({ ...detail, [key]: next });
 
@@ -336,7 +338,7 @@ export function ProductDetailEditor({
           </div>
         </div>
       ))}
-      <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-600 hover:border-orange-400 hover:bg-orange-50/40">
+      <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-600 hover:border-orange-400 hover:bg-slate-50 hover:text-orange-700">
         <ImagePlus className="h-4 w-4" />
         批量上传图片
         <input
@@ -362,29 +364,88 @@ export function ProductDetailEditor({
           产品主图 <span className="text-red-500">*</span>
         </h3>
         <p className="mt-1 text-sm text-slate-500">
-          最多八张；上传时自动生成 SEO 文件名、转换 WebP，并限制在 2048px 内。
+          最多八张；第一张为前台主图。可拖拽排序，也可点击“设为主图”。上传时自动生成 SEO 文件名、转换 WebP，并限制在 2048px 内。
         </p>
         {mainImages.length > 0 && (
           <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {mainImages.map((url, index) => (
-              <div key={`${url}-${index}`} className="relative rounded-xl border border-slate-200 p-2">
+              <div
+                key={`${url}-${index}`}
+                draggable
+                onDragStart={(event) => {
+                  setDraggedMainImage(index);
+                  event.dataTransfer.effectAllowed = "move";
+                  event.dataTransfer.setData("text/plain", String(index));
+                }}
+                onDragOver={(event) => {
+                  event.preventDefault();
+                  event.dataTransfer.dropEffect = "move";
+                }}
+                onDrop={(event) => {
+                  event.preventDefault();
+                  const sourceText = event.dataTransfer.getData("text/plain");
+                  const source = draggedMainImage ?? (sourceText ? Number(sourceText) : Number.NaN);
+                  if (Number.isInteger(source)) onMainImagesChange(moveArrayItem(mainImages, source, index));
+                  setDraggedMainImage(null);
+                }}
+                onDragEnd={() => setDraggedMainImage(null)}
+                className={`relative rounded-xl border bg-white p-2 transition ${
+                  draggedMainImage === index ? "border-orange-400 opacity-60" : "border-slate-200"
+                }`}
+              >
+                <div className="absolute left-3 top-3 z-10 flex items-center gap-1 rounded-md bg-white/95 px-2 py-1 text-xs font-medium text-slate-700 shadow-sm">
+                  <GripVertical className="h-3.5 w-3.5 text-slate-400" aria-hidden="true" />
+                  {index === 0 ? "主图" : `第 ${index + 1} 张`}
+                </div>
                 <img src={url} alt="" className="aspect-square w-full rounded-lg bg-slate-100 object-contain" />
-                <div className="absolute right-3 top-3 flex gap-1 rounded-lg bg-white/95 p-1 shadow">
-                  <button type="button" onClick={() => onMainImagesChange(move(mainImages, index, -1))} disabled={index === 0} className="rounded p-1 hover:bg-slate-100 disabled:opacity-30" aria-label="主图上移">
-                    <ArrowUp className="h-4 w-4" />
-                  </button>
-                  <button type="button" onClick={() => onMainImagesChange(move(mainImages, index, 1))} disabled={index === mainImages.length - 1} className="rounded p-1 hover:bg-slate-100 disabled:opacity-30" aria-label="主图下移">
-                    <ArrowDown className="h-4 w-4" />
-                  </button>
-                  <button type="button" onClick={() => onMainImagesChange(mainImages.filter((_, itemIndex) => itemIndex !== index))} className="rounded p-1 text-red-500 hover:bg-red-50" aria-label="删除主图">
-                    <Trash2 className="h-4 w-4" />
-                  </button>
+                <button
+                  type="button"
+                  onClick={() => onMainImagesChange(mainImages.filter((_, itemIndex) => itemIndex !== index))}
+                  className="absolute right-3 top-3 rounded-full bg-white p-1 text-red-500 shadow"
+                  aria-label="删除主图"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+                <div className="mt-2 flex items-center justify-between gap-1">
+                  {index === 0 ? (
+                    <span className="inline-flex min-h-9 items-center gap-1 text-xs font-semibold text-orange-600">
+                      <Star className="h-3.5 w-3.5 fill-current" aria-hidden="true" /> 当前主图
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => onMainImagesChange(moveArrayItem(mainImages, index, 0))}
+                      className="min-h-9 rounded-lg px-2 text-xs font-medium text-slate-600 hover:bg-slate-50 hover:text-orange-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+                    >
+                      设为主图
+                    </button>
+                  )}
+                  <div className="flex">
+                    <button
+                      type="button"
+                      onClick={() => onMainImagesChange(moveArrayItem(mainImages, index, index - 1))}
+                      disabled={index === 0}
+                      className="min-h-9 min-w-9 rounded p-2 hover:bg-slate-100 disabled:opacity-30"
+                      aria-label={`将第 ${index + 1} 张图片前移`}
+                    >
+                      <ArrowUp className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onMainImagesChange(moveArrayItem(mainImages, index, index + 1))}
+                      disabled={index === mainImages.length - 1}
+                      className="min-h-9 min-w-9 rounded p-2 hover:bg-slate-100 disabled:opacity-30"
+                      aria-label={`将第 ${index + 1} 张图片后移`}
+                    >
+                      <ArrowDown className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         )}
-        <label className="mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-600 hover:border-orange-400 hover:bg-orange-50/40">
+        <label className="mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-600 hover:border-orange-400 hover:bg-slate-50 hover:text-orange-700">
           <ImagePlus className="h-4 w-4" />
           批量上传主图
           <input

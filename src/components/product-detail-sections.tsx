@@ -5,6 +5,7 @@ import {
   type ProductSpecificationItem,
 } from "@/lib/product-detail";
 import { cleanPublicProductText } from "@/lib/public-product-copy";
+import { parseProductDescription } from "@/lib/product-presentation";
 
 interface ProductDetailSectionsProps {
   content: ProductDetailContent | null | undefined;
@@ -39,7 +40,7 @@ export function ProductDetailSections({
 }: ProductDetailSectionsProps) {
   const labels = sectionCopy[locale] || sectionCopy.en;
   const detail = normalizeProductDetail(content);
-  const descriptionBlocks = description ? formatProductDescription(description, locale) : [];
+  const descriptionBlocks = description ? parseProductDescription(description, locale) : [];
   const specifications: ProductSpecificationItem[] =
     detail.specifications.length > 0
       ? detail.specifications.map((item) => ({
@@ -102,12 +103,21 @@ export function ProductDetailSections({
       {descriptionBlocks.length > 0 && (
         <section className={sectionClass} aria-labelledby="product-description">
           <h2 id="product-description" className={headingClass}>{labels.description}</h2>
-          <div className="prose prose-slate max-w-none space-y-5">
-            {descriptionBlocks.map((paragraph, index) => (
-              <p key={`${index}-${paragraph.slice(0, 24)}`} className="text-slate-600 leading-relaxed">
-                {paragraph}
-              </p>
-            ))}
+          <div className="max-w-4xl space-y-5 text-slate-600">
+            {descriptionBlocks.map((block, index) => {
+              if (block.type === "heading") {
+                return <h3 key={index} className="pt-2 text-lg font-semibold text-[#0B1A40]">{block.text}</h3>;
+              }
+              if (block.type === "list") {
+                const List = block.ordered ? "ol" : "ul";
+                return (
+                  <List key={index} className={`space-y-2 ps-6 leading-7 ${block.ordered ? "list-decimal" : "list-disc marker:text-orange-500"}`}>
+                    {block.items.map((item, itemIndex) => <li key={itemIndex} className="ps-1">{item}</li>)}
+                  </List>
+                );
+              }
+              return <p key={index} className="max-w-[75ch] leading-7">{block.text}</p>;
+            })}
           </div>
         </section>
       )}
