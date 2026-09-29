@@ -2,6 +2,16 @@
 
 Updated: 2026-09-29. Owner: Reach Projector. Working language: English; operational notes: Chinese.
 
+## 发布授权与当前状态（2026-09-29）
+
+用户已明确要求按计划发布，取代下文历史阶段的“不发布、不合并”限制。首篇距离指南已从独立草稿集合迁入公开 buyingGuides，进入指南列表、路由查找和 sitemap。发布日期设为 2026-09-29，B2B 项目采购保留同一联系入口。其余三篇研究稿仍按日历准备发布。
+
+已完成：首篇发布接入、计算复核及公开查找检查。
+正在做：PR 更新、部署与线上检查。
+等待用户：无；具体型号或真实案例仍需证据才能加入。
+下一步：2026-10-02 B2B 样机验收稿，发布前核对来源、接入数据并检查页面。
+
+以下为草稿阶段历史记录；当前发布状态以本节为准。验证脚本现为 scripts/check-editorial-guide.ts。
 ## 独占工作区与迁移范围
 
 本阶段仅在 `reachprojector-editorial-next` / `agent/editorial-next` 工作。从旧共享目录选择性复制本任务的 3 个规划文件和 4 篇草稿，未迁移询盘、订单、运费代码，也未修改旧目录。
@@ -59,3 +69,4 @@ At publication record actual dates, reviewer, live URL and source check date. Pr
 ## Measurement
 
 Baseline currently unavailable. At 14 and 28 days after each actual publication, inspect indexing, impressions, queries, clicks and qualified inquiries where analytics access exists. Compare equal windows and record limitations. Manually sampled AI mentions are observations tied to date, prompt and platform, not a universal ranking. Prioritize useful query coverage and qualified inquiries over article count. Refresh when specifications or policies change; review evergreen drafts quarterly.
+

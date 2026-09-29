@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict'
-import { buyingGuides, draftBuyingGuides, getBuyingGuide } from '../src/lib/guides'
+import { buyingGuides, getBuyingGuide } from '../src/lib/guides'
 
 const slug = 'projector-distance-for-100-inch-screen'
-const draft = draftBuyingGuides.find((guide) => guide.slug === slug)
-assert.ok(draft, 'Priority guide must exist in the typed draft collection')
-assert.equal(getBuyingGuide(slug), undefined, 'Draft must not resolve through public lookup')
-assert.ok(!buyingGuides.some((guide) => guide.slug === slug), 'Draft must stay out of the public list used by routes and sitemap')
-assert.equal(new Set([...buyingGuides, ...draftBuyingGuides].map((guide) => guide.slug)).size, buyingGuides.length + draftBuyingGuides.length, 'Guide slugs must be unique')
+const draft = buyingGuides.find((guide) => guide.slug === slug)
+assert.ok(draft, 'Priority guide must exist in the public collection')
+assert.equal(getBuyingGuide(slug), draft, 'Published guide must resolve through public lookup')
+assert.ok(buyingGuides.some((guide) => guide.slug === slug), 'Published guide must be in the list used by routes and sitemap')
+assert.equal(new Set(buyingGuides.map((guide) => guide.slug)).size, buyingGuides.length, 'Guide slugs must be unique')
 assert.equal(draft.cta.href, '/contact')
 assert.ok(draft.sections.some((section) => section.paragraphs?.some((paragraph) => paragraph.includes('multi-room project'))), 'Keep the business procurement path')
 
@@ -18,4 +18,5 @@ for (const [ratio, metres, feet] of examples) {
   assert.equal((width * ratio / 0.3048).toFixed(2), feet)
   assert.ok(copy.includes(`${metres} metres (${feet} feet)`))
 }
-console.log('Editorial checks passed: unpublished lookup, unique slugs, business CTA and distance calculations.')
+console.log('Editorial checks passed: published lookup, unique slugs, business CTA and distance calculations.')
+

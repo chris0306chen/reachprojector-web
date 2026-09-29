@@ -367,17 +367,14 @@ export const buyingGuides: BuyingGuide[] = [
     ],
     cta: { label: 'Send your room measurements', href: '/contact' },
   },
-]
 
-// Editorial drafts use the page's data shape but stay out of public routes and sitemap.
-export const draftBuyingGuides: BuyingGuide[] = [
   {
     slug: 'projector-distance-for-100-inch-screen',
     audience: 'Home buyers',
     title: 'How Far Should a Projector Be from a 100-Inch Screen?',
     description: 'Calculate the distance for a 100-inch image and check whether your shelf, ceiling mount or cabinet position will work before buying.',
     directAnswer: 'A 100-inch 16:9 image is about 2.214 metres wide. Multiply that width by the exact projector throw ratio: at 1.2:1, the calculated distance is 2.66 metres (8.72 feet). Confirm the position with the model installation drawing before ordering or fixing a mount.',
-    updatedAt: '2026-09-28',
+    updatedAt: '2026-09-29',
     readTime: '5 min read',
     sections: [
       {
