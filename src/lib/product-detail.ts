@@ -48,6 +48,43 @@ export const EMPTY_PRODUCT_DETAIL: ProductDetailContent = {
   logistics_images: [],
 };
 
+/**
+ * Creates readable presentation blocks without rewriting the stored description.
+ * Authored line breaks always win; legacy single-line copy is grouped by sentences.
+ */
+export function formatProductDescription(value: string, locale = "en"): string[] {
+  const text = value.replace(/\r\n?/g, "\n").trim();
+  if (!text) return [];
+
+  const authoredBlocks = text
+    .split(/\n{2,}/)
+    .flatMap((block) => block.split("\n"))
+    .map((block) => block.trim())
+    .filter(Boolean);
+  if (authoredBlocks.length > 1) return authoredBlocks;
+  if (text.length <= 420) return [text];
+
+  const sentences = Array.from(
+    new Intl.Segmenter(locale, { granularity: "sentence" }).segment(text),
+    ({ segment }) => segment.trim()
+  ).filter(Boolean);
+  if (sentences.length < 2) return [text];
+
+  const paragraphs: string[] = [];
+  let paragraph = "";
+  for (const sentence of sentences) {
+    const candidate = paragraph ? `${paragraph} ${sentence}` : sentence;
+    if (paragraph && candidate.length > 360) {
+      paragraphs.push(paragraph);
+      paragraph = sentence;
+    } else {
+      paragraph = candidate;
+    }
+  }
+  if (paragraph) paragraphs.push(paragraph);
+  return paragraphs;
+}
+
 const isSafeImageUrl = (value: unknown): value is string => {
   if (typeof value !== "string" || value.length > 2048) return false;
   try {

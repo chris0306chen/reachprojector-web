@@ -1,4 +1,5 @@
 import {
+  formatProductDescription,
   normalizeProductDetail,
   type ProductDetailContent,
   type ProductSpecificationItem,
@@ -38,6 +39,7 @@ export function ProductDetailSections({
 }: ProductDetailSectionsProps) {
   const labels = sectionCopy[locale] || sectionCopy.en;
   const detail = normalizeProductDetail(content);
+  const descriptionBlocks = description ? formatProductDescription(description, locale) : [];
   const specifications: ProductSpecificationItem[] =
     detail.specifications.length > 0
       ? detail.specifications.map((item) => ({
@@ -97,11 +99,15 @@ export function ProductDetailSections({
         </section>
       )}
 
-      {description && (
+      {descriptionBlocks.length > 0 && (
         <section className={sectionClass} aria-labelledby="product-description">
           <h2 id="product-description" className={headingClass}>{labels.description}</h2>
-          <div className="prose prose-slate max-w-none">
-            <p className="whitespace-pre-line text-slate-600 leading-relaxed">{description}</p>
+          <div className="prose prose-slate max-w-none space-y-5">
+            {descriptionBlocks.map((paragraph, index) => (
+              <p key={`${index}-${paragraph.slice(0, 24)}`} className="text-slate-600 leading-relaxed">
+                {paragraph}
+              </p>
+            ))}
           </div>
         </section>
       )}

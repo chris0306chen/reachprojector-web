@@ -369,14 +369,17 @@ export function ProductDetailEditor({
             {mainImages.map((url, index) => (
               <div key={`${url}-${index}`} className="relative rounded-xl border border-slate-200 p-2">
                 <img src={url} alt="" className="aspect-square w-full rounded-lg bg-slate-100 object-contain" />
-                <button
-                  type="button"
-                  onClick={() => onMainImagesChange(mainImages.filter((_, itemIndex) => itemIndex !== index))}
-                  className="absolute right-3 top-3 rounded-full bg-white p-1 text-red-500 shadow"
-                  aria-label="删除主图"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
+                <div className="absolute right-3 top-3 flex gap-1 rounded-lg bg-white/95 p-1 shadow">
+                  <button type="button" onClick={() => onMainImagesChange(move(mainImages, index, -1))} disabled={index === 0} className="rounded p-1 hover:bg-slate-100 disabled:opacity-30" aria-label="主图上移">
+                    <ArrowUp className="h-4 w-4" />
+                  </button>
+                  <button type="button" onClick={() => onMainImagesChange(move(mainImages, index, 1))} disabled={index === mainImages.length - 1} className="rounded p-1 hover:bg-slate-100 disabled:opacity-30" aria-label="主图下移">
+                    <ArrowDown className="h-4 w-4" />
+                  </button>
+                  <button type="button" onClick={() => onMainImagesChange(mainImages.filter((_, itemIndex) => itemIndex !== index))} className="rounded p-1 text-red-500 hover:bg-red-50" aria-label="删除主图">
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
