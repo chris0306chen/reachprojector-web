@@ -49,27 +49,27 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
       {/* Product Main */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-16">
         {/* Image Gallery */}
-        <div>
+        <div className="min-w-0">
           <div className="aspect-square bg-slate-100 rounded-xl overflow-hidden mb-4">
             <img
               src={images[currentImage]}
               alt={displayName}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </div>
           {images.length > 1 && (
-            <div className="flex gap-2">
+            <div className="flex gap-2 overflow-x-auto p-1">
               {images.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setCurrentImage(idx)}
                   aria-label={`${displayName} image ${idx + 1}`}
                   aria-pressed={idx === currentImage}
-                  className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors ${
+                  className={`w-16 h-16 shrink-0 rounded-lg overflow-hidden border-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 ${
                     idx === currentImage ? 'border-orange-500' : 'border-slate-200'
                   }`}
                 >
-                  <img src={img} alt="" className="w-full h-full object-cover" />
+                  <img src={img} alt="" className="w-full h-full object-contain" />
                 </button>
               ))}
             </div>
@@ -168,12 +168,12 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
           {/* Quantity Selector */}
           {isAvailable && <div className="mb-6">
             <label className="text-sm font-medium text-slate-700 mb-2 block">{t('quantity')}</label>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 aria-label={`Decrease ${t('quantity')}`}
                 disabled={quantity <= 1}
-                className="w-9 h-9 flex items-center justify-center border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+                className="w-11 h-11 shrink-0 flex items-center justify-center border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <Minus className="w-4 h-4" />
               </button>
@@ -182,7 +182,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
                 onClick={() => setQuantity(Math.min(20, product.inventory_quantity, quantity + 1))}
                 aria-label={`Increase ${t('quantity')}`}
                 disabled={quantity >= Math.min(20, product.inventory_quantity)}
-                className="w-9 h-9 flex items-center justify-center border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+                className="w-11 h-11 shrink-0 flex items-center justify-center border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <Plus className="w-4 h-4" />
               </button>
