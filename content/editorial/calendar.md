@@ -24,4 +24,3 @@ Answer direction: Agree acceptance criteria before the sample arrives; verify th
 Outline: identity and supplied items; document checks; setup and source compatibility; buyer-defined image and operating checks; issue log; written approval boundaries. CTA: send the intended application, quantity, destination and acceptance requirements through the contact page. Link to the existing RFQ guide.
 
 Do not invent pass thresholds, claim a factory audit, imply certification verification without documents, or describe suggested procedures as tests Reach has performed. A customer-ready checklist should include requirement, method, expected result, observation and disposition fields.
-

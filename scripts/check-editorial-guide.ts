@@ -19,4 +19,3 @@ for (const [ratio, metres, feet] of examples) {
   assert.ok(copy.includes(`${metres} metres (${feet} feet)`))
 }
 console.log('Editorial checks passed: published lookup, unique slugs, business CTA and distance calculations.')
-

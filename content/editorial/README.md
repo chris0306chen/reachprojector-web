@@ -69,4 +69,3 @@ At publication record actual dates, reviewer, live URL and source check date. Pr
 ## Measurement
 
 Baseline currently unavailable. At 14 and 28 days after each actual publication, inspect indexing, impressions, queries, clicks and qualified inquiries where analytics access exists. Compare equal windows and record limitations. Manually sampled AI mentions are observations tied to date, prompt and platform, not a universal ranking. Prioritize useful query coverage and qualified inquiries over article count. Refresh when specifications or policies change; review evergreen drafts quarterly.
-
