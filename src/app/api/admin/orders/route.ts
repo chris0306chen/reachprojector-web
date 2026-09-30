@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
 import { sendShippingNotification } from "@/lib/order-email";
+import { canTransitionOrder } from "@/lib/order-status";
 
 export async function GET(request: NextRequest) {
   try {
@@ -45,7 +46,7 @@ export async function PUT(request: NextRequest) {
     const supabase = await getSupabaseClient();
 
     const updateData: Record<string, unknown> = {};
-    // Status changes use /api/admin/orders/[id]/status so transition rules cannot be bypassed.
+    // Explicit status changes use /api/admin/orders/[id]/status.
     const trackingNumber = typeof body.tracking_number === "string" ? body.tracking_number.trim() : "";
     if (body.tracking_number !== undefined) {
       updateData.tracking_number = trackingNumber || null;
@@ -58,16 +59,30 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "没有可更新的订单字段" }, { status: 400 });
     }
 
+    const { data: currentOrder, error: readError } = await supabase
+      .from("orders")
+      .select("status,payment_status,order_type,tracking_number")
+      .eq("id", id)
+      .maybeSingle();
+    if (readError) throw readError;
+    if (!currentOrder) return NextResponse.json({ error: "订单不存在" }, { status: 404 });
+    if (trackingNumber && !canTransitionOrder(currentOrder, "shipped")) {
+      return NextResponse.json({ error: "当前订单状态或付款状态不允许发货" }, { status: 409 });
+    }
+
     const { data, error } = await supabase
       .from("orders")
       .update(updateData)
       .eq("id", id)
+      .eq("status", currentOrder.status)
+      .eq("payment_status", currentOrder.payment_status)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
+    if (!data) return NextResponse.json({ error: "订单已变更，请刷新后重试" }, { status: 409 });
 
-    if (trackingNumber) {
+    if (trackingNumber && trackingNumber !== currentOrder.tracking_number) {
       sendShippingNotification({
         orderId: data.order_id,
         productName: data.product_name,
@@ -115,6 +130,10 @@ export async function POST(request: NextRequest) {
       product_specs: body.product_specs || null,
       notes: body.notes || null,
     };
+
+    if (!canTransitionOrder(orderData, orderData.status)) {
+      return NextResponse.json({ error: "订单状态与付款状态不一致" }, { status: 409 });
+    }
 
     const { data, error } = await supabase
       .from("orders")
