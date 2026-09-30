@@ -31,6 +31,13 @@ const CATEGORY_META: Record<string, { title: string; description: string; keywor
   },
 }
 
+const PRIMARY_CATEGORY_SLUGS = [
+  '4k-laser-projectors',
+  'ust-laser-tv',
+  'projector-mounts',
+  'projection-screens',
+] as const;
+
 export async function generateMetadata({ searchParams }: ProductsPageProps): Promise<Metadata> {
   const params = await searchParams
   const category = params?.category
@@ -72,6 +79,16 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     getBrands(),
   ]);
 
+  const primaryCategories = PRIMARY_CATEGORY_SLUGS
+    .map((slug) => categories.find((category) => category.slug === slug))
+    .filter((category): category is (typeof categories)[number] => Boolean(category));
+  const categoryChildren = new Map(
+    primaryCategories.map((category) => [
+      category.id,
+      categories.filter((child) => child.parent_id === category.id),
+    ])
+  );
+
   const filters = (
     <div className="space-y-8">
       <div>
@@ -87,19 +104,39 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           >
             {t('filters.allProducts')}
           </Link>
-          {categories.map((category) => (
-            <Link
-              key={category.slug}
-              href={`/products?category=${category.slug}`}
-              className={`block rounded-lg px-3 py-2 text-sm transition ${
-                params.category === category.slug
-                  ? 'bg-slate-950 font-semibold text-white'
-                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'
-              }`}
-            >
-              {category.name}
-            </Link>
-          ))}
+          {primaryCategories.map((category) => {
+            const children = categoryChildren.get(category.id) || [];
+            const isActive = params.category === category.slug || children.some((child) => child.slug === params.category);
+            return (
+              <details key={category.slug} open={isActive} className="group rounded-lg">
+                <summary className={`flex cursor-pointer list-none items-center justify-between rounded-lg px-3 py-2 text-sm transition marker:content-none ${
+                  isActive ? 'bg-slate-100 font-semibold text-slate-950' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-950'
+                }`}>
+                  <Link href={`/products?category=${category.slug}`} onClick={(event) => event.stopPropagation()} className="min-w-0 flex-1">
+                    {category.name}
+                  </Link>
+                  {children.length > 0 && <span aria-hidden="true" className="ms-3 text-slate-400 transition group-open:rotate-180">⌄</span>}
+                </summary>
+                {children.length > 0 && (
+                  <div className="ms-3 border-s border-slate-200 ps-3 pt-1">
+                    {children.map((child) => (
+                      <Link
+                        key={child.slug}
+                        href={`/products?category=${child.slug}`}
+                        className={`block rounded-lg px-3 py-2 text-sm transition ${
+                          params.category === child.slug
+                            ? 'bg-slate-950 font-semibold text-white'
+                            : 'text-slate-500 hover:bg-slate-100 hover:text-slate-950'
+                        }`}
+                      >
+                        {child.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </details>
+            );
+          })}
         </div>
       </div>
 
