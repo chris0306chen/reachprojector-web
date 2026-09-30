@@ -65,13 +65,17 @@ export default function AdminOrdersPage() {
 
   const handleUpdateStatus = async (id: string, status: string) => {
     try {
-      const res = await fetch(`/api/admin/orders?id=${id}`, {
+      const res = await fetch(`/api/admin/orders/${id}/status`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       });
       if (res.ok) {
+        setError(null);
         fetchOrders();
+      } else {
+        const data = await res.json();
+        setError(data.error || "更新订单状态失败");
       }
     } catch (err) {
       console.error("Failed to update status:", err);
@@ -86,7 +90,11 @@ export default function AdminOrdersPage() {
         body: JSON.stringify({ tracking_number: trackingNumber }),
       });
       if (res.ok) {
+        setError(null);
         fetchOrders();
+      } else {
+        const data = await res.json();
+        setError(data.error || "更新物流信息失败");
       }
     } catch (err) {
       console.error("Failed to update tracking:", err);
