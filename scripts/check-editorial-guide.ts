@@ -19,3 +19,10 @@ for (const [ratio, metres, feet] of examples) {
   assert.ok(copy.includes(`${metres} metres (${feet} feet)`))
 }
 console.log('Editorial checks passed: published lookup, unique slugs, business CTA and distance calculations.')
+const sampleGuide = getBuyingGuide('projector-sample-acceptance-checklist')
+assert.ok(sampleGuide, 'Sample acceptance guide must resolve publicly')
+assert.equal(sampleGuide.audience, 'Business buyers')
+assert.equal(sampleGuide.updatedAt, '2026-10-10')
+assert.equal(sampleGuide.cta.href, '/contact')
+assert.ok(JSON.stringify(sampleGuide).includes('no sample was tested'))
+assert.ok(sampleGuide.sources.every((source) => source.url.startsWith('https://files.support.epson.com/')))

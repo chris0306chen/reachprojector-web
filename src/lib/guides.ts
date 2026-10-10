@@ -21,6 +21,78 @@ export interface BuyingGuide {
 
 export const buyingGuides: BuyingGuide[] = [
   {
+    slug: 'projector-sample-acceptance-checklist',
+    audience: 'Business buyers',
+    title: 'Projector Sample Acceptance Checklist for Business Buyers',
+    description: 'Define what a projector sample must demonstrate before a bulk order: identity, installation fit, source compatibility, exceptions and written approval.',
+    directAnswer: 'Agree acceptance criteria before the sample arrives. Record its exact configuration, check it with the planned screen and signal path, and document results and exceptions before approval. A successful sample check does not establish the condition of every unit in a future shipment.',
+    updatedAt: '2026-10-10',
+    readTime: '6 min read',
+    sections: [
+      {
+        title: 'Define a result you can actually check',
+        paragraphs: [
+          'Start with the application, image size, installation position, source devices and accessories. For each requirement, agree a method, expected result and responsible reviewer. This is a proposed procurement workflow; no sample was tested for this article.',
+          'For a meeting room, an example requirement is readable text from an agreed presentation file at the normal seating positions, using the intended laptop and signal path. Specify the room lighting, image size and viewing positions before checking. This is a buyer-defined criterion, not a universal image-quality standard.',
+          'If a contract requires measured brightness or another laboratory result, agree the procedure, equipment, settings and acceptance limits separately. Do not turn a visual impression into a measured specification.',
+        ],
+      },
+      {
+        title: 'Identify exactly what arrived',
+        checklist: [
+          'Record the model, regional version, serial number and firmware version where available.',
+          'Photograph labels and inventory the lens, remote, power cord and agreed accessories.',
+          'Compare the supplied configuration with the written sample specification.',
+          'Request project documents and check their model references. Document receipt alone does not verify validity or destination suitability.',
+        ],
+      },
+      {
+        title: 'Use the signal path you plan to install',
+        paragraphs: [
+          'Follow the exact model manual for placement, mounting, power and ventilation. Record the screen, image size, source device, adapter, switcher or receiver, cable and projector input used in each check.',
+          'For example, the Epson EB-L520U series guide provides installation, test-pattern and image-source instructions for its listed models. Use the corresponding documentation for your sample; features and procedures are model-specific.',
+          'A laptop connected directly to the projector does not demonstrate operation through an untested switcher or long cable run. If required equipment is missing, record that check as pending rather than passed.',
+        ],
+      },
+      {
+        title: 'Create one record for each requirement',
+        paragraphs: ['Use these fields for each check. Start with “not checked”; then record pass, fail, pending or not applicable, with an explanation. Nothing in this checklist represents an actual test result.'],
+        checklist: [
+          'Requirement and agreed expected result.',
+          'Method, equipment and operating settings.',
+          'Date, reviewer and room conditions.',
+          'Observation and evidence reference.',
+          'Disposition, issue owner and resolution or accepted exception.',
+        ],
+      },
+      {
+        title: 'Cover the functions your project needs',
+        checklist: [
+          'Placement: confirm image size and position within the model installation limits.',
+          'Presentation image: use the agreed files and patterns against the agreed readability criteria.',
+          'Sources: check each required device through the intended signal path.',
+          'Audio and control, where required: exercise the agreed routing, controls and integration.',
+          'Operating scenario: agree a usage sequence and duration appropriate to the application and manufacturer instructions.',
+          'Documents and service: record who reviews required documents and the written support responsibilities.',
+        ],
+      },
+      {
+        title: 'Resolve changes before signing off',
+        paragraphs: [
+          'If firmware, an adapter or a lens changes during evaluation, record the change and which checks were repeated. For subjective observations such as fan noise, keep the mode, room conditions and observer position with the note.',
+          'Approval should name the accepted sample configuration, completed checks, open issues and accepted exceptions. Approval for one source device does not imply approval for an untested device.',
+          'Agree the bulk configuration, treatment of substitutions, shipment inspection and handling of discrepancies separately. A sample record is evidence about that unit under the recorded conditions, not proof that every future unit meets the same requirements.',
+        ],
+      },
+      {
+        title: 'Prepare your sample request',
+        paragraphs: ['Send the intended application, quantity, destination, room constraints, source devices and acceptance requirements with your project brief. For a single home installation, the same identity and connection checks can help confirm that the selected version fits your setup. Sample availability and commercial terms must be confirmed in the quotation.'],
+      },
+    ],
+    sources: [{ label: 'Epson EB-L520U series: installation, test patterns and source selection', url: 'https://files.support.epson.com/docid/cpd6/cpd61218/helpcontents.html' }],
+    cta: { label: 'Send your project brief and acceptance requirements', href: '/contact' },
+  },
+  {
     slug: 'how-to-choose-a-projector-for-your-room',
     audience: 'Home buyers',
     title: 'How to Choose a Projector for Your Room',
