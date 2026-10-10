@@ -2,6 +2,13 @@
 
 Updated: 2026-09-29. Owner: Reach Projector. Working language: English; operational notes: Chinese.
 
+## 当前进度（2026-10-10，覆盖历史状态）
+
+- 已完成：远程 main 和正式站去重检查；9 月 29 日距离指南已上线。样机验收稿已接入 guides，采用实际发布日期 2026-10-10；Epson 官方手册已重新访问，未采用本轮无法打开的 BenQ PDF 作为发布依据。
+- 正在做：样机验收稿 PR、构建与正式站验收。
+- 等待用户：无。
+- 下一步：下一轮处理已到期的亮度规格稿；本轮只发布一篇。
+- 本轮文章地址：https://www.reachprojector.com/en/guides/projector-sample-acceptance-checklist
 ## 发布授权与当前状态（2026-09-29）
 
 用户已明确要求按计划发布，取代下文历史阶段的“不发布、不合并”限制。首篇距离指南已从独立草稿集合迁入公开 buyingGuides，进入指南列表、路由查找和 sitemap。发布日期设为 2026-09-29，B2B 项目采购保留同一联系入口。其余三篇研究稿仍按日历准备发布。
