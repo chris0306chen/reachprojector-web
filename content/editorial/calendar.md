@@ -5,8 +5,8 @@ Updated: 2026-09-28. Timezone: Asia/Shanghai. The four-week window is September 
 | Target date | ID | English working title | Action / audience | Evidence required before release | State |
 |---|---|---|---|---|---|
 | 2026-09-29 | 01 | How Far Should a Projector Be from a 100-Inch Screen? | New guide / B2C with project CTA | Manufacturer geometry guidance + checked calculations | Published 2026-09-29: /en/guides/projector-distance-for-100-inch-screen |
-| 2026-10-02 | 18 | Projector Sample Acceptance Checklist for Business Buyers | New guide / B2B | Epson manual rechecked; proposed checks distinguished from test results | Release prepared 2026-10-10: /en/guides/projector-sample-acceptance-checklist |
-| 2026-10-06 | 05 | Projector Brightness Specifications: What Can You Compare? | New guide / B2C | Manufacturer specification references checked; no standards equivalence or conversion claim | Draft ready for review |
+| 2026-10-02 | 18 | Projector Sample Acceptance Checklist for Business Buyers | New guide / B2B | Epson manual rechecked; proposed checks distinguished from test results | Published 2026-10-10: /en/guides/projector-sample-acceptance-checklist |
+| 2026-10-06 | 05 | Projector Brightness Specifications: What Can You Compare? | New guide / B2C | Official sources rechecked 2026-10-12; no equivalence or conversion claim | Release prepared 2026-10-12: /en/guides/projector-brightness-specifications |
 | 2026-10-09 | 09 | International Projector Regional-Version Checklist | Existing guide update / B2C | Regional manuals + current warranty and app information | Research queued |
 | 2026-10-13 | 06 | Can You Use a Projector in a Bright Living Room? | New guide / B2C | Manufacturer installation and screen guidance | Research queued |
 | 2026-10-16 | 22 | Projector Total Cost of Ownership: A Procurement Worksheet | New guide / B2B | Itemized cost categories and clearly labeled buyer inputs | Draft ready for review |

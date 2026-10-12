@@ -2,7 +2,15 @@
 
 Updated: 2026-09-29. Owner: Reach Projector. Working language: English; operational notes: Chinese.
 
-## 当前进度（2026-10-10，覆盖历史状态）
+## 当前进度（2026-10-12）
+
+- 已完成：前两篇已上线；亮度稿去重、官方来源复核及指南结构接入。
+- 正在做：亮度稿检查与部署。
+- 等待用户：无。
+- 下一步：区域版本指南更新。
+- 本轮地址：https://www.reachprojector.com/en/guides/projector-brightness-specifications
+
+## 历史进度（2026-10-10）
 
 - 已完成：远程 main 和正式站去重检查；9 月 29 日距离指南已上线。样机验收稿已接入 guides，采用实际发布日期 2026-10-10；Epson 官方手册已重新访问，未采用本轮无法打开的 BenQ PDF 作为发布依据。
 - 正在做：样机验收稿 PR、构建与正式站验收。

@@ -21,6 +21,72 @@ export interface BuyingGuide {
 
 export const buyingGuides: BuyingGuide[] = [
   {
+    slug: 'projector-brightness-specifications',
+    audience: 'Home buyers',
+    title: 'Projector Brightness Specifications: What Can You Compare?',
+    description: 'Compare brightness labels, white and color output, and operating modes before choosing a projector for your room.',
+    directAnswer: 'Before comparing lumen numbers, check the exact model, measurement method, output type and operating mode. Keep the original specification labels. A larger unexplained number is not enough to decide which projector fits your screen and room.',
+    updatedAt: '2026-10-12',
+    readTime: '5 min read',
+    sections: [
+      {
+        title: 'Read the words beside the number',
+        paragraphs: ['BenQ distinguishes ANSI, LED and light-source lumen claims in its brightness explainer. Use those distinctions to ask for the exact model specification, rather than applying a generic conversion to an unknown product. This guide compares documentation; it does not report hands-on measurements.'],
+        checklist: [
+          'ANSI lumens: record the manufacturer figure and its stated conditions.',
+          'ISO 21118: retain the standard reference, output type and operating mode.',
+          'Color light output: keep it separate from white light output.',
+          'LED lumens: request a documented projected-output measurement before comparing with an ANSI or ISO-labelled figure.',
+          'Light-source lumens: establish whether the claim describes the source rather than the projected image.',
+          'Unqualified lumens: ask for the original specification and measurement method.',
+        ],
+      },
+      {
+        title: 'Do not fill a specification gap with a conversion',
+        paragraphs: [
+          'If two shortlisted models use different labels, preserve the wording and ask which method and settings apply. This guide does not establish numerical equivalence between measurement procedures or provide a universal conversion factor.',
+          'Imagine one listing gives ANSI lumens in a named mode while another gives only LED lumens. The useful next step is to obtain comparable documentation for the second model, not to rank the two by the size of the numbers. Leave missing fields marked as unknown.',
+        ],
+      },
+      {
+        title: 'White and color output are separate fields',
+        paragraphs: ['Epson identifies separate white and color brightness specifications, citing ISO 21118 for white output and IDMS 15.4 for color output. Do not add the figures together into a total lumen number. Neither field alone is a complete assessment of image quality.'],
+      },
+      {
+        title: 'Check the mode you intend to use',
+        paragraphs: [
+          'Epson lists different white-output values for Normal and Quiet or Extended modes on its Pro L1060-series specification page. This is a model-specific documentation example, not a performance claim about another projector.',
+          'Keep the mode beside every figure. If a supplier quotes brightness from one mode and noise or power consumption from another, those values do not document a single operating condition. Ask for the combination you expect to use.',
+        ],
+      },
+      {
+        title: 'Make a comparison record you can check',
+        checklist: [
+          'Exact model and regional version.',
+          'Manufacturer URL and date checked.',
+          'Published brightness figure and its original label.',
+          'White or color output and stated measurement reference.',
+          'Picture or power mode and any documented conditions.',
+          'Unknown details requiring clarification before a recommendation.',
+        ],
+      },
+      {
+        title: 'Bring your room into the decision',
+        paragraphs: [
+          'Send the intended image size, screen, daytime or evening use, window lighting and whether blinds can be closed. Those details belong with the model shortlist; a brightness number without the planned installation is an incomplete buying brief.',
+          'For a demonstration, request the intended image size and similar room lighting, and record the modes used. This is a proposed comparison method, not a demonstration Reach has already performed. We do not set a universal daylight lumen threshold in this guide.',
+          'For classroom or multi-room procurement, add the room layouts, operating hours and agreed acceptance requirements. Keep the same specification fields across supplier quotations so unresolved differences remain visible.',
+        ],
+      },
+    ],
+    sources: [
+      { label: 'BenQ: ANSI, LED and light-source brightness labels', url: 'https://www.benq.com/en-us/knowledge-center/knowledge/ansi-light-source-and-led-lumens-how-led-projectors-with-3000-lumens-are-a-marketing-ploy.html' },
+      { label: 'Epson: white and color brightness references', url: 'https://epson.com/projector-guide-how-to-buy-a-projector-color-brightness' },
+      { label: 'Epson Pro L1060-series: output by operating mode', url: 'https://files.support.epson.com/docid/cpd5/cpd57486/source/specifications/reference/pl1060u_1075u/spex_general_pl1060u_1075u.html' },
+    ],
+    cta: { label: 'Send your room details and model shortlist', href: '/contact' },
+  },
+  {
     slug: 'projector-sample-acceptance-checklist',
     audience: 'Business buyers',
     title: 'Projector Sample Acceptance Checklist for Business Buyers',
