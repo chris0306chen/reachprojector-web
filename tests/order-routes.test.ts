@@ -133,3 +133,45 @@ test("status endpoint accepts current states and rejects unconfirmed payment/ref
   const unpaid = setup("[id]/status/route.ts", "pending_payment", "unpaid");
   assert.equal((await unpaid.call({ status: "preparing" })).status, 409);
 });
+
+test("dedicated shipping endpoint enforces full payment for both retail and B2B", async () => {
+  const body = { tracking_number: " TRACK-1 ", shipping_method: " Air " };
+  for (const orderType of ["b2c_online", "b2b_offline"]) {
+    for (const payment of ["unpaid", "partial", "refunded", "partially_refunded"]) {
+      for (const status of ["paid", "preparing"]) {
+        const app = setup("[id]/ship/route.ts", status, payment, { orderType });
+        assert.equal((await app.call(body)).status, 409);
+        assert.equal(app.state().writes, 0);
+        assert.equal(app.state().emails, 0);
+      }
+    }
+    const app = setup("[id]/ship/route.ts", "preparing", "paid", { orderType });
+    assert.equal((await app.call(body)).status, 200);
+    assert.equal(app.state().row.status, "shipped");
+    assert.equal(app.state().row.tracking_number, "TRACK-1");
+    assert.equal((await app.call(body)).status, 409);
+    assert.equal(app.state().emails, 1);
+  }
+});
+
+test("dedicated shipping endpoint preserves concurrent changes and fails closed on database errors", async () => {
+  for (const [options, expected] of [[{ concurrentChange: "refund" }, 409], [{ concurrentChange: "payment" }, 409], [{ missing: true }, 404], [{ readError: true }, 500], [{ writeError: true }, 500]] as const) {
+    const app = setup("[id]/ship/route.ts", "preparing", "paid", options);
+    assert.equal((await app.call({ tracking_number: "TRACK-1", shipping_method: "Air" })).status, expected);
+    assert.equal(app.state().writes, 0);
+    assert.equal(app.state().emails, 0);
+  }
+});
+
+test("dedicated shipping endpoint rejects terminal states and invalid shipment details", async () => {
+  for (const status of ["pending_payment", "cancelled", "completed", "refunded"]) {
+    const app = setup("[id]/ship/route.ts", status, "paid");
+    assert.equal((await app.call({ tracking_number: "TRACK-1", shipping_method: "Air" })).status, 409);
+    assert.equal(app.state().writes, 0);
+  }
+  const app = setup("[id]/ship/route.ts", "preparing", "paid");
+  assert.equal((await app.call({ tracking_number: " ", shipping_method: "Air" })).status, 400);
+  assert.equal((await app.call({ tracking_number: "TRACK-1", shipping_method: null })).status, 400);
+  assert.equal(app.state().writes, 0);
+  assert.equal(app.state().emails, 0);
+});
