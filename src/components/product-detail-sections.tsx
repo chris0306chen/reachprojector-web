@@ -1,5 +1,4 @@
 import {
-  formatProductDescription,
   normalizeProductDetail,
   type ProductDetailContent,
   type ProductSpecificationItem,
