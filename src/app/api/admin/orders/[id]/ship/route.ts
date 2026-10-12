@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
 import { sendShippingNotification } from "@/lib/order-email";
+import { canTransitionOrder } from "@/lib/order-status";
 
 export async function PUT(
   request: NextRequest,
@@ -25,14 +26,15 @@ export async function PUT(
     const supabase = await getSupabaseClient();
     const { data: currentOrder, error: readError } = await supabase
       .from("orders")
-      .select("status, order_id, product_name, payer_email")
+      .select("status, payment_status, order_id, product_name, payer_email")
       .eq("id", id)
-      .single();
+      .maybeSingle();
 
-    if (readError || !currentOrder) {
+    if (readError) throw readError;
+    if (!currentOrder) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
-    if (!["paid", "preparing"].includes(currentOrder.status)) {
+    if (!["paid", "preparing"].includes(currentOrder.status) || !canTransitionOrder(currentOrder, "shipped")) {
       return NextResponse.json({ error: "Only paid orders can be shipped" }, { status: 409 });
     }
 
@@ -45,10 +47,13 @@ export async function PUT(
         updated_at: new Date().toISOString(),
       })
       .eq("id", id)
+      .eq("status", currentOrder.status)
+      .eq("payment_status", currentOrder.payment_status)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
+    if (!data) return NextResponse.json({ error: "Order changed; reload and retry" }, { status: 409 });
 
     sendShippingNotification({
       orderId: currentOrder.order_id,
