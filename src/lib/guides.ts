@@ -12,6 +12,7 @@ export interface BuyingGuide {
   title: string
   description: string
   directAnswer: string
+  publishedAt?: string
   updatedAt: string
   readTime: string
   sections: GuideSection[]
@@ -398,7 +399,8 @@ export const buyingGuides: BuyingGuide[] = [
     title: 'International Projector Regional-Version Checklist',
     description: 'Check system language, apps, streaming hardware, power, warranty and support before importing a projector.',
     directAnswer: 'A menu that supports English does not automatically make a projector an official regional model. Before importing, confirm the exact hardware and firmware version, local power and plug, app availability, streaming-device path, warranty territory, return process and included accessories in writing.',
-    updatedAt: '2026-09-03',
+    publishedAt: '2026-09-03',
+    updatedAt: '2026-10-19',
     readTime: '8 min read',
     sections: [
       {
@@ -408,6 +410,13 @@ export const buyingGuides: BuyingGuide[] = [
           'Firmware or operating-system version and available interface languages.',
           'Power-input range, plug type and included power cable.',
           'Included remote, accessories and printed documentation.',
+        ],
+      },
+      {
+        title: 'Ask for evidence of the delivered version',
+        paragraphs: [
+          'Treat international version and Chinese-market version as descriptions to verify, not complete specifications. Request photos of the model label, system-information screen and language menu for the configuration being offered. A translated launcher alone does not establish the language of every settings page or application.',
+          'Keep a written record of the model code, firmware, included accessories and seller changes. Ask whether the language setup survives a normal restart or factory reset, and what manufacturer-supported update and recovery process applies. Do not assume a similar model name means identical software or regional support.',
         ],
       },
       {
@@ -428,6 +437,13 @@ export const buyingGuides: BuyingGuide[] = [
         ],
       },
       {
+        title: 'An installed app is not a playback test',
+        paragraphs: [
+          'Ask for evidence that the intended service plays on the exact configuration, with the intended account region and supported connection path. Record the device, app version, firmware, test date and observed playback result. A home-screen icon or login screen does not demonstrate successful playback or a particular resolution.',
+          'Netflix recommends checking model compatibility with the manufacturer and using a supported external device where appropriate. A supported brand name does not prove that every regional model has the same app support. Google TV also documents differences by country and language. These are platform requirements to investigate, not evidence that Reach has tested your combination.',
+        ],
+      },
+      {
         title: 'Confirm the commercial safety net',
         checklist: [
           'Who handles warranty service and in which country?',
@@ -437,8 +453,12 @@ export const buyingGuides: BuyingGuide[] = [
         ],
       },
       {
-        title: 'How Reach Projector should describe imported versions',
-        paragraphs: ['Each product page should distinguish confirmed specifications from regional details that still need confirmation. Until a projector-and-streaming-device combination is physically tested for a target market, it should be described as under validation—not as a guaranteed compatible solution.'],
+        title: 'Get the service path in writing',
+        paragraphs: [
+          'Ask who accepts the service request, which country handles repair, and who pays transport and any removal or reinstallation costs. Keep the written warranty and return terms for the exact quotation; a local-language menu is not evidence of local warranty coverage.',
+          'For a home purchase, send your destination, required apps, audio equipment and candidate model before ordering. For a hotel, classroom or reseller order, also specify quantities, account-management requirements and the sample acceptance process. Confirm the same regional configuration will be supplied across the order.',
+          'Where compatibility has not been verified, keep it marked as awaiting confirmation. This checklist does not certify any specific model, modified firmware or streaming setup.',
+        ],
       },
     ],
     sources: [

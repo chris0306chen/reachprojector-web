@@ -2,7 +2,15 @@
 
 Updated: 2026-09-29. Owner: Reach Projector. Working language: English; operational notes: Chinese.
 
-## 当前进度（2026-10-12）
+## 当前进度（2026-10-19）
+
+- 已完成：前三篇已发布；区域版本指南沿用原 URL 更新，平台官方资料已核实，不对具体机型作未经验证的承诺。
+- 正在做：区域版本指南发布检查，保留原 publication 日期，仅更新 modified 日期。
+- 等待用户：无；型号级实机验证仍需实际证据。
+- 下一步：亮客厅选型稿。
+- 更新地址：https://www.reachprojector.com/en/guides/international-projector-regional-version-checklist
+
+## 历史进度（2026-10-12）
 
 - 已完成：前两篇已上线；亮度稿去重、官方来源复核及指南结构接入。
 - 正在做：亮度稿检查与部署。
