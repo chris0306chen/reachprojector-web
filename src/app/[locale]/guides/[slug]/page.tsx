@@ -34,7 +34,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
     '@type': 'Article',
     headline: guide.title,
     description: guide.description,
-    datePublished: guide.updatedAt,
+    datePublished: guide.publishedAt ?? guide.updatedAt,
     dateModified: guide.updatedAt,
     mainEntityOfPage: url,
     author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
