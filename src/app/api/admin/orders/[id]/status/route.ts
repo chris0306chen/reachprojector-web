@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
+import { canTransitionOrder, orderTransitions } from "@/lib/order-status";
 
 export async function PUT(
   request: NextRequest,
@@ -10,31 +11,23 @@ export async function PUT(
     const body = await request.json();
     const { status } = body;
 
-    const validStatuses = ["pending", "paid", "shipped", "delivered", "refunded"] as const;
-    if (!validStatuses.includes(status)) {
+    if (typeof status !== "string" || !Object.hasOwn(orderTransitions, status)) {
       return NextResponse.json({ error: "Invalid status" }, { status: 400 });
     }
 
     const supabase = await getSupabaseClient();
     const { data: currentOrder, error: readError } = await supabase
       .from("orders")
-      .select("status")
+      .select("status,payment_status,order_type")
       .eq("id", id)
-      .single();
+      .maybeSingle();
 
-    if (readError || !currentOrder) {
+    if (readError) throw readError;
+    if (!currentOrder) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
-    const allowedTransitions: Record<string, readonly string[]> = {
-      pending: ["paid", "refunded"],
-      paid: ["shipped", "refunded"],
-      shipped: ["delivered", "refunded"],
-      delivered: ["refunded"],
-      refunded: [],
-    };
-
-    if (status !== currentOrder.status && !allowedTransitions[currentOrder.status]?.includes(status)) {
+    if (!canTransitionOrder(currentOrder, status)) {
       return NextResponse.json(
         { error: `Cannot move order from ${currentOrder.status} to ${status}` },
         { status: 409 }
@@ -45,10 +38,13 @@ export async function PUT(
       .from("orders")
       .update({ status, updated_at: new Date().toISOString() })
       .eq("id", id)
+      .eq("status", currentOrder.status)
+      .eq("payment_status", currentOrder.payment_status)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
+    if (!data) return NextResponse.json({ error: "Order changed; reload and retry" }, { status: 409 });
 
     return NextResponse.json({ success: true, data });
   } catch (error) {
