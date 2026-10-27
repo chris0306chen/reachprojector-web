@@ -112,7 +112,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 <summary className={`flex cursor-pointer list-none items-center justify-between rounded-lg px-3 py-2 text-sm transition marker:content-none ${
                   isActive ? 'bg-slate-100 font-semibold text-slate-950' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-950'
                 }`}>
-                  <Link href={`/products?category=${category.slug}`} onClick={(event) => event.stopPropagation()} className="min-w-0 flex-1">
+                  <Link href={`/products?category=${category.slug}`} className="min-w-0 flex-1">
                     {category.name}
                   </Link>
                   {children.length > 0 && <span aria-hidden="true" className="ms-3 text-slate-400 transition group-open:rotate-180">⌄</span>}
