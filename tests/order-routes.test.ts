@@ -18,6 +18,7 @@ function setup(route: string, status: string, paymentStatus: string, options: {
       const query = {
         select() { return query; },
         eq(key: string, value: unknown) { filters[key] = value; return query; },
+        is(key: string, value: unknown) { filters[key] = value; return query; },
         update(value: Record<string, unknown>) { update = value; return query; },
         insert(value: Record<string, unknown>) { update = value; return query; },
         single() { return query.maybeSingle(); },
@@ -74,6 +75,19 @@ test("paid tracking update ships the order and does not resend email for the sam
   assert.equal(app.state().row.status, "shipped");
   assert.equal((await app.call({ tracking_number: "TRACK-1" })).status, 200);
   assert.equal(app.state().emails, 1);
+});
+
+test("concurrent duplicate tracking requests write and notify once, including already shipped orders", async () => {
+  for (const status of ["preparing", "shipped"]) {
+    const app = setup("route.ts", status, "paid", { orderType: "b2b_offline" });
+    const responses = await Promise.all([
+      app.call({ tracking_number: "TRACK-1" }),
+      app.call({ tracking_number: "TRACK-1" }),
+    ]);
+    assert.deepEqual(responses.map((response) => response.status).sort(), [200, 409]);
+    assert.equal(app.state().writes, 1);
+    assert.equal(app.state().emails, 1);
+  }
 });
 
 test("both update endpoints preserve a concurrent refund", async () => {

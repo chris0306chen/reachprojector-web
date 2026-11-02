@@ -70,14 +70,18 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "当前订单状态或付款状态不允许发货" }, { status: 409 });
     }
 
-    const { data, error } = await supabase
+    let updateQuery = supabase
       .from("orders")
       .update(updateData)
       .eq("id", id)
       .eq("status", currentOrder.status)
-      .eq("payment_status", currentOrder.payment_status)
-      .select()
-      .maybeSingle();
+      .eq("payment_status", currentOrder.payment_status);
+    if (body.tracking_number !== undefined) {
+      updateQuery = currentOrder.tracking_number === null
+        ? updateQuery.is("tracking_number", null)
+        : updateQuery.eq("tracking_number", currentOrder.tracking_number);
+    }
+    const { data, error } = await updateQuery.select().maybeSingle();
 
     if (error) throw error;
     if (!data) return NextResponse.json({ error: "订单已变更，请刷新后重试" }, { status: 409 });
