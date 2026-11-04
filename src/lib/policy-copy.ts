@@ -17,7 +17,7 @@ const chrome: Record<string, PolicyChrome> = {
 
 const privacy: Record<string, PolicyDocument> = {
   en: {
-    title: 'Privacy Policy', description: 'How REACH PROJECTOR collects, uses, shares, protects and retains customer and website information.', summary: 'This policy explains how HK REACH SOURCING LIMITED and its operating partners handle information submitted through REACH PROJECTOR.',
+    title: 'Privacy Policy', description: 'How REACH PROJECTOR collects, uses, shares, protects and retains customer and website information.', summary: 'This policy explains how Quanzhou Reach Technology Co., Ltd. and its operating partners handle information submitted through REACH PROJECTOR.',
     sections: [
       { title: 'Information we collect', items: ['Contact, company, billing, delivery, tax, customs, and account information you provide.', 'Product inquiries, quotations, orders, communications, uploaded files, support records, and transaction references.', 'Device, browser, IP address, referral, page interaction, security, and cookie information generated when the website is used.'] },
       { title: 'How information is used', items: ['To answer inquiries, prepare quotations, process payments and orders, arrange shipping, provide support, and meet legal obligations.', 'To prevent fraud, secure the website, maintain business records, analyze performance, and improve products and services.', 'To send requested or permitted business communications. You may opt out of marketing messages at any time.'] },
@@ -28,7 +28,7 @@ const privacy: Record<string, PolicyDocument> = {
     ],
   },
   zh: {
-    title: '隐私政策', description: '说明 REACH PROJECTOR 如何收集、使用、共享、保护及保留客户与网站信息。', summary: '本政策说明 HK REACH SOURCING LIMITED 及其运营合作方如何处理通过 REACH PROJECTOR 提交的信息。',
+    title: '隐私政策', description: '说明 REACH PROJECTOR 如何收集、使用、共享、保护及保留客户与网站信息。', summary: '本政策说明泉州锐驰科技有限公司及其运营合作方如何处理通过 REACH PROJECTOR 提交的信息。',
     sections: [
       { title: '我们收集的信息', items: ['您提供的联系人、公司、账单、配送、税务、海关及账户信息。', '产品询价、报价、订单、沟通记录、上传文件、支持记录及交易参考信息。', '使用网站时产生的设备、浏览器、IP 地址、来源、页面互动、安全及 Cookie 信息。'] },
       { title: '信息的使用方式', items: ['回复询价、准备报价、处理付款与订单、安排运输、提供支持并履行法律义务。', '防止欺诈、保护网站、保存业务记录、分析表现并改进产品与服务。', '发送您请求或法律允许的业务信息；您可随时退订营销信息。'] },
@@ -39,7 +39,7 @@ const privacy: Record<string, PolicyDocument> = {
     ],
   },
   es: {
-    title: 'Política de privacidad', description: 'Cómo REACH PROJECTOR recopila, usa, comparte, protege y conserva información.', summary: 'Esta política explica cómo HK REACH SOURCING LIMITED y sus socios operativos tratan la información enviada mediante REACH PROJECTOR.',
+    title: 'Política de privacidad', description: 'Cómo REACH PROJECTOR recopila, usa, comparte, protege y conserva información.', summary: 'Esta política explica cómo Quanzhou Reach Technology Co., Ltd. y sus socios operativos tratan la información enviada mediante REACH PROJECTOR.',
     sections: [
       { title: 'Información que recopilamos', items: ['Datos de contacto, empresa, facturación, entrega, impuestos, aduanas y cuenta que proporcione.', 'Consultas, cotizaciones, pedidos, comunicaciones, archivos cargados, soporte y referencias de transacción.', 'Datos de dispositivo, navegador, IP, procedencia, interacción, seguridad y cookies generados al usar el sitio.'] },
       { title: 'Cómo usamos la información', items: ['Responder consultas, preparar cotizaciones, procesar pagos y pedidos, coordinar envíos, prestar soporte y cumplir obligaciones legales.', 'Prevenir fraude, proteger el sitio, mantener registros, analizar resultados y mejorar productos y servicios.', 'Enviar comunicaciones solicitadas o permitidas; puede cancelar el marketing en cualquier momento.'] },
@@ -50,7 +50,7 @@ const privacy: Record<string, PolicyDocument> = {
     ],
   },
   ru: {
-    title: 'Политика конфиденциальности', description: 'Как REACH PROJECTOR собирает, использует, передает, защищает и хранит информацию.', summary: 'Эта политика объясняет, как HK REACH SOURCING LIMITED и операционные партнеры обрабатывают информацию, переданную через REACH PROJECTOR.',
+    title: 'Политика конфиденциальности', description: 'Как REACH PROJECTOR собирает, использует, передает, защищает и хранит информацию.', summary: 'Эта политика объясняет, как Quanzhou Reach Technology Co., Ltd. и операционные партнеры обрабатывают информацию, переданную через REACH PROJECTOR.',
     sections: [
       { title: 'Какие данные мы собираем', items: ['Предоставленные вами контактные, корпоративные, платежные, доставочные, налоговые, таможенные и учетные данные.', 'Запросы, расчеты, заказы, переписка, загруженные файлы, обращения в поддержку и сведения о транзакциях.', 'Данные устройства, браузера, IP-адреса, источника перехода, взаимодействий, безопасности и cookie.'] },
       { title: 'Как используются данные', items: ['Для ответов, расчетов, обработки платежей и заказов, доставки, поддержки и выполнения правовых обязанностей.', 'Для предотвращения мошенничества, защиты сайта, учета, анализа и улучшения товаров и услуг.', 'Для запрошенных или разрешенных деловых сообщений; от маркетинга можно отказаться в любое время.'] },
@@ -61,7 +61,7 @@ const privacy: Record<string, PolicyDocument> = {
     ],
   },
   ar: {
-    title: 'سياسة الخصوصية', description: 'كيفية جمع REACH PROJECTOR لمعلومات العملاء والموقع واستخدامها ومشاركتها وحمايتها والاحتفاظ بها.', summary: 'توضح هذه السياسة كيفية معالجة HK REACH SOURCING LIMITED وشركائها التشغيليين للمعلومات المقدمة عبر REACH PROJECTOR.',
+    title: 'سياسة الخصوصية', description: 'كيفية جمع REACH PROJECTOR لمعلومات العملاء والموقع واستخدامها ومشاركتها وحمايتها والاحتفاظ بها.', summary: 'توضح هذه السياسة كيفية معالجة Quanzhou Reach Technology Co., Ltd. وشركائها التشغيليين للمعلومات المقدمة عبر REACH PROJECTOR.',
     sections: [
       { title: 'المعلومات التي نجمعها', items: ['معلومات الاتصال والشركة والفوترة والتسليم والضرائب والجمارك والحساب التي تقدمها.', 'استفسارات المنتجات وعروض الأسعار والطلبات والمراسلات والملفات المرفوعة وسجلات الدعم ومراجع المعاملات.', 'بيانات الجهاز والمتصفح وعنوان IP والإحالة وتفاعل الصفحة والأمان وملفات تعريف الارتباط.'] },
       { title: 'كيفية استخدام المعلومات', items: ['للرد على الاستفسارات وإعداد العروض ومعالجة المدفوعات والطلبات وترتيب الشحن وتقديم الدعم والوفاء بالالتزامات القانونية.', 'لمنع الاحتيال وحماية الموقع وحفظ السجلات وتحليل الأداء وتحسين المنتجات والخدمات.', 'لإرسال اتصالات تجارية مطلوبة أو مسموحة؛ ويمكنك إلغاء الرسائل التسويقية في أي وقت.'] },
@@ -79,7 +79,7 @@ const terms: Record<string, PolicyDocument> = {
     sections: [
       { title: 'Seller and order acceptance', paragraphs: ['The selling entity identified on the order confirmation, invoice, or quotation is responsible for that transaction. An online submission is an offer to purchase. An order is accepted only when payment and product availability are confirmed and we issue acceptance or begin fulfillment.'] },
       { title: 'Product information and suitability', paragraphs: ['We work to keep descriptions and specifications accurate, but manufacturers may revise packaging, firmware, accessories, regional features, plugs, languages, or specifications. Customers must confirm critical compatibility, installation, certification, and regional requirements before ordering.'] },
-      { title: 'Prices and payment', items: ['Unless otherwise stated, website prices are in USD and exclude shipping, duties, taxes, installation, and local charges.', 'Card payments may be processed by Stripe and wallet payments by PayPal. B2B orders may use the payment schedule stated in the quotation or proforma invoice.', 'We may cancel and refund an order affected by an obvious pricing error, suspected fraud, unavailable stock, export restriction, or an unsupported destination.'] },
+      { title: 'Prices and payment', items: ['Unless otherwise stated, website prices are in USD and exclude shipping, duties, taxes, installation, and local charges.', 'Card payments are processed by HK REACH SOURCING LIMITED through Stripe. Wallet payments may be processed by PayPal. B2B orders may use the payment schedule stated in the quotation or proforma invoice.', 'We may cancel and refund an order affected by an obvious pricing error, suspected fraud, unavailable stock, export restriction, or an unsupported destination.'] },
       { title: 'B2B, OEM and project orders', paragraphs: ['A written quotation, proforma invoice, specification sheet, sample approval, or contract may add or replace these general terms. Tooling, branding, packaging, certification, sample, deposit, balance, inspection, tolerance, and lead-time requirements must be recorded in that document.'] },
       { title: 'Shipping, risk and customs', paragraphs: ['Shipping terms are described in our Shipping, Duties & Delivery Policy and the applicable checkout or quotation. Trade terms such as DDP or DAP apply only when expressly stated. Title, risk, insurance, and delivery responsibilities may be further defined by the applicable order document.'] },
       { title: 'Intellectual property and website use', paragraphs: ['Website content, branding, layout, text, and original media may not be copied, scraped for republication, misrepresented, or commercially reused without permission. Third-party trademarks and product materials remain the property of their respective owners.'] },
@@ -91,7 +91,7 @@ const terms: Record<string, PolicyDocument> = {
     sections: [
       { title: '卖方与订单接受', paragraphs: ['订单确认、发票或报价单中标明的销售主体对该交易负责。在线提交仅构成购买要约。只有在付款及产品供应情况确认，并且我们发出接受通知或开始履约后，订单才被接受。'] },
       { title: '产品信息与适用性', paragraphs: ['我们尽力保持描述和规格准确，但制造商可能调整包装、固件、配件、地区功能、插头、语言或规格。客户必须在订购前确认关键兼容性、安装、认证及地区要求。'] },
-      { title: '价格与付款', items: ['除非另有说明，网站价格以美元计价，不含运输、关税、税费、安装及当地费用。', '银行卡付款可由 Stripe 处理，电子钱包付款可由 PayPal 处理。B2B 订单可采用报价单或形式发票中规定的付款计划。', '对于明显定价错误、涉嫌欺诈、库存不足、出口限制或不支持的目的地，我们可能取消订单并退款。'] },
+      { title: '价格与付款', items: ['除非另有说明，网站价格以美元计价，不含运输、关税、税费、安装及当地费用。', '银行卡付款由 HK REACH SOURCING LIMITED 通过 Stripe 处理。电子钱包付款可由 PayPal 处理。B2B 订单可采用报价单或形式发票中规定的付款计划。', '对于明显定价错误、涉嫌欺诈、库存不足、出口限制或不支持的目的地，我们可能取消订单并退款。'] },
       { title: 'B2B、OEM 与项目订单', paragraphs: ['书面报价单、形式发票、规格书、样品批准或合同可以补充或替代这些一般条款。模具、品牌、包装、认证、样品、定金、尾款、检验、公差和交期要求必须记录在该文件中。'] },
       { title: '运输、风险与海关', paragraphs: ['运输条款见《运输、关税与交付政策》以及适用的结账页面或报价单。DDP、DAP 等贸易条款仅在明确写明时适用。所有权、风险、保险及交付责任可由适用的订单文件进一步规定。'] },
       { title: '知识产权与网站使用', paragraphs: ['未经许可，不得复制网站内容、品牌、布局、文字和原创媒体，不得抓取后重新发布、歪曲呈现或商业再利用。第三方商标和产品资料仍归各自权利人所有。'] },
