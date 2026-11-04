@@ -33,7 +33,6 @@
     "hospitalityLiving": "Hospitality & Living",
     "eventsRentals": "Events & Rentals",
     "retailChannels": "Retail & Channels",
-    "shopByScene": "Shop by Scene",
     "bedroomCinema": "Bedroom Cinema",
     "backyardCamping": "Backyard & Camping",
     "portableScreen": "Portable Screen",
@@ -68,10 +67,10 @@
     "viewAll": "View All",
     "viewAllProducts": "View All Products",
     "guides": {
-      "eyebrow": "Projector Buying Guides",
-      "title": "Make the decision before you make the purchase",
-      "description": "Clear answers for room planning, product comparison, international shipping and business procurement.",
-      "viewAll": "View all guides",
+      "eyebrow": "Blog",
+      "title": "Insights from REACH PROJECTOR",
+      "description": "Practical advice for choosing projection equipment, planning installations and sourcing for business.",
+      "viewAll": "See all articles",
       "read": "Read guide"
     },
     "categories": {
@@ -181,7 +180,7 @@
     "aboutTitle": "About REACH PROJECTOR",
     "aboutText": "Projector advice and global retail for home buyers, with wholesale sourcing, OEM/ODM discussion and project support for qualified business customers.",
     "company1": "Quanzhou Reach Technology Co., Ltd.",
-    "company2": "HK REACH SOURCING LIMITED",
+    "company2": "Quanzhou Reach Technology Co., Ltd.",
     "quickLinks": "Quick Links",
     "contactInfo": "Contact Info",
     "newsletter": "Newsletter",
@@ -422,8 +421,8 @@
   },
   "Footer": {
     "description": "Projector advice and global retail for home buyers, with wholesale sourcing and AV project support for business customers.",
-    "addressFujian": "No. 1108 Quan'an North Road, Jinjiang City, Quanzhou City, Fujian Province",
-    "addressHongKong": "Room S007, 2/F, Capital Plaza, 61-65 Chatham Road South, Tsim Sha Tsui, Hong Kong",
+    "addressFujian": "No. 1108 Quan'an North Road, Jinjiang City, Quanzhou City, Fujian Province, China",
+    "addressHongKong": "No. 1108 Quan'an North Road, Jinjiang City, Quanzhou City, Fujian Province, China",
     "products": "Products",
     "company": "Company",
     "support": "Support",
