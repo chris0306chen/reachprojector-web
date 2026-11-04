@@ -1,4 +1,4 @@
-const allowedTerms = new Set(["DDP", "DAP", "MANUAL_QUOTE", "UNAVAILABLE"]);
+const allowedTerms = new Set(["DDP", "DAP", "SHIPPING_INCLUDED", "MANUAL_QUOTE", "UNAVAILABLE"]);
 const allowedClasses = new Set(["parcel", "oversize", "freight"]);
 
 export function normalizeShippingTemplate(body: Record<string, unknown>) {
@@ -26,7 +26,7 @@ export function normalizeShippingTemplate(body: Record<string, unknown>) {
     trade_terms: tradeTerms,
     shipping_class: shippingClass,
     currency,
-    is_active: body.is_active === true && ["DDP", "DAP"].includes(tradeTerms),
+    is_active: body.is_active === true && ["DDP", "DAP", "SHIPPING_INCLUDED"].includes(tradeTerms),
     notes: body.notes ? String(body.notes).trim() : null,
     estimated_days_min: body.estimated_days_min || null,
     estimated_days_max: body.estimated_days_max || null,
@@ -40,6 +40,12 @@ export function normalizeShippingTemplate(body: Record<string, unknown>) {
     if (!Number.isFinite(value) || value < 0) throw new Error("INVALID_NUMBER");
     normalized[field] = value;
   }
+  const ids = body.product_ids ?? [];
+  if (!Array.isArray(ids) || !ids.every((id) => typeof id === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id))) throw new Error("INVALID_PRODUCT_SCOPE");
+  normalized.product_ids = [...new Set(ids)];
+  if (tradeTerms === "SHIPPING_INCLUDED" && (
+    ids.length === 0 || [normalized.base_fee, normalized.increment_fee, normalized.minimum_fee].some((value) => value !== 0)
+  )) throw new Error("INVALID_INCLUDED_RATE");
   if (Number(normalized.max_weight_kg) < Number(normalized.min_weight_kg)) {
     throw new Error("INVALID_WEIGHT_RANGE");
   }
@@ -53,7 +59,7 @@ export function normalizeShippingTemplate(body: Record<string, unknown>) {
       Number(normalized.max_weight_kg) <= Number(normalized.min_weight_kg) ||
       Number(normalized.increment_weight_kg) <= 0 ||
       Number(normalized.volumetric_divisor) <= 0 ||
-      (Number(normalized.base_fee) <= 0 && Number(normalized.increment_fee) <= 0)
+      (tradeTerms !== "SHIPPING_INCLUDED" && Number(normalized.base_fee) <= 0 && Number(normalized.increment_fee) <= 0)
     ) {
       throw new Error("INCOMPLETE_ACTIVE_RATE");
     }
