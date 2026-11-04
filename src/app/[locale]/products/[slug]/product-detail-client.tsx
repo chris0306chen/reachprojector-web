@@ -193,17 +193,17 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
           </div>}
 
           {/* CTA Buttons */}
-          <div className="flex flex-wrap gap-3 mb-6">
+          <div className="grid gap-3 mb-6 sm:flex sm:flex-wrap">
             {isQuoteOnly ? (
               <Link
                 href={`/${locale}/contact?product=${product.slug}&type=project`}
-                className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-orange-500 px-6 py-3 font-medium text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-orange-500 px-6 py-3 font-medium text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 sm:flex-none"
               >
                 {t('projectQuote')}
               </Link>
             ) : isAvailable && <Link
               href={`/${locale}/checkout?productId=${product.id}&quantity=${quantity}`}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-all hover:scale-[1.02] shadow-md"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-orange-500 px-6 py-3 font-medium text-white shadow-md transition-all hover:bg-orange-600 hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 sm:flex-none"
             >
               <ShoppingCart className="w-4 h-4" />
               {t('checkoutNow')}
@@ -212,14 +212,14 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
               href={`https://wa.me/8613655920080?text=${whatsappMessage}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-green-600 bg-white px-6 py-3 font-medium text-green-700 transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 sm:flex-none"
             >
               <MessageCircle className="w-4 h-4" />
               {t('whatsappInquiry')}
             </a>
             {!isQuoteOnly && <Link
               href={`/${locale}/contact?product=${product.slug}`}
-              className="inline-flex items-center gap-2 px-6 py-3 border-2 border-slate-300 hover:border-orange-400 text-slate-700 hover:text-orange-600 font-medium rounded-lg transition-colors"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-slate-300 px-6 py-3 font-medium text-slate-700 transition-colors hover:border-orange-400 hover:text-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 sm:flex-none"
             >
               {t('sendInquiry')}
             </Link>}
