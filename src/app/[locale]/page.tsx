@@ -98,8 +98,8 @@ export default async function HomePage() {
         <section className="relative isolate min-h-[calc(100dvh-5rem)] overflow-hidden bg-slate-950 text-white">
           <div className="absolute inset-0 lg:left-[46%]">
             <Image
-              src="/images/hero/hero-bg.jpg"
-              alt="Complete projection setup designed for a real viewing space"
+              src="/images/hero/reach-home-cinema-concept.png"
+              alt="Premium home cinema living room with a large projection screen at dusk"
               fill
               priority
               sizes="(min-width: 1024px) 54vw, 100vw"
@@ -181,7 +181,7 @@ export default async function HomePage() {
                 >
                   <Image
                     src={category.image}
-                    alt=""
+              alt=""
                     fill
                     sizes="(min-width: 1024px) 58vw, (min-width: 768px) 50vw, 100vw"
                     className="object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
