@@ -2,7 +2,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import {
   ArrowRight,
-  BookOpen,
   Monitor,
   Package,
   RectangleVertical,
@@ -248,12 +247,9 @@ export default async function HomePage() {
             </div>
             <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {buyingGuides.map((guide) => (
-                <Link key={guide.slug} href={`/${locale}/guides/${guide.slug}`} className="group flex min-h-72 flex-col rounded-xl border border-slate-200 bg-white p-6 transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-500">
+                <Link key={guide.slug} href={`/${locale}/guides/${guide.slug}`} className="group flex min-h-40 flex-col justify-between rounded-xl border border-slate-200 bg-white p-6 transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-500">
                   <div className="flex items-center justify-between gap-3 text-[11px] font-bold uppercase tracking-wider"><span className="text-orange-700">{guide.audience}</span><span className="text-slate-400">{guide.readTime}</span></div>
-                  <BookOpen className="mt-8 h-7 w-7 text-slate-300" aria-hidden="true" />
-                  <h3 className="mt-5 text-xl font-semibold tracking-tight text-slate-950">{guide.title}</h3>
-                  <p className="mt-3 flex-1 text-sm leading-6 text-slate-600">{guide.description}</p>
-                  <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-950 transition group-hover:text-orange-600">{t('guides.read')}<ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" /></span>
+                  <h3 className="mt-8 text-xl font-semibold tracking-tight text-slate-950 transition-colors group-hover:text-orange-600">{guide.title}</h3>
                 </Link>
               ))}
             </div>
