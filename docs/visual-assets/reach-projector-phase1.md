@@ -8,6 +8,7 @@ These source files were supplied by the user and are reference-only until mapped
 - `XR10.jpg` — Hisense XR10, real product reference.
 - `Aetherion Pro.jpg` — Aetherion Pro, real product reference.
 - `Hisense PX4PRO/hisense_px4pro_px4_pro_trichroma_laser_1992837.jpg` — Hisense PX4 Pro, real product reference (JPEG inside the extensionless download folder).
+- `N5S ULTRA MAX.jpg` — JMGO N5S Ultra Max, real product reference (JPEG).
 
 The source images are not used as homepage hero artwork and are not altered or stretched.
 
@@ -19,5 +20,4 @@ The source images are not used as homepage hero artwork and are not altered or s
 
 ## Still needed
 
-- Verified JMGO N5S Ultra Max source image or the previously approved social asset.
 - Approval and source paths for the existing container-loading image and the two recent shipping images before using them as trust or logistics evidence.
