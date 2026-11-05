@@ -6,9 +6,10 @@ import { cleanPublicProductText } from '@/lib/public-product-copy';
 
 interface ProductCardProps {
   product: Product;
+  showDescription?: boolean;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, showDescription = true }: ProductCardProps) {
   const t = useTranslations('products');
   const locale = useLocale();
   const messages = useMessages();
@@ -61,10 +62,12 @@ export function ProductCard({ product }: ProductCardProps) {
         <h3 className="mb-2 line-clamp-2 min-h-10 text-sm font-semibold leading-5 text-slate-950 transition-colors group-hover:text-orange-600">
           {displayName}
         </h3>
-        {displayShortDesc && (
+        {showDescription && displayShortDesc ? (
           <p className="mb-4 line-clamp-2 min-h-10 text-xs leading-5 text-slate-500">
             {displayShortDesc}
           </p>
+        ) : (
+          <div className="mb-4 min-h-10" aria-hidden="true" />
         )}
         {decisionFacts.length > 0 && (
           <ul className="mb-4 flex flex-wrap gap-1.5" aria-label={t('decisionFacts')}>
