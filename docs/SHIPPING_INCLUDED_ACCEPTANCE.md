@@ -51,6 +51,12 @@ PR 保持未合并。用户报告已在 Supabase 执行迁移并收到 Success /
 
 ## 测试环境联调矩阵
 
+### PayPal 实际 sandbox 创建订单核验（2026-11-05）
+
+用户授权将 Default Application 的 Sandbox Client ID/Secret 保存在被 Git 忽略的 `.env.test.local`，API 固定为 https://api-m.sandbox.paypal.com。执行 `node scripts/verify-paypal-shipping-sandbox.cjs --run-sandbox`，实际创建路由源码使用合成商品/报价 fixture 调用真实 sandbox，并 GET 读取订单核验。
+
+结果 PASS：订单 03426233HJ7618035，状态 CREATED，USD 200.00，shipping=0.00，完整运费已含和税费另行确认说明。未进行买家批准或 capture；未导入数据库/邮件模块。沙盒应用当前无 webhook。此结果不等同于完整付款、订单/库存事务或 webhook 验收。
+
 ### Stripe 实际 sandbox 创建会话核验（2026-11-05）
 
 补充执行 `pnpm exec tsx --test --test-concurrency=1 tests/fulfillment-isolated/shipping-included-webhook.test.ts`：3/3 通过。实际 webhook 路由与签名校验处理合成签名事件，通过测试数据服务适配器保存到连接内临时 PostgreSQL 表。验证零运费、完整说明、订单金额/状态/地址、顺序重复仅一单一次通知；无效/过期签名及未付款、金额/币种/国家不匹配不建单。邮件完全替换为内存计数。此测试未调用生产 createPaidOrder 库存事务、真实目录/报价服务，也不是 Stripe 真实事件投递或完整端到端付款验收。
