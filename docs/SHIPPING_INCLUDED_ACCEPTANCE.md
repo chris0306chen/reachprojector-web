@@ -51,6 +51,12 @@ PR 保持未合并。用户报告已在 Supabase 执行迁移并收到 Success /
 
 ## 测试环境联调矩阵
 
+### Stripe 实际 sandbox 创建会话核验（2026-11-05）
+
+用户授权后，现有 sk_test 密钥仅保存在被 Git 忽略的 `.env.test.local`。执行 `node scripts/verify-stripe-shipping-sandbox.cjs --run-sandbox`，固定校验账户 acct_1TvUACKLpy9D25tu。实际创建路由源码调用 Stripe API，商品和运费查询使用合成 fixture，不导入数据库或邮件模块。
+
+结果 PASS：livemode=false、USD 总额 20000 分、包邮行金额 0、metadata.shipping_cost=0.00，Stripe 返回的行描述包含完整运费已含与税费不保证包含说明。测试 session cs_test_b1GgfS9LHzRM84pEikBJQOuAsCxF5ddeqVfQq2TtkfMd2pLb89iSfgV8ZX 已主动 expire，未尝试付款。此结果仅证明真实渠道接受创建请求，不代表真实目录报价、付款完成、签名回调或订单持久化已验收。沙盒控制台当前未配置接收端。
+
 1. 使用独立数据库、Stripe test / PayPal sandbox 配置和合成订单；邮件模块替换为内存捕获，收件人和 BCC 均不得外发。确认隔离后才执行支付操作。
 2. 执行迁移并对比模板数量、费率、国家、有效期、启用状态；全部应保持原值。
 3. Hisense 非 VIDDA、AWOL：有有效线路、包装完整时运费为零；显示 Shipping included in product price，税费另行确认。
