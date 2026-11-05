@@ -53,6 +53,10 @@ PR 保持未合并。用户报告已在 Supabase 执行迁移并收到 Success /
 
 ### PayPal 实际 sandbox 创建订单核验（2026-11-05）
 
+完整 capture 验收准备：`scripts/verify-paypal-capture-sandbox.cjs` 使用固定本地 127.0.0.1:55477/payment_sandbox，执行实际 data-service 源码及原始 create_paid_order_and_decrement_inventory SQL；目录与报价仍为 fixture，邮件为内存计数。独立容器 reach-payment-sandbox-db 已初始化，库存初值 10。setup 只允许空库，create 创建测试订单，capture 接收订单 ID；成功后应验证库存 8、仅一单、重复 capture 幂等和一次通知。
+
+C2 测试买家批准订单 74V48148GY715104D 后，GET 返回 APPROVED，但 purchase_units[0] 没有 shipping；应用 capture 返回 409，未请求扣款。原因尚未确定，未放松国家或地址校验。已创建 US Personal 测试买家 sb-9axuj53707879@personal.example.com，新的 US 测试订单 9XK37532E9206682H 已创建；浏览器连接在读取买家详情时超时，尚未批准。真实 capture、库存和完整付款链路仍未通过，不得将此准备工作视为验收成功。
+
 用户授权将 Default Application 的 Sandbox Client ID/Secret 保存在被 Git 忽略的 `.env.test.local`，API 固定为 https://api-m.sandbox.paypal.com。执行 `node scripts/verify-paypal-shipping-sandbox.cjs --run-sandbox`，实际创建路由源码使用合成商品/报价 fixture 调用真实 sandbox，并 GET 读取订单核验。
 
 结果 PASS：订单 03426233HJ7618035，状态 CREATED，USD 200.00，shipping=0.00，完整运费已含和税费另行确认说明。未进行买家批准或 capture；未导入数据库/邮件模块。沙盒应用当前无 webhook。此结果不等同于完整付款、订单/库存事务或 webhook 验收。
