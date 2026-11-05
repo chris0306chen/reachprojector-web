@@ -1,4 +1,4 @@
-# PR #76 迁移与联调准备（2026-11-04）
+# PR #76 迁移与联调准备（2026-11-05）
 
 PR 保持未合并。用户报告已在 Supabase 执行迁移并收到 Success / No rows returned；代理未执行生产写入、真实支付或邮件。
 
@@ -7,9 +7,23 @@ PR 保持未合并。用户报告已在 Supabase 执行迁移并收到 Success /
 - 应用回归再次通过：14 个运费测试及 21 个履约测试。
 - `tests/shipping-included-payment.test.ts` 新增 3 个支付请求格式测试通过：Stripe 零运费行及税费说明、PayPal 商品总额和零运费拆分、人工报价阻断。网络请求全部模拟，未连接真实 sandbox，不等同于渠道端到端验收。
 - `scripts/verify-shipping-included-readonly.sql` 可在已迁移项目中只读核对字段、默认值、已验证约束定义及现有模板值。
-- 当前工作区只有 `.env.example`，没有 Supabase 项目连接或支付 sandbox 凭据。待提供现有测试配置路径后，才能独立执行在线核验和真实 sandbox 联调；不要在聊天中粘贴密钥。
+- 当前工作区只有 `.env.example`，没有独立测试数据库或支付 sandbox 凭据。线上只读结构核验已通过浏览器完成；真实 sandbox 联调仍需要现有测试配置路径，不要在聊天中粘贴密钥。
 - “已有费率和启用状态未变”需要与迁移前导出/备份比较。脚本本身没有数据更新语句，但单独的迁移后快照无法证明历史值相等。
-- 暂不建议合并：在线字段/约束核验、历史值对比以及真实 sandbox 创建/回调/订单持久化链路尚未完成。PR #70 不操作。
+- 暂不建议合并：历史值对比以及真实 sandbox 创建/回调/订单持久化链路尚未完成。PR #70 不操作。
+
+## 2026-11-05 在线只读核验
+
+通过用户指定的 Supabase RC projector 项目（ufzzynacrknnmmyczmzl）SQL Editor，执行 BEGIN READ ONLY 包裹的查询并读取实际结果：
+
+- orders.shipping_method：text，可为空。
+- shipping_templates.product_ids：uuid[]，NOT NULL，默认 '{}'::uuid[]。
+- shipping_templates.is_active：boolean，NOT NULL，默认 false。
+- shipping_included_explicit_scope：convalidated=true；定义要求 SHIPPING_INCLUDED 指定非空产品范围、两位大写国家代码及三项非空零费用，符合迁移脚本。
+- 模板总数 452，启用 416；SHIPPING_INCLUDED 总数 0、启用 0。
+
+查询页面：https://supabase.com/dashboard/project/ufzzynacrknnmmyczmzl/sql/bb4a2bc9-ac01-40c6-b31f-c01380d8045c
+
+本次仅查询，没有修改数据库。结构核验通过；以上计数不能证明历史费率未变。PR #76 当前 head 1deb210 的 Vercel 检查成功、状态 OPEN / MERGEABLE，未合并。
 
 ## 迁移检查结论
 
@@ -31,7 +45,7 @@ PR 保持未合并。用户报告已在 Supabase 执行迁移并收到 Success /
 
 测试检查：已有 DDP/DAP/人工报价行逐字段不变、默认产品范围为空、原订单值不变、空范围和非零免运费被拒绝、新模板默认停用、长订单说明可保存。
 
-本次尝试未能启动容器：Docker Desktop Linux 引擎管道不存在。此测试尚未运行，不能视为数据库迁移通过。未连接生产数据库。
+此前尝试未能启动容器：Docker Desktop Linux 引擎管道不存在。此测试尚未运行，不能视为隔离数据库迁移测试通过。生产数据库仅完成上文只读结构核验。
 
 ## 测试环境联调矩阵
 
