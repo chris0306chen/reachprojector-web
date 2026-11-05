@@ -53,6 +53,8 @@ PR 保持未合并。用户报告已在 Supabase 执行迁移并收到 Success /
 
 ### Stripe 实际 sandbox 创建会话核验（2026-11-05）
 
+补充执行 `pnpm exec tsx --test --test-concurrency=1 tests/fulfillment-isolated/shipping-included-webhook.test.ts`：3/3 通过。实际 webhook 路由与签名校验处理合成签名事件，通过测试数据服务适配器保存到连接内临时 PostgreSQL 表。验证零运费、完整说明、订单金额/状态/地址、顺序重复仅一单一次通知；无效/过期签名及未付款、金额/币种/国家不匹配不建单。邮件完全替换为内存计数。此测试未调用生产 createPaidOrder 库存事务、真实目录/报价服务，也不是 Stripe 真实事件投递或完整端到端付款验收。
+
 用户授权后，现有 sk_test 密钥仅保存在被 Git 忽略的 `.env.test.local`。执行 `node scripts/verify-stripe-shipping-sandbox.cjs --run-sandbox`，固定校验账户 acct_1TvUACKLpy9D25tu。实际创建路由源码调用 Stripe API，商品和运费查询使用合成 fixture，不导入数据库或邮件模块。
 
 结果 PASS：livemode=false、USD 总额 20000 分、包邮行金额 0、metadata.shipping_cost=0.00，Stripe 返回的行描述包含完整运费已含与税费不保证包含说明。测试 session cs_test_b1GgfS9LHzRM84pEikBJQOuAsCxF5ddeqVfQq2TtkfMd2pLb89iSfgV8ZX 已主动 expire，未尝试付款。此结果仅证明真实渠道接受创建请求，不代表真实目录报价、付款完成、签名回调或订单持久化已验收。沙盒控制台当前未配置接收端。
