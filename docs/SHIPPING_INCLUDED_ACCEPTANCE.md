@@ -51,7 +51,13 @@ PR 保持未合并。用户报告已在 Supabase 执行迁移并收到 Success /
 
 ## 测试环境联调矩阵
 
-### PayPal 实际 sandbox 创建订单核验（2026-11-05）
+### PayPal 实际 sandbox 付款与库存核验（2026-11-06）
+
+2026-11-06，旧订单 9XK37532E9206682H 的 GET 返回 404 / RESOURCE_NOT_FOUND / INVALID_RESOURCE_ID。重新通过实际创建路由生成订单 80080979AA534602P，US 测试买家批准后 GET 返回 APPROVED，收货国家及付款人国家均为 US。
+
+执行 `node scripts/verify-paypal-capture-sandbox.cjs capture 80080979AA534602P` 返回 PASS：真实 PayPal sandbox capture 成功，本地原始库存事务保存 payment_status=paid、status=preparing、shipping_cost=0.00 和完整运费/税费说明；库存由 10 减为 8。重复请求返回 idempotent，订单总数保持 1、库存保持 8、通知内存计数为 1，无真实邮件。商品与报价仍为 fixture，数据库为固定本地独立测试库；不代表生产目录报价或 Stripe 付款已验收。create 操作不再依赖本地数据库启动，setup/capture 仍检查固定测试数据库。
+
+以下为此前创建阶段及阻断记录，现有 US 付款通过结果取代此前“完整付款尚未通过”的结论；C2 缺少 shipping 的原因仍未确定。
 
 完整 capture 验收准备：`scripts/verify-paypal-capture-sandbox.cjs` 使用固定本地 127.0.0.1:55477/payment_sandbox，执行实际 data-service 源码及原始 create_paid_order_and_decrement_inventory SQL；目录与报价仍为 fixture，邮件为内存计数。独立容器 reach-payment-sandbox-db 已初始化，库存初值 10。setup 只允许空库，create 创建测试订单，capture 接收订单 ID；成功后应验证库存 8、仅一单、重复 capture 幂等和一次通知。
 

@@ -15,8 +15,10 @@ function load(path, resolve, globals = {}) {
 async function main() {
   const action = process.argv[2];
   assert.ok(['setup', 'create', 'capture'].includes(action));
-  await db.connect();
-  assert.equal((await db.query('SELECT current_database() AS name')).rows[0].name, 'payment_sandbox');
+  if (action !== 'create') {
+    await db.connect();
+    assert.equal((await db.query('SELECT current_database() AS name')).rows[0].name, 'payment_sandbox');
+  }
   if (action === 'setup') {
     assert.equal((await db.query("SELECT to_regclass('public.products') AS name")).rows[0].name, null, 'Setup only supports a fresh disposable DB');
     await db.query("CREATE ROLE service_role; CREATE TABLE products (id uuid PRIMARY KEY, inventory_quantity integer NOT NULL, stock_status text NOT NULL, is_active boolean NOT NULL, updated_at timestamptz)");
