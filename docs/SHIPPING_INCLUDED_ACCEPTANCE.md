@@ -86,6 +86,8 @@ C2 测试买家批准订单 74V48148GY715104D 后，GET 返回 APPROVED，但 pu
 
 ## 合并条件
 
+2026-11-06 实际预览站检查：f4b0398 的 Vercel 检查 SUCCESS。通过现有 GitHub 登录进入受保护预览，商品列表加载 7 个实际商品。Hisense PX4 Pro（c5ee3fe7-8308-40a8-ab04-b1bb5d83a9d1，USD 3199）及 AWOL Vision Aetherion Pro（70bf6e4a-c53f-4390-8ea8-23bb4db81046，USD 2100）进入结账、选择 United States 后均显示 Online shipping is unavailable. Please request a quote. 尚未验证实际商品可自动包邮；不能将 fixture 付款通过替代此项。具体为包装数据、人工报价开关、线路条件或接口异常尚待后台检查，未改动商品或费率。预览 admin/products 重定向 admin/login，等待用户登录。前台商品页仍使用通用 DDP/DAP 说明；未发起生产付款。
+
 2026-11-06，在独立 detached worktree 将 9fa80a1 与 origin/main 89bd9f1（PR #74 公司身份与首页更新）执行无提交合并，无冲突。使用 localhost 占位 Supabase 配置执行 `node node_modules/next/dist/bin/next build`，编译、TypeScript 和 241 页生成通过；商品读取因占位数据库不可达产生警告，不代表目录数据加载验收。合并结果上的 shipping-included/shipping-quote/order-status/order-routes 共 30 项测试通过。pnpm 11 的依赖脚本批准检查导致快捷构建命令未启动，直接执行已安装的 Next CLI 完成构建，未修改依赖批准策略。
 
 Stripe 完整付款准备：`scripts/verify-stripe-payment-sandbox.cjs` 使用官方 Stripe CLI 1.55.8（下载校验和匹配）转发实际 sandbox 事件到 127.0.0.1:55478；签名密钥仅在内存中。使用原 webhook/data-service 源码及原库存 RPC，仅处理本脚本会话，商品/报价为 fixture，邮件为内存计数，独立测试商品库存初值 10。已创建实际测试会话并显示正确金额及运费说明，尚待买家付款和回调结果；准备工作不算通过。
