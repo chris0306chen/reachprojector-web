@@ -90,4 +90,6 @@ C2 测试买家批准订单 74V48148GY715104D 后，GET 返回 APPROVED，但 pu
 
 Stripe 完整付款准备：`scripts/verify-stripe-payment-sandbox.cjs` 使用官方 Stripe CLI 1.55.8（下载校验和匹配）转发实际 sandbox 事件到 127.0.0.1:55478；签名密钥仅在内存中。使用原 webhook/data-service 源码及原库存 RPC，仅处理本脚本会话，商品/报价为 fixture，邮件为内存计数，独立测试商品库存初值 10。已创建实际测试会话并显示正确金额及运费说明，尚待买家付款和回调结果；准备工作不算通过。
 
-静态迁移检查、线上只读结构核验、隔离数据库脚本、PayPal sandbox capture 及目标分支编译已完成；Stripe 实际付款回调仍待完成。PR #76 保持未合并，不自动部署生产环境。
+2026-11-06 Stripe 实际付款回调验收 PASS，取代上段待付款状态：会话 cs_test_b1yr4yeRmSRpaY99Y92e0vheZPfFKDzeh2B6wf9hrSEmpDHyDdNbOOQ1n3；真实 sandbox 事件 evt_1UYhEUKLpy9D25tuEX6FNXPg 经官方 CLI 转发并通过应用签名验证。Stripe API 再查 payment_status=paid；本地订单仅一条、运费 0.00、完整税费说明保留、库存由 10 减至 8、通知内存计数 1。相同签名事件再次调用实际 webhook 返回 200，未重复建单或扣库存。脚本返回 PASS 后正常退出（exit 0）并关闭本地监听，因此买家稍后跳转到 127.0.0.1 出现连接拒绝；这不代表付款失败。未发送真实邮件或修改生产数据库。
+
+静态迁移检查、线上只读结构核验、隔离数据库脚本、PayPal sandbox capture、Stripe 实际付款签名回调及目标分支编译已完成。商品目录/报价使用 fixture、前台及管理端完整真实数据浏览流程不在本次支付脚本验收范围内，不能称为生产全链路验收。PR #76 保持未合并，不自动部署生产环境。
