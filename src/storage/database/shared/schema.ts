@@ -1,4 +1,4 @@
-import { pgTable, primaryKey, serial, timestamp, varchar, text, numeric, boolean, jsonb, integer, index, uniqueIndex } from "drizzle-orm/pg-core"
+import { pgTable, uuid, primaryKey, serial, timestamp, varchar, text, numeric, boolean, jsonb, integer, index, uniqueIndex } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 import { z } from "zod"
 import type { ProductDetailContent } from "@/lib/product-detail"
@@ -161,7 +161,7 @@ export const orders = pgTable(
 		airwallex_intent_id: varchar("airwallex_intent_id", { length: 100 }),
 		payment_method: varchar("payment_method", { length: 20 }).default("paypal").notNull(),
 		payment_status: varchar("payment_status", { length: 30 }).default("unpaid").notNull(),
-		shipping_method: varchar("shipping_method", { length: 50 }),
+		shipping_method: text("shipping_method"),
 		shipping_cost: numeric("shipping_cost", { precision: 10, scale: 2 }),
 		tracking_number: varchar("tracking_number", { length: 200 }),
 		status: varchar("status", { length: 20 }).default("pending").notNull(),
@@ -213,6 +213,7 @@ export const shipping_templates = pgTable(
 		fixed_fee: numeric("fixed_fee", { precision: 10, scale: 2 }),
 		free_shipping_min: numeric("free_shipping_min", { precision: 10, scale: 2 }),
 		trade_terms: varchar("trade_terms", { length: 20 }).default("DDP"),
+		product_ids: uuid("product_ids").array().notNull().default(sql`'{}'::uuid[]`),
 		is_active: boolean("is_active").default(true).notNull(),
 		created_at: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 		updated_at: timestamp("updated_at", { withTimezone: true }),

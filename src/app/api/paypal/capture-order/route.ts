@@ -1,3 +1,4 @@
+import { shippingMethodLabel } from "@/lib/shipping-label";
 import { NextRequest, NextResponse } from 'next/server';
 import { createPaidOrder, getOrderByPayPalId } from '@/lib/data-service';
 import { getCheckoutItem } from '@/lib/checkout';
@@ -187,7 +188,7 @@ export async function POST(request: NextRequest) {
         country: countryCode,
         customer_phone: customerPhone,
         shipping_address: shippingAddress,
-        shipping_method: `${shipping.method} (${shipping.tradeTerms})`,
+        shipping_method: shippingMethodLabel(shipping),
         shipping_cost: shipping.shippingCost.toFixed(2),
         status: 'preparing',
       });
@@ -208,7 +209,7 @@ export async function POST(request: NextRequest) {
         currency: item.currency,
         customerEmail: payerEmail,
         paymentMethod: 'paypal',
-        shippingMethod: `${shipping.method} (${shipping.tradeTerms})`,
+        shippingMethod: shippingMethodLabel(shipping),
         shippingAddress,
       }).catch((emailError) => console.error('PayPal confirmation email failed:', emailError));
     }

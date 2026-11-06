@@ -10,7 +10,7 @@ export interface ShippingRate {
   id: string;
   name: string;
   method: string;
-  tradeTerms: "DDP" | "DAP";
+  tradeTerms: "DDP" | "DAP" | "SHIPPING_INCLUDED";
   currency: string;
   minWeightKg: number;
   maxWeightKg: number;
@@ -37,6 +37,7 @@ export function calculatePackageQuote(input: PackageInput, rate: ShippingRate) {
     ![rate.minWeightKg, rate.maxWeightKg, rate.baseWeightKg, rate.baseFee,
       rate.incrementWeightKg, rate.incrementFee, rate.minimumFee, rate.volumetricDivisor]
       .every((value) => Number.isFinite(value) && value >= 0) ||
+    (rate.tradeTerms === "SHIPPING_INCLUDED" && [rate.baseFee, rate.incrementFee, rate.minimumFee].some((value) => value !== 0)) ||
     rate.maxWeightKg < rate.minWeightKg ||
     rate.volumetricDivisor <= 0 ||
     rate.incrementWeightKg <= 0
@@ -68,7 +69,7 @@ export function calculatePackageQuote(input: PackageInput, rate: ShippingRate) {
   if (
     !Number.isFinite(totalChargeableWeightKg) ||
     !Number.isSafeInteger(Math.round(shippingCost * 100)) ||
-    shippingCost <= 0
+    (shippingCost === 0 && rate.tradeTerms !== "SHIPPING_INCLUDED") || shippingCost < 0
   ) {
     return null;
   }

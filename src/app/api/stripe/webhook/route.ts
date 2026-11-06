@@ -1,3 +1,4 @@
+import { shippingMethodLabel } from "@/lib/shipping-label";
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { getCheckoutItem } from '@/lib/checkout';
@@ -129,7 +130,7 @@ export async function POST(request: NextRequest) {
           country: countryCode,
           customer_phone: customerPhone,
           shipping_address: shippingAddressText,
-          shipping_method: `${shipping.method} (${shipping.tradeTerms})`,
+          shipping_method: shippingMethodLabel(shipping),
           shipping_cost: shipping.shippingCost.toFixed(2),
           status: 'preparing',
         });
@@ -141,7 +142,7 @@ export async function POST(request: NextRequest) {
           currency: item.currency,
           customerEmail: stringValue(customerDetails.email),
           paymentMethod: 'stripe',
-          shippingMethod: `${shipping.method} (${shipping.tradeTerms})`,
+          shippingMethod: shippingMethodLabel(shipping),
           shippingAddress: shippingAddressText,
         }).catch((emailError) => console.error('Stripe confirmation email failed:', emailError));
       }

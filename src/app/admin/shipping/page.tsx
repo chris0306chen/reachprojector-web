@@ -1,5 +1,6 @@
 "use client";
 
+import { INCLUDED_SHIPPING_LABEL, INCLUDED_TAX_LABEL } from "@/lib/shipping-label";
 import { useCallback, useEffect, useState } from "react";
 import { AlertCircle, Edit2, Plus, Truck } from "lucide-react";
 
@@ -8,7 +9,7 @@ interface ShippingTemplate {
   name: string;
   country_code: string;
   method: string;
-  trade_terms: "DDP" | "DAP" | "MANUAL_QUOTE" | "UNAVAILABLE";
+  trade_terms: "DDP" | "DAP" | "SHIPPING_INCLUDED" | "MANUAL_QUOTE" | "UNAVAILABLE";
   shipping_class: "parcel" | "oversize" | "freight";
   currency: string;
   min_weight_kg: number;
@@ -25,6 +26,7 @@ interface ShippingTemplate {
   valid_to?: string | null;
   is_active: boolean;
   notes?: string | null;
+  product_ids?: string[];
 }
 
 interface ImportStatus {
@@ -36,6 +38,7 @@ interface ImportStatus {
 }
 
 const emptyTemplate: Omit<ShippingTemplate, "id"> = {
+  product_ids: [],
   name: "",
   country_code: "",
   method: "express",
@@ -125,7 +128,7 @@ export default function AdminShippingPage() {
         <div>
           <h1 className="text-2xl font-bold text-slate-900">运费模板</h1>
           <p className="mt-1 text-sm text-slate-500">
-            按国家、重量和贸易条款维护。未确认线路请保持“人工报价”和停用状态。
+            Hisense（排除全部 VIDDA）和 AWOL：仅在已有有效配送线路内显示 Shipping included in product price；不承诺含税。其他品牌沿用原规则。
           </p>
         </div>
         <button
@@ -194,7 +197,7 @@ export default function AdminShippingPage() {
                     <div className="text-xs text-slate-500">{template.country_code}</div>
                   </td>
                   <td className="px-4 py-3">{template.method}</td>
-                  <td className="px-4 py-3">{template.trade_terms}</td>
+                  <td className="px-4 py-3">{template.trade_terms === "SHIPPING_INCLUDED" ? `${INCLUDED_SHIPPING_LABEL} (${template.product_ids?.length || 0} 个产品)` : template.trade_terms}</td>
                   <td className="px-4 py-3">{template.shipping_class}</td>
                   <td className="px-4 py-3">{template.min_weight_kg}–{template.max_weight_kg} kg</td>
                   <td className="px-4 py-3">
@@ -249,8 +252,16 @@ function TemplateForm({
   onSaved: () => void;
 }) {
   const [form, setForm] = useState<Omit<ShippingTemplate, "id">>(template || emptyTemplate);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [products, setProducts] = useState<Array<{ id: string; name: string }>>([]);
+  useEffect(() => {
+    fetch("/api/admin/shipping/products").then(async (response) => {
+      if (!response.ok) throw new Error("无法加载可选产品");
+      const result = await response.json();
+      setProducts(result.data);
+    }).catch((caught) => setError(caught.message));
+  }, []);
+  const [saving, setSaving] = useState(false);
 
   const setNumber = (key: keyof typeof form, value: string) => {
     setForm({ ...form, [key]: value === "" ? 0 : Number(value) });
@@ -307,13 +318,26 @@ function TemplateForm({
             <input value={form.method} onChange={(e) => setForm({ ...form, method: e.target.value })} className="input" placeholder="express" />
           </Field>
           <Field label="贸易条款">
-            <select value={form.trade_terms} onChange={(e) => setForm({ ...form, trade_terms: e.target.value as typeof form.trade_terms })} className="input">
+            <select value={form.trade_terms} onChange={(e) => setForm({ ...form, trade_terms: e.target.value as typeof form.trade_terms, ...(e.target.value === "SHIPPING_INCLUDED" ? { base_fee: 0, increment_fee: 0, minimum_fee: 0 } : {}) })} className="input">
               <option value="MANUAL_QUOTE">人工报价</option>
               <option value="DAP">DAP（税费由买家承担）</option>
               <option value="DDP">DDP（双清包税）</option>
+              <option value="SHIPPING_INCLUDED">Free Shipping / Shipping included in product price</option>
               <option value="UNAVAILABLE">不配送</option>
             </select>
           </Field>
+          {form.trade_terms === "SHIPPING_INCLUDED" && (
+            <div className="sm:col-span-2 space-y-2">
+              <p className="text-sm text-slate-600">{INCLUDED_TAX_LABEL} 可选产品仅限 Hisense 非 VIDDA 和 AWOL。仅限已有有效配送线路；未选择产品不可保存。</p>
+              <fieldset className="max-h-48 overflow-y-auto rounded border p-3">
+                <legend>适用产品（必须明确选择）</legend>
+                {products.map((product) => <label key={product.id} className="flex gap-2 py-1 text-sm">
+                  <input type="checkbox" checked={(form.product_ids || []).includes(product.id)} onChange={(e) => setForm({ ...form, product_ids: e.target.checked ? [...(form.product_ids || []), product.id] : (form.product_ids || []).filter((id) => id !== product.id) })} />
+                  {product.name}
+                </label>)}
+              </fieldset>
+            </div>
+          )}
           <Field label="运输类别">
             <select value={form.shipping_class} onChange={(e) => setForm({ ...form, shipping_class: e.target.value as typeof form.shipping_class })} className="input">
               <option value="parcel">普通包裹</option>
@@ -326,7 +350,7 @@ function TemplateForm({
           </Field>
           {numberFields.map(([key, label, step]) => (
             <Field key={key} label={`${label}${key.includes("fee") ? ` (${form.currency})` : key === "volumetric_divisor" ? "" : " (kg)"}`}>
-              <input type="number" min="0" step={step} value={String(form[key] ?? "")} onChange={(e) => setNumber(key, e.target.value)} className="input" />
+              <input disabled={form.trade_terms === "SHIPPING_INCLUDED" && key.includes("fee")} type="number" min="0" step={step} value={String(form[key] ?? "")} onChange={(e) => setNumber(key, e.target.value)} className="input" />
             </Field>
           ))}
           <Field label="生效日期">
