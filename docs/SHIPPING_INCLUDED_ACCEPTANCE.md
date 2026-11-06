@@ -86,4 +86,8 @@ C2 测试买家批准订单 74V48148GY715104D 后，GET 返回 APPROVED，但 pu
 
 ## 合并条件
 
-静态迁移检查、线上只读结构核验和隔离数据库脚本实测已完成；支付 sandbox 联调和最终目标分支构建仍待执行。PR #76 保持未合并，不自动部署生产环境。
+2026-11-06，在独立 detached worktree 将 9fa80a1 与 origin/main 89bd9f1（PR #74 公司身份与首页更新）执行无提交合并，无冲突。使用 localhost 占位 Supabase 配置执行 `node node_modules/next/dist/bin/next build`，编译、TypeScript 和 241 页生成通过；商品读取因占位数据库不可达产生警告，不代表目录数据加载验收。合并结果上的 shipping-included/shipping-quote/order-status/order-routes 共 30 项测试通过。pnpm 11 的依赖脚本批准检查导致快捷构建命令未启动，直接执行已安装的 Next CLI 完成构建，未修改依赖批准策略。
+
+Stripe 完整付款准备：`scripts/verify-stripe-payment-sandbox.cjs` 使用官方 Stripe CLI 1.55.8（下载校验和匹配）转发实际 sandbox 事件到 127.0.0.1:55478；签名密钥仅在内存中。使用原 webhook/data-service 源码及原库存 RPC，仅处理本脚本会话，商品/报价为 fixture，邮件为内存计数，独立测试商品库存初值 10。已创建实际测试会话并显示正确金额及运费说明，尚待买家付款和回调结果；准备工作不算通过。
+
+静态迁移检查、线上只读结构核验、隔离数据库脚本、PayPal sandbox capture 及目标分支编译已完成；Stripe 实际付款回调仍待完成。PR #76 保持未合并，不自动部署生产环境。
