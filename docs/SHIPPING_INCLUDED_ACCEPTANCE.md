@@ -1,4 +1,4 @@
-# PR #76 迁移与联调准备（2026-11-05）
+# PR #76 迁移与联调验收（更新至 2026-11-06）
 
 PR 保持未合并。用户报告已在 Supabase 执行迁移并收到 Success / No rows returned；代理未执行生产写入、真实支付或邮件。
 
@@ -7,9 +7,9 @@ PR 保持未合并。用户报告已在 Supabase 执行迁移并收到 Success /
 - 应用回归再次通过：14 个运费测试及 21 个履约测试。
 - `tests/shipping-included-payment.test.ts` 新增 3 个支付请求格式测试通过：Stripe 零运费行及税费说明、PayPal 商品总额和零运费拆分、人工报价阻断。网络请求全部模拟，未连接真实 sandbox，不等同于渠道端到端验收。
 - `scripts/verify-shipping-included-readonly.sql` 可在已迁移项目中只读核对字段、默认值、已验证约束定义及现有模板值。
-- 当前工作区只有 `.env.example`，没有独立测试数据库或支付 sandbox 凭据。线上只读结构核验已通过浏览器完成；真实 sandbox 联调仍需要现有测试配置路径，不要在聊天中粘贴密钥。
+- 已配置被 Git 忽略的 `.env.test.local` 和独立本地 PostgreSQL。PayPal 实际 sandbox capture、Stripe 实际 sandbox 付款/签名回调、订单持久化、库存扣减及顺序重复幂等已通过；两渠道的目录和报价使用 fixture，邮件只在内存捕获。详见下方实测记录。
 - “已有费率和启用状态未变”需要与迁移前导出/备份比较。脚本本身没有数据更新语句，但单独的迁移后快照无法证明历史值相等。
-- 暂不建议合并：历史值对比以及真实 sandbox 创建/回调/订单持久化链路尚未完成。PR #70 不操作。
+- 与 main 89bd9f1 合并后的本地编译、TypeScript 和 30 项回归测试通过。剩余：最新 Vercel 检查、实际商品/报价及前台和后台完整页面联调、迁移前历史费率基线对比。PayPal C2 买家缺少 shipping 的案例仍未解释，保持地址校验拦截。PR #76 保持未合并；PR #70 不操作。
 
 ## 2026-11-05 在线只读核验
 
