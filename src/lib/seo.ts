@@ -32,6 +32,7 @@ export interface ProductSEOData {
   availability: 'in_stock' | 'out_of_stock' | 'preorder'
   rating?: number
   reviewCount?: number
+  reviews?: Array<{ author: string; datePublished: string; reviewBody: string; rating: number }>
   locale?: string
   additionalProperties?: Array<{ name: string; value: string }>
   includeOffer?: boolean
@@ -161,6 +162,17 @@ export function generateProductSchema(product: ProductSEOData) {
             bestRating: '5',
             worstRating: '1',
           },
+        }
+      : {}),
+    ...(product.reviews?.length
+      ? {
+          review: product.reviews.map((review) => ({
+            '@type': 'Review',
+            author: { '@type': 'Person', name: review.author },
+            datePublished: review.datePublished,
+            reviewBody: review.reviewBody,
+            reviewRating: { '@type': 'Rating', ratingValue: review.rating, bestRating: '5', worstRating: '1' },
+          })),
         }
       : {}),
   }
