@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     title: t('title'),
     description: t('description'),
     keywords: t('keywords'),
-    authors: [{ name: 'HK REACH SOURCING LIMITED' }],
+    authors: [{ name: 'Quanzhou Reach Technology Co., Ltd.' }],
     robots: {
       index: true,
       follow: true,

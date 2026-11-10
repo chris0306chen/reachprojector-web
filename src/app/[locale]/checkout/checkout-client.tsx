@@ -178,7 +178,6 @@ function CheckoutContent() {
                   {copy.stripeSeller}
                 </p>
               )}
-              <p>{copy.sellerNotice}</p>
             </div>
           </div>
 

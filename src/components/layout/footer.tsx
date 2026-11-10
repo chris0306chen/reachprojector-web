@@ -60,9 +60,6 @@ export function Footer() {
               <div className="flex items-center gap-2 text-sm text-slate-400 mb-3">
                 <span className="font-medium text-white">Quanzhou Reach Technology Co., Ltd.</span>
               </div>
-              <div className="flex items-center gap-2 text-sm text-slate-400 mb-3">
-                <span className="font-medium text-white">HK REACH SOURCING LIMITED</span>
-              </div>
               <a href="mailto:info@reachtronics.com" className="flex items-center gap-2 text-sm text-slate-400 hover:text-orange-400 transition-colors">
                 <Mail className="w-4 h-4 shrink-0" />
                 info@reachtronics.com
@@ -74,10 +71,6 @@ export function Footer() {
               <div className="flex items-start gap-2 text-sm text-slate-400">
                 <MapPin className="w-4 h-4 shrink-0 mt-0.5" />
                 <span>{t('addressFujian')}</span>
-              </div>
-              <div className="flex items-start gap-2 text-sm text-slate-400">
-                <MapPin className="w-4 h-4 shrink-0 mt-0.5" />
-                <span>{t('addressHongKong')}</span>
               </div>
             </div>
           </div>
@@ -142,7 +135,7 @@ export function Footer() {
       <div className="border-t border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-slate-500">
-            &copy; 2026 HK REACH SOURCING LIMITED. {t('allRightsReserved')}
+            &copy; 2026 Quanzhou Reach Technology Co., Ltd. {t('allRightsReserved')}
           </p>
           <div className="flex items-center gap-4">
             <Link href={`/${locale}/privacy`} className="text-xs text-slate-500 hover:text-orange-400 transition-colors">

@@ -235,7 +235,7 @@ export function generateOrganizationSchema() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: SITE_NAME,
-    legalName: 'HK REACH SOURCING LIMITED',
+    legalName: 'Quanzhou Reach Technology Co., Ltd.',
     url: SITE_URL,
     logo: `${SITE_URL}/images/logo.png`,
     description:
