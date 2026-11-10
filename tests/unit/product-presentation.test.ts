@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import test from "node:test";
 import { moveArrayItem, parseProductDescription } from "../../src/lib/product-presentation";
 
@@ -30,4 +31,13 @@ test("supports markdown headings and numbered lists", () => {
     { type: "heading", text: "Before buying" },
     { type: "list", ordered: true, items: ["Confirm voltage", "Confirm plug"] },
   ]);
+});
+
+test("homepage product cards hide summaries while shared cards keep them by default", () => {
+  const homepage = fs.readFileSync("src/app/[locale]/page.tsx", "utf8");
+  const card = fs.readFileSync("src/components/product-card.tsx", "utf8");
+
+  assert.match(homepage, /<ProductCard key=\{product\.id\} product=\{product\} showDescription=\{false\} \/>/);
+  assert.match(card, /showDescription = true/);
+  assert.match(card, /showDescription && displayShortDesc/);
 });
