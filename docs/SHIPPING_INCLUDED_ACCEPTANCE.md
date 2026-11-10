@@ -107,3 +107,13 @@ Stripe 完整付款准备：`scripts/verify-stripe-payment-sandbox.cjs` 使用�
 新增回归测试先复现两项失败，修复后 3/3 通过；相关运费测试合计 17/17 通过，TypeScript 和目标 ESLint 通过。该提交的 Vercel 检查 SUCCESS。在独立验收 worktree 的主分支合并结果中应用此修复，Next 构建、TypeScript 和 241 页生成通过；本地占位数据库不可达的商品读取警告不代表真实目录验收。
 
 预览后台登录过期，已打开登录入口请用户重新登录。随后浏览器连接中断，尚未保存 PX4 Pro / Aetherion Pro 的开关，尚未验证两款实际目录的零运费。PR #76 保持未合并，PR #70 未改动。
+
+### 2026-11-10 实际商品保存与美国结账复核
+
+通过已登录预览后台，分别取消 PX4 Pro 和 AWOL Aetherion Pro 的“强制人工确认运费”，保存返回产品列表；重新打开两款编辑表单确认开关关闭。未修改价格、包装或运费线路。
+
+实际 PX4 Pro 美国结账显示 Shipping included in product price: $0.00，并显示 Import duties and taxes are not guaranteed included; confirm separately. 总额 USD 3199。AWOL 美国结账仍显示 Online shipping is unavailable. Please request a quote.
+
+后台线路只读核对：美国小货为 0.5–20 kg；美国大货为 25–300 kg、续重单位 1 kg、体积除数 6000，已启用，有效期 2026-07-27 至 2027-01-01。AWOL 包装 74×32×57 cm、毛重 13.6 kg，按大货体积重 22.496 kg 进位为 23 kg，未达到 25 kg 门槛。现有数据不足以自动报价，未扩大覆盖、改费率或降低重量门槛。线路编辑窗口只读后取消。
+
+重新运行 product-shipping-update、shipping-included、shipping-quote 测试 17/17 通过，包括 VIDDA 排除和含运费不等于含税。尝试通过现有本地生产配置做数据库只读核验时，项目域名保护检查不匹配，在网络查询前中止；上述线上数据证据来自后台 UI，不能冒称直接数据库查询成功。需要物流确认该 AWOL 包装是否可按 25 kg 起算，或提供覆盖该重量的有效美国线路，才可完成 AWOL 自动包邮。PR #76 未合并。
