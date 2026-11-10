@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { InquiryPipelineEditor } from "@/components/admin/inquiry-pipeline-editor";
+import { channelLabels, type InquiryOwner, type PipelineFields } from "@/lib/inquiry-pipeline";
 import {
   Search,
   ChevronDown,
@@ -10,7 +12,6 @@ import {
   Mail,
   Phone,
   MessageCircle,
-  Save,
   Loader2,
   FileText,
   Globe,
@@ -37,7 +38,7 @@ interface RFQDetail {
   message?: string;
 }
 
-interface Inquiry {
+interface Inquiry extends PipelineFields {
   id: string;
   name: string;
   email: string;
@@ -59,7 +60,7 @@ interface Pagination {
   totalPages: number;
 }
 
-type StatusKey = "pending" | "contacted" | "quoted" | "converted" | "rejected";
+type StatusKey = "pending" | "contacted" | "quoted" | "negotiating" | "converted" | "rejected";
 
 const STATUS_CONFIG: Record<
   StatusKey,
@@ -68,8 +69,9 @@ const STATUS_CONFIG: Record<
   pending: { label: "待处理", color: "text-amber-700", bg: "bg-amber-100" },
   contacted: { label: "已联系", color: "text-blue-700", bg: "bg-blue-100" },
   quoted: { label: "已报价", color: "text-purple-700", bg: "bg-purple-100" },
+  negotiating: { label: "谈判中", color: "text-orange-700", bg: "bg-orange-100" },
   converted: { label: "已成交", color: "text-green-700", bg: "bg-green-100" },
-  rejected: { label: "已拒绝", color: "text-red-700", bg: "bg-red-100" },
+  rejected: { label: "已失单", color: "text-red-700", bg: "bg-red-100" },
 };
 
 const STATUS_TABS: { key: string; label: string }[] = [
@@ -77,8 +79,9 @@ const STATUS_TABS: { key: string; label: string }[] = [
   { key: "pending", label: "待处理" },
   { key: "contacted", label: "已联系" },
   { key: "quoted", label: "已报价" },
+  { key: "negotiating", label: "谈判中" },
   { key: "converted", label: "已成交" },
-  { key: "rejected", label: "已拒绝" },
+  { key: "rejected", label: "已失单" },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -87,7 +90,8 @@ const STATUS_TABS: { key: string; label: string }[] = [
 
 function parseRFQDetail(raw: string): RFQDetail | null {
   try {
-    return JSON.parse(raw);
+    const detail = JSON.parse(raw);
+    return detail && typeof detail === "object" && typeof detail.rfq_number === "string" ? detail : null;
   } catch {
     return null;
   }
@@ -95,6 +99,7 @@ function parseRFQDetail(raw: string): RFQDetail | null {
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleString("zh-CN", {
+    timeZone: "Asia/Shanghai",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -104,7 +109,7 @@ function formatDate(iso: string): string {
 }
 
 function getStatusStyle(status: string) {
-  const key = status as StatusKey;
+  const key = (status === "new" ? "pending" : status) as StatusKey;
   if (STATUS_CONFIG[key]) return STATUS_CONFIG[key];
   return { label: status, color: "text-slate-600", bg: "bg-slate-100" };
 }
@@ -125,18 +130,19 @@ export default function AdminInquiriesPage() {
   const [error, setError] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState("all");
   const [search, setSearch] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const requestId = useRef(0);
+  const [viewer, setViewer] = useState<{ id: string; name: string; is_manager: boolean } | null>(null);
+  const [owners, setOwners] = useState<InquiryOwner[]>([]);
+  const [ownerError, setOwnerError] = useState("");
+  const [saveMessage, setSaveMessage] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  // Edit state for expanded row
-  const [editStatus, setEditStatus] = useState<string>("");
-  const [editNotes, setEditNotes] = useState<string>("");
-  const [saving, setSaving] = useState(false);
-  const [saveMsg, setSaveMsg] = useState<string | null>(null);
   const [emailTestMsg, setEmailTestMsg] = useState<string | null>(null);
-
   /* ---- Fetch ---- */
   const fetchInquiries = useCallback(
     async (page = 1) => {
+      const currentRequest = ++requestId.current;
       setLoading(true);
       setError(null);
       try {
@@ -145,26 +151,52 @@ export default function AdminInquiriesPage() {
           limit: String(pagination.limit),
         });
         if (statusFilter !== "all") params.set("status", statusFilter);
+        if (searchQuery) params.set("search", searchQuery);
 
-        const res = await fetch(`/api/rfq?${params}`);
+        const res = await fetch(`/api/admin/inquiries?${params}`);
         if (!res.ok) throw new Error("获取询价列表失败");
         const json = await res.json();
+        if (currentRequest !== requestId.current) return;
         setInquiries(json.data || []);
+        setViewer(json.viewer);
         setPagination((current) => json.pagination || current);
       } catch (err: unknown) {
+        if (currentRequest !== requestId.current) return;
         const msg = err instanceof Error ? err.message : "加载失败，请稍后重试";
         setError(msg);
       } finally {
-        setLoading(false);
+        if (currentRequest === requestId.current) setLoading(false);
       }
     },
-    [statusFilter, pagination.limit]
+    [statusFilter, searchQuery, pagination.limit]
   );
 
   useEffect(() => {
+    const timer = setTimeout(() => setSearchQuery(search.trim()), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    setExpandedId(null);
     fetchInquiries(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusFilter]);
+    return () => { requestId.current += 1; };
+  }, [fetchInquiries]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/admin/inquiries/owners").then(async (res) => {
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || "读取负责人失败");
+      if (!cancelled) setOwners(result.data || []);
+    }).catch((err) => { if (!cancelled) setOwnerError(err.message); });
+    return () => { cancelled = true; };
+  }, []);
+
+  const handleSaved = (data: PipelineFields) => {
+    setInquiries((rows) => rows.map((row) => row.id === data.id ? { ...row, ...data } : row));
+    setSaveMessage("跟进已保存");
+    if (statusFilter !== "all" && data.status !== statusFilter) fetchInquiries(1);
+  };
 
   /* ---- Toggle expand ---- */
   const handleExpand = (inq: Inquiry) => {
@@ -173,30 +205,7 @@ export default function AdminInquiriesPage() {
       return;
     }
     setExpandedId(inq.id);
-    setEditStatus(inq.status);
-    setEditNotes(inq.reply || "");
-    setSaveMsg(null);
-  };
-
-  /* ---- Save status / notes ---- */
-  const handleSave = async (id: string) => {
-    setSaving(true);
-    setSaveMsg(null);
-    try {
-      const res = await fetch(`/api/rfq/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: editStatus, notes: editNotes }),
-      });
-      if (!res.ok) throw new Error("保存失败");
-      setSaveMsg("保存成功");
-      fetchInquiries(pagination.page);
-      setTimeout(() => setSaveMsg(null), 2000);
-    } catch {
-      setSaveMsg("保存失败，请重试");
-    } finally {
-      setSaving(false);
-    }
+    setSaveMessage("");
   };
 
   const handleEmailTest = async () => {
@@ -211,21 +220,7 @@ export default function AdminInquiriesPage() {
     }
   };
 
-  /* ---- Filter by search ---- */
-  const filtered = search
-    ? inquiries.filter((inq) => {
-        const detail = parseRFQDetail(inq.message);
-        const q = search.toLowerCase();
-        return (
-          inq.name?.toLowerCase().includes(q) ||
-          inq.email?.toLowerCase().includes(q) ||
-          inq.company?.toLowerCase().includes(q) ||
-          inq.subject?.toLowerCase().includes(q) ||
-          detail?.product_name?.toLowerCase().includes(q) ||
-          detail?.rfq_number?.toLowerCase().includes(q)
-        );
-      })
-    : inquiries;
+  const filtered = inquiries;
 
   /* ================================================================ */
   /*  Render                                                           */
@@ -253,6 +248,12 @@ export default function AdminInquiriesPage() {
       </div>
 
       {/* Error */}
+      <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-slate-600">
+        <p>{viewer?.is_manager ? "主管可查看全部询盘并分配负责人" : "仅显示分配给我的询盘"} · 时间为北京时间</p>
+        <button type="button" onClick={() => { setExpandedId(null); fetchInquiries(pagination.page); }} className="underline underline-offset-4">刷新列表（放弃未保存修改）</button>
+      </div>
+      {ownerError && <p role="alert" className="text-sm text-red-700">{ownerError}，请刷新页面重试。</p>}
+      {saveMessage && <p role="status" className="text-sm text-green-800">{saveMessage}</p>}
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
           {error}
@@ -286,7 +287,9 @@ export default function AdminInquiriesPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="搜索RFQ编号、公司、产品、联系人..."
+              aria-label="搜索可见询盘"
+              maxLength={200}
+              placeholder="搜索编号、公司、产品、联系人..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
@@ -312,7 +315,7 @@ export default function AdminInquiriesPage() {
                 <thead>
                   <tr className="bg-slate-50 text-left">
                     <th className="px-4 py-3 font-medium text-slate-600">
-                      RFQ编号
+                      编号 / 主题
                     </th>
                     <th className="px-4 py-3 font-medium text-slate-600">
                       公司
@@ -332,6 +335,7 @@ export default function AdminInquiriesPage() {
                     <th className="px-4 py-3 font-medium text-slate-600">
                       提交时间
                     </th>
+                    <th className="px-4 py-3 font-medium text-slate-600">负责人 / 下次跟进</th>
                     <th className="px-4 py-3 font-medium text-slate-600 w-10"></th>
                   </tr>
                 </thead>
@@ -347,7 +351,8 @@ export default function AdminInquiriesPage() {
                         onClick={() => handleExpand(inq)}
                       >
                         <td className="px-4 py-3 font-mono text-xs text-slate-700">
-                          {detail?.rfq_number || inq.subject}
+                          <button type="button" aria-expanded={expanded} onClick={(event) => { event.stopPropagation(); handleExpand(inq); }} className="text-left underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-orange-600">{detail?.rfq_number || inq.subject || "未填写主题"}</button>
+                          <p className="mt-1 font-sans text-slate-600">{channelLabels[inq.channel] || inq.channel || "网站"} · {inq.inquiry_type}</p>
                         </td>
                         <td className="px-4 py-3 text-slate-700">
                           {inq.company}
@@ -361,7 +366,7 @@ export default function AdminInquiriesPage() {
                         <td className="px-4 py-3 text-slate-700">
                           <span className="inline-flex items-center gap-1">
                             <Globe className="w-3.5 h-3.5 text-slate-400" />
-                            {detail?.country || inq.company}
+                            {detail?.country || "-"}
                           </span>
                         </td>
                         <td className="px-4 py-3">
@@ -374,6 +379,7 @@ export default function AdminInquiriesPage() {
                         <td className="px-4 py-3 text-slate-500 text-xs whitespace-nowrap">
                           {formatDate(inq.created_at)}
                         </td>
+                        <td className="px-4 py-3 text-sm text-slate-700"><p>{!inq.assigned_to ? "未分配" : owners.find((owner) => owner.id === inq.assigned_to)?.name || "待核对负责人"}</p><p className="mt-1 text-xs">{inq.next_follow_up_at ? formatDate(inq.next_follow_up_at) : "未安排跟进"}</p></td>
                         <td className="px-4 py-3">
                           {expanded ? (
                             <ChevronUp className="w-4 h-4 text-slate-400" />
@@ -397,12 +403,16 @@ export default function AdminInquiriesPage() {
                 return (
                   <div key={inq.id} className="p-4">
                     <div
+                      role="button"
+                      tabIndex={0}
+                      aria-expanded={expanded}
+                      onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); handleExpand(inq); } }}
                       className="cursor-pointer"
                       onClick={() => handleExpand(inq)}
                     >
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-mono text-xs text-slate-600">
-                          {detail?.rfq_number || inq.subject}
+                          {detail?.rfq_number || inq.subject || "未填写主题"}
                         </span>
                         <span
                           className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${s.bg} ${s.color}`}
@@ -416,8 +426,7 @@ export default function AdminInquiriesPage() {
                             {inq.company}
                           </p>
                           <p className="text-xs text-slate-500">
-                            {detail?.product_name} · {detail?.quantity}件 ·{" "}
-                            {detail?.country}
+                            {detail ? `${detail.product_name} · ${detail.quantity}件 · ${detail.country}` : inq.name}
                           </p>
                         </div>
                         <div className="flex items-center gap-1 text-xs text-slate-400">
@@ -432,17 +441,15 @@ export default function AdminInquiriesPage() {
                     </div>
 
                     {/* Mobile expanded detail */}
+                    <p className="mt-2 text-sm text-slate-600">{channelLabels[inq.channel] || inq.channel || "网站"} · {inq.inquiry_type} · {!inq.assigned_to ? "未分配" : owners.find((owner) => owner.id === inq.assigned_to)?.name || "待核对负责人"}</p>
+                    <p className="mt-1 text-sm text-slate-600">下次跟进：{inq.next_follow_up_at ? formatDate(inq.next_follow_up_at) : "未安排"}</p>
                     {expanded && (
                       <ExpandedDetail
                         inq={inq}
                         detail={detail}
-                        editStatus={editStatus}
-                        setEditStatus={setEditStatus}
-                        editNotes={editNotes}
-                        setEditNotes={setEditNotes}
-                        saving={saving}
-                        saveMsg={saveMsg}
-                        onSave={() => handleSave(inq.id)}
+                        isManager={!!viewer?.is_manager}
+                        owners={owners}
+                        onSaved={handleSaved}
                       />
                     )}
                   </div>
@@ -462,13 +469,9 @@ export default function AdminInquiriesPage() {
                         key={inq.id}
                         inq={inq}
                         detail={detail}
-                        editStatus={editStatus}
-                        setEditStatus={setEditStatus}
-                        editNotes={editNotes}
-                        setEditNotes={setEditNotes}
-                        saving={saving}
-                        saveMsg={saveMsg}
-                        onSave={() => handleSave(inq.id)}
+                        isManager={!!viewer?.is_manager}
+                        owners={owners}
+                        onSaved={handleSaved}
                       />
                     );
                   })}
@@ -542,26 +545,12 @@ export default function AdminInquiriesPage() {
 /*  Expanded Detail Panel                                              */
 /* ------------------------------------------------------------------ */
 
-function ExpandedDetail({
-  inq,
-  detail,
-  editStatus,
-  setEditStatus,
-  editNotes,
-  setEditNotes,
-  saving,
-  saveMsg,
-  onSave,
-}: {
+function ExpandedDetail({ inq, detail, isManager, owners, onSaved }: {
   inq: Inquiry;
   detail: RFQDetail | null;
-  editStatus: string;
-  setEditStatus: (v: string) => void;
-  editNotes: string;
-  setEditNotes: (v: string) => void;
-  saving: boolean;
-  saveMsg: string | null;
-  onSave: () => void;
+  isManager: boolean;
+  owners: InquiryOwner[];
+  onSaved: (data: PipelineFields) => void;
 }) {
   return (
     <div className="p-4 md:p-6 space-y-5">
@@ -617,7 +606,7 @@ function ExpandedDetail({
           <div className="space-y-2 text-sm">
             <InfoRow
               icon={<Hash className="w-3.5 h-3.5" />}
-              label="RFQ编号"
+              label={detail ? "RFQ编号" : "主题"}
               value={detail?.rfq_number || inq.subject}
             />
             <InfoRow
@@ -640,11 +629,11 @@ function ExpandedDetail({
               label="用途"
               value={detail?.intended_use}
             />
-            {detail?.message && (
+            {(detail?.message || (!detail && inq.message)) && (
               <div className="pt-1">
                 <p className="text-xs text-slate-400 mb-1">留言</p>
                 <p className="text-slate-600 bg-white rounded-lg border border-slate-200 p-3 text-sm whitespace-pre-wrap">
-                  {detail.message}
+                  {detail ? detail.message : inq.message}
                 </p>
               </div>
             )}
@@ -652,59 +641,7 @@ function ExpandedDetail({
         </div>
       </div>
 
-      {/* Actions */}
-      <div className="border-t border-slate-200 pt-5">
-        <h3 className="text-sm font-semibold text-slate-700 mb-3">操作</h3>
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end">
-          <div className="flex-1 max-w-xs">
-            <label className="block text-xs text-slate-500 mb-1">状态</label>
-            <select
-              value={editStatus}
-              onChange={(e) => setEditStatus(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
-            >
-              {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
-                <option key={key} value={key}>
-                  {cfg.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex-1 w-full sm:w-auto">
-            <label className="block text-xs text-slate-500 mb-1">备注</label>
-            <input
-              type="text"
-              value={editNotes}
-              onChange={(e) => setEditNotes(e.target.value)}
-              placeholder="添加内部备注..."
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
-            />
-          </div>
-          <button
-            onClick={onSave}
-            disabled={saving}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
-          >
-            {saving ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Save className="w-4 h-4" />
-            )}
-            保存
-          </button>
-          {saveMsg && (
-            <span
-              className={`text-sm ${
-                saveMsg.includes("成功")
-                  ? "text-green-600"
-                  : "text-red-600"
-              }`}
-            >
-              {saveMsg}
-            </span>
-          )}
-        </div>
-      </div>
+      <InquiryPipelineEditor key={`${inq.id}:${inq.workflow_version}`} inquiry={inq} isManager={isManager} owners={owners} onSaved={onSaved} />
     </div>
   );
 }

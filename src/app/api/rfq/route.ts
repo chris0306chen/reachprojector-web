@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseClient } from '@/storage/database/supabase-client';
-import { getCurrentUser } from '@/lib/auth';
-import { hasPermission } from '@/lib/auth';
 import { sendEmail } from '@/lib/email';
 import { z } from 'zod';
 
@@ -245,42 +243,10 @@ export async function POST(request: Request) {
   }
 }
 
-// GET /api/rfq - List RFQs (admin only)
+// Legacy listing shares current-account and owner checks with the admin pipeline.
 export async function GET(request: NextRequest) {
-  try {
-    const user = await getCurrentUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    if (!hasPermission(user, 'inquiries')) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
-
-    const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
-    const status = searchParams.get('status');
-    const offset = (page - 1) * limit;
-
-    const supabase = getSupabaseClient();
-    let query = supabase
-      .from('inquiries')
-      .select('*', { count: 'exact' })
-      .eq('inquiry_type', 'rfq')
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
-
-    if (status) query = query.eq('status', status);
-
-    const { data, error, count } = await query;
-    if (error) throw error;
-
-    return NextResponse.json({
-      data,
-      pagination: { page, limit, total: count || 0, totalPages: Math.ceil((count || 0) / limit) },
-    });
-  } catch (error) {
-    console.error('Failed to fetch RFQs:', error);
-    return NextResponse.json({ error: 'Failed to fetch RFQs' }, { status: 500 });
-  }
+  const { GET: listInquiries } = await import('@/app/api/admin/inquiries/route');
+  const url = new URL(request.url);
+  url.searchParams.set('inquiry_type', 'rfq');
+  return listInquiries(new NextRequest(url, { headers: request.headers }));
 }
