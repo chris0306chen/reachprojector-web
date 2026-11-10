@@ -96,7 +96,12 @@ export async function getShippingQuote(
   });
   for (const row of scopedRows) {
     let rate = toRate(row);
-    let calculated = calculatePackageQuote({ packedWeightKg, lengthCm, widthCm, heightCm, quantity }, rate);
+    // Confirmed 2026-11-10: this Aetherion Pro may use the US bulk route billed from 25 kg.
+    const minimumChargeableWeightKg = productId === "70bf6e4a-c53f-4390-8ea8-23bb4db81046"
+      && countryCode === "US" && hasIncludedShippingBrand(product)
+      && rate.method === "国际快递(大货)" && rate.tradeTerms === "DDP" && rate.minWeightKg === 25
+      ? 25 : undefined;
+    let calculated = calculatePackageQuote({ packedWeightKg, lengthCm, widthCm, heightCm, quantity, minimumChargeableWeightKg }, rate);
     if (calculated) {
       const included = hasIncludedShippingBrand(product);
       if (included) {

@@ -142,3 +142,27 @@ test("other or ambiguous brands retain existing paid or manual quoting", async (
     assert.equal(quote.tradeTerms, "DAP");
   }
 });
+
+test("approved Aetherion US bulk route bills at least 25 kg without widening other coverage", async () => {
+  const id = "70bf6e4a-c53f-4390-8ea8-23bb4db81046";
+  const product = { id, brand: "AWOL Vision", packed_weight_kg: 13.6, package_length_cm: 74, package_width_cm: 32, package_height_cm: 57 };
+  const rate = { ...paidRate, method: "国际快递(大货)", min_weight_kg: 25, max_weight_kg: 300, increment_weight_kg: 1, base_fee: 0, increment_fee: 9.29 };
+  const result = await quoting([rate], product)(id, "US", 2);
+  assert.equal(result.mode, "automatic");
+  assert.equal(result.actualWeightPerPackageKg, 13.6);
+  assert.equal(result.volumetricWeightPerPackageKg, 22.5);
+  assert.equal(result.chargeableWeightPerPackageKg, 25);
+  assert.equal(result.totalChargeableWeightKg, 50);
+  assert.equal(result.shippingCost, 0);
+  assert.equal(result.tradeTerms, "SHIPPING_INCLUDED");
+  assert.equal(result.dutiesIncluded, null);
+  for (const patch of [{ id: otherId }, { brand: "VIDDA" }, { shipping_quote_required: true }, { package_count: 2 }, { packed_weight_kg: 301 }, { package_length_cm: null }]) {
+    const item = { ...product, ...patch };
+    assert.equal((await quoting([rate], item)(item.id, "US", 1)).mode, "manual_quote");
+  }
+  for (const patch of [{ country_code: "CA" }, { method: "other" }, { trade_terms: "DAP" }, { is_active: false }, { valid_to: "2020-01-01" }, { min_weight_kg: 30 }]) {
+    const route = { ...rate, ...patch };
+    assert.equal((await quoting([route], product)(id, route.country_code, 1)).mode, "manual_quote");
+  }
+  assert.equal((await quoting([rate], { ...product, packed_weight_kg: 26 })(id, "US", 1)).chargeableWeightPerPackageKg, 26);
+});

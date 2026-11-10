@@ -4,6 +4,7 @@ export interface PackageInput {
   widthCm: number;
   heightCm: number;
   quantity: number;
+  minimumChargeableWeightKg?: number;
 }
 
 export interface ShippingRate {
@@ -47,7 +48,9 @@ export function calculatePackageQuote(input: PackageInput, rate: ShippingRate) {
 
   const volumetricWeightKg =
     (input.lengthCm * input.widthCm * input.heightCm) / rate.volumetricDivisor;
-  const rawChargeableWeightKg = Math.max(input.packedWeightKg, volumetricWeightKg);
+  const minimumChargeableWeightKg = input.minimumChargeableWeightKg ?? 0;
+  if (!Number.isFinite(minimumChargeableWeightKg) || minimumChargeableWeightKg < 0) return null;
+  const rawChargeableWeightKg = Math.max(input.packedWeightKg, volumetricWeightKg, minimumChargeableWeightKg);
   const chargeableWeightPerPackageKg =
     Number((weightUnits(rawChargeableWeightKg, rate.incrementWeightKg) * rate.incrementWeightKg).toPrecision(15));
 
