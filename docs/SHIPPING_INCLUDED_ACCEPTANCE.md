@@ -123,3 +123,5 @@ Stripe 完整付款准备：`scripts/verify-stripe-payment-sandbox.cjs` 使用�
 用户确认该 AWOL 可按最低 25 kg 计费。新增严格限定为商品 70bf6e4a-c53f-4390-8ea8-23bb4db81046、US、国际快递(大货)、DDP、线路最低 25 kg 的服务端计费下限；仍要求有效且启用的原线路、包装完整、单包裹、无人工报价标志及符合品牌排除规则。保留实际毛重与体积重，计费重为 max(实际毛重, 体积重, 25)，超过线路最大重量仍拒绝。其他商品、国家和线路不获得此例外。未修改数据库费率或包装数据。
 
 18/18 运费及保存测试、TypeScript 通过，新增覆盖 25 kg 起算、数量、超过 25 kg 实重、超重/过期/停用/VIDDA/人工报价/其他国家和线路隔离。客户运费仍为 0，税费状态未知。此规则待分支部署后的实际预览复核；PR 保持未合并。
+
+同日部署后实际预览复核通过：Aetherion Pro 数量 1、United States，显示 Shipping included in product price: $0.00 (Import duties and taxes are not guaranteed included; confirm separately.)，总额 USD 2100.00，PayPal 入口可见。仅查看报价，未发起付款。之前 AWOL 无匹配线路的结论由本次已授权 25 kg 起算规则及实测结果取代。
