@@ -48,11 +48,11 @@ export function ProductsClient({
   return (
     <>
       {/* Toolbar */}
-      <div className="mb-7 flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-7 flex flex-col gap-3 border-b border-slate-200 pb-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm font-medium text-slate-600">
           {t('showingProducts', { count: total })}
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex w-full items-center gap-2 sm:w-auto">
             <ArrowUpDown className="h-4 w-4 text-slate-500" aria-hidden="true" />
             <select
               value={currentSort}
@@ -60,7 +60,7 @@ export function ProductsClient({
                 window.location.href = buildUrl({ sort: e.target.value, page: '1' });
               }}
               aria-label={t('sort.newest')}
-              className="min-h-10 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+              className="min-h-10 min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 sm:flex-none"
             >
               <option value="newest">{t('sort.newest')}</option>
               <option value="price_asc">{t('sort.priceLowHigh')}</option>
