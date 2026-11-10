@@ -1,3 +1,4 @@
+import { hasIncludedShippingBrand } from "@/lib/shipping-brand-policy";
 import { getSupabaseClient } from "@/storage/database/supabase-client";
 import { calculatePackageQuote, type ShippingRate } from "@/lib/shipping-quote";
 
@@ -7,8 +8,8 @@ export type AutomaticShippingQuote = {
   templateId: string;
   serviceName: string;
   method: string;
-  tradeTerms: "DDP" | "DAP";
-  dutiesIncluded: boolean;
+  tradeTerms: "DDP" | "DAP" | "SHIPPING_INCLUDED";
+  dutiesIncluded: boolean | null;
   currency: string;
   estimatedDaysMin: number | null;
   estimatedDaysMax: number | null;
@@ -39,7 +40,7 @@ export async function getShippingQuote(
   const supabase = getSupabaseClient();
   const { data: product, error: productError } = await supabase
     .from("products")
-    .select("id,shipping_class,packed_weight_kg,package_length_cm,package_width_cm,package_height_cm,package_count,shipping_quote_required")
+    .select("id,brand,name,model,slug,specifications,detail_content,shipping_class,packed_weight_kg,package_length_cm,package_width_cm,package_height_cm,package_count,shipping_quote_required")
     .eq("id", productId)
     .eq("is_active", true)
     .maybeSingle();
@@ -59,23 +60,24 @@ export async function getShippingQuote(
   }
 
   const today = new Date().toISOString().slice(0, 10);
-  let rateQuery = supabase
+  const rateQuery = supabase
     .from("shipping_templates")
     .select("*")
     .eq("country_code", countryCode)
     .eq("shipping_class", "parcel")
     .eq("is_active", true)
-    .in("trade_terms", ["DDP", "DAP"])
+    .in("trade_terms", ["DDP", "DAP", "SHIPPING_INCLUDED"])
     .lte("valid_from", today)
     .gte("valid_to", today);
-  if (countryCode === "MX") rateQuery = rateQuery.eq("trade_terms", "DDP");
   const { data: rows, error: rateError } = await rateQuery
     .order("trade_terms", { ascending: true })
     .order("base_fee", { ascending: true });
 
   if (rateError) throw rateError;
-  for (const row of rows || []) {
-    const rate: ShippingRate = {
+  // Brand discounts never establish delivery coverage: first match a valid paid route.
+  const scopedRows = (rows || []).filter((row) => ["DDP", "DAP"].includes(row.trade_terms)
+    && (countryCode !== "MX" || row.trade_terms === "DDP"));
+  const toRate = (row: (typeof scopedRows)[number]): ShippingRate => ({
       id: row.id,
       name: row.name,
       method: row.method,
@@ -91,21 +93,38 @@ export async function getShippingQuote(
       volumetricDivisor: Number(row.volumetric_divisor),
       estimatedDaysMin: row.estimated_days_min,
       estimatedDaysMax: row.estimated_days_max,
-    };
-    const calculated = calculatePackageQuote({ packedWeightKg, lengthCm, widthCm, heightCm, quantity }, rate);
+  });
+  for (const row of scopedRows) {
+    let rate = toRate(row);
+    // Confirmed 2026-11-10: this Aetherion Pro may use the US bulk route billed from 25 kg.
+    const minimumChargeableWeightKg = productId === "70bf6e4a-c53f-4390-8ea8-23bb4db81046"
+      && countryCode === "US" && hasIncludedShippingBrand(product)
+      && rate.method === "国际快递(大货)" && rate.tradeTerms === "DDP" && rate.minWeightKg === 25
+      ? 25 : undefined;
+    let calculated = calculatePackageQuote({ packedWeightKg, lengthCm, widthCm, heightCm, quantity, minimumChargeableWeightKg }, rate);
     if (calculated) {
+      const included = hasIncludedShippingBrand(product);
+      if (included) {
+        for (const candidate of rows || []) {
+          if (candidate.trade_terms !== "SHIPPING_INCLUDED" || !Array.isArray(candidate.product_ids) || !candidate.product_ids.includes(productId)) continue;
+          const selectedRate = toRate(candidate);
+          const selectedQuote = calculatePackageQuote({ packedWeightKg, lengthCm, widthCm, heightCm, quantity }, selectedRate);
+          if (selectedQuote) { rate = selectedRate; calculated = selectedQuote; break; }
+        }
+      }
       return {
         mode: "automatic",
         countryCode,
         templateId: rate.id,
         serviceName: rate.name,
         method: rate.method,
-        tradeTerms: rate.tradeTerms,
-        dutiesIncluded: rate.tradeTerms === "DDP",
+        tradeTerms: included ? "SHIPPING_INCLUDED" : rate.tradeTerms,
+        dutiesIncluded: included ? null : rate.tradeTerms === "DDP",
         currency: rate.currency,
         estimatedDaysMin: rate.estimatedDaysMin ?? null,
         estimatedDaysMax: rate.estimatedDaysMax ?? null,
         ...calculated,
+        shippingCost: included ? 0 : calculated.shippingCost,
       };
     }
   }

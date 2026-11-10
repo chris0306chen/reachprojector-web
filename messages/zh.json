@@ -33,7 +33,6 @@
     "hospitalityLiving": "民宿/卧室影院",
     "eventsRentals": "活动租赁",
     "retailChannels": "渠道分销/OEM",
-    "shopByScene": "场景化购物",
     "bedroomCinema": "卧室影院",
     "backyardCamping": "露营",
     "portableScreen": "便携屏",
@@ -68,10 +67,10 @@
     "viewAll": "查看全部",
     "viewAllProducts": "查看所有产品",
     "guides": {
-      "eyebrow": "投影仪购买指南",
-      "title": "先做正确判断，再决定购买",
-      "description": "提供房间规划、产品比较、国际运输和商业采购方面的清晰答案。",
-      "viewAll": "查看全部指南",
+      "eyebrow": "博客",
+      "title": "REACH PROJECTOR 实用文章",
+      "description": "了解投影设备选购、安装规划与商业采购的实用建议。",
+      "viewAll": "查看全部文章",
       "read": "阅读指南"
     },
     "categories": {
@@ -181,7 +180,7 @@
     "aboutTitle": "关于REACH PROJECTOR",
     "aboutText": "您的OEM/ODM投影合作伙伴。我们提供投影仪、支架、幕布和配件，支持白标定制和批量部署，服务全球企业。",
     "company1": "泉州锐驰科技有限公司",
-    "company2": "香港锐达采购有限公司",
+    "company2": "泉州锐驰科技有限公司",
     "quickLinks": "快速链接",
     "contactInfo": "联系信息",
     "newsletter": "订阅通讯",
@@ -422,8 +421,8 @@
   },
   "Footer": {
     "description": "为家庭、酒店、教育、会议、活动和户外观影搭配完整投影场景，组合投影仪、幕布、支架、家具与配件。",
-    "addressFujian": "福建省泉州市晋江市泉安北路1108号",
-    "addressHongKong": "香港尖沙咀加连威老道61-65号资本广场2楼S007室",
+    "addressFujian": "中国福建省泉州市晋江市泉安北路1108号",
+    "addressHongKong": "中国福建省泉州市晋江市泉安北路1108号",
     "products": "产品",
     "company": "公司",
     "support": "支持",

@@ -12,6 +12,7 @@ export interface BuyingGuide {
   title: string
   description: string
   directAnswer: string
+  publishedAt?: string
   updatedAt: string
   readTime: string
   sections: GuideSection[]
@@ -20,6 +21,144 @@ export interface BuyingGuide {
 }
 
 export const buyingGuides: BuyingGuide[] = [
+  {
+    slug: 'projector-brightness-specifications',
+    audience: 'Home buyers',
+    title: 'Projector Brightness Specifications: What Can You Compare?',
+    description: 'Compare brightness labels, white and color output, and operating modes before choosing a projector for your room.',
+    directAnswer: 'Before comparing lumen numbers, check the exact model, measurement method, output type and operating mode. Keep the original specification labels. A larger unexplained number is not enough to decide which projector fits your screen and room.',
+    updatedAt: '2026-10-12',
+    readTime: '5 min read',
+    sections: [
+      {
+        title: 'Read the words beside the number',
+        paragraphs: ['BenQ distinguishes ANSI, LED and light-source lumen claims in its brightness explainer. Use those distinctions to ask for the exact model specification, rather than applying a generic conversion to an unknown product. This guide compares documentation; it does not report hands-on measurements.'],
+        checklist: [
+          'ANSI lumens: record the manufacturer figure and its stated conditions.',
+          'ISO 21118: retain the standard reference, output type and operating mode.',
+          'Color light output: keep it separate from white light output.',
+          'LED lumens: request a documented projected-output measurement before comparing with an ANSI or ISO-labelled figure.',
+          'Light-source lumens: establish whether the claim describes the source rather than the projected image.',
+          'Unqualified lumens: ask for the original specification and measurement method.',
+        ],
+      },
+      {
+        title: 'Do not fill a specification gap with a conversion',
+        paragraphs: [
+          'If two shortlisted models use different labels, preserve the wording and ask which method and settings apply. This guide does not establish numerical equivalence between measurement procedures or provide a universal conversion factor.',
+          'Imagine one listing gives ANSI lumens in a named mode while another gives only LED lumens. The useful next step is to obtain comparable documentation for the second model, not to rank the two by the size of the numbers. Leave missing fields marked as unknown.',
+        ],
+      },
+      {
+        title: 'White and color output are separate fields',
+        paragraphs: ['Epson identifies separate white and color brightness specifications, citing ISO 21118 for white output and IDMS 15.4 for color output. Do not add the figures together into a total lumen number. Neither field alone is a complete assessment of image quality.'],
+      },
+      {
+        title: 'Check the mode you intend to use',
+        paragraphs: [
+          'Epson lists different white-output values for Normal and Quiet or Extended modes on its Pro L1060-series specification page. This is a model-specific documentation example, not a performance claim about another projector.',
+          'Keep the mode beside every figure. If a supplier quotes brightness from one mode and noise or power consumption from another, those values do not document a single operating condition. Ask for the combination you expect to use.',
+        ],
+      },
+      {
+        title: 'Make a comparison record you can check',
+        checklist: [
+          'Exact model and regional version.',
+          'Manufacturer URL and date checked.',
+          'Published brightness figure and its original label.',
+          'White or color output and stated measurement reference.',
+          'Picture or power mode and any documented conditions.',
+          'Unknown details requiring clarification before a recommendation.',
+        ],
+      },
+      {
+        title: 'Bring your room into the decision',
+        paragraphs: [
+          'Send the intended image size, screen, daytime or evening use, window lighting and whether blinds can be closed. Those details belong with the model shortlist; a brightness number without the planned installation is an incomplete buying brief.',
+          'For a demonstration, request the intended image size and similar room lighting, and record the modes used. This is a proposed comparison method, not a demonstration Reach has already performed. We do not set a universal daylight lumen threshold in this guide.',
+          'For classroom or multi-room procurement, add the room layouts, operating hours and agreed acceptance requirements. Keep the same specification fields across supplier quotations so unresolved differences remain visible.',
+        ],
+      },
+    ],
+    sources: [
+      { label: 'BenQ: ANSI, LED and light-source brightness labels', url: 'https://www.benq.com/en-us/knowledge-center/knowledge/ansi-light-source-and-led-lumens-how-led-projectors-with-3000-lumens-are-a-marketing-ploy.html' },
+      { label: 'Epson: white and color brightness references', url: 'https://epson.com/projector-guide-how-to-buy-a-projector-color-brightness' },
+      { label: 'Epson Pro L1060-series: output by operating mode', url: 'https://files.support.epson.com/docid/cpd5/cpd57486/source/specifications/reference/pl1060u_1075u/spex_general_pl1060u_1075u.html' },
+    ],
+    cta: { label: 'Send your room details and model shortlist', href: '/contact' },
+  },
+  {
+    slug: 'projector-sample-acceptance-checklist',
+    audience: 'Business buyers',
+    title: 'Projector Sample Acceptance Checklist for Business Buyers',
+    description: 'Define what a projector sample must demonstrate before a bulk order: identity, installation fit, source compatibility, exceptions and written approval.',
+    directAnswer: 'Agree acceptance criteria before the sample arrives. Record its exact configuration, check it with the planned screen and signal path, and document results and exceptions before approval. A successful sample check does not establish the condition of every unit in a future shipment.',
+    updatedAt: '2026-10-10',
+    readTime: '6 min read',
+    sections: [
+      {
+        title: 'Define a result you can actually check',
+        paragraphs: [
+          'Start with the application, image size, installation position, source devices and accessories. For each requirement, agree a method, expected result and responsible reviewer. This is a proposed procurement workflow; no sample was tested for this article.',
+          'For a meeting room, an example requirement is readable text from an agreed presentation file at the normal seating positions, using the intended laptop and signal path. Specify the room lighting, image size and viewing positions before checking. This is a buyer-defined criterion, not a universal image-quality standard.',
+          'If a contract requires measured brightness or another laboratory result, agree the procedure, equipment, settings and acceptance limits separately. Do not turn a visual impression into a measured specification.',
+        ],
+      },
+      {
+        title: 'Identify exactly what arrived',
+        checklist: [
+          'Record the model, regional version, serial number and firmware version where available.',
+          'Photograph labels and inventory the lens, remote, power cord and agreed accessories.',
+          'Compare the supplied configuration with the written sample specification.',
+          'Request project documents and check their model references. Document receipt alone does not verify validity or destination suitability.',
+        ],
+      },
+      {
+        title: 'Use the signal path you plan to install',
+        paragraphs: [
+          'Follow the exact model manual for placement, mounting, power and ventilation. Record the screen, image size, source device, adapter, switcher or receiver, cable and projector input used in each check.',
+          'For example, the Epson EB-L520U series guide provides installation, test-pattern and image-source instructions for its listed models. Use the corresponding documentation for your sample; features and procedures are model-specific.',
+          'A laptop connected directly to the projector does not demonstrate operation through an untested switcher or long cable run. If required equipment is missing, record that check as pending rather than passed.',
+        ],
+      },
+      {
+        title: 'Create one record for each requirement',
+        paragraphs: ['Use these fields for each check. Start with “not checked”; then record pass, fail, pending or not applicable, with an explanation. Nothing in this checklist represents an actual test result.'],
+        checklist: [
+          'Requirement and agreed expected result.',
+          'Method, equipment and operating settings.',
+          'Date, reviewer and room conditions.',
+          'Observation and evidence reference.',
+          'Disposition, issue owner and resolution or accepted exception.',
+        ],
+      },
+      {
+        title: 'Cover the functions your project needs',
+        checklist: [
+          'Placement: confirm image size and position within the model installation limits.',
+          'Presentation image: use the agreed files and patterns against the agreed readability criteria.',
+          'Sources: check each required device through the intended signal path.',
+          'Audio and control, where required: exercise the agreed routing, controls and integration.',
+          'Operating scenario: agree a usage sequence and duration appropriate to the application and manufacturer instructions.',
+          'Documents and service: record who reviews required documents and the written support responsibilities.',
+        ],
+      },
+      {
+        title: 'Resolve changes before signing off',
+        paragraphs: [
+          'If firmware, an adapter or a lens changes during evaluation, record the change and which checks were repeated. For subjective observations such as fan noise, keep the mode, room conditions and observer position with the note.',
+          'Approval should name the accepted sample configuration, completed checks, open issues and accepted exceptions. Approval for one source device does not imply approval for an untested device.',
+          'Agree the bulk configuration, treatment of substitutions, shipment inspection and handling of discrepancies separately. A sample record is evidence about that unit under the recorded conditions, not proof that every future unit meets the same requirements.',
+        ],
+      },
+      {
+        title: 'Prepare your sample request',
+        paragraphs: ['Send the intended application, quantity, destination, room constraints, source devices and acceptance requirements with your project brief. For a single home installation, the same identity and connection checks can help confirm that the selected version fits your setup. Sample availability and commercial terms must be confirmed in the quotation.'],
+      },
+    ],
+    sources: [{ label: 'Epson EB-L520U series: installation, test patterns and source selection', url: 'https://files.support.epson.com/docid/cpd6/cpd61218/helpcontents.html' }],
+    cta: { label: 'Send your project brief and acceptance requirements', href: '/contact' },
+  },
   {
     slug: 'how-to-choose-a-projector-for-your-room',
     audience: 'Home buyers',
@@ -260,7 +399,8 @@ export const buyingGuides: BuyingGuide[] = [
     title: 'International Projector Regional-Version Checklist',
     description: 'Check system language, apps, streaming hardware, power, warranty and support before importing a projector.',
     directAnswer: 'A menu that supports English does not automatically make a projector an official regional model. Before importing, confirm the exact hardware and firmware version, local power and plug, app availability, streaming-device path, warranty territory, return process and included accessories in writing.',
-    updatedAt: '2026-09-03',
+    publishedAt: '2026-09-03',
+    updatedAt: '2026-10-19',
     readTime: '8 min read',
     sections: [
       {
@@ -270,6 +410,13 @@ export const buyingGuides: BuyingGuide[] = [
           'Firmware or operating-system version and available interface languages.',
           'Power-input range, plug type and included power cable.',
           'Included remote, accessories and printed documentation.',
+        ],
+      },
+      {
+        title: 'Ask for evidence of the delivered version',
+        paragraphs: [
+          'Treat international version and Chinese-market version as descriptions to verify, not complete specifications. Request photos of the model label, system-information screen and language menu for the configuration being offered. A translated launcher alone does not establish the language of every settings page or application.',
+          'Keep a written record of the model code, firmware, included accessories and seller changes. Ask whether the language setup survives a normal restart or factory reset, and what manufacturer-supported update and recovery process applies. Do not assume a similar model name means identical software or regional support.',
         ],
       },
       {
@@ -290,6 +437,13 @@ export const buyingGuides: BuyingGuide[] = [
         ],
       },
       {
+        title: 'An installed app is not a playback test',
+        paragraphs: [
+          'Ask for evidence that the intended service plays on the exact configuration, with the intended account region and supported connection path. Record the device, app version, firmware, test date and observed playback result. A home-screen icon or login screen does not demonstrate successful playback or a particular resolution.',
+          'Netflix recommends checking model compatibility with the manufacturer and using a supported external device where appropriate. A supported brand name does not prove that every regional model has the same app support. Google TV also documents differences by country and language. These are platform requirements to investigate, not evidence that Reach has tested your combination.',
+        ],
+      },
+      {
         title: 'Confirm the commercial safety net',
         checklist: [
           'Who handles warranty service and in which country?',
@@ -299,8 +453,12 @@ export const buyingGuides: BuyingGuide[] = [
         ],
       },
       {
-        title: 'How Reach Projector should describe imported versions',
-        paragraphs: ['Each product page should distinguish confirmed specifications from regional details that still need confirmation. Until a projector-and-streaming-device combination is physically tested for a target market, it should be described as under validation—not as a guaranteed compatible solution.'],
+        title: 'Get the service path in writing',
+        paragraphs: [
+          'Ask who accepts the service request, which country handles repair, and who pays transport and any removal or reinstallation costs. Keep the written warranty and return terms for the exact quotation; a local-language menu is not evidence of local warranty coverage.',
+          'For a home purchase, send your destination, required apps, audio equipment and candidate model before ordering. For a hotel, classroom or reseller order, also specify quantities, account-management requirements and the sample acceptance process. Confirm the same regional configuration will be supplied across the order.',
+          'Where compatibility has not been verified, keep it marked as awaiting confirmation. This checklist does not certify any specific model, modified firmware or streaming setup.',
+        ],
       },
     ],
     sources: [
@@ -366,6 +524,70 @@ export const buyingGuides: BuyingGuide[] = [
       { label: 'AWOL Vision Support: image and screen alignment', url: 'https://support.awolvision.com/hc/en-us/articles/15956289161615-How-do-I-fine-tune-the-alignment-between-the-image-and-the-screen' },
     ],
     cta: { label: 'Send your room measurements', href: '/contact' },
+  },
+
+  {
+    slug: 'projector-distance-for-100-inch-screen',
+    audience: 'Home buyers',
+    title: 'How Far Should a Projector Be from a 100-Inch Screen?',
+    description: 'Calculate the distance for a 100-inch image and check whether your shelf, ceiling mount or cabinet position will work before buying.',
+    directAnswer: 'A 100-inch 16:9 image is about 2.214 metres wide. Multiply that width by the exact projector throw ratio: at 1.2:1, the calculated distance is 2.66 metres (8.72 feet). Confirm the position with the model installation drawing before ordering or fixing a mount.',
+    updatedAt: '2026-09-29',
+    readTime: '5 min read',
+    sections: [
+      {
+        title: 'Start with the image width',
+        paragraphs: [
+          'The 100-inch label is a diagonal measurement. Throw ratio uses image width: distance divided by width. For a 16:9 image, width is diagonal × 16 ÷ √337; height is diagonal × 9 ÷ √337.',
+          'That gives an image approximately 221.4 cm wide and 124.5 cm high. These are calculated image dimensions, not the outside dimensions of a screen frame. Check the screen drawing before deciding whether it fits your wall.',
+        ],
+      },
+      {
+        title: 'What different ratios mean for your room',
+        paragraphs: ['The following are rounded calculations for a 100-inch 16:9 image using hypothetical ratios. They are not tested mounting positions or claims that a particular model supports this image size.'],
+        checklist: [
+          '0.5:1 — 1.11 metres (3.63 feet).',
+          '1.0:1 — 2.21 metres (7.26 feet).',
+          '1.2:1 — 2.66 metres (8.72 feet).',
+          '1.5:1 — 3.32 metres (10.89 feet).',
+          '2.0:1 — 4.43 metres (14.53 feet).',
+        ],
+      },
+      {
+        title: 'A three-metre room is not a three-metre throw',
+        paragraphs: [
+          'For a conventional front-lens projector, use the lens-to-screen measurement in its manual. A rear shelf, the projector body, connectors and required ventilation can reduce the usable distance. Measure the planned lens position rather than assuming the full room depth is available.',
+          'If the lens can actually sit 3.00 metres from the image surface, the required ratio is approximately 3.00 ÷ 2.214 = 1.36:1. Check whether the exact model and lens support that ratio at a 100-inch image size. A model outside that range needs a different position or image size.',
+          'This calculation answers a placement question. It does not establish brightness, source compatibility or image quality. Your seating distance is a separate measurement.',
+        ],
+      },
+      {
+        title: 'Before buying the screen or drilling the ceiling',
+        checklist: [
+          'Confirm the exact model, lens where applicable, aspect ratio and supported image-size range.',
+          'Check the manufacturer calculator and installation drawing, including zoom range and vertical placement.',
+          'Allow for the screen frame, cables and model-specific ventilation clearances.',
+          'Verify the proposed image position with the actual unit before permanent installation.',
+        ],
+      },
+      {
+        title: 'For UST, use the cabinet drawing',
+        paragraphs: ['Do not treat a calculated optical throw distance as the gap between an ultra-short-throw projector and the wall. Use the exact model placement drawing to check cabinet depth and screen height together. A distance that looks small in a specification does not establish that your existing furniture fits.'],
+      },
+      {
+        title: 'Send a room brief, not just a model name',
+        paragraphs: [
+          'For a home setup, send the target image size, available wall dimensions, planned lens or cabinet position, viewing light conditions and candidate model. Include the screen model if you have chosen one.',
+          'For a classroom, hotel or multi-room project, add room count, quantities, signal sources, destination and installation constraints to the same contact request. Record measurements for each room layout before requesting a common equipment specification.',
+        ],
+      },
+    ],
+    sources: [
+      { label: 'BenQ: screen size and throw-ratio calculation', url: 'https://www.benq.com/en-me/knowledge-center/knowledge/projector-installation-calculator.html' },
+      { label: 'Epson: throw distance and positioning', url: 'https://epson.com/projector-guide-how-to-buy-a-projector-throw-distance-and-positioning' },
+      { label: 'BenQ LU9750 manual: lens-to-screen geometry (model-specific example)', url: 'https://esupportdownload.benq.com/esupport/PROJECTOR/UserManual/LU9750/LU9750_UM_EN_211108155601.pdf' },
+    ],
+    cta: { label: 'Send your room or project measurements', href: '/contact' },
   },
 ]
 

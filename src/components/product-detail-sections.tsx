@@ -3,7 +3,9 @@ import {
   type ProductDetailContent,
   type ProductSpecificationItem,
 } from "@/lib/product-detail";
+import { getLegacySpecificationGroup } from "@/lib/product-specification-group";
 import { cleanPublicProductText } from "@/lib/public-product-copy";
+import { parseProductDescription } from "@/lib/product-presentation";
 
 interface ProductDetailSectionsProps {
   content: ProductDetailContent | null | undefined;
@@ -38,6 +40,7 @@ export function ProductDetailSections({
 }: ProductDetailSectionsProps) {
   const labels = sectionCopy[locale] || sectionCopy.en;
   const detail = normalizeProductDetail(content);
+  const descriptionBlocks = description ? parseProductDescription(description, locale) : [];
   const specifications: ProductSpecificationItem[] =
     detail.specifications.length > 0
       ? detail.specifications.map((item) => ({
@@ -46,7 +49,7 @@ export function ProductDetailSections({
           value: cleanPublicProductText(item.value),
         }))
       : Object.entries(legacySpecifications || {}).map(([name, value]) => ({
-          group: "Other",
+          group: getLegacySpecificationGroup(name),
           name: cleanPublicProductText(name),
           value: cleanPublicProductText(String(value)),
         }));
@@ -84,7 +87,7 @@ export function ProductDetailSections({
                   {items.map((item, index) => (
                     <div
                       key={`${item.name}-${index}`}
-                      className="grid grid-cols-[minmax(110px,35%)_1fr] gap-4 border-b border-slate-100 px-5 py-4 last:border-b-0 md:[&:nth-child(odd)]:border-e"
+                      className="grid grid-cols-1 sm:grid-cols-[minmax(110px,35%)_minmax(0,1fr)] gap-4 border-b border-slate-100 px-5 py-4 last:border-b-0 md:[&:nth-child(odd)]:border-e"
                     >
                       <dt className="text-sm font-medium text-slate-600">{item.name}</dt>
                       <dd className="break-words text-sm text-slate-900">{item.value}</dd>
@@ -97,11 +100,24 @@ export function ProductDetailSections({
         </section>
       )}
 
-      {description && (
+      {descriptionBlocks.length > 0 && (
         <section className={sectionClass} aria-labelledby="product-description">
           <h2 id="product-description" className={headingClass}>{labels.description}</h2>
-          <div className="prose prose-slate max-w-none">
-            <p className="whitespace-pre-line text-slate-600 leading-relaxed">{description}</p>
+          <div className="max-w-4xl space-y-5 text-slate-600">
+            {descriptionBlocks.map((block, index) => {
+              if (block.type === "heading") {
+                return <h3 key={index} className="pt-2 text-lg font-semibold text-[#0B1A40]">{block.text}</h3>;
+              }
+              if (block.type === "list") {
+                const List = block.ordered ? "ol" : "ul";
+                return (
+                  <List key={index} className={`space-y-2 ps-6 leading-7 ${block.ordered ? "list-decimal" : "list-disc marker:text-orange-500"}`}>
+                    {block.items.map((item, itemIndex) => <li key={itemIndex} className="ps-1">{item}</li>)}
+                  </List>
+                );
+              }
+              return <p key={index} className="max-w-[75ch] leading-7">{block.text}</p>;
+            })}
           </div>
         </section>
       )}

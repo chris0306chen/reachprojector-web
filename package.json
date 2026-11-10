@@ -10,9 +10,12 @@
     "lint:build": "eslint . --quiet",
     "quality:lighthouse": "lhci autorun",
     "quality:smoke": "playwright test",
+    "test:fulfillment": "tsx --test tests/shipping-quote.test.ts tests/order-status.test.ts tests/order-routes.test.ts",
+    "test:fulfillment:isolated": "tsx --test --test-concurrency=1 --test-timeout=60000 tests/fulfillment-isolated/acceptance.test.ts",
     "start": "bash ./scripts/start.sh",
     "ts-check": "tsc -p tsconfig.json",
-    "validate": "pnpm run --parallel '/^(ts-check|lint:build)$/'"
+    "validate": "pnpm run --parallel '/^(ts-check|lint:build)$/'",
+    "test:shipping-included": "tsx --test tests/shipping-included.test.ts tests/shipping-quote.test.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.958.0",

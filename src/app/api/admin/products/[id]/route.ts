@@ -256,13 +256,20 @@ export async function PUT(
     }
     if (updateData.shipping_quote_required === false) {
       const requiredPackaging = ["packed_weight_kg", "package_length_cm", "package_width_cm", "package_height_cm"];
-      if (requiredPackaging.some((field) => !Number.isFinite(Number(updateData[field])) || Number(updateData[field]) <= 0)) {
+      const { data: savedPackaging, error: packagingError } = await publicationSupabase
+        .from("products")
+        .select("packed_weight_kg,package_length_cm,package_width_cm,package_height_cm,shipping_class,package_count")
+        .eq("id", id)
+        .single();
+      if (packagingError) throw packagingError;
+      const effectivePackaging: Record<string, unknown> = { ...savedPackaging, ...updateData };
+      if (requiredPackaging.some((field) => !Number.isFinite(Number(effectivePackaging[field])) || Number(effectivePackaging[field]) <= 0)) {
         return NextResponse.json(
           { error: "关闭人工运费确认前，必须填写包装重量和包装尺寸" },
           { status: 400 }
         );
       }
-      if (updateData.shipping_class !== "parcel" || Number(updateData.package_count || 1) !== 1) {
+      if (effectivePackaging.shipping_class !== "parcel" || Number(effectivePackaging.package_count) !== 1) {
         return NextResponse.json(
           { error: "只有单件包裹运输可以关闭人工运费确认" },
           { status: 400 }

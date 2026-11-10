@@ -30,9 +30,10 @@ export async function sendOrderConfirmation(input: OrderConfirmationInput): Prom
   const customerEmail = validEmail(input.customerEmail) ? input.customerEmail : null;
   const recipient = customerEmail || businessEmail;
   const method = input.paymentMethod === 'stripe' ? 'Card (Stripe)' : 'PayPal';
-  const seller = input.paymentMethod === 'stripe'
-    ? 'HK REACH SOURCING LIMITED'
-    : 'Quanzhou Reach Technology Co., Ltd.';
+  const paymentEntityDisclosure = input.paymentMethod === 'stripe'
+    ? 'Card payments are processed by HK REACH SOURCING LIMITED through Stripe.'
+    : '';
+  const seller = input.paymentMethod === 'paypal' ? 'Quanzhou Reach Technology Co., Ltd.' : '';
 
   await sendEmail({
     to: recipient,
@@ -51,7 +52,7 @@ export async function sendOrderConfirmation(input: OrderConfirmationInput): Prom
           <tr><td style="padding:8px;border-bottom:1px solid #e2e8f0">Payment method</td><td style="padding:8px;border-bottom:1px solid #e2e8f0">${method}</td></tr>
           ${input.shippingMethod ? `<tr><td style="padding:8px;border-bottom:1px solid #e2e8f0">Shipping</td><td style="padding:8px;border-bottom:1px solid #e2e8f0">${escapeHtml(input.shippingMethod)}</td></tr>` : ''}
           ${input.shippingAddress ? `<tr><td style="padding:8px;border-bottom:1px solid #e2e8f0">Delivery address</td><td style="padding:8px;border-bottom:1px solid #e2e8f0;white-space:pre-line">${escapeHtml(input.shippingAddress)}</td></tr>` : ''}
-          <tr><td style="padding:8px">Seller</td><td style="padding:8px">${seller}</td></tr>
+          ${paymentEntityDisclosure ? `<tr><td style="padding:8px">Payment processing</td><td style="padding:8px">${paymentEntityDisclosure}</td></tr>` : `<tr><td style="padding:8px">Seller</td><td style="padding:8px">${seller}</td></tr>`}
         </table>
         <p>Questions? Reply to this email or contact ${businessEmail}.</p>
       </div>

@@ -49,27 +49,27 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
       {/* Product Main */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-16">
         {/* Image Gallery */}
-        <div>
+        <div className="min-w-0">
           <div className="aspect-square bg-slate-100 rounded-xl overflow-hidden mb-4">
             <img
               src={images[currentImage]}
               alt={displayName}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </div>
           {images.length > 1 && (
-            <div className="flex gap-2">
+            <div className="flex gap-2 overflow-x-auto p-1">
               {images.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setCurrentImage(idx)}
                   aria-label={`${displayName} image ${idx + 1}`}
                   aria-pressed={idx === currentImage}
-                  className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors ${
+                  className={`w-16 h-16 shrink-0 rounded-lg overflow-hidden border-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 ${
                     idx === currentImage ? 'border-orange-500' : 'border-slate-200'
                   }`}
                 >
-                  <img src={img} alt="" className="w-full h-full object-cover" />
+                  <img src={img} alt="" className="w-full h-full object-contain" />
                 </button>
               ))}
             </div>
@@ -168,12 +168,12 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
           {/* Quantity Selector */}
           {isAvailable && <div className="mb-6">
             <label className="text-sm font-medium text-slate-700 mb-2 block">{t('quantity')}</label>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 aria-label={`Decrease ${t('quantity')}`}
                 disabled={quantity <= 1}
-                className="w-9 h-9 flex items-center justify-center border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+                className="w-11 h-11 shrink-0 flex items-center justify-center border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <Minus className="w-4 h-4" />
               </button>
@@ -182,7 +182,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
                 onClick={() => setQuantity(Math.min(20, product.inventory_quantity, quantity + 1))}
                 aria-label={`Increase ${t('quantity')}`}
                 disabled={quantity >= Math.min(20, product.inventory_quantity)}
-                className="w-9 h-9 flex items-center justify-center border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+                className="w-11 h-11 shrink-0 flex items-center justify-center border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <Plus className="w-4 h-4" />
               </button>
@@ -193,17 +193,17 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
           </div>}
 
           {/* CTA Buttons */}
-          <div className="flex flex-wrap gap-3 mb-6">
+          <div className="grid gap-3 mb-6 sm:flex sm:flex-wrap">
             {isQuoteOnly ? (
               <Link
                 href={`/${locale}/contact?product=${product.slug}&type=project`}
-                className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-orange-500 px-6 py-3 font-medium text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-orange-500 px-6 py-3 font-medium text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 sm:flex-none"
               >
                 {t('projectQuote')}
               </Link>
             ) : isAvailable && <Link
               href={`/${locale}/checkout?productId=${product.id}&quantity=${quantity}`}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-all hover:scale-[1.02] shadow-md"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-orange-500 px-6 py-3 font-medium text-white shadow-md transition-all hover:bg-orange-600 hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 sm:flex-none"
             >
               <ShoppingCart className="w-4 h-4" />
               {t('checkoutNow')}
@@ -212,14 +212,14 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
               href={`https://wa.me/8613655920080?text=${whatsappMessage}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-green-600 bg-white px-6 py-3 font-medium text-green-700 transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 sm:flex-none"
             >
               <MessageCircle className="w-4 h-4" />
               {t('whatsappInquiry')}
             </a>
             {!isQuoteOnly && <Link
               href={`/${locale}/contact?product=${product.slug}`}
-              className="inline-flex items-center gap-2 px-6 py-3 border-2 border-slate-300 hover:border-orange-400 text-slate-700 hover:text-orange-600 font-medium rounded-lg transition-colors"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-slate-300 px-6 py-3 font-medium text-slate-700 transition-colors hover:border-orange-400 hover:text-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 sm:flex-none"
             >
               {t('sendInquiry')}
             </Link>}

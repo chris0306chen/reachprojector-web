@@ -1,3 +1,4 @@
+import { shippingMethodLabel } from "@/lib/shipping-label";
 import { NextRequest, NextResponse } from 'next/server';
 import { getCheckoutItem } from '@/lib/checkout';
 import { getShippingQuote } from '@/lib/shipping';
@@ -75,7 +76,7 @@ export async function POST(request: NextRequest) {
         purchase_units: [
           {
             reference_id: item.id,
-            description: item.name,
+            description: shipping.tradeTerms === 'SHIPPING_INCLUDED' ? shippingMethodLabel(shipping) : item.name,
             amount: {
               currency_code: item.currency,
               value: orderTotal,
