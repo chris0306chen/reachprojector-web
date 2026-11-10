@@ -1,3 +1,4 @@
+import { shippingMethodLabel } from "@/lib/shipping-label";
 import { NextRequest, NextResponse } from 'next/server';
 import { getCheckoutItem } from '@/lib/checkout';
 import { getShippingQuote } from '@/lib/shipping';
@@ -45,7 +46,7 @@ export async function POST(request: NextRequest) {
     append(params, 'line_items[0][quantity]', item.quantity);
     append(params, 'line_items[1][price_data][currency]', item.currency.toLowerCase());
     append(params, 'line_items[1][price_data][unit_amount]', Math.round(shipping.shippingCost * 100));
-    append(params, 'line_items[1][price_data][product_data][name]', `Shipping (${shipping.tradeTerms})`);
+    append(params, 'line_items[1][price_data][product_data][name]', shipping.tradeTerms === 'SHIPPING_INCLUDED' ? shippingMethodLabel(shipping) : `Shipping (${shipping.tradeTerms})`);
     append(params, 'line_items[1][quantity]', 1);
     append(params, 'metadata[product_id]', item.id);
     append(params, 'metadata[quantity]', item.quantity);

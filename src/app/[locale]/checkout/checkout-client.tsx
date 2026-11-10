@@ -1,5 +1,6 @@
 'use client';
 
+import { INCLUDED_SHIPPING_LABEL, INCLUDED_TAX_LABEL } from "@/lib/shipping-label";
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Shield, Lock, CreditCard, Loader2 } from 'lucide-react';
@@ -11,8 +12,8 @@ import { getCheckoutCopy } from '@/lib/checkout-copy';
 type ShippingQuote = {
   mode: 'automatic';
   shippingCost: number;
-  tradeTerms: 'DDP' | 'DAP';
-  dutiesIncluded: boolean;
+  tradeTerms: 'DDP' | 'DAP' | 'SHIPPING_INCLUDED';
+  dutiesIncluded: boolean | null;
   method: string;
   estimatedDaysMin: number | null;
   estimatedDaysMax: number | null;
@@ -144,8 +145,8 @@ function CheckoutContent() {
             {shippingError && <p className="text-sm text-amber-700 mb-4">{shippingError}</p>}
             {shipping && (
               <p className="text-sm text-green-700 mb-4">
-                {shipping.tradeTerms} {t('shipping')}: ${shipping.shippingCost.toFixed(2)}
-                {shipping.dutiesIncluded ? ` (${copy.dutiesIncluded})` : ` (${copy.dutiesRecipient})`}
+                {shipping.tradeTerms === 'SHIPPING_INCLUDED' ? INCLUDED_SHIPPING_LABEL : `${shipping.tradeTerms} ${t('shipping')}`}: ${shipping.shippingCost.toFixed(2)}
+                {shipping.tradeTerms === 'SHIPPING_INCLUDED' ? ` (${INCLUDED_TAX_LABEL})` : shipping.dutiesIncluded ? ` (${copy.dutiesIncluded})` : ` (${copy.dutiesRecipient})`}
               </p>
             )}
             <h2 className="text-lg font-semibold text-slate-900 mb-4">{t('selectPayment')}</h2>
@@ -238,7 +239,7 @@ function CheckoutContent() {
               <div className="flex justify-between text-sm">
                 <span className="text-slate-600">{t('shipping')}</span>
                 <span className="text-slate-900 font-medium">
-                  {shipping ? `$${shipping.shippingCost.toFixed(2)} ${shipping.tradeTerms}` : copy.selectCountry}
+                  {shipping ? `${shipping.shippingCost.toFixed(2)} ${shipping.tradeTerms === 'SHIPPING_INCLUDED' ? INCLUDED_SHIPPING_LABEL : shipping.tradeTerms}` : copy.selectCountry}
                 </span>
               </div>
             </div>

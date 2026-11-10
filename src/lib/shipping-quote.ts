@@ -4,13 +4,14 @@ export interface PackageInput {
   widthCm: number;
   heightCm: number;
   quantity: number;
+  minimumChargeableWeightKg?: number;
 }
 
 export interface ShippingRate {
   id: string;
   name: string;
   method: string;
-  tradeTerms: "DDP" | "DAP";
+  tradeTerms: "DDP" | "DAP" | "SHIPPING_INCLUDED";
   currency: string;
   minWeightKg: number;
   maxWeightKg: number;
@@ -37,6 +38,7 @@ export function calculatePackageQuote(input: PackageInput, rate: ShippingRate) {
     ![rate.minWeightKg, rate.maxWeightKg, rate.baseWeightKg, rate.baseFee,
       rate.incrementWeightKg, rate.incrementFee, rate.minimumFee, rate.volumetricDivisor]
       .every((value) => Number.isFinite(value) && value >= 0) ||
+    (rate.tradeTerms === "SHIPPING_INCLUDED" && [rate.baseFee, rate.incrementFee, rate.minimumFee].some((value) => value !== 0)) ||
     rate.maxWeightKg < rate.minWeightKg ||
     rate.volumetricDivisor <= 0 ||
     rate.incrementWeightKg <= 0
@@ -46,7 +48,9 @@ export function calculatePackageQuote(input: PackageInput, rate: ShippingRate) {
 
   const volumetricWeightKg =
     (input.lengthCm * input.widthCm * input.heightCm) / rate.volumetricDivisor;
-  const rawChargeableWeightKg = Math.max(input.packedWeightKg, volumetricWeightKg);
+  const minimumChargeableWeightKg = input.minimumChargeableWeightKg ?? 0;
+  if (!Number.isFinite(minimumChargeableWeightKg) || minimumChargeableWeightKg < 0) return null;
+  const rawChargeableWeightKg = Math.max(input.packedWeightKg, volumetricWeightKg, minimumChargeableWeightKg);
   const chargeableWeightPerPackageKg =
     Number((weightUnits(rawChargeableWeightKg, rate.incrementWeightKg) * rate.incrementWeightKg).toPrecision(15));
 
@@ -68,7 +72,7 @@ export function calculatePackageQuote(input: PackageInput, rate: ShippingRate) {
   if (
     !Number.isFinite(totalChargeableWeightKg) ||
     !Number.isSafeInteger(Math.round(shippingCost * 100)) ||
-    shippingCost <= 0
+    (shippingCost === 0 && rate.tradeTerms !== "SHIPPING_INCLUDED") || shippingCost < 0
   ) {
     return null;
   }
