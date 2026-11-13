@@ -103,10 +103,10 @@ export function ProductDetailSections({
       {descriptionBlocks.length > 0 && (
         <section className={sectionClass} aria-labelledby="product-description">
           <h2 id="product-description" className={headingClass}>{labels.description}</h2>
-          <div className="max-w-4xl space-y-5 text-slate-600">
+          <div className="max-w-4xl space-y-6 text-pretty text-slate-600">
             {descriptionBlocks.map((block, index) => {
               if (block.type === "heading") {
-                return <h3 key={index} className="pt-2 text-lg font-semibold text-[#0B1A40]">{block.text}</h3>;
+                return <h3 key={index} className="pt-3 text-lg font-semibold leading-7 text-[#0B1A40] first:pt-0">{block.text}</h3>;
               }
               if (block.type === "list") {
                 const List = block.ordered ? "ol" : "ul";
