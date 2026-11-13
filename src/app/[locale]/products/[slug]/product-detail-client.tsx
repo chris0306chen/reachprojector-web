@@ -15,6 +15,16 @@ interface ProductDetailClientProps {
   relatedProducts: Product[];
 }
 
+function simplifyProductTitle(name: string, brand: string) {
+  const normalizedName = name.trim();
+  const normalizedBrand = brand.trim();
+  if (!normalizedBrand) return normalizedName;
+  const prefix = `${normalizedBrand} `;
+  return normalizedName.toLowerCase().startsWith(prefix.toLowerCase())
+    ? normalizedName.slice(prefix.length).trim()
+    : normalizedName;
+}
+
 export function ProductDetailClient({ product, relatedProducts }: ProductDetailClientProps) {
   const t = useTranslations('productDetail');
   const locale = useLocale();
@@ -36,7 +46,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
   const productItems = (messages as Record<string, unknown>)?.products as Record<string, unknown> | undefined;
   const items = productItems?.items as Record<string, { name?: string; shortDescription?: string; description?: string }> | undefined;
   const translatedItem = items?.[product.slug];
-  const displayName = translatedItem?.name || product.name;
+  const displayName = simplifyProductTitle(translatedItem?.name || product.name, product.brand);
   const displayShortDesc = cleanPublicProductText(translatedItem?.shortDescription || product.short_description);
   const displayDescription = cleanPublicProductText(translatedItem?.description || product.description);
 
