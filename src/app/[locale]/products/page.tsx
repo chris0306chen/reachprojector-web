@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { generateItemListSchema } from '@/lib/seo';
+import { buildLocalizedAlternates, generateItemListSchema } from '@/lib/seo';
 import Link from 'next/link';
 import { getProducts, getCategories, getBrands } from '@/lib/data-service';
 import { ProductsClient } from './products-client';
@@ -38,15 +38,18 @@ const PRIMARY_CATEGORY_SLUGS = [
   'projection-screens',
 ] as const;
 
-export async function generateMetadata({ searchParams }: ProductsPageProps): Promise<Metadata> {
-  const params = await searchParams
-  const category = params?.category
+export async function generateMetadata({ params: routeParams, searchParams }: ProductsPageProps): Promise<Metadata> {
+  const { locale } = await routeParams
+  const query = await searchParams
+  const category = query?.category
   const meta = category ? CATEGORY_META[category] : null
-  if (!meta) return { title: 'All Products | REACH PROJECTOR' }
-  return { title: meta.title, description: meta.description, keywords: meta.keywords }
+  const path = category ? `/products?category=${encodeURIComponent(category)}` : '/products'
+  if (!meta) return { title: 'All Products | REACH PROJECTOR', alternates: buildLocalizedAlternates(locale, path) }
+  return { title: meta.title, description: meta.description, keywords: meta.keywords, alternates: buildLocalizedAlternates(locale, path) }
 }
 
 interface ProductsPageProps {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{
     category?: string;
     brand?: string;
