@@ -29,6 +29,7 @@ function buildAlternates(path: string) {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPaths = [
     '', '/products', '/solutions', '/about', '/contact', '/wholesale',
+    '/oem-projection-modules', '/professional-projection-mapping',
     '/shipping-policy', '/returns-refunds', '/warranty', '/privacy', '/terms',
   ]
   const staticPages: MetadataRoute.Sitemap = staticPaths.flatMap((path) => locales.map((locale) => ({ url: `${SITE_URL}/${locale}${path}`, lastModified: new Date(), changeFrequency: path === '' ? ('daily' as const) : ('monthly' as const), priority: path === '' ? 1 : path === '/products' ? 0.9 : 0.7, alternates: buildAlternates(path) })))
