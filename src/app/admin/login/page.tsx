@@ -44,7 +44,7 @@ export default function AdminLoginPage() {
             <span className="text-2xl font-bold text-white">R</span>
           </div>
           <h1 className="text-2xl font-bold text-white">REACH 管理后台</h1>
-          <p className="mt-2 text-slate-400">HK REACH SOURCING LIMITED</p>
+          <p className="mt-2 text-slate-400">Quanzhou Reach Technology Co., Ltd.</p>
         </div>
         <div className="rounded-2xl bg-white p-8 shadow-xl">
           <h2 className="mb-6 text-xl font-bold text-slate-900">管理员登录</h2>
@@ -87,3 +87,4 @@ export default function AdminLoginPage() {
     </div>
   );
 }
+
