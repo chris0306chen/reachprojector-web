@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, ArrowRight, Check, ExternalLink } from 'lucide-react'
 import { buyingGuides, getBuyingGuide } from '@/lib/guides'
-import { generateBreadcrumbSchema, SITE_NAME, SITE_URL } from '@/lib/seo'
+import { buildLocalizedAlternates, generateBreadcrumbSchema, SITE_NAME, SITE_URL } from '@/lib/seo'
 
 type GuidePageProps = { params: Promise<{ locale: string; slug: string }> }
 
@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: GuidePageProps): Promise<Meta
   return {
     title: `${guide.title} | ${SITE_NAME}`,
     description: guide.description,
-    alternates: { canonical: `${SITE_URL}/${locale}/guides/${guide.slug}` },
+    alternates: buildLocalizedAlternates(locale, `/guides/${guide.slug}`),
     openGraph: { title: guide.title, description: guide.description, type: 'article' },
   }
 }
@@ -88,3 +88,4 @@ export default async function GuidePage({ params }: GuidePageProps) {
     </article>
   )
 }
+

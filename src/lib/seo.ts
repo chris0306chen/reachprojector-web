@@ -1,3 +1,5 @@
+import { locales } from '@/i18n/config'
+
 /**
  * SEO Utility Functions for REACH PROJECTOR
  * 
@@ -14,6 +16,19 @@
 
 export const SITE_URL = 'https://www.reachprojector.com'
 export const SITE_NAME = 'REACH PROJECTOR'
+
+export function buildLocalizedAlternates(locale: string, path = '') {
+  const normalizedPath = path ? (path.startsWith('/') ? path : `/${path}`) : ''
+  const languages: Record<string, string> = Object.fromEntries(
+    locales.map((item) => [item, `${SITE_URL}/${item}${normalizedPath}`]),
+  )
+  languages['x-default'] = `${SITE_URL}/en${normalizedPath}`
+
+  return {
+    canonical: `${SITE_URL}/${locale}${normalizedPath}`,
+    languages,
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Types
@@ -256,7 +271,7 @@ export function generateOrganizationSchema() {
       '@type': 'ContactPoint',
       telephone: '+86-13655920080',
       contactType: 'sales',
-      email: 'info@reachtronics.com',
+      email: 'sales@reachtronics.com',
       availableLanguage: ['English', 'Chinese'],
     },
     sameAs: [] as string[],
@@ -293,3 +308,4 @@ export function generateWebSiteSchema() {
     },
   }
 }
+

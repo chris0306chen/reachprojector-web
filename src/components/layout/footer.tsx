@@ -60,9 +60,9 @@ export function Footer() {
               <div className="flex items-center gap-2 text-sm text-slate-400 mb-3">
                 <span className="font-medium text-white">Quanzhou Reach Technology Co., Ltd.</span>
               </div>
-              <a href="mailto:info@reachtronics.com" className="flex items-center gap-2 text-sm text-slate-400 hover:text-orange-400 transition-colors">
+              <a href="mailto:sales@reachtronics.com" className="flex items-center gap-2 text-sm text-slate-400 hover:text-orange-400 transition-colors">
                 <Mail className="w-4 h-4 shrink-0" />
-                info@reachtronics.com
+                sales@reachtronics.com
               </a>
               <a href="tel:+8613655920080" className="flex items-center gap-2 text-sm text-slate-400 hover:text-orange-400 transition-colors">
                 <Phone className="w-4 h-4 shrink-0" />
@@ -159,3 +159,4 @@ export function Footer() {
     </footer>
   );
 }
+

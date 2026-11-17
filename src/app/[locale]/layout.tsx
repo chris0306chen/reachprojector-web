@@ -6,7 +6,7 @@ import { locales, type Locale, rtlLocales } from '@/i18n/config';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { WhatsAppFloat } from '@/components/WhatsAppFloat';
-import { generateOrganizationSchema } from '@/lib/seo';
+import { buildLocalizedAlternates, generateOrganizationSchema } from '@/lib/seo';
 import { getCategories } from '@/lib/data-service';
 import './globals.css';
 
@@ -27,13 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         follow: true,
       },
     },
-    alternates: {
-      canonical: `/${locale}`,
-      languages: {
-        ...Object.fromEntries(locales.map((l) => [l, `/${l}`])),
-        'x-default': '/en',
-      },
-    },
+    alternates: buildLocalizedAlternates(locale),
   };
 }
 
@@ -74,3 +68,4 @@ export default async function LocaleLayout({
     </html>
   );
 }
+
