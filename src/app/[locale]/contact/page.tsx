@@ -36,11 +36,11 @@ export default async function ContactPage() {
               <div>
                 <h2 className="mb-7 text-2xl font-semibold tracking-tight text-slate-950">{t('getInTouch')}</h2>
                 <div className="space-y-3">
-                  <a href="mailto:info@reachtronics.com" className="group flex min-h-16 items-start gap-4 rounded-2xl p-3 text-slate-600 transition-colors hover:bg-white hover:text-orange-600">
+                  <a href="mailto:sales@reachtronics.com" className="group flex min-h-16 items-start gap-4 rounded-2xl p-3 text-slate-600 transition-colors hover:bg-white hover:text-orange-600">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-100"><Mail className="h-4.5 w-4.5 text-orange-700" /></span>
                     <div>
                       <p className="text-sm font-medium text-slate-900">{t('email')}</p>
-                      <p className="text-sm">info@reachtronics.com</p>
+                      <p className="text-sm">sales@reachtronics.com</p>
                     </div>
                   </a>
                   <a href="tel:+8613655920080" className="group flex min-h-16 items-start gap-4 rounded-2xl p-3 text-slate-600 transition-colors hover:bg-white hover:text-orange-600">
