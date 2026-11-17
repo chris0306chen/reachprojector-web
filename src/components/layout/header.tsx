@@ -132,8 +132,12 @@ export function Header({ categories = [] }: { categories?: HeaderCategory[] }) {
       ],
     },
     {
-      href: `/${locale}/wholesale`,
+      href: `/${locale}/oem-projection-modules`,
       label: t('oemOdmProjectors'),
+    },
+    {
+      href: `/${locale}/professional-projection-mapping`,
+      label: 'Professional AV & Mapping',
     },
     {
       href: `/${locale}/contact`,
