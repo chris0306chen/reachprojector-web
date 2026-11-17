@@ -42,7 +42,7 @@ export function PolicyPage({
           <section className="border-t border-slate-200 pt-7">
             <h2 className="text-xl font-bold text-slate-900">{copy.questions}</h2>
             <p className="mt-3 leading-7 text-slate-600">
-              {copy.questionText} <a className="font-medium text-orange-600 hover:underline" href="mailto:info@reachtronics.com">info@reachtronics.com</a>
+              {copy.questionText} <a className="font-medium text-orange-600 hover:underline" href="mailto:sales@reachtronics.com">sales@reachtronics.com</a>
             </p>
             <Link href={`/${locale}/contact`} className="mt-5 inline-flex rounded-lg bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-600">
               {copy.contact}

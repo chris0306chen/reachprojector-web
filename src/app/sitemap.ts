@@ -4,6 +4,7 @@ import { productNavigation, sceneNavigation } from '@/lib/catalog-navigation'
 import { buyingGuides } from '@/lib/guides'
 
 const SITE_URL = 'https://www.reachprojector.com'
+const SITE_LAST_MODIFIED = new Date('2026-11-17T00:00:00.000Z')
 
 async function fetchProductSlugs(): Promise<{ slug: string; updatedAt: string }[]> {
   try {
@@ -29,21 +30,20 @@ function buildAlternates(path: string) {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPaths = [
     '', '/products', '/solutions', '/about', '/contact', '/wholesale',
-    '/oem-projection-modules', '/professional-projection-mapping',
     '/shipping-policy', '/returns-refunds', '/warranty', '/privacy', '/terms',
   ]
-  const staticPages: MetadataRoute.Sitemap = staticPaths.flatMap((path) => locales.map((locale) => ({ url: `${SITE_URL}/${locale}${path}`, lastModified: new Date(), changeFrequency: path === '' ? ('daily' as const) : ('monthly' as const), priority: path === '' ? 1 : path === '/products' ? 0.9 : 0.7, alternates: buildAlternates(path) })))
+  const staticPages: MetadataRoute.Sitemap = staticPaths.flatMap((path) => locales.map((locale) => ({ url: `${SITE_URL}/${locale}${path}`, lastModified: SITE_LAST_MODIFIED, changeFrequency: path === '' ? ('daily' as const) : ('monthly' as const), priority: path === '' ? 1 : path === '/products' ? 0.9 : 0.7, alternates: buildAlternates(path) })))
   const categories = productNavigation.flatMap((category) => [
     category.slug,
     ...category.children.map(([, slug]) => slug),
   ])
-  const categoryPages: MetadataRoute.Sitemap = categories.flatMap((cat) => locales.map((locale) => ({ url: `${SITE_URL}/${locale}/products?category=${cat}`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8, alternates: buildAlternates(`/products?category=${cat}`) })))
-  const scenePages: MetadataRoute.Sitemap = sceneNavigation.flatMap((group) => group.items.flatMap(([, slug]) => locales.map((locale) => ({ url: `${SITE_URL}/${locale}/solutions/${slug}`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.8, alternates: buildAlternates(`/solutions/${slug}`) }))))
+  const categoryPages: MetadataRoute.Sitemap = categories.flatMap((cat) => locales.map((locale) => ({ url: `${SITE_URL}/${locale}/products?category=${cat}`, lastModified: SITE_LAST_MODIFIED, changeFrequency: 'weekly' as const, priority: 0.8, alternates: buildAlternates(`/products?category=${cat}`) })))
+  const scenePages: MetadataRoute.Sitemap = sceneNavigation.flatMap((group) => group.items.flatMap(([, slug]) => locales.map((locale) => ({ url: `${SITE_URL}/${locale}/solutions/${slug}`, lastModified: SITE_LAST_MODIFIED, changeFrequency: 'monthly' as const, priority: 0.8, alternates: buildAlternates(`/solutions/${slug}`) }))))
   const products = await fetchProductSlugs()
   const productPages: MetadataRoute.Sitemap = products.flatMap((product) => locales.map((locale) => ({ url: `${SITE_URL}/${locale}/products/${product.slug}`, lastModified: new Date(product.updatedAt), changeFrequency: 'weekly' as const, priority: 0.6, alternates: buildAlternates(`/products/${product.slug}`) })))
-  const guidePages: MetadataRoute.Sitemap = [
-    { url: `${SITE_URL}/en/guides`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    ...buyingGuides.map((guide) => ({ url: `${SITE_URL}/en/guides/${guide.slug}`, lastModified: new Date(guide.updatedAt), changeFrequency: 'monthly' as const, priority: 0.7 })),
-  ]
+  const guidePages: MetadataRoute.Sitemap = locales.flatMap((locale) => [
+    { url: `${SITE_URL}/${locale}/guides`, lastModified: SITE_LAST_MODIFIED, changeFrequency: 'weekly' as const, priority: 0.8, alternates: buildAlternates('/guides') },
+    ...buyingGuides.map((guide) => ({ url: `${SITE_URL}/${locale}/guides/${guide.slug}`, lastModified: new Date(guide.updatedAt), changeFrequency: 'monthly' as const, priority: 0.7, alternates: buildAlternates(`/guides/${guide.slug}`) })),
+  ])
   return [...staticPages, ...categoryPages, ...scenePages, ...guidePages, ...productPages]
 }

@@ -2,12 +2,15 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, BookOpen, Building2, Home } from 'lucide-react'
 import { buyingGuides } from '@/lib/guides'
-import { SITE_URL } from '@/lib/seo'
+import { buildLocalizedAlternates } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Projector Buying Guides | REACH PROJECTOR',
-  description: 'Practical projector selection, room planning, international shipping and RFQ guides for home and business buyers.',
-  alternates: { canonical: `${SITE_URL}/en/guides` },
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  return {
+    title: 'Projector Buying Guides | REACH PROJECTOR',
+    description: 'Practical projector selection, room planning, international shipping and RFQ guides for home and business buyers.',
+    alternates: buildLocalizedAlternates(locale, '/guides'),
+  }
 }
 
 export default async function GuidesPage({ params }: { params: Promise<{ locale: string }> }) {
