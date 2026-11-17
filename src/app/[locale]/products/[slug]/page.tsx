@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { getProductBySlug, getRelatedProducts, getCategories } from '@/lib/data-service';
 import { ProductDetailClient } from './product-detail-client';
 import PricingRFQWrapper from '@/components/b2b/PricingRFQWrapper';
-import { generateProductSchema, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo';
+import { buildLocalizedAlternates, generateProductSchema, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo';
 import { normalizeProductDetail } from '@/lib/product-detail';
 import { getProductCommerceProfile } from '@/lib/product-commerce';
 import { getTranslations } from 'next-intl/server';
@@ -23,9 +23,7 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
   return {
     title: product.seo_title || `${product.name} - ${product.brand}`,
     description: product.meta_description || product.short_description || `${product.name} by ${product.brand}.`,
-    alternates: {
-      canonical: `/${locale}/products/${product.slug}`,
-    },
+    alternates: buildLocalizedAlternates(locale, `/products/${product.slug}`),
     openGraph: {
       title: `${product.name} - ${product.brand} | REACH PROJECTOR`,
       description: product.short_description || '',
@@ -129,3 +127,4 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     </div>
   );
 }
+
