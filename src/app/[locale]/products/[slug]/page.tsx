@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { getProductBySlug, getRelatedProducts, getCategories } from '@/lib/data-service';
 import { ProductDetailClient } from './product-detail-client';
 import PricingRFQWrapper from '@/components/b2b/PricingRFQWrapper';
-import { generateProductSchema, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo';
+import { buildLocalizedAlternates, generateProductSchema, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo';
 import { normalizeProductDetail } from '@/lib/product-detail';
 import { getProductCommerceProfile } from '@/lib/product-commerce';
 import { getTranslations } from 'next-intl/server';
