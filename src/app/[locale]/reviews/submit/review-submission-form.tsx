@@ -14,7 +14,7 @@ export default function ReviewSubmissionForm({ locale }: { locale: string }) {
     setStatus('submitting')
     setMessage('')
     const form = new FormData(event.currentTarget)
-    const payload = {
+      const payload = {
       token,
       review_type: String(form.get('review_type') || 'product'),
       product_rating: form.get('product_rating') ? Number(form.get('product_rating')) : null,
@@ -26,11 +26,13 @@ export default function ReviewSubmissionForm({ locale }: { locale: string }) {
       company_name: String(form.get('company_name') || '') || null,
       allow_public_name: form.get('allow_public_name') === 'on',
       allow_public_company: form.get('allow_public_company') === 'on',
-      allow_public_image: false,
+      allow_public_image: form.get('allow_public_image') === 'on',
       locale,
     }
     try {
-      const response = await fetch('/api/reviews/submit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+      const image = form.get('image')
+      const requestBody = image instanceof File && image.size > 0 ? (() => { const multipart = new FormData(); Object.entries(payload).forEach(([key, value]) => multipart.append(key, String(value ?? ''))); multipart.append('image', image); return multipart })() : JSON.stringify(payload)
+      const response = await fetch('/api/reviews/submit', { method: 'POST', headers: requestBody instanceof FormData ? undefined : { 'Content-Type': 'application/json' }, body: requestBody })
       const data = await response.json()
       if (!response.ok) throw new Error(data.error || 'Unable to submit review')
       setStatus('success')
@@ -61,6 +63,8 @@ export default function ReviewSubmissionForm({ locale }: { locale: string }) {
       </div>
       <label className="flex items-start gap-3 text-sm text-slate-600"><input type="checkbox" name="allow_public_name" className="mt-1" />Allow my display name to appear publicly.</label>
       <label className="flex items-start gap-3 text-sm text-slate-600"><input type="checkbox" name="allow_public_company" className="mt-1" />Allow my company name to appear publicly.</label>
+      <label className="text-sm font-medium text-slate-700">Photo (optional)<input type="file" name="image" accept="image/jpeg,image/png,image/webp" className="mt-2 block w-full text-sm" /></label>
+      <label className="flex items-start gap-3 text-sm text-slate-600"><input type="checkbox" name="allow_public_image" className="mt-1" />Allow this photo to appear publicly if the review is approved.</label>
       {message && <p className={status === 'error' ? 'text-sm text-red-600' : 'text-sm text-slate-600'}>{message}</p>}
       <button disabled={!token || status === 'submitting'} className="rounded-lg bg-orange-500 px-5 py-3 text-sm font-semibold text-white hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50">{status === 'submitting' ? 'Submitting…' : 'Submit for review'}</button>
     </form>

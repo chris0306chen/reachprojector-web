@@ -1,33 +1,35 @@
 import { NextResponse } from 'next/server'
-import { z } from 'zod'
 import { getSupabaseClient } from '@/storage/database/supabase-client'
 import { hashReviewInvitationToken } from '@/lib/reviews'
 import { allowReviewSubmission, getClientIp } from '@/lib/review-security'
-
-const reviewSchema = z.object({
-  token: z.string().min(20).max(200),
-  review_type: z.enum(['product', 'company']),
-  product_rating: z.coerce.number().int().min(1).max(5).nullable().optional(),
-  service_rating: z.coerce.number().int().min(1).max(5).nullable().optional(),
-  title: z.string().trim().min(3).max(160),
-  body: z.string().trim().min(10).max(4000),
-  display_name: z.string().trim().min(1).max(120),
-  country: z.string().trim().min(2).max(100),
-  company_name: z.string().trim().max(200).nullable().optional(),
-  allow_public_name: z.boolean().default(false),
-  allow_public_company: z.boolean().default(false),
-  allow_public_image: z.boolean().default(false),
-  locale: z.string().trim().max(10).default('en'),
-}).superRefine((value, context) => {
-  if (value.review_type === 'product' && !value.product_rating) context.addIssue({ code: 'custom', path: ['product_rating'], message: 'Product rating is required' })
-  if (value.review_type === 'company' && !value.service_rating) context.addIssue({ code: 'custom', path: ['service_rating'], message: 'Service rating is required' })
-})
+import { reviewSubmissionSchema } from '@/lib/review-validation'
 
 export async function POST(request: Request) {
   const ip = getClientIp(request)
   if (!allowReviewSubmission(`review:${ip}`)) return NextResponse.json({ error: 'Too many submissions. Please try again later.' }, { status: 429 })
   try {
-    const parsed = reviewSchema.safeParse(await request.json())
+    const isMultipart = request.headers.get('content-type')?.includes('multipart/form-data')
+    let rawInput: Record<string, unknown>
+    let image: File | null = null
+    if (isMultipart) {
+      const form = await request.formData()
+      const value = (name: string) => String(form.get(name) || '')
+      rawInput = {
+        token: value('token'), review_type: value('review_type'), product_rating: value('product_rating') || null,
+        service_rating: value('service_rating') || null, title: value('title'), body: value('body'),
+        display_name: value('display_name'), country: value('country'), company_name: value('company_name') || null,
+        allow_public_name: form.get('allow_public_name') === 'on', allow_public_company: form.get('allow_public_company') === 'on',
+        allow_public_image: form.get('allow_public_image') === 'on', locale: value('locale') || 'en',
+      }
+      const uploaded = form.get('image')
+      image = uploaded instanceof File && uploaded.size > 0 ? uploaded : null
+    } else {
+      rawInput = await request.json() as Record<string, unknown>
+    }
+    if (image && (!['image/jpeg', 'image/png', 'image/webp'].includes(image.type) || image.size > 5 * 1024 * 1024)) {
+      return NextResponse.json({ error: 'Images must be JPG, PNG or WebP and no larger than 5MB.' }, { status: 400 })
+    }
+    const parsed = reviewSubmissionSchema.safeParse(rawInput)
     if (!parsed.success) return NextResponse.json({ error: 'Please complete the required review fields.', issues: parsed.error.flatten() }, { status: 400 })
     const input = parsed.data
     const db = getSupabaseClient()
@@ -73,6 +75,18 @@ export async function POST(request: Request) {
     if (reviewError) {
       if (reviewError.code === '23505') return NextResponse.json({ error: 'This invitation has already been used for this review type.' }, { status: 409 })
       throw reviewError
+    }
+
+    if (image) {
+      const bucket = 'review-media'
+      const { data: buckets } = await db.storage.listBuckets()
+      if (!buckets?.some((bucketInfo) => bucketInfo.name === bucket)) await db.storage.createBucket(bucket, { public: false, fileSizeLimit: 5 * 1024 * 1024 })
+      const safeName = image.name.toLowerCase().replace(/[^a-z0-9._-]/g, '-').slice(0, 160)
+      const storagePath = `${review.id}/${Date.now()}-${safeName}`
+      const { error: uploadError } = await db.storage.from(bucket).upload(storagePath, image, { contentType: image.type, upsert: false })
+      if (uploadError) throw uploadError
+      const { error: mediaError } = await db.from('review_media').insert({ review_id: review.id, storage_path: storagePath, is_public: input.allow_public_image })
+      if (mediaError) throw mediaError
     }
 
     const { error: markUsedError } = await db.from('review_invitations').update({ used_at: now, status: 'used' }).eq('id', invitation.id).eq('status', 'pending')
