@@ -17,6 +17,7 @@ const ALL_PERMISSIONS = [
   { key: "products", label: "产品管理" },
   { key: "orders", label: "订单管理" },
   { key: "inquiries", label: "询盘管理" },
+  { key: "reviews", label: "评价管理" },
   { key: "shipping", label: "物流管理" },
   { key: "users", label: "用户管理" },
   { key: "import", label: "产品导入" },

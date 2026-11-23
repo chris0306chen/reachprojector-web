@@ -12,6 +12,7 @@ import {
   Mail, 
   Truck, 
   Users, 
+  Star,
   Download,
   LogOut,
   ExternalLink,
@@ -28,6 +29,7 @@ const navItems = [
   { href: "/admin/products/import", label: "导入产品", icon: Download },
   { href: "/admin/orders", label: "订单管理", icon: ShoppingCart },
   { href: "/admin/inquiries", label: "询价管理", icon: Mail },
+  { href: "/admin/reviews", label: "评价管理", icon: Star },
   { href: "/admin/shipping", label: "物流管理", icon: Truck },
   { href: "/admin/users", label: "用户管理", icon: Users },
 ];
