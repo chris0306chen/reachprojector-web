@@ -5,6 +5,7 @@ import { getProductBySlug, getRelatedProducts, getCategories } from '@/lib/data-
 import { ProductDetailClient } from './product-detail-client';
 import PricingRFQWrapper from '@/components/b2b/PricingRFQWrapper';
 import { buildLocalizedAlternates, generateProductSchema, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo';
+import { getPublicProductReviews } from '@/lib/reviews';
 import { normalizeProductDetail } from '@/lib/product-detail';
 import { getProductCommerceProfile } from '@/lib/product-commerce';
 import { getTranslations } from 'next-intl/server';
@@ -41,6 +42,12 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const relatedProducts = await getRelatedProducts(product.id, product.category_id);
   const categories = await getCategories();
   const category = categories.find((c) => c.id === product.category_id);
+  let publicReviews = [];
+  try {
+    publicReviews = await getPublicProductReviews(product.id);
+  } catch {
+    publicReviews = [];
+  }
   const structuredDetail = normalizeProductDetail(product.detail_content);
   const geoContent = product.import_data && typeof product.import_data === "object"
     ? (product.import_data as { geo_content?: { faq?: Array<{ question: string; answer: string }> } }).geo_content
@@ -48,6 +55,10 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const verifiedFaq = Array.isArray(geoContent?.faq) ? geoContent.faq : [];
   const commerceProfile = getProductCommerceProfile(product.import_data);
   const hasRetailOffer = commerceProfile.saleMode !== 'quote_only' && Number(product.price) > 0;
+  const reviewRatings = publicReviews.filter((review) => typeof review.product_rating === 'number');
+  const averageRating = reviewRatings.length > 0
+    ? reviewRatings.reduce((sum, review) => sum + (review.product_rating || 0), 0) / reviewRatings.length
+    : undefined;
 
   return (
     <div className="bg-white min-h-screen">
@@ -72,7 +83,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         </div>
       </div>
 
-      <ProductDetailClient product={product} relatedProducts={relatedProducts} />
+      <ProductDetailClient product={product} relatedProducts={relatedProducts} publicReviews={publicReviews} />
 
       <PricingRFQWrapper
         basePrice={Number(product.price)}
@@ -100,6 +111,14 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               : 'out_of_stock',
             locale,
             includeOffer: hasRetailOffer,
+            rating: averageRating ? Number(averageRating.toFixed(2)) : undefined,
+            reviewCount: reviewRatings.length || undefined,
+            reviews: reviewRatings.map((review) => ({
+              author: review.allow_public_name && review.display_name ? review.display_name : 'Verified customer',
+              datePublished: review.published_at || review.submitted_at,
+              reviewBody: review.body,
+              rating: review.product_rating || 0,
+            })),
             additionalProperties: structuredDetail.specifications.map((item) => ({
               name: item.name,
               value: item.value,

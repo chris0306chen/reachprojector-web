@@ -11,13 +11,16 @@ import { getProductCommerceProfile } from '@/lib/product-commerce';
 import { cleanPublicProductText } from '@/lib/public-product-copy';
 import { ExternalFeedback } from '@/components/product/external-feedback';
 import { getExternalProductFeedback } from '@/lib/product-feedback';
+import { ReviewList } from '@/components/product/review-list';
+import type { PublicReview } from '@/lib/reviews';
 
 interface ProductDetailClientProps {
   product: Product;
   relatedProducts: Product[];
+  publicReviews: PublicReview[];
 }
 
-export function ProductDetailClient({ product, relatedProducts }: ProductDetailClientProps) {
+export function ProductDetailClient({ product, relatedProducts, publicReviews }: ProductDetailClientProps) {
   const t = useTranslations('productDetail');
   const locale = useLocale();
   const [currentImage, setCurrentImage] = useState(0);
@@ -261,6 +264,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
       />
 
       <ExternalFeedback feedback={externalFeedback} />
+      <ReviewList reviews={publicReviews} />
 
       {/* Related Products */}
       {relatedProducts.length > 0 && (
