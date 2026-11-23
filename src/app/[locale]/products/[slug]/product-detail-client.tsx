@@ -9,6 +9,8 @@ import { ProductCard } from '@/components/product-card';
 import { ProductDetailSections } from '@/components/product-detail-sections';
 import { getProductCommerceProfile } from '@/lib/product-commerce';
 import { cleanPublicProductText } from '@/lib/public-product-copy';
+import { ExternalFeedback } from '@/components/product/external-feedback';
+import { getExternalProductFeedback } from '@/lib/product-feedback';
 
 interface ProductDetailClientProps {
   product: Product;
@@ -39,6 +41,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
   const displayName = translatedItem?.name || product.name;
   const displayShortDesc = cleanPublicProductText(translatedItem?.shortDescription || product.short_description);
   const displayDescription = cleanPublicProductText(translatedItem?.description || product.description);
+  const externalFeedback = getExternalProductFeedback(product);
 
   const whatsappMessage = encodeURIComponent(
     `Hi, I am interested in ${displayName} (${product.brand}). Could you please provide more details and pricing?`
@@ -256,6 +259,8 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
         description={displayDescription}
         locale={locale}
       />
+
+      <ExternalFeedback feedback={externalFeedback} />
 
       {/* Related Products */}
       {relatedProducts.length > 0 && (
